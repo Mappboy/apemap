@@ -148,6 +148,9 @@ GeoAlchemy2 = "^0.13.1"
 Wikipedia-API = "^0.5.8"
 geopy = "^2.3.0"
 python-dotenv = "^1.0.0"
+pre-commit = "^3.2.0"
+black = "^23.1.0"
+flake8 = "^6.0.0"
 
 
 [build-system]
