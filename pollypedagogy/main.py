@@ -2,8 +2,9 @@
 # https://rdflib.github.io/sparqlwrapper/
 
 import sys
-from SPARQLWrapper import SPARQLWrapper, JSON
+
 import pandas as pd
+from SPARQLWrapper import SPARQLWrapper, JSON
 
 endpoint_url = "https://query.wikidata.org/sparql"
 
@@ -50,22 +51,26 @@ def get_results(endpoint_url, query):
     sparql.setReturnFormat(JSON)
     return sparql.query().convert()
 
-def clean_results(results:dict) -> pd.DataFrame:
+
+def clean_results(results: dict) -> pd.DataFrame:
     output = pd.json_normalize(results)
-    col_vals = [ c for c in output.columns if c.endswith(".value")]
+    col_vals = [c for c in output.columns if c.endswith(".value")]
     output_cleaned = output[col_vals]
 
-    output_cleaned.columns = [ c.replace(".value", "") for c in col_vals ]
+    output_cleaned.columns = [c.replace(".value", "") for c in col_vals]
     return output_cleaned
 
-senate_results = get_results(endpoint_url, query_senate)
-senate_df = clean_results(senate_results['results']['bindings'])
 
-reps_results  = get_results(endpoint_url, query_reps)
-reps_df = clean_results(reps_results['results']['bindings'])
+senate_results = get_results(endpoint_url, query_senate)
+senate_df = clean_results(senate_results["results"]["bindings"])
+
+reps_results = get_results(endpoint_url, query_reps)
+reps_df = clean_results(reps_results["results"]["bindings"])
 
 edu_cols = [["edu" "eduLabel"]]
-education_df: pd.DataFrame = pd.concat([reps_df[["edu","eduLabel"]], senate_df[["edu","eduLabel"]]])
+education_df: pd.DataFrame = pd.concat(
+    [reps_df[["edu", "eduLabel"]], senate_df[["edu", "eduLabel"]]]
+)
 education_df.dropna().drop_duplicates(["edu"], inplace=True)
 education_df.sort_values(["eduLabel"], inplace=True)
 education_df["is_university"] = education_df["eduLabel"].str.contains("University")

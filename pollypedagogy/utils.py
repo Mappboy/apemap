@@ -1,3 +1,4 @@
+import re
 import sys
 
 import pandas as pd
@@ -6,6 +7,34 @@ import wikipediaapi
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 WIKI_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&ppprop=wikibase_item&redirects=1&titles={title}&format=json"
+PARLIMENTARIAN_HANDBOOK = "https://handbookapi.aph.gov.au/api/individuals?$orderby=FamilyName,GivenName &$filter=PHID eq '{ph_id}'"
+
+
+def parlimentarian_handbook_secondary_school(ph_id):
+    r = requests.get(PARLIMENTARIAN_HANDBOOK.format(ph_id=ph_id))
+    r.raise_for_status()
+    query = r.json()
+    values = query.get("value", [])
+    if len(values):
+        return ",".join([value.get("SecondarySchool") for value in values])
+
+
+def get_ph_id_from_wikidata(entitiy_id_or_str):
+    """Parse entityid to mp_id
+
+    :param entitiy_id_or_str: http://www.wikidata.org/entity/Q16732352 or Q16732352
+    :return:
+    """
+    entitiy_id = re.search(r"(Q\d+)", entitiy_id_or_str).group(0)
+    mp_id_query = f"""SELECT ?mp_id WHERE {{
+  wd:{entitiy_id} wdt:P10020 ?mp_id .
+    }}"""
+
+    mp_res = get_results(query=mp_id_query)
+    try:
+        return clean_results(mp_res)["mp_id"][0]
+    except KeyError:
+        return ""
 
 
 def get_wikipedia_entity_id(title):
@@ -21,11 +50,12 @@ def get_wikipedia_entity_id(title):
 
 
 def get_wikidata_entity_id(title):
-    wiki_wiki = wikipediaapi.Wikipedia('en')
+    wiki_wiki = wikipediaapi.Wikipedia("en")
     a = wiki_wiki.page(title)
     if a.exists():
         r = requests.get(
-            f"https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles={a.title}&normalize=1&format=json")
+            f"https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles={a.title}&normalize=1&format=json"
+        )
         r.raise_for_status()
         entities = r.json()
         return f"http://www.wikidata.org/entity/{list(entities['entities'].keys())[0]}"
@@ -40,8 +70,11 @@ def get_results(endpoint_url="https://query.wikidata.org/sparql", query=""):
     return sparql.query().convert()
 
 
-def clean_results(results: dict) -> pd.DataFrame:
-    output = pd.json_normalize(results)
+def clean_results(results: dict, dataframe=True) -> pd.DataFrame | dict:
+    if not dataframe:
+        for result in results["results"]["bindings"]:
+            return result
+    output = pd.json_normalize(results["results"]["bindings"])
     col_vals = [c for c in output.columns if c.endswith(".value")]
     output_cleaned = output[col_vals]
 
