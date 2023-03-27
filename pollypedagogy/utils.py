@@ -1,17 +1,20 @@
 import re
 import sys
+import urllib3
 
 import pandas as pd
 import requests
 import wikipediaapi
 from SPARQLWrapper import SPARQLWrapper, JSON
 
+urllib3.disable_warnings()
+
 WIKI_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&ppprop=wikibase_item&redirects=1&titles={title}&format=json"
 PARLIMENTARIAN_HANDBOOK = "https://handbookapi.aph.gov.au/api/individuals?$orderby=FamilyName,GivenName &$filter=PHID eq '{ph_id}'"
 
 
 def parlimentarian_handbook_secondary_school(ph_id):
-    r = requests.get(PARLIMENTARIAN_HANDBOOK.format(ph_id=ph_id))
+    r = requests.get(PARLIMENTARIAN_HANDBOOK.format(ph_id=ph_id), verify=False)
     r.raise_for_status()
     query = r.json()
     values = query.get("value", [])
