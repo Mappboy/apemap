@@ -1,4 +1,4 @@
-# Polly Pedagogy Map
+# Australian Parliamentarian Education Map (APEMAP)
 
 ## Background
 Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
