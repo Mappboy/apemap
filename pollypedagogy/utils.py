@@ -1,9 +1,9 @@
 import re
 import sys
-import urllib3
 
 import pandas as pd
 import requests
+import urllib3
 import wikipediaapi
 from SPARQLWrapper import SPARQLWrapper, JSON
 
@@ -13,7 +13,33 @@ WIKI_URL = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&pppro
 PARLIMENTARIAN_HANDBOOK = "https://handbookapi.aph.gov.au/api/individuals?$orderby=FamilyName,GivenName &$filter=PHID eq '{ph_id}'"
 
 
+def get_aph_df(mp_id: str) -> pd.DataFrame:
+    """Fetch data from APH"""
+    r = requests.get(PARLIMENTARIAN_HANDBOOK.format(ph_id=mp_id), verify=False)
+    r.raise_for_status()
+    query = r.json()
+    return pd.json_normalize(query, "value")
+
+
+def fetch_handbook_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Given a dataframe with mp_id pull down all information for each row and create an aph dataframe
+
+    :param df: Dataframe contain mp_ids
+    :return: All details from APH ID
+    """
+    aph_df = pd.DataFrame()
+    assert "mp_id" in df.columns
+    for row in df.drop_duplicates("mp_id").iterrows():
+        data = get_aph_df(row[1]["mp_id"])
+        if aph_df.empty:
+            aph_df = data
+        else:
+            aph_df = pd.concat([aph_df, data])
+    return aph_df
+
+
 def parlimentarian_handbook_secondary_school(ph_id):
+    """Only fetching Secondaryy School"""
     r = requests.get(PARLIMENTARIAN_HANDBOOK.format(ph_id=ph_id), verify=False)
     r.raise_for_status()
     query = r.json()
