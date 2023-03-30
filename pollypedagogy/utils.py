@@ -45,7 +45,9 @@ def parlimentarian_handbook_secondary_school(ph_id):
     query = r.json()
     values = query.get("value", [])
     if len(values):
-        return ",".join([value.get("SecondarySchool") for value in values])
+        return ",".join(
+            [value.get("parlimentarian_handbook_secondary_school") for value in values]
+        )
 
 
 def get_ph_id_from_wikidata(entitiy_id_or_str):
