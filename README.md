@@ -11,6 +11,7 @@ There's a number of fascinating questions which come out of this:
  - Also I think it's just cool
 
 ## TODO
+- Switch to Indigenous names for Capital cities (Because 2023)
 - Convert datasets to standard outputs
 - Convert ministry table from 46th parliament to 47th parliament
 - Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese

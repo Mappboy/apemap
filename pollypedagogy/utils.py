@@ -68,6 +68,35 @@ def get_ph_id_from_wikidata(entitiy_id_or_str):
         return ""
 
 
+def get_dob_gender_from_wikidata(entitiy_id_or_str):
+    """Parse entityid to gender, and dob"""
+    entitiy_id = re.search(r"(Q\d+)", entitiy_id_or_str).group(0)
+    gender_query = f"""SELECT ?genderLabel ?dob WHERE {{
+     wd:{entitiy_id} wdt:P21 ?gender .
+              SERVICE wikibase:label {{
+                 bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+            ?gender rdfs:label ?genderLabel .
+        }}
+     OPTIONAL {{ wd:{entitiy_id} wdt:P569 ?dob . }}
+      }}"""
+
+    dob_gender = get_results(query=gender_query)
+    try:
+        clean_res = clean_results(dob_gender)
+        if "genderLabel" in clean_res.columns and "dob" in clean_res.columns:
+            return clean_res.iloc[0][["genderLabel", "dob"]]
+        if "genderLabel" in clean_res.columns:
+            ret_series = clean_res.iloc[0]
+            ret_series["dob"] = ""
+            return ret_series
+        if "dob" in clean_res.columns:
+            ret_series = clean_res.iloc[0]
+            ret_series["genderLabel"] = ""
+            return ret_series
+    except KeyError:
+        return ""
+
+
 def get_wikipedia_entity_id(title):
     r = requests.get(WIKI_URL.format(title=title))
     r.raise_for_status()
