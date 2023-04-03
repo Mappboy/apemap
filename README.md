@@ -11,15 +11,10 @@ There's a number of fascinating questions which come out of this:
  - Also I think it's just cool
 
 ## TODO
-- Finish data cleaning and converting to a relational dataset.
-- Add full address and state to education
-- Add on sector from school-location or profile
-- Add on extra data - compare any missing schools or uni's
-- Tidy up old data.
 - Convert datasets to standard outputs
+- Convert ministry table from 46th parliament to 47th parliament
 - Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese
 - Add openpolitics https://openpolitics.au/member/penny-allman-payne
-- Get missing poly school data
 - https://github.com/openaustralia/openaustralia-parser
 
 
@@ -42,17 +37,22 @@ There's a number of fascinating questions which come out of this:
 - As above some may be online in which case I will just pick a headquarters of campus
 
 ## Datasets
-### PPM.gpkg Layers
+### aped.gpkg tables
 - acara_school_locations_2022 - School locations from ACARA
 - acara_school_profile_2022 - School profiles from ACARA
 - careers - Career data from SMH
-- education - Education data compliled from multiple sources (Originally Wikipedia+APH)
+- education - Education data compiled from multiple sources (Originally Wikipedia+APH)
 - education__acara - Matched datasets to ACARA data
 - ministers - Ministers from Wikipedia
 - ministers_aph - Ministers from APH
 - ministers_occupations - Ministers occupations from APH
-- ministers_secondary_occupations - Minsiters secondary occupations
-- ministers_secondary_school - Ministers secondary school from APH (split by "/")
+- ministers_secondary_occupations - Miniiters secondary occupations
+- ministers_aph_secondary_school - Ministers secondary school from APH (split by "/")
+
+### aped.db views
+-ministers_combined_all_education - Combined education data from all sources
+-ministers_combined_secondary_education - Combined education data from all sources
+
 
 ### Online Layers
 - https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis
@@ -74,6 +74,6 @@ Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
 - Pandas + Geopandas
 
 ## Credits
-### Sydney Morning Herald
+### Sydney Morning Herald - Article
 *Developers*: Daniel Carter, Noah YimEditors Fleta Page, Rob Harris
 *Design/Production*: Mark Stehle, Matthew Absalom-Wong
