@@ -8,7 +8,14 @@ There's a number of fascinating questions which come out of this:
  - Is school funding affected by an MP's secondary school ?
  - Are there schools which routinely have MPs ?
  - Does any of it matter?
- - Also I think it's just cool
+
+## Existing Data and Articles
+- https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836
+- https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters
+- https://data.ipu.org/node/9/data-on-women?chamber_id=13325
+- https://percapita.org.au/wp-content/uploads/2022/05/The-Way-In-46th-Parliament-May-2022-UPDATED.pdf
+- https://www.abs.gov.au/statistics/people/education/schools/latest-release
+
 
 ## TODO
 - Switch to Indigenous names for Capital cities (Because 2023)
@@ -18,9 +25,6 @@ There's a number of fascinating questions which come out of this:
 - Add openpolitics https://openpolitics.au/member/penny-allman-payne
 - https://github.com/openaustralia/openaustralia-parser
 
-
-- https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836
-- https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters
 
 ## Data sources
 ### Schools search
