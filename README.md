@@ -9,6 +9,11 @@ There's a number of fascinating questions which come out of this:
  - Are there schools which routinely have MPs ?
  - Does any of it matter?
 
+## Quick 47th Parliament Overview
+
+https://www.abs.gov.au/statistics/people/education/schools/latest-release
+
+
 ## Existing Data and Articles
 - https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836
 - https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters
