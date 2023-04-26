@@ -1,13 +1,16 @@
 # Australian Parliamentarian Education Map (APEMAP)
 
+![Australian Politicians Education Map.png](Austalian%20Politicians%20Education%20Map.png)
+
 ## Background
 Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
 The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) the which I used as a starting point.
 
-There's a number of fascinating questions which come out of this:
- - Which Members have attended the same school?
- - Shift between parliaments ?
+The article addressed There are several intriguing questions that arise from this research:
+ - Where did my local MP and [insert name of any politician my friends keep asking me about] go to school?
+ - Which members have attended the same school?
  - Has school funding been affected by the number of politicians as alumni ?
+ - Has there been a shift between parliaments ?
  - Are there schools which routinely have MPs ?
  - Does the location of the school impact party and policy ?
 
@@ -15,6 +18,10 @@ The other good reason for doing this make Australian political data easier to fi
 There's a really good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
 
 See [analysis](notebooks/analysis.ipynb) for initial analysis.
+
+View the [Felt Map here](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
+
+_*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
 
 ## Missing Ministers
 We are currently missing the exact school for the following ministers and senators.
@@ -92,18 +99,20 @@ As above some may be online in which case I will just pick a headquarters of cam
 - member_secondary_school_education_47
 - member_secondary_school_education_46
 
-### Online Layers
-- https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis
-- Mapbox
-- Openstreetmap
-- Map tiler
+
 
 ### Copyright & Licensing
 - AEC : © Commonwealth of Australia (Australian Electoral Commission)2023
 - ACARA : © Australian Curriculum, Assessment and Reporting Authority (ACARA) 2023
 - ABS : © Commonwealth of Australia (Australian Bureau of Statistics) 2023
 
-Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
+
+### Online Layers
+- https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis
+- Mapbox
+- Openstreetmap
+- Map tiler
+- Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
 
 ## Built with
 - Pandas + Geopandas
@@ -111,13 +120,17 @@ Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
 - PostgreSQL + PostGIS
 - Wikidata
 - Jupyter
+- Plotly + Dash
+- Mapbox
+- Felt
 
 ## TODO
 - Convert QGIS to using aped.gpkg
+- Add high_school_international to members table
 - Add issue templates for suggesting member data
 - Add at a glance
 - Add related news
-- Finish Plotly map see app
+- Finish Plotly map see [app](/app)
 - Switch to Indigenous names for Capital cities (Because 2023)
 - Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese
 - Add openpolitics https://openpolitics.au/member/penny-allman-payne
@@ -131,12 +144,13 @@ Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
 `ogr2ogr -f GPKG aped.gpkg PG:"service=ape" -oo LIST_ALL_TABLES=YES  -mapFieldType "StringList=String,IntegerList=String" -oo SCHEMAS="public"`
 
 ## Existing Data and Articles
-- https://www.abs.gov.au/statistics/people/education/schools/latest-release
-- https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836
-- https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters
-- https://data.ipu.org/node/9/data-on-women?chamber_id=13325
-- https://percapita.org.au/wp-content/uploads/2022/05/The-Way-In-46th-Parliament-May-2022-UPDATED.pdf
-- https://www.abs.gov.au/statistics/people/education/schools/latest-release
+- [Schools should be publicly funded](https://www.theage.com.au/politics/victoria/schools-should-be-publicly-funded-free-and-open-to-all-researchers-20230418-p5d1a6.html)
+- [Latest School Statistics](https://www.abs.gov.au/statistics/people/education/schools/latest-release)
+- [Do politicians know what it's like to do your job?](https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836)
+- [Politician Degrees](https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters)
+- [Women in parliament](https://data.ipu.org/node/9/data-on-women?chamber_id=13325)
+- [Demographics of 46th Parliament](https://percapita.org.au/wp-content/uploads/2022/05/The-Way-In-46th-Parliament-May-2022-UPDATED.pdf)
+- [ABS Education Stats](https://www.abs.gov.au/statistics/people/education/schools/latest-release)
 
 
 ## Credits

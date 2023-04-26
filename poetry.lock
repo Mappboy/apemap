@@ -695,6 +695,14 @@ requests = "*"
 testing = ["pytest"]
 
 [[package]]
+name = "fontawesomefree"
+version = "6.4.0"
+description = "Font Awesome Free"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "fonttools"
 version = "4.39.3"
 description = "Tools to manipulate font files"
@@ -2257,6 +2265,18 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
 tzdata = {version = "*", markers = "python_version >= \"3.6\""}
 
 [[package]]
+name = "pywaffle"
+version = "1.1.0"
+description = "PyWaffle is an open source, MIT-licensed Python package for plotting waffle charts."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+fontawesomefree = "*"
+matplotlib = "*"
+
+[[package]]
 name = "pywin32"
 version = "306"
 description = "Python for Window Extensions"
@@ -3070,7 +3090,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "158ffd0367ad97bbd39ebc9464d2db4b2c724181c81197fdba3826d0d418f4a6"
+content-hash = "6c262203322b554e261cfdcb91cb15ba43a175ef228654af0a7ac08a36f3df2c"
 
 [metadata.files]
 aiofiles = [
@@ -3667,6 +3687,9 @@ Flask = [
 folium = [
     {file = "folium-0.14.0-py2.py3-none-any.whl", hash = "sha256:c894e2c029a8ca40e043a311978a895cefe32d746a94263f807dd7b6b2e9c679"},
     {file = "folium-0.14.0.tar.gz", hash = "sha256:8ec44697d18f5932e0fdaee8b19da98625de4d0e72cb30ef56f9479f18e11b9f"},
+]
+fontawesomefree = [
+    {file = "fontawesomefree-6.4.0-py3-none-any.whl", hash = "sha256:e12edad71b6cf6993fc7c6aea6367e131f2f247b6435faca99b12329bacd2b27"},
 ]
 fonttools = [
     {file = "fonttools-4.39.3-py3-none-any.whl", hash = "sha256:64c0c05c337f826183637570ac5ab49ee220eec66cf50248e8df527edfa95aeb"},
@@ -4774,6 +4797,10 @@ pytz = [
 pytz-deprecation-shim = [
     {file = "pytz_deprecation_shim-0.1.0.post0-py2.py3-none-any.whl", hash = "sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6"},
     {file = "pytz_deprecation_shim-0.1.0.post0.tar.gz", hash = "sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d"},
+]
+pywaffle = [
+    {file = "pywaffle-1.1.0-py2.py3-none-any.whl", hash = "sha256:28d7e677fd28857279355cb51396a508837b462b3d52d28710f73e0f8da5e6c0"},
+    {file = "pywaffle-1.1.0.tar.gz", hash = "sha256:ac2deba1db4775d7b6381e8d75416dfda1e7286f3cf1436bad50fc0616ac2996"},
 ]
 pywin32 = [
     {file = "pywin32-306-cp310-cp310-win32.whl", hash = "sha256:06d3420a5155ba65f0b72f2699b5bacf3109f36acbe8923765c22938a69dfc8d"},
