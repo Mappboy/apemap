@@ -163,3 +163,4 @@ cython_debug/
 !/.env
 !/.env
 !/.env
+/app/assets/images/
