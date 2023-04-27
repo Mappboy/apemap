@@ -17,7 +17,7 @@ The article addressed There are several intriguing questions that arise from thi
 The other good reason for doing this make Australian political data easier to find and update.
 There's a really good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
 
-See [analysis](notebooks/analysis.ipynb) for initial analysis.
+See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) for initial analysis.
 
 View the [Felt Map here](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
 
