@@ -1,4 +1,4 @@
-create view public.member_secondary_school_education_47
+create view public.member_secondary_school_education
 as
 SELECT row_number() over () as id,
        m.id as member_id,
@@ -43,7 +43,7 @@ SELECT row_number() over () as id,
        eaf.total_gross_income_per_student,
        eaf.total_gross_income_total,
        e.geometry         AS geom
-FROM member_aph_47 m
+FROM member_aph m
          LEFT JOIN member_education me ON m.id = me.member_id
          JOIN education e ON me.education_id = e.id
          LEFT JOIN education_acara ea ON me.education_id = ea.education_id
@@ -51,5 +51,5 @@ FROM member_aph_47 m
          LEFT JOIN acara_education_finances eaf ON ea.acara_id = eaf.acara_id
 WHERE e.is_high_school;
 
-alter table public.member_secondary_school_education_47
+alter table public.member_secondary_school_education
     owner to cam;

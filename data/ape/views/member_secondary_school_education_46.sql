@@ -1,19 +1,18 @@
 create or replace view public.member_secondary_school_education_46
 as
-SELECT m.member,
+SELECT row_number() over () as id,
+       m.id as member_id,
+       m.member,
        m.party,
        m.district,
-       CASE m.is_senator
-           WHEN true THEN 'Senator'::text
-           ELSE 'Member'::text
-           END     AS house,
+       m.chamber,
        CASE
            WHEN m.party_abbrev = ANY (ARRAY ['ALP'::text, 'LNP'::text, 'GRN'::text, 'NP'::text, 'IND'::text])
                THEN m.party_abbrev
            ELSE 'Other'::text
-           END     AS party_abbrv,
+           END            AS party_abbrv,
        m.mp_id,
-       m.wiki_link AS "wiki link",
+       m.wiki_link        AS "wiki link",
        m.dob,
        m."Image",
        m."Gender",
@@ -27,8 +26,8 @@ SELECT m.member,
        e.is_international,
        e.school_sector,
        ea.acara_id,
-       al.suburb   AS school_suburb,
-       al."school sector" as al_school_sector,
+       al.suburb          AS school_suburb,
+       al."school sector" AS al_school_sector,
        al."school type",
        al."statistical area 2 name",
        al."local government area name",
@@ -43,7 +42,7 @@ SELECT m.member,
        eaf.other_private_sources_total,
        eaf.total_gross_income_per_student,
        eaf.total_gross_income_total,
-       e.geometry  AS geom
+       e.geometry         AS geom
 FROM member_aph_46 m
          LEFT JOIN member_education me ON m.id = me.member_id
          JOIN education e ON me.education_id = e.id

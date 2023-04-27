@@ -1,5 +1,5 @@
-DROP VIEW IF EXISTS public.member_secondary_school_education_46, public.member_aph_46;
-create view public.member_aph_46
+DROP VIEW IF EXISTS public.member_secondary_school_education, public.member_aph;
+create view public.member_aph
 as
 SELECT row_number() over () as id,
        m.id as member_id,
@@ -64,9 +64,8 @@ SELECT row_number() over () as id,
        ap."PartyParliamentaryService",
        ap."PartyCommitteeService"
 FROM members m
-    JOIN aec_parties p on  m.party_id = p.id
-         JOIN aph_parliamentarians ap ON m.mp_id = ap."PHID"
-WHERE 46 = ANY (ap."RepresentedParliaments");
+         JOIN aec_parties p ON m.party_id = p.id
+         JOIN aph_parliamentarians ap ON m.mp_id = ap."PHID";
 
-alter table public.member_aph_46
+alter table public.member_aph
     owner to cam;
