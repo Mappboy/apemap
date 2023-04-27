@@ -9,6 +9,7 @@ TODO - Add age range slider and histogram
 """
 import math
 import os
+import pathlib
 from datetime import date
 
 import dash_bootstrap_components as dbc
@@ -16,7 +17,8 @@ import geopandas as gpd
 import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc, dash_table, Input, Output
-from dash.exceptions import PreventUpdate
+
+# from dash.exceptions import PreventUpdate
 from dotenv import load_dotenv
 from shapely import Polygon
 from sqlalchemy import create_engine
@@ -27,24 +29,52 @@ TRANSPARENT = "rgba(0,0,0,0)"
 
 load_dotenv("../.env")
 
-engine = create_engine(
-    f"postgresql+psycopg://{os.environ.get('DATABASE_USERNAME')}:{os.environ.get('DATABASE_PASSWORD')}@localhost:5432/{os.environ.get('DATABASE_NAME')}"
-)
+root_data_dir = pathlib.Path("..").resolve() / "data"
+ext_data_dir = root_data_dir / "external"
+geopackage = root_data_dir / "aped.gpkg"
+
+USE_POSTGRES = False
+
+if USE_POSTGRES:
+    engine = create_engine(
+        f"postgresql+psycopg://{os.environ.get('DATABASE_USERNAME')}:{os.environ.get('DATABASE_PASSWORD')}@localhost:5432/{os.environ.get('DATABASE_NAME')}"
+    )
+else:
+    import sqlite3
+
+    engine = sqlite3.connect(geopackage)
+
+
+def geopackage_col_to_list(df, col, convert_ints=False):
+    if not isinstance(df[col][0], list):
+        parliamentarians[col] = parliamentarians[col].str[2:-1].str.split(",")
+        # convert to integers and remove empty strings or non integers
+        if convert_ints:
+            parliamentarians[col] = parliamentarians[col].apply(
+                lambda x: [int(i) for i in x if i.isdigit()]
+            )
+    return df[col]
+
 
 today = date.today()
 
 parliamentarians = pd.read_sql(
     """
-SELECT row_number() over (), members_aph.* FROM members_aph
+SELECT member_aph.* FROM member_aph
     ORDER BY "GivenName" asc
 """,
     engine,
 )
+parliamentarians.drop(["Age"], axis=1, inplace=True)
+parliamentarians.drop_duplicates(["mp_id"], inplace=True)
+# fix up if using geopacakage and not array
+# if parliamentarians["RepresentedParliaments"] not an array then str remove first integer and convert to array
+if not isinstance(parliamentarians["RepresentedParliaments"], list):
+    parliamentarians["RepresentedParliaments"] = geopackage_col_to_list(
+        parliamentarians, "RepresentedParliaments"
+    )
 
 parliamentarians = parliamentarians.explode("RepresentedParliaments")
-parliamentarians["politician_type"] = parliamentarians["is_representative"].apply(
-    lambda x: "Member" if x else "Senator"
-)
 parliamentarians["age"] = pd.to_datetime(parliamentarians["dob"]).apply(
     lambda x: today.year - x.year - ((today.month, today.day) < (x.month, x.day))
 )
@@ -65,17 +95,29 @@ parliamentarians["age_group"] = pd.cut(
     ordered=False,
 )
 # parliamentarians = parliamentarians[
-#     ["member", "politician_type", "age", "dob", "district", "party_abbrev", "RepresentedParliaments", "Gender",
+#     ["member", "chamber", "age", "dob", "district", "party_abbrev", "RepresentedParliaments", "Gender",
 #      "State", "Image", "wiki_link"]]
 parliamentarians.columns = parliamentarians.columns.str.lower().str.replace(" ", "_")
 
-gdf = gpd.read_postgis(
-    'SELECT m.*, "total enrolments" as total_students '
-    "FROM minister_secondary_school_education_47 m "
-    'LEFT JOIN acara_school_profile_2022 a on m.acara_id = a."acara sml id"::int ORDER BY member asc, "school name"',
-    engine,
-    geom_col="geom",
-)
+if USE_POSTGRES:
+    gdf = gpd.read_postgis(
+        'SELECT m.*, "total enrolments" as total_students '
+        "FROM member_secondary_school_education_47 m "
+        'LEFT JOIN acara_school_profile_2022 a on m.acara_id = a."acara sml id"::int ORDER BY member asc, "school name"',
+        engine,
+        geom_col="geom",
+    )
+else:
+    gdf_47 = gpd.read_file(geopackage, layer="member_secondary_school_education_47")
+    gdf_47 = gdf_47.convert_dtypes()
+    asp_47 = gpd.read_file(geopackage, layer="acara_school_profile_2022")[
+        ["acara sml id", "total enrolments"]
+    ]
+    asp_47["acara sml id"] = asp_47["acara sml id"].astype(int)
+    gdf = pd.merge(
+        gdf_47, asp_47, left_on="acara_id", right_on="acara sml id", how="left"
+    )
+    gdf.rename(columns={"total enrolments": "total_students"}, inplace=True)
 
 gdf = gdf.convert_dtypes()
 # fill missing students with min 50 students
@@ -87,7 +129,7 @@ gdf.columns = gdf.columns.str.lower().str.replace(" ", "_")
 
 
 def get_chamber_counts(df):
-    return df.groupby(["politician_type"]).size().reset_index(name="count")
+    return df.groupby(["chamber"]).size().reset_index(name="count")
 
 
 def get_party_counts(df):
@@ -129,13 +171,14 @@ app = Dash(
 # create a plotly express scatter map coloured by school sector with marker size based on the number of students
 hovertemplate = (
     "<b>Lat:</b> %{lat:.2f}<br><b>Lon:</b> %{lon:.2f}<br><br>"
-    + "<b>Values:</b> %{text} <extra>%{fullData.member}</extra>"
+    "<b>Values:</b> %{text} "
+    "<extra>%{fullData}</extra>"
 )
 
 table_cols = [
     "mp_id",
     "member",
-    "school_name",
+    "name",
     "school_sector",
     "total_students",
     "party",
@@ -179,7 +222,7 @@ fig.update_layout(
         font=dict(family="Roboto", size=12, color="lightgrey"),
     ),
 )
-fig.update_traces(cluster=dict(enabled=True))
+fig.update_traces(cluster=dict(enabled=True, maxzoom=10))
 # set hover_template to show all values in the cluster
 
 # Todo add table callback to zoom to location
@@ -271,9 +314,9 @@ histogram = px.bar(
     parliamentarians.groupby(["party_abbrev", "gender"])["age"]
     .agg({"mean"})
     .reset_index()
-    .rename({"mean": "age"}, axis=1),
+    .rename({"mean": "avg_age"}, axis=1),
     x="party_abbrev",
-    y="age",
+    y="avg_age",
     color="gender",
     barmode="group",
 )
@@ -437,6 +480,7 @@ def create_bounding_box(center, zoom):
     Input("map", "figure"),
 )
 def store_bounds(figure):
+    print(figure)
     center = figure["layout"]["mapbox"]["center"]
     zoom = figure["layout"]["mapbox"]["zoom"]
     return {"center": center, "zoom": zoom}
@@ -454,8 +498,8 @@ def update_table(bbox, bounds):
     # create a shapely bbox based on the viewport bounds
     # We need to use both bounds and bbox here. The bounds are used to filter the data
     # and the bbox is used to trigger the callback
-    if not bbox:
-        raise PreventUpdate
+    # if not bbox:
+    #     raise PreventUpdate
     if bbox and bounds:
         bbox = Polygon(bbox)
         # Filter the data based on the viewport bounds
