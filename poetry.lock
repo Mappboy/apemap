@@ -2254,17 +2254,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "pytz-deprecation-shim"
-version = "0.1.0.post0"
-description = "Shims to make deprecation of pytz easier"
-category = "main"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
-
-[package.dependencies]
-tzdata = {version = "*", markers = "python_version >= \"3.6\""}
-
-[[package]]
 name = "pywaffle"
 version = "1.1.0"
 description = "PyWaffle is an open source, MIT-licensed Python package for plotting waffle charts."
@@ -2445,27 +2434,6 @@ description = "Pure python rfc3986 validator"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[[package]]
-name = "rpy2"
-version = "3.5.10"
-description = "Python interface to the R language (embedded R)"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-cffi = ">=1.10.0"
-jinja2 = "*"
-packaging = {version = "*", markers = "platform_system == \"Windows\""}
-pytz = "*"
-tzlocal = "*"
-
-[package.extras]
-all = ["ipython", "numpy", "pandas (>=1.2.0)", "pytest"]
-pandas = ["numpy", "pandas (>=1.2.0)"]
-test = ["ipython", "numpy", "pandas (>=1.2.0)", "pytest"]
-types = ["mypy", "types-pytz", "types-tzlocal"]
 
 [[package]]
 name = "ruff"
@@ -2894,21 +2862,6 @@ optional = false
 python-versions = ">=2"
 
 [[package]]
-name = "tzlocal"
-version = "4.3"
-description = "tzinfo object for the local timezone"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-pytz-deprecation-shim = "*"
-tzdata = {version = "*", markers = "platform_system == \"Windows\""}
-
-[package.extras]
-devenv = ["black", "check-manifest", "flake8", "pyroma", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)", "zest.releaser"]
-
-[[package]]
 name = "uri-template"
 version = "1.2.0"
 description = "RFC 6570 URI Template Processor"
@@ -3090,7 +3043,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "6c262203322b554e261cfdcb91cb15ba43a175ef228654af0a7ac08a36f3df2c"
+content-hash = "c189f10aeaa13e1871c4f3bb688801439cc0cb85aaa9d9b35dbe1b96edbfa102"
 
 [metadata.files]
 aiofiles = [
@@ -4794,10 +4747,6 @@ pytz = [
     {file = "pytz-2022.7.1-py2.py3-none-any.whl", hash = "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"},
     {file = "pytz-2022.7.1.tar.gz", hash = "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0"},
 ]
-pytz-deprecation-shim = [
-    {file = "pytz_deprecation_shim-0.1.0.post0-py2.py3-none-any.whl", hash = "sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6"},
-    {file = "pytz_deprecation_shim-0.1.0.post0.tar.gz", hash = "sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d"},
-]
 pywaffle = [
     {file = "pywaffle-1.1.0-py2.py3-none-any.whl", hash = "sha256:28d7e677fd28857279355cb51396a508837b462b3d52d28710f73e0f8da5e6c0"},
     {file = "pywaffle-1.1.0.tar.gz", hash = "sha256:ac2deba1db4775d7b6381e8d75416dfda1e7286f3cf1436bad50fc0616ac2996"},
@@ -5074,11 +5023,6 @@ rfc3986-validator = [
     {file = "rfc3986_validator-0.1.1-py2.py3-none-any.whl", hash = "sha256:2f235c432ef459970b4306369336b9d5dbdda31b510ca1e327636e01f528bfa9"},
     {file = "rfc3986_validator-0.1.1.tar.gz", hash = "sha256:3d44bde7921b3b9ec3ae4e3adca370438eccebc676456449b145d533b240d055"},
 ]
-rpy2 = [
-    {file = "rpy2-3.5.10-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:a524d09a85ffda275985919bf1e1f850e83036fbadda5fd0c46959b486c21841"},
-    {file = "rpy2-3.5.10-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:798350c4faaebaccacf92c1c7e3619aa049e9bdaf3265822eefdeae1f3d7becb"},
-    {file = "rpy2-3.5.10.tar.gz", hash = "sha256:f81f0afb01e3c6f515c09573bc585c0e1c7e385ec81415ce0a62268c605ec7fc"},
-]
 ruff = [
     {file = "ruff-0.0.260-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:c559650b623f3fbdc39c7ed1bcb064765c666a53ee738c53d1461afbf3f23db2"},
     {file = "ruff-0.0.260-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:90ff1479e292a84c388a8a035d223247ddeea5f6760752a9142b88b6d59ac334"},
@@ -5350,10 +5294,6 @@ typing-extensions = [
 tzdata = [
     {file = "tzdata-2023.3-py2.py3-none-any.whl", hash = "sha256:7e65763eef3120314099b6939b5546db7adce1e7d6f2e179e3df563c70511eda"},
     {file = "tzdata-2023.3.tar.gz", hash = "sha256:11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a"},
-]
-tzlocal = [
-    {file = "tzlocal-4.3-py3-none-any.whl", hash = "sha256:b44c4388f3d34f25862cfbb387578a4d70fec417649da694a132f628a23367e2"},
-    {file = "tzlocal-4.3.tar.gz", hash = "sha256:3f21d09e1b2aa9f2dacca12da240ca37de3ba5237a93addfd6d593afe9073355"},
 ]
 uri-template = [
     {file = "uri_template-1.2.0-py3-none-any.whl", hash = "sha256:f1699c77b73b925cf4937eae31ab282a86dc885c333f2e942513f08f691fc7db"},
