@@ -47,7 +47,7 @@ else:
 
 def geopackage_col_to_list(df, col, convert_ints=False):
     if not isinstance(df[col][0], list):
-        parliamentarians[col] = parliamentarians[col].str[2:-1].str.split(",")
+        parliamentarians[col] = parliamentarians[col].str[3:-1].str.split(",")
         # convert to integers and remove empty strings or non integers
         if convert_ints:
             parliamentarians[col] = parliamentarians[col].apply(
