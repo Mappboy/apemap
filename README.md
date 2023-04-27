@@ -3,7 +3,6 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/analysis.ipynb)
 
 
-[
 ![Australian Politicians Education Map.png](Austalian%20Politicians%20Education%20Map.png)
 
 ## Background
