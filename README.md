@@ -99,7 +99,22 @@ As above some may be online in which case I will just pick a headquarters of cam
 - member_secondary_school_education_47
 - member_secondary_school_education_46
 
+## Installation
 
+### Python + Poetry
+```bash
+pip install poetry
+poetry install
+```
+### Viewing Data
+
+Using [QGIS](https://qgis.org/en/site/forusers/download.html) open the [data/analysis.qgz](data/analysis.qgz) file.
+
+Using [Datasette](https://datasette.io/) run the following command from the root directory
+```bash
+datasette install
+datasette data/aped.db --load-extension spatialite
+```
 
 ### Copyright & Licensing
 - AEC : © Commonwealth of Australia (Australian Electoral Commission)2023
@@ -125,11 +140,13 @@ As above some may be online in which case I will just pick a headquarters of cam
 - Felt
 
 ## TODO
+- Convert to issues
 - Convert QGIS to using aped.gpkg
 - Add high_school_international to members table
 - Add issue templates for suggesting member data
 - Add at a glance
 - Add related news
+- Fix Age or make generated column
 - Finish Plotly map see [app](/app)
 - Switch to Indigenous names for Capital cities (Because 2023)
 - Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese
