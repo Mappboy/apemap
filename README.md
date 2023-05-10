@@ -2,11 +2,10 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/analysis.ipynb)
 
-![Australian Politicians Education Map.png](Austalian%20Politicians%20Education%20Map.png)
 [![Australian Politicians Education Map](Austalian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
 ## Background
 Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
-The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) the which I used as a starting point.
+The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) which I used as a starting point.
 
 There are several intriguing questions that arise from this research:
  - Where did my local MP and [insert name of any politician my friends keep asking me about] go to school?
@@ -17,7 +16,7 @@ There are several intriguing questions that arise from this research:
  - Does the location of the school impact party and policy ?
 
 The other good reason for doing this make Australian political data easier to find and update.
-There's a really good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
+There is a good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
 
 See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) for initial analysis.
 
@@ -26,7 +25,7 @@ View the [Felt Map here](https://felt.com/map/Austalian-Politicians-Education-Ma
 _*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
 
 ## Missing Ministers
-We are currently missing the exact school for the following ministers and senators.
+We are missing the exact school for the following ministers and senators.
 
 ### Missing Senators
 - Alex Antic - Public
