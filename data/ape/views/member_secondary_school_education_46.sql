@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS public.member_secondary_school_education_46;
 create or replace view public.member_secondary_school_education_46
 as
 SELECT row_number() over () as id,
@@ -44,7 +45,7 @@ SELECT row_number() over () as id,
        eaf.total_gross_income_total,
        e.geometry         AS geom
 FROM member_aph_46 m
-         LEFT JOIN member_education me ON m.id = me.member_id
+         LEFT JOIN member_education me ON m.member_id = me.member_id
          JOIN education e ON me.education_id = e.id
          LEFT JOIN education_acara ea ON e.id = ea.education_id
          LEFT JOIN acara_school_locations_2022 al ON ea.acara_id = al."acara sml id"

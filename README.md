@@ -9,7 +9,7 @@
 Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
 The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) the which I used as a starting point.
 
-The article addressed There are several intriguing questions that arise from this research:
+There are several intriguing questions that arise from this research:
  - Where did my local MP and [insert name of any politician my friends keep asking me about] go to school?
  - Which members have attended the same school?
  - Has school funding been affected by the number of politicians as alumni ?
