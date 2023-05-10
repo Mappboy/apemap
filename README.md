@@ -2,9 +2,8 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/analysis.ipynb)
 
-
 ![Australian Politicians Education Map.png](Austalian%20Politicians%20Education%20Map.png)
-
+[![Australian Politicians Education Map](Austalian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
 ## Background
 Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
 The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) the which I used as a starting point.
@@ -29,29 +28,29 @@ _*Please note that I collated this data to the best of my ability in my free tim
 ## Missing Ministers
 We are currently missing the exact school for the following ministers and senators.
 
-### Missing Seneators
-- Alex Antic,senate,Public
-- Arthur Sinodinos,senate,Public
-- Jana Stewart,senate,?
-- Jess Walsh,senate,Non-government
-- Karen Grogan,senate,?
-- Peter Whish-Wilson,senate,Both
-- Marielle Smith,senate,Both
+### Missing Senators
+- Alex Antic - Public
+- Arthur Sinodinos - Public
+- Jana Stewart - ?
+- Jess Walsh - Non-government
+- Karen Grogan - ?
+- Peter Whish-Wilson - Both
+- Marielle Smith - Both
 
 ### Missing MPs
-- Graham Perrett,house,Public
-- Peter Khalil,house,Non-government
-- Milton Dick,house,Non-government
-- Rob Mitchell,house,Public
-- Llew O'Brien,house, Did not graduate but left school in year 9
-- Michelle Ananda-Rajah,house,?
-- Sam Birrell,house,?
-- Susan Templeman,house,Public
-- Stephen Bates,house, International probably
-- Tracey Roberts,house,?
-- Vince Connelly,house,Non-government
-- Julian Simmonds,house,Non-government
-- Nicolle Flint,house,Non-government
+- Graham Perrett - Public
+- Peter Khalil - Non-government
+- Milton Dick - Non-government
+- Rob Mitchell - Public
+- Llew O'Brien -  Did not graduate but left school in year 9
+- Michelle Ananda-Rajah - ?
+- Sam Birrell - ?
+- Susan Templeman - Public
+- Stephen Bates -  International probably
+- Tracey Roberts - ?
+- Vince Connelly - Non-government
+- Julian Simmonds - Non-government
+- Nicolle Flint - Non-government
 
 ## Data sources
 ### Caveats

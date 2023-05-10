@@ -10,17 +10,17 @@ TODO - Add age range slider and histogram
 import math
 import os
 import pathlib
+import random
 from datetime import date
 
 import dash_bootstrap_components as dbc
 import geopandas as gpd
 import pandas as pd
 import plotly.express as px
-from dash import Dash, html, dcc, dash_table, Input, Output
-
-# from dash.exceptions import PreventUpdate
+from dash import Dash, html, dcc, dash_table, Input, Output, State
+from dash.exceptions import PreventUpdate
 from dotenv import load_dotenv
-from shapely import Polygon
+from shapely import Polygon, Point
 from sqlalchemy import create_engine
 
 BGCOLOR = "#222"
@@ -42,12 +42,17 @@ if USE_POSTGRES:
 else:
     import sqlite3
 
-    engine = sqlite3.connect(geopackage)
+    engine = sqlite3.connect(geopackage, check_same_thread=False)
 
 
 def geopackage_col_to_list(df, col, convert_ints=False):
     if not isinstance(df[col][0], list):
-        parliamentarians[col] = parliamentarians[col].str[3:-1].str.split(",")
+        parliamentarians[col] = (
+            parliamentarians[col]
+            .str.replace(r"\d+:", "", regex=True)
+            .str.replace(r"\(|\)", "", regex=True)
+            .str.split(",")
+        )
         # convert to integers and remove empty strings or non integers
         if convert_ints:
             parliamentarians[col] = parliamentarians[col].apply(
@@ -98,34 +103,49 @@ parliamentarians["age_group"] = pd.cut(
 #     ["member", "chamber", "age", "dob", "district", "party_abbrev", "RepresentedParliaments", "Gender",
 #      "State", "Image", "wiki_link"]]
 parliamentarians.columns = parliamentarians.columns.str.lower().str.replace(" ", "_")
+STATE_LOOKUP = {
+    i["state"]: i["stateabbrev"]
+    for i in parliamentarians[["state", "stateabbrev"]]
+    .drop_duplicates()
+    .to_dict("records")
+}
 
-if USE_POSTGRES:
-    gdf = gpd.read_postgis(
-        'SELECT m.*, "total enrolments" as total_students '
-        "FROM member_secondary_school_education_47 m "
-        'LEFT JOIN acara_school_profile_2022 a on m.acara_id = a."acara sml id"::int ORDER BY member asc, "school name"',
-        engine,
-        geom_col="geom",
-    )
-else:
-    gdf_47 = gpd.read_file(geopackage, layer="member_secondary_school_education_47")
-    gdf_47 = gdf_47.convert_dtypes()
-    asp_47 = gpd.read_file(geopackage, layer="acara_school_profile_2022")[
-        ["acara sml id", "total enrolments"]
-    ]
-    asp_47["acara sml id"] = asp_47["acara sml id"].astype(int)
-    gdf = pd.merge(
-        gdf_47, asp_47, left_on="acara_id", right_on="acara sml id", how="left"
-    )
-    gdf.rename(columns={"total enrolments": "total_students"}, inplace=True)
 
-gdf = gdf.convert_dtypes()
-# fill missing students with min 50 students
-gdf["total_students"] = (
-    gdf["total_students"].fillna("50").apply(lambda x: "50" if not x else x)
-)
-gdf["total_students"] = gdf["total_students"].astype(int)
-gdf.columns = gdf.columns.str.lower().str.replace(" ", "_")
+def create_gdf():
+    if USE_POSTGRES:
+        gdf = gpd.read_postgis(
+            'SELECT m.*, "total enrolments" as total_students '
+            "FROM member_secondary_school_education m "
+            'LEFT JOIN acara_school_profile_2022 a on m.acara_id = a."acara sml id"::int ORDER BY member asc, "school name"',
+            engine,
+            geom_col="geom",
+        )
+    else:
+        gdf_47 = gpd.read_file(geopackage, layer="member_secondary_school_education")
+        gdf_47 = gdf_47.convert_dtypes()
+        asp_47 = gpd.read_file(geopackage, layer="acara_school_profile_2022")[
+            ["acara sml id", "total enrolments"]
+        ]
+        asp_47["acara sml id"] = asp_47["acara sml id"].astype(int)
+        gdf = pd.merge(
+            gdf_47, asp_47, left_on="acara_id", right_on="acara sml id", how="left"
+        )
+        gdf.rename(columns={"total enrolments": "total_students"}, inplace=True)
+    gdf = gdf.convert_dtypes()
+    # fill missing students with min 50 students
+    gdf["total_students"] = (
+        gdf["total_students"].fillna("50").apply(lambda x: "50" if not x else x)
+    )
+    gdf["total_students"] = gdf["total_students"].astype(int)
+    gdf.columns = gdf.columns.str.lower().str.replace(" ", "_")
+    # add small random number to lat/lon to avoid overlapping points
+    gdf["lat"] = gdf.geometry.y.apply(lambda x: x + random.uniform(-0.0001, 0.0001))
+    gdf["lon"] = gdf.geometry.x.apply(lambda x: x + random.uniform(-0.0001, 0.0001))
+    gdf["geometry"] = gdf.apply(lambda x: Point(x["lon"], x["lat"]), axis=1)
+    return gdf
+
+
+gdf = create_gdf()
 
 
 def get_chamber_counts(df):
@@ -144,16 +164,25 @@ def get_gender_counts(df):
 # https://dash.plotly.com/holoviews + datashader + Rapids
 # Scattergeo
 layout = dict(
-    autosize=True,
-    automargin=True,
-    margin=dict(l=30, r=30, b=20, t=40),
+    height=800,
+    margin={"r": 0, "t": 0, "l": 0, "b": 0},
+    legend=dict(
+        bgcolor=BGCOLOR,
+        orientation="h",
+        yanchor="bottom",
+        y=1,
+        xanchor="center",
+        x=1,
+        font=dict(family="Roboto", size=12, color="lightgrey"),
+    ),
     hovermode="closest",
+    title="Schools Overview",
     plot_bgcolor=TRANSPARENT,
     paper_bgcolor=TRANSPARENT,
-    legend=dict(font=dict(size=10), orientation="h"),
-    title="Satellite Overview",
     mapbox=dict(
         style="dark",
+        center=dict(lat=-25.2744, lon=133.7751),
+        zoom=3,
     ),
 )
 
@@ -169,19 +198,23 @@ app = Dash(
 )
 
 # create a plotly express scatter map coloured by school sector with marker size based on the number of students
-hovertemplate = (
-    "<b>Lat:</b> %{lat:.2f}<br><b>Lon:</b> %{lon:.2f}<br><br>"
-    "<b>Values:</b> %{text} "
-    "<extra>%{fullData}</extra>"
-)
-
-table_cols = [
+hovertemplate = "<b>name</b>: %{name}<br>" "<b>customdata</b>: %{customdata}<br>"
+map_cols = [
     "mp_id",
     "member",
     "name",
     "school_sector",
-    "total_students",
     "party",
+    "party_abbrv",
+    "chamber",
+    "district",
+    "total_students",
+    "gender",
+    "stateabbrev",
+]
+
+table_cols = [
+    *map_cols,
     "australian_government_recurrent_funding_per_student",
     "australian_government_recurrent_funding_total",
     "state__territory_government_recurring_funding_per_student",
@@ -193,7 +226,7 @@ table_cols = [
     "total_gross_income_per_student",
     "total_gross_income_total",
 ]
-
+gdf = gdf[[*map_cols, "geometry"]]
 px.set_mapbox_access_token(os.environ.get("MAPBOX_TOKEN"))
 fig = px.scatter_mapbox(
     gdf,
@@ -203,57 +236,24 @@ fig = px.scatter_mapbox(
     size="total_students",
     color_discrete_sequence=px.colors.qualitative.Dark24,
     mapbox_style="dark",
-    hover_data=table_cols[1:],
+    hover_data=map_cols[1:],
     zoom=4,
-    height=500,
-)
-fig.update_layout(
     height=800,
-    margin={"r": 0, "t": 0, "l": 0, "b": 0},
-    plot_bgcolor=TRANSPARENT,
-    paper_bgcolor=TRANSPARENT,
-    legend=dict(
-        bgcolor=BGCOLOR,
-        orientation="h",
-        yanchor="bottom",
-        y=1,
-        xanchor="center",
-        x=1,
-        font=dict(family="Roboto", size=12, color="lightgrey"),
-    ),
 )
-fig.update_traces(cluster=dict(enabled=True, maxzoom=10))
+fig.update_layout(**layout)
+fig.update_traces(cluster=dict(enabled=True, maxzoom=11))
 # set hover_template to show all values in the cluster
 
 # Todo add table callback to zoom to location
 table = dash_table.DataTable(
     id="table",
-    data=gdf[table_cols].to_dict("records"),
+    data=gdf[map_cols].to_dict("records"),
     page_size=25,
     columns=[
         {"name": i, "id": i, "deletable": True, "selectable": True} for i in gdf.columns
     ],
     style_header={"backgroundColor": "rgb(30, 30, 30)", "color": "white"},
     style_data={"backgroundColor": "rgb(50, 50, 50)", "color": "white"},
-    style_data_conditional=[
-        {"if": {"row_index": "odd"}, "backgroundColor": "rgb(50, 50, 50)"},
-        {
-            "if": {"state": "active"},
-            "backgroundColor": "rgba(0, 116, 217, 0.3)",
-            "border": "1px solid rgba(0, 116, 217, 0.3)",
-        },
-        {"if": {"column_id": "member"}, "textAlign": "left"},
-        {"if": {"column_id": "age"}, "textAlign": "right"},
-        {"if": {"column_id": "gender"}, "textAlign": "center"},
-        {
-            "if": {"filter_query": "{age} > 30"},
-            "backgroundColor": "rgba(255, 0, 0, 0.5)",
-        },
-        {
-            "if": {"filter_query": '{gender} contains "Male"'},
-            "backgroundColor": "rgba(0, 255, 0, 0.5)",
-        },
-    ],
 )
 
 # Pie_figs
@@ -328,6 +328,7 @@ histogram.update_layout(
 app.layout = html.Div(
     [
         html.H1(children="APE 🦍 Map", style={"textAlign": "center"}),
+        dcc.Geolocation(id="geolocation"),
         dcc.Store(id="viewport-store"),
         dcc.Store(id="bounds-store"),
         dbc.Row(
@@ -364,6 +365,20 @@ app.layout = html.Div(
                             .sort_values()
                             .unique(),
                         ),
+                        # add dbc select for party
+                        dbc.Label("Select Political Parties"),
+                        dcc.Dropdown(
+                            id="party-select",
+                            options=gdf["party"].dropna().sort_values().unique(),
+                            multi=True,
+                        ),
+                        # add dbc select for party
+                        dbc.Label("Select Electorate or Division"),
+                        dcc.Dropdown(
+                            id="electorate-select",
+                            options=gdf["district"].dropna().sort_values().unique(),
+                            multi=True,
+                        ),
                     ],
                     id="cross-filter-options",
                     width=3,
@@ -380,13 +395,7 @@ app.layout = html.Div(
                 dbc.Col(
                     html.Div(
                         [
-                            html.H3("Information"),
-                            dbc.Row(
-                                dcc.Markdown(
-                                    """# Add some information based on current  filter here.
-                    """
-                                )
-                            ),
+                            html.H3("Theme: Age vs Gender"),
                             dbc.Row(
                                 dcc.Graph(figure=histogram),
                             ),
@@ -481,8 +490,14 @@ def create_bounding_box(center, zoom):
 )
 def store_bounds(figure):
     print(figure)
-    center = figure["layout"]["mapbox"]["center"]
-    zoom = figure["layout"]["mapbox"]["zoom"]
+    if not figure:
+        raise PreventUpdate
+    if "layout" not in figure:
+        raise PreventUpdate
+    center = figure["layout"]["mapbox"].get("center")
+    zoom = figure["layout"]["mapbox"].get("zoom")
+    if not center or not zoom:
+        raise PreventUpdate
     return {"center": center, "zoom": zoom}
 
 
@@ -491,64 +506,198 @@ def store_bounds(figure):
     [
         Input("viewport-store", "data"),
         Input("bounds-store", "data"),
+        Input("parliament-select", "value"),
+        Input("state-select", "value"),
+        Input("school-sector-select", "value"),
+        Input("party-select", "value"),
+        Input("electorate-select", "value"),
     ],
 )
-def update_table(bbox, bounds):
+def update_table(
+    bbox,
+    bounds,
+    parliament,
+    state,
+    school_sector,
+    party,
+    electorate,
+):
     # Extract the viewport bounds
     # create a shapely bbox based on the viewport bounds
     # We need to use both bounds and bbox here. The bounds are used to filter the data
     # and the bbox is used to trigger the callback
-    # if not bbox:
-    #     raise PreventUpdate
-    if bbox and bounds:
+
+    if bbox or bounds:
         bbox = Polygon(bbox)
         # Filter the data based on the viewport bounds
-        filtered_df = gdf[gdf.geometry.intersects(bbox)]
+        if not bbox.is_empty:
+            mask = gdf.geometry.intersects(bbox)
+            filtered_df = gdf[mask]
+        else:
+            filtered_df = gdf.copy()
+        filtered_df = generate_geo_map(
+            filtered_df,
+            parliament,
+            party=party,
+            state=state,
+            electorate=electorate,
+            school_sector=school_sector,
+        )
 
         # Convert the filtered data to a dictionary for use in the data table
-        filtered_data = filtered_df[table_cols].to_dict("records")
+        filtered_data = filtered_df[map_cols].to_dict("records")
         return filtered_data
-    return gdf[table_cols].to_dict("records")
+    return gdf[map_cols].to_dict("records")
+
+
+@app.callback(
+    Output("map", "figure"),
+    [
+        Input("parliament-select", "value"),
+        Input("state-select", "value"),
+        Input("school-sector-select", "value"),
+        Input("party-select", "value"),
+        Input("electorate-select", "value"),
+    ],
+    [State("map", "relayoutData")],
+)
+def update_geo_map(
+    parliament_select, state_select, school_sector, party, electorate, main_graph_layout
+):
+    # generate geo map from state-select, procedure-select
+    # add chamber and gender and party select
+    filtered_data = generate_geo_map(
+        gdf,
+        parliament_select,
+        party,
+        state=state_select,
+        school_sector=school_sector,
+        electorate=electorate,
+    )
+    text = (
+        filtered_data["member"]
+        + "<br>"
+        + "<b>"
+        + filtered_data["name"]
+        + "/<b> <br>"
+        + ""
+        + filtered_data["party_abbrv"]
+    )
+    trace = dict(
+        type="scattermapbox",
+        lat=filtered_data.geometry.y,
+        lon=filtered_data.geometry.x,
+        customdata=filtered_data[map_cols].to_dict("records"),
+        color="school_sector",
+        size="total_students",
+        name=filtered_data.member,
+        hoverinfo="text",
+        hovertext=text,
+        color_discrete_sequence=px.colors.qualitative.Dark24,
+        mapbox_style="dark",
+        hover_data=map_cols[1:],
+    )
+    # relayoutData is None by default, and {'autosize': True} without relayout action
+    if main_graph_layout is not None:
+        if (
+            "mapbox.center" in main_graph_layout.keys()
+            and "center" in layout["mapbox"]
+            and "zoom" in layout["mapbox"]
+        ):
+            lon = float(main_graph_layout["mapbox.center"]["lon"])
+            lat = float(main_graph_layout["mapbox.center"]["lat"])
+            zoom = main_graph_layout["mapbox.zoom"]
+            layout["mapbox"]["center"]["lon"] = lon
+            layout["mapbox"]["center"]["lat"] = lat
+            layout["mapbox"]["zoom"] = zoom
+    if not filtered_data.empty:
+        center_lat, center_lon, zoom = calculate_zoom(filtered_data, zoom)
+        layout["mapbox"]["center"]["lon"] = center_lon
+        layout["mapbox"]["center"]["lat"] = center_lat
+        layout["mapbox"]["zoom"] = zoom
+    return dict(data=[trace], layout=layout)
+
+
+def calculate_zoom(filtered_data):
+    minx, miny, maxx, maxy = filtered_data.total_bounds
+    # Calculate the center point of the bounding box
+    center_lat = (miny + maxy) / 2
+    center_lon = (minx + maxx) / 2
+    # Calculate the zoom level based on the range of the bounding box
+    # max_bound = * 111
+    # zoom = 11.5 - np.log(max_bound)
+    max_range = max(abs(maxx - minx), abs(maxy - miny))
+    # Determine the appropriate zoom level based on the range
+    if max_range < 0.1:
+        zoom = 13
+    elif max_range < 0.2:
+        zoom = 12
+    elif max_range < 0.5:
+        zoom = 11
+    elif max_range < 1:
+        zoom = 10
+    elif max_range < 2:
+        zoom = 9
+    elif max_range < 5:
+        zoom = 8
+    elif max_range < 10:
+        zoom = 7
+    elif max_range < 20:
+        zoom = 6
+    else:
+        zoom = 5
+    return center_lat, center_lon, zoom
 
 
 def generate_geo_map(
-    geo_data, parliament, party, gender, electorate, school_sector, state
+    geo_data,
+    parliament=None,
+    party=None,
+    gender=None,
+    electorate=None,
+    school_sector=None,
+    state=None,
 ):
     masks = None
     if parliament:
-        masks = geo_data.parliament.isin(parliament)
+        masks = geo_data["mp_id"].isin(
+            parliamentarians[
+                parliamentarians.representedparliaments == parliament
+            ].mp_id
+        )
     if party:
         masks = (
-            masks & geo_data.party.isin(party)
+            masks & geo_data["party"].isin(party)
             if masks is not None
-            else geo_data.party.isin(party)
+            else geo_data["party"].isin(party)
         )
     if gender:
         masks = (
-            masks & geo_data.gender.isin(gender)
+            masks & geo_data["gender"].isin(gender)
             if masks is not None
-            else geo_data.gender.isin(gender)
+            else geo_data["gender"].isin(gender)
         )
     if electorate:
         masks = (
-            masks & geo_data.distict.isin(electorate)
+            masks & geo_data["district"].isin(electorate)
             if masks is not None
-            else geo_data.distict.isin(electorate)
+            else geo_data["district"].isin(electorate)
         )
     if school_sector:
         masks = (
-            masks & geo_data.distict.isin(school_sector)
+            masks & geo_data["school_sector"] == school_sector
             if masks is not None
-            else geo_data.distict.isin(school_sector)
+            else geo_data["district"] == school_sector
         )
     if state:
         masks = (
-            masks & geo_data.state.isin(state)
+            masks & geo_data["stateabbrev"] == STATE_LOOKUP[state]
             if masks is not None
-            else geo_data.state.isin(state)
+            else geo_data["stateabbrev"] == STATE_LOOKUP[state]
         )
-    if masks:
+    if masks is not None:
         geo_data = geo_data[masks]
+
     return geo_data
 
 

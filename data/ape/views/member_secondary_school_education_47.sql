@@ -4,6 +4,7 @@ as
 SELECT row_number() over () as id,
        m.id as member_id,
        m.member,
+       m.member || ', ' || e.name as label,
        m.party,
        m.district,
        m.chamber,
