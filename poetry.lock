@@ -2075,6 +2075,17 @@ python-versions = "*"
 tests = ["pytest"]
 
 [[package]]
+name = "px"
+version = "0.1.0"
+description = "Python module for 6px"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+websocket-client = "*"
+
+[[package]]
 name = "pyarrow"
 version = "11.0.0"
 description = "Python library for Apache Arrow"
@@ -3037,7 +3048,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "a1192e1a0d1341c5178d884f05f7461f713f1a5f59ed8e165beea5dccd0ee713"
+content-hash = "05e410dfd477acc4b52992b34971ae8255b0b7452a16029263f80c9e75d8d7ff"
 
 [metadata.files]
 aiofiles = [
@@ -4576,6 +4587,9 @@ ptyprocess = [
 pure-eval = [
     {file = "pure_eval-0.2.2-py3-none-any.whl", hash = "sha256:01eaab343580944bc56080ebe0a674b39ec44a945e6d09ba7db3cb8cec289350"},
     {file = "pure_eval-0.2.2.tar.gz", hash = "sha256:2b45320af6dfaa1750f543d714b6d1c520a1688dec6fd24d339063ce0aaa9ac3"},
+]
+px = [
+    {file = "px-0.1.0.tar.gz", hash = "sha256:c41f3a6b3b91950560c3870378924120473857b73b476e0e15ce6e4732079201"},
 ]
 pyarrow = [
     {file = "pyarrow-11.0.0-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:40bb42afa1053c35c749befbe72f6429b7b5f45710e85059cdd534553ebcf4f2"},
