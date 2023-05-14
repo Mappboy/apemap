@@ -23,7 +23,19 @@ See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) 
 View the [Felt Map here](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
 
 _*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
-
+## Preliminary Results
+### School Sector
+![school_sector_breakdown.png](images/school_sector_breakdown.png)
+![school_sector_by_party.png](images/school_sector_by_party.png)
+![high_school_47.png](images/high_school_47.png)
+![high_school_46.png](images/high_school_46.png)
+### Demographics
+![gender_vs_party.png](images/gender_vs_party.png)
+![age_vs_chamber.png](images/age_vs_chamber.png)
+![mean_age_by_party.png](images/mean_age_by_party.png)
+### Financial Data
+![total_gross_income_per_student.png](images%2Ftotal_gross_income_per_student.png)
+![other_private_sources_per_student.png](images%2Fother_private_sources_per_student.png)
 ## Missing Ministers
 We are missing the exact school for the following ministers and senators.
 
