@@ -65,7 +65,8 @@ SELECT row_number() over () as id,
        ap."PartyCommitteeService"
 FROM members m
     JOIN aec_parties p on  m.party_id = p.id
-         JOIN aph_parliamentarians ap ON m.mp_id = ap."PHID";
+         JOIN aph_parliamentarians ap ON m.mp_id = ap."PHID"
+    WHERE 47 = ANY (ap."RepresentedParliaments");;
 
 alter table public.member_aph_47
     owner to cam;
