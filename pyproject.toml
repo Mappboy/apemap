@@ -167,6 +167,7 @@ today = "^0.2"
 dash-bootstrap-components = "^1.4.1"
 pywaffle = "^1.1.0"
 px = "^0.1.0"
+networkx = "^3.1"
 
 
 [build-system]
