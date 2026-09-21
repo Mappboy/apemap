@@ -1,4 +1,9 @@
-""" APE Map Dashboard inspration
+""" APE Map Dashboard (Deprecated)
+
+NOTE: This Dash prototype application is deprecated and no longer actively maintained.
+It has been superseded by the static results page on cpoole.dev.
+
+Dashboard inspiration:
 https://github.com/plotly/dash-sample-apps/blob/main/apps/dash-medical-provider-charges/app.py
 https://github.com/plotly/dash-sample-apps/blob/main/apps/dash-oil-and-gas/app.py
 https://github.com/plotly/dash-sample-apps/blob/main/apps/dash-spatial-clustering/app.py

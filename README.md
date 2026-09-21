@@ -2,9 +2,9 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/analysis.ipynb)
 
-[![Australian Politicians Education Map](Austalian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
+![Australian Politicians Education Map](Australian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')
 ## Background
-Simply put I wanted to know where all the Parliamentarian's went to school and any links that exist between them.
+Simply put I wanted to know where all the Parliamentarians went to school and any links that exist between them.
 The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) which I used as a starting point.
 
 There are several intriguing questions that arise from this research:
@@ -18,9 +18,7 @@ There are several intriguing questions that arise from this research:
 The other good reason for doing this make Australian political data easier to find and update.
 There is a good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
 
-See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) for initial analysis.
-
-View the [Felt Map here](https://felt.com/map/Austalian-Politicians-Education-Map-mAKBz3XhRQ9BJ0jEkdVb39CB?lat=-28.585924&lon=131.326302&zoom=4.49)
+See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) for initial analysis. Interactive results and visualizations are published on [cpoole.dev](https://cpoole.dev).
 
 _*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
 ## Preliminary Results
@@ -89,13 +87,13 @@ As above some may be online in which case I will just pick a headquarters of cam
 - acara_school_profile_2022 - School profiles from ACARA
 - aec_parties - Party lookup from AEC
 - aec_elb_2021 - AEC 2021 Electoral Boundaries
-- aph_parliamentarians - All Parlmentarians downloaded from APH
+- aph_parliamentarians - All Parliamentarians downloaded from APH
 - education - Education data compiled from multiple sources (Originally Wikipedia+APH)
 - education_acara - Matched datasets to ACARA data
 - members_wiki - Members from Wikipedia
 - members_aph - Members from APH
 - members_occupations - Members occupations from APH
-- members_secondary_occupations - Miniiters secondary occupations
+- members_secondary_occupations - Ministers secondary occupations
 - members_secondary_school - Members secondary school from APH (split by "/,")
 - smh_careers - Career data from SMH
 - smh_ministry - Ministry data from SMH
@@ -130,10 +128,17 @@ datasette data/aped.db --load-extension spatialite
 ```
 
 ### Copyright & Licensing
-- AEC : © Commonwealth of Australia (Australian Electoral Commission)2023
-- ACARA : © Australian Curriculum, Assessment and Reporting Authority (ACARA) 2023
-- ABS : © Commonwealth of Australia (Australian Bureau of Statistics) 2023
 
+This project is dual-licensed under open-source terms:
+- **Code & Tooling**: [MIT License](LICENSE)
+- **Compiled Datasets & Derived Data**: [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE)
+
+#### Third-Party Data Sources & Attributions
+- **AEC**: © Commonwealth of Australia (Australian Electoral Commission) 2023
+- **ACARA**: © Australian Curriculum, Assessment and Reporting Authority (ACARA) 2023
+- **ABS**: © Commonwealth of Australia (Australian Bureau of Statistics) 2023
+- **APH**: Parliament of Australia Parliamentary Handbook
+- **SMH**: Sydney Morning Herald investigative baseline (Carter, Yim et al.)
 
 ### Online Layers
 - https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis
@@ -150,7 +155,6 @@ datasette data/aped.db --load-extension spatialite
 - Jupyter
 - Plotly + Dash
 - Mapbox
-- Felt
 
 ## TODO
 - Convert to issues
@@ -160,7 +164,7 @@ datasette data/aped.db --load-extension spatialite
 - Add at a glance
 - Add related news
 - Fix Age or make generated column
-- Finish Plotly map see [app](/app)
+- Finish Plotly map see [app](/app) (Note: legacy Dash prototype is deprecated; superseded by static results on cpoole.dev)
 - Switch to Indigenous names for Capital cities (Because 2023)
 - Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese
 - Add openpolitics https://openpolitics.au/member/penny-allman-payne
