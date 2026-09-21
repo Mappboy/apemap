@@ -1,0 +1,744 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "description": "Historical school amalgamations, renames, abbreviations, and explicit disambiguation overrides.",
+  "total_aliases": 92,
+  "aliases": {
+    "hollywood high school": {
+      "canonical_acara_id": "48250",
+      "canonical_name": "Shenton College",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Amalgamated with Swanbourne High School in 2001 to form Shenton College"
+    },
+    "swanbourne high school": {
+      "canonical_acara_id": "48250",
+      "canonical_name": "Shenton College",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Amalgamated with Hollywood High School in 2001 to form Shenton College"
+    },
+    "shepparton high school": {
+      "canonical_acara_id": "53105",
+      "canonical_name": "Greater Shepparton Secondary College",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Amalgamated into Greater Shepparton Secondary College in 2020"
+    },
+    "ogilvie high school": {
+      "canonical_acara_id": "53087",
+      "canonical_name": "Hobart City High School",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Amalgamated with New Town High School in 2022 to form Hobart City High School"
+    },
+    "hobart matriculation college": {
+      "canonical_acara_id": "40444",
+      "canonical_name": "Elizabeth College",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Hobart Matriculation College was renamed to Elizabeth College"
+    },
+    "gawler high school": {
+      "canonical_acara_id": "49458",
+      "canonical_name": "Gawler and District College B-12",
+      "state": "SA",
+      "sector": "Government",
+      "school_type": "Pri/Sec",
+      "notes": "Gawler High School amalgamated to form Gawler and District College B-12 in 2013"
+    },
+    "sale high school": {
+      "canonical_acara_id": "40726",
+      "canonical_name": "Sale College",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Sale High School amalgamated to form Sale College in 1996"
+    },
+    "narrabeen boys high school": {
+      "canonical_acara_id": "41604",
+      "canonical_name": "Prairiewood High School",
+      "state": "NSW",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Narrabeen Boys High School merged to form Narrabeen Sports High School"
+    },
+    "mlc": {
+      "canonical_acara_id": "46144",
+      "canonical_name": "Methodist Ladies' College",
+      "state": "VIC",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Acronym for Methodist Ladies' College (Kew, VIC)"
+    },
+    "plc sydney": {
+      "canonical_acara_id": "43900",
+      "canonical_name": "Korowal School",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Acronym for Presbyterian Ladies' College, Sydney"
+    },
+    "pembroke": {
+      "canonical_acara_id": "49833",
+      "canonical_name": "Pembroke School - Middle School Campus",
+      "state": "SA",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Pembroke School (Kensington Park, SA)"
+    },
+    "salesian college, chadstone, victoria": {
+      "canonical_acara_id": "45870",
+      "canonical_name": "Salesian College Chadstone",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Salesian College Chadstone (VIC)"
+    },
+    "kilbreda girls college": {
+      "canonical_acara_id": "45712",
+      "canonical_name": "Kilbreda College",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Kilbreda College (Mentone, VIC)"
+    },
+    "meriden girls school": {
+      "canonical_acara_id": "43913",
+      "canonical_name": "Meriden School",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Meriden School (Strathfield, NSW)"
+    },
+    "melbourne girls grammar school": {
+      "canonical_acara_id": "46138",
+      "canonical_name": "Ruyton Girls' School",
+      "state": "VIC",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Melbourne Girls Grammar (South Yarra, VIC)"
+    },
+    "macrobertson high school": {
+      "canonical_acara_id": "45437",
+      "canonical_name": "MacRobertson Girls High School",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "The Mac.Robertson Girls' High School (Melbourne, VIC)"
+    },
+    "assumption college kilmore": {
+      "canonical_acara_id": "45647",
+      "canonical_name": "Assumption College",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Assumption College (Kilmore, VIC)"
+    },
+    "clairvaux mackillop school": {
+      "canonical_acara_id": "47886",
+      "canonical_name": "Clairvaux MacKillop College",
+      "state": "QLD",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Clairvaux MacKillop College (Upper Mount Gravatt, QLD)"
+    },
+    "st joseph's college gregory terrace": {
+      "canonical_acara_id": "47864",
+      "canonical_name": "Gilroy Santa Maria College",
+      "state": "QLD",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "St Joseph's College Gregory Terrace (Spring Hill, QLD)"
+    },
+    "nudgee college": {
+      "canonical_acara_id": "47865",
+      "canonical_name": "Ryan Catholic College",
+      "state": "QLD",
+      "sector": "Catholic",
+      "school_type": "Pri/Sec",
+      "notes": "St Joseph's Nudgee College (Boondall, QLD)"
+    },
+    "danebank anglican girls school": {
+      "canonical_acara_id": "43914",
+      "canonical_name": "Danebank - An Anglican School for Girls",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Danebank - An Anglican School for Girls (Hurstville, NSW)"
+    },
+    "queechy high school (launceston)": {
+      "canonical_acara_id": "40097",
+      "canonical_name": "Queechy High School",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Queechy High School (Launceston, TAS)"
+    },
+    "rosny college (hobart)": {
+      "canonical_acara_id": "40445",
+      "canonical_name": "Rosny College",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Rosny College (Rosny, TAS)"
+    },
+    "hutchins school": {
+      "canonical_acara_id": "40487",
+      "canonical_name": "Port Lincoln Junior Primary School",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "The Hutchins School (Sandy Bay, TAS)"
+    },
+    "geelong college": {
+      "canonical_acara_id": "45914",
+      "canonical_name": "Sacred Heart School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "The Geelong College (Newtown, VIC)"
+    },
+    "geelong grammar school": {
+      "canonical_acara_id": "46102",
+      "canonical_name": "Thomas Carr College",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Geelong Grammar School (Corio, VIC)"
+    },
+    "king's school": {
+      "canonical_acara_id": "43883",
+      "canonical_name": "The King's School",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "The King's School (North Parramatta, NSW)"
+    },
+    "scots college": {
+      "canonical_acara_id": "43904",
+      "canonical_name": "Trinity Anglican College - Albury",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "The Scots College (Bellevue Hill, NSW)"
+    },
+    "rockhampton grammar school": {
+      "canonical_acara_id": "48092",
+      "canonical_name": "Redlands College",
+      "state": "QLD",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "The Rockhampton Grammar School (Rockhampton, QLD)"
+    },
+    "carey grammar school": {
+      "canonical_acara_id": "45902",
+      "canonical_name": "Mother of God School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Carey Baptist Grammar School (Kew, VIC)"
+    },
+    "centenary heights high school": {
+      "canonical_acara_id": "47525",
+      "canonical_name": "Kirwan State High School",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Centenary Heights State High School (Toowoomba, QLD)"
+    },
+    "coorparoo state high school": {
+      "canonical_acara_id": "47530",
+      "canonical_name": "Rosewood State High School",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Coorparoo State High School renamed to Coorparoo Secondary College"
+    },
+    "innisfail state high school": {
+      "canonical_acara_id": "47551",
+      "canonical_name": "Bray Park State High School",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Innisfail State High School amalgamated to form Innisfail State College"
+    },
+    "kelvin grove state high school": {
+      "canonical_acara_id": "47555",
+      "canonical_name": "Maleny State High School",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Kelvin Grove State High School amalgamated into Kelvin Grove State College"
+    },
+    "nambour high school": {
+      "canonical_acara_id": "47573",
+      "canonical_name": "Flagstone State Community College",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Nambour High School amalgamated into Nambour State College"
+    },
+    "nambour state high school": {
+      "canonical_acara_id": "47573",
+      "canonical_name": "Flagstone State Community College",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Nambour State High School amalgamated into Nambour State College"
+    },
+    "nanango state high": {
+      "canonical_acara_id": "47574",
+      "canonical_name": "North Lakes State College",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Pri/Sec",
+      "notes": "Nanango State High School"
+    },
+    "newtown high school of the performing arts": {
+      "canonical_acara_id": "42687",
+      "canonical_name": "Kandeer School",
+      "state": "NSW",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Newtown High School of the Performing Arts (Newtown, NSW)"
+    },
+    "jannali girls high school": {
+      "canonical_acara_id": "42686",
+      "canonical_name": "Gralee School",
+      "state": "NSW",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Jannali Girls High School amalgamated to form The Jannali High School"
+    },
+    "john curtin high school": {
+      "canonical_acara_id": "48320",
+      "canonical_name": "Capel Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "John Curtin Senior High School renamed to John Curtin College of the Arts"
+    },
+    "kambah high school": {
+      "canonical_acara_id": "50438",
+      "canonical_name": "Beaconsfield Primary School - Rottnest Island Campus",
+      "state": "ACT",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Kambah High School site amalgamated into Namadgi School in 2011"
+    },
+    "kambalda senior high school": {
+      "canonical_acara_id": "48322",
+      "canonical_name": "Carlisle Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Kambalda Senior High School amalgamated into Kambalda West District High School"
+    },
+    "leeming high school": {
+      "canonical_acara_id": "48329",
+      "canonical_name": "Wangkatjungka Remote Community School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Pri/Sec",
+      "notes": "Leeming Senior High School (WA)"
+    },
+    "mirrabooka senior high school": {
+      "canonical_acara_id": "48348",
+      "canonical_name": "Dalkeith Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Mirrabooka Senior High School (WA)"
+    },
+    "maddington senior high school": {
+      "canonical_acara_id": "48454",
+      "canonical_name": "Morley Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Maddington Senior High School renamed to Yule Brook College"
+    },
+    "south fremantle high school": {
+      "canonical_acara_id": "52834",
+      "canonical_name": "Karalundi College",
+      "state": "WA",
+      "sector": "Independent",
+      "school_type": "Sec",
+      "notes": "South Fremantle High School amalgamated in 2018 to form Fremantle College"
+    },
+    "st brigid's ladies college": {
+      "canonical_acara_id": "48722",
+      "canonical_name": "Marri Grove Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "St Brigid's College (Lesmurdie, WA)"
+    },
+    "thornlie christian college": {
+      "canonical_acara_id": "48805",
+      "canonical_name": "Mosman Park School For Deaf Children",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Thornlie Christian College (Southern River, WA)"
+    },
+    "australian islamic college, dianella and kewdale": {
+      "canonical_acara_id": "48483",
+      "canonical_name": "North Perth Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Australian Islamic College Kewdale/Dianella (WA)"
+    },
+    "duval high school": {
+      "canonical_acara_id": "42200",
+      "canonical_name": "Lismore Public School",
+      "state": "NSW",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Duval High School amalgamated in 2019 to form Armidale Secondary College"
+    },
+    "enfield high school": {
+      "canonical_acara_id": "50354",
+      "canonical_name": "Roma Mitchell Secondary College",
+      "state": "SA",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Enfield High School amalgamated to form Roma Mitchell Secondary College"
+    },
+    "eynesbury college": {
+      "canonical_acara_id": "49830",
+      "canonical_name": "Trinity College North",
+      "state": "SA",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Eynesbury Senior College (Adelaide, SA)"
+    },
+    "lameroo area school": {
+      "canonical_acara_id": "49444",
+      "canonical_name": "Lameroo Regional Community School",
+      "state": "SA",
+      "sector": "Government",
+      "school_type": "Pri/Sec",
+      "notes": "Lameroo Area School renamed to Lameroo Regional Community School"
+    },
+    "norwood high school": {
+      "canonical_acara_id": "49544",
+      "canonical_name": "East Torrens Primary School",
+      "state": "SA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Norwood High School renamed to Norwood International High School"
+    },
+    "tennison woods college": {
+      "canonical_acara_id": "49753",
+      "canonical_name": "St Albert's Catholic School",
+      "state": "SA",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Tenison Woods College (Mount Gambier, SA)"
+    },
+    "university senior college, adelaide": {
+      "canonical_acara_id": "40700",
+      "canonical_name": "University Senior College at Adelaide University - Jordan Campus",
+      "state": "SA",
+      "sector": "Independent",
+      "school_type": "Sec",
+      "notes": "University Senior College (Adelaide, SA)"
+    },
+    "the don college": {
+      "canonical_acara_id": "50255",
+      "canonical_name": "Don College",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Don College (Devonport, TAS)"
+    },
+    "ulverstone high school": {
+      "canonical_acara_id": "40115",
+      "canonical_name": "Moonah Primary School",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Ulverstone High School renamed to Ulverstone Secondary College"
+    },
+    "sorell high school": {
+      "canonical_acara_id": "40108",
+      "canonical_name": "Taroona Primary School",
+      "state": "TAS",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Sorell School (Sorell, TAS)"
+    },
+    "academy of mary immaculate fitzroy": {
+      "canonical_acara_id": "45704",
+      "canonical_name": "Academy of Mary Immaculate",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Academy of Mary Immaculate (Fitzroy, VIC)"
+    },
+    "benalla high school": {
+      "canonical_acara_id": "45396",
+      "canonical_name": "Western Port Secondary College",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Benalla High School amalgamated to form Benalla P-12 College"
+    },
+    "lyndale secondary": {
+      "canonical_acara_id": "45091",
+      "canonical_name": "Northern School For Autism",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Lyndale Secondary College (Dandenong North, VIC)"
+    },
+    "mount st joseph's college": {
+      "canonical_acara_id": "45964",
+      "canonical_name": "Mount St Joseph Girls' College",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Mount St. Joseph Girls' College (Altona, VIC)"
+    },
+    "mt lilydale college": {
+      "canonical_acara_id": "45706",
+      "canonical_name": "Mount Lilydale Mercy College",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Mount Lilydale Mercy College (Lilydale, VIC)"
+    },
+    "padua catholic college": {
+      "canonical_acara_id": "45753",
+      "canonical_name": "St Augustine's School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Padua College (Mornington, VIC)"
+    },
+    "princess hill high school": {
+      "canonical_acara_id": "45115",
+      "canonical_name": "Southern Autistic School",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Princes Hill Secondary College (Princes Hill, VIC)"
+    },
+    "st joseph's college (echuca)": {
+      "canonical_acara_id": "45778",
+      "canonical_name": "St Mary's School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Joseph's College (Echuca, VIC)"
+    },
+    "taralgon high school": {
+      "canonical_acara_id": "45228",
+      "canonical_name": "Woorinen District Primary School",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Traralgon High School amalgamated to form Traralgon College"
+    },
+    "victorian school of correspondence": {
+      "canonical_acara_id": "45241",
+      "canonical_name": "Nyah District Primary School",
+      "state": "VIC",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Correspondence School renamed to Virtual School Victoria"
+    },
+    "loreto convent, toorak": {
+      "canonical_acara_id": "45719",
+      "canonical_name": "St Joseph's School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Loreto Convent Toorak is known as Loreto Mandeville Hall"
+    },
+    "lowther hall anglican girls school": {
+      "canonical_acara_id": "45927",
+      "canonical_name": "St Brendan's School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Lowther Hall Anglican Grammar School (Essendon, VIC)"
+    },
+    "mount saint michael's college ashgrove": {
+      "canonical_acara_id": "48011",
+      "canonical_name": "Brisbane Boys' College",
+      "state": "QLD",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Mount St Michael's College (Ashgrove, QLD)"
+    },
+    "stuartholme": {
+      "canonical_acara_id": "48017",
+      "canonical_name": "Graceview Adventist College",
+      "state": "QLD",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Stuartholme School (Toowong, QLD)"
+    },
+    "mansfield high school": {
+      "canonical_acara_id": "47565",
+      "canonical_name": "Tullawong State High School",
+      "state": "QLD",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Mansfield State High School (Mansfield, QLD)"
+    },
+    "frawley college": {
+      "canonical_acara_id": "47883",
+      "canonical_name": "St Peter Claver College",
+      "state": "QLD",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "Frawley College amalgamated to form Southern Cross Catholic College in 1995"
+    },
+    "st clare's college (act)": {
+      "canonical_acara_id": "49968",
+      "canonical_name": "St Clare's College",
+      "state": "ACT",
+      "sector": "Catholic",
+      "school_type": "Sec",
+      "notes": "St Clare's College (Griffith, ACT)"
+    },
+    "deakin high school": {
+      "canonical_acara_id": "40003",
+      "canonical_name": "Holy Rosary Catholic School",
+      "state": "ACT",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Deakin High School is now Alfred Deakin High School"
+    },
+    "st clare's high school taree": {
+      "canonical_acara_id": "43444",
+      "canonical_name": "St Christopher's Catholic Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Clare's High School (Taree, NSW)"
+    },
+    "st gregory's college": {
+      "canonical_acara_id": "43503",
+      "canonical_name": "St Christopher's Catholic Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Gregory's College Campbelltown (Gregory Hills, NSW)"
+    },
+    "st leo's college": {
+      "canonical_acara_id": "43236",
+      "canonical_name": "St Rose Catholic Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Leo's Catholic College (Wahroonga, NSW)"
+    },
+    "st michael's regional high school": {
+      "canonical_acara_id": "43530",
+      "canonical_name": "St Peter's Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Michael's Regional High School amalgamated in 2004 to form Kildare Catholic College"
+    },
+    "trinity senior high school": {
+      "canonical_acara_id": "43530",
+      "canonical_name": "St Peter's Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Trinity Senior High amalgamated to form Kildare Catholic College"
+    },
+    "st scholastica's college": {
+      "canonical_acara_id": "43513",
+      "canonical_name": "St Joseph's Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "St Scholastica's College (Glebe, NSW)"
+    },
+    "strathfield & rosebank college": {
+      "canonical_acara_id": "43511",
+      "canonical_name": "St Mary's Primary School",
+      "state": "NSW",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Rosebank College (Five Dock, NSW)"
+    },
+    "christian brothers'": {
+      "canonical_acara_id": "43667",
+      "canonical_name": "Christian Brothers' High School Lewisham",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Pri/Sec",
+      "notes": "Christian Brothers' High School Lewisham (NSW)"
+    },
+    "peakhurst high school": {
+      "canonical_acara_id": "42693",
+      "canonical_name": "Yanco Agricultural High School",
+      "state": "NSW",
+      "sector": "Government",
+      "school_type": "Sec",
+      "notes": "Peakhurst High School became Georges River College Peakhurst Campus"
+    },
+    "gosford christian school": {
+      "canonical_acara_id": "43818",
+      "canonical_name": "Tuntable Falls Community School",
+      "state": "NSW",
+      "sector": "Independent",
+      "school_type": "Prim",
+      "notes": "Gosford Christian School renamed to St Philip's Christian College - Gosford"
+    },
+    "banksia park high school": {
+      "canonical_acara_id": "49568",
+      "canonical_name": "SA School and Services for Vision Impaired",
+      "state": "SA",
+      "sector": "Government",
+      "school_type": "Special",
+      "notes": "Banksia Park International High School (St Agnes, SA)"
+    },
+    "beaumans high school": {
+      "canonical_acara_id": "52837",
+      "canonical_name": "Faith Christian School of Distance Education - Woodridge Campus",
+      "state": "VIC",
+      "sector": "Independent",
+      "school_type": "Sec",
+      "notes": "Beaumaris High School / Secondary College (VIC)"
+    },
+    "harvey agricultural senior high school": {
+      "canonical_acara_id": "48312",
+      "canonical_name": "River Valley Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Harvey Senior High School (WA)"
+    },
+    "prendiville ladies college": {
+      "canonical_acara_id": "48674",
+      "canonical_name": "Beldon Primary School",
+      "state": "WA",
+      "sector": "Government",
+      "school_type": "Prim",
+      "notes": "Prendiville Catholic College (Ocean Reef, WA)"
+    },
+    "sacred heart high school": {
+      "canonical_acara_id": "45763",
+      "canonical_name": "St Columba's School",
+      "state": "VIC",
+      "sector": "Catholic",
+      "school_type": "Prim",
+      "notes": "Sacred Heart Girls' College (Oakleigh, VIC)"
+    }
+  }
+}

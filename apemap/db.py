@@ -7,6 +7,7 @@ and parameterized queries for parliament and education analytics.
 from __future__ import annotations
 
 from pathlib import Path
+import sqlite3
 from typing import TYPE_CHECKING
 
 import duckdb
@@ -24,6 +25,7 @@ CANONICAL_TABLES = (
     "institutions",
     "member_education",
     "school_snapshots",
+    "school_finances_2021",
 )
 
 
@@ -180,3 +182,123 @@ def get_secondary_education_by_parliament(
     return conn.execute(
         "SELECT * FROM get_parliament_education(?)", [parliament_number]
     ).df()
+
+
+def migrate_historical_finances(
+    conn: DuckDBPyConnection, gpkg_path: Path | str | None = None
+) -> int:
+    """Migrate historical 2021 school finances from GeoPackage into DuckDB.
+
+    Isolates historical 2021 financial metrics from the legacy aped.gpkg database
+    into the dedicated canonical table `school_finances_2021`.
+
+    Args:
+        conn: Active DuckDB connection.
+        gpkg_path: Optional path to aped.gpkg (defaults to data/aped.gpkg).
+
+    Returns:
+        Number of migrated rows.
+    """
+    path = Path(gpkg_path or (PROJECT_ROOT / "data" / "aped.gpkg")).resolve()
+    if not path.exists():
+        return 0
+
+    with sqlite3.connect(path) as sq_conn:
+        cursor = sq_conn.cursor()
+        cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='acara_education_finances'"
+        )
+        if not cursor.fetchone():
+            return 0
+
+        df = pd.read_sql("SELECT * FROM acara_education_finances", sq_conn)
+
+    if df.empty:
+        return 0
+
+    inserted = 0
+    for _, row in df.iterrows():
+        acara_id = str(row["acara_id"]).strip()
+        inst_id = f"acara-{acara_id}"
+        # Ensure parent institution exists to satisfy foreign key constraint
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO institutions (
+                institution_id, acara_id, school_name, sector
+            ) VALUES (?, ?, ?, 'Other')
+            """,
+            [inst_id, acara_id, f"ACARA School {acara_id}"],
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO school_finances_2021 (
+                institution_id,
+                acara_id,
+                recurrent_funding_gov_total,
+                recurrent_funding_state_total,
+                fees_charges_parent_total,
+                other_private_sources_total,
+                total_gross_income_total,
+                total_net_recurrent_income_total,
+                recurrent_funding_gov_per_student,
+                recurrent_funding_state_per_student,
+                fees_charges_parent_per_student,
+                other_private_sources_per_student,
+                total_gross_income_per_student,
+                total_net_recurrent_income_per_student,
+                reporting_year
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                inst_id,
+                acara_id,
+                int(row["australian_government_recurrent_funding_total"])
+                if pd.notna(row.get("australian_government_recurrent_funding_total"))
+                else None,
+                int(row["state__territory_government_recurring_funding_total"])
+                if pd.notna(
+                    row.get("state__territory_government_recurring_funding_total")
+                )
+                else None,
+                int(row["fees_charges_and_parent_contributions_total"])
+                if pd.notna(row.get("fees_charges_and_parent_contributions_total"))
+                else None,
+                int(row["other_private_sources_total"])
+                if pd.notna(row.get("other_private_sources_total"))
+                else None,
+                int(row["total_gross_income_total"])
+                if pd.notna(row.get("total_gross_income_total"))
+                else None,
+                int(row["total_net_recurrent_income_total"])
+                if pd.notna(row.get("total_net_recurrent_income_total"))
+                else None,
+                int(row["australian_government_recurrent_funding_per_student"])
+                if pd.notna(
+                    row.get("australian_government_recurrent_funding_per_student")
+                )
+                else None,
+                int(row["state__territory_government_recurring_funding_per_student"])
+                if pd.notna(
+                    row.get("state__territory_government_recurring_funding_per_student")
+                )
+                else None,
+                int(row["fees_charges_and_parent_contributions_per_student"])
+                if pd.notna(
+                    row.get("fees_charges_and_parent_contributions_per_student")
+                )
+                else None,
+                int(row["other_private_sources_per_student"])
+                if pd.notna(row.get("other_private_sources_per_student"))
+                else None,
+                int(row["total_gross_income_per_student"])
+                if pd.notna(row.get("total_gross_income_per_student"))
+                else None,
+                int(row["total_net_recurrent_income_per_student"])
+                if pd.notna(row.get("total_net_recurrent_income_per_student"))
+                else None,
+                int(row["year"]) if pd.notna(row.get("year")) else 2021,
+            ],
+        )
+        inserted += 1
+
+    return inserted

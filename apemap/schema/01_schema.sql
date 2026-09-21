@@ -71,3 +71,23 @@ CREATE TABLE IF NOT EXISTS school_snapshots (
     financial_profile_2021 JSON,
     PRIMARY KEY (institution_id, snapshot_year)
 );
+
+-- 6. School Finances 2021: Standalone historical snapshot table isolated from runtime scraping
+CREATE TABLE IF NOT EXISTS school_finances_2021 (
+    institution_id VARCHAR PRIMARY KEY REFERENCES institutions(institution_id),
+    acara_id VARCHAR NOT NULL,
+    recurrent_funding_gov_total BIGINT,
+    recurrent_funding_state_total BIGINT,
+    fees_charges_parent_total BIGINT,
+    other_private_sources_total BIGINT,
+    total_gross_income_total BIGINT,
+    total_net_recurrent_income_total BIGINT,
+    recurrent_funding_gov_per_student BIGINT,
+    recurrent_funding_state_per_student BIGINT,
+    fees_charges_parent_per_student BIGINT,
+    other_private_sources_per_student BIGINT,
+    total_gross_income_per_student BIGINT,
+    total_net_recurrent_income_per_student BIGINT,
+    reporting_year INTEGER NOT NULL DEFAULT 2021
+);
+

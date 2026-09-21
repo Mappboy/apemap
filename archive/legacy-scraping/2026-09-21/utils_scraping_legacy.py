@@ -1,12 +1,15 @@
 import os
+import random
 import re
 import sys
+import time
 
 import pandas as pd
 import requests
 import urllib3
 import wikipediaapi
-from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper import SPARQLWrapper, JSON
+from bs4 import BeautifulSoup
 
 urllib3.disable_warnings()
 
@@ -160,3 +163,116 @@ def get_google_geocode(location: str) -> str:
             return f"Point({address[1][1]} {address[1][0]})"
     except Exception as exc:
         print(f"Error: {exc}")
+
+
+# finances are doable for 2014-2021
+class MissingSchool(Exception):
+    def __init__(self, msg, school_id):
+        super().__init__(msg)
+        self.school_id = school_id
+
+
+def get_finances(school_id: int, year: int = 2021):  # noqa C901
+    """Download financial data from ACARA"""
+    cols = [
+        "australian_government_recurrent_funding",
+        "state__territory_government_recurring_funding",
+        "fees_charges_and_parent_contributions",
+        "other_private_sources",
+        "total_gross_income",
+        "total_net_recurrent_income",
+    ]
+    time.sleep(random.randrange(2, 10))
+    cookies = {
+        ".ESAPI_SESSIONID": os.environ.get("ESAPI_SESSIONID"),
+    }
+    print(f"Getting finances for {school_id} - {year}")
+    if os.environ.get("RECAPTCHA"):
+        cookies["__RequestVerificationToken"] = os.environ.get("RECAPTCHA")
+
+    r = requests.get(
+        f"https://www.myschool.edu.au/school/{school_id}/finances/{year}",
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+            "Referer": f"https://www.myschool.edu.au/school/{school_id}/profile/{year}",
+        },
+        cookies=cookies,
+    )
+    if not r.ok:
+        raise MissingSchool(f"School {school_id} not found", school_id)
+    soup = BeautifulSoup(r.text, "html.parser")
+    ul = soup.find("ul", {"class": "table-content table-border"})
+    # Find all the <li> elements
+    if not ul:
+        # manually check recaptcha
+        input("Please solve the recaptcha and press enter")
+
+        cookies = {
+            ".ESAPI_SESSIONID": os.environ.get("ESAPI_SESSIONID"),
+        }
+        if os.environ.get("RECAPTCHA"):
+            cookies["__RequestVerificationToken"] = os.environ.get("RECAPTCHA")
+        r = requests.get(
+            f"https://www.myschool.edu.au/school/{school_id}/finances/{year}",
+            headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+                "Referer": f"https://www.myschool.edu.au/school/{school_id}/profile/{year}",
+            },
+            cookies=cookies,
+        )
+        soup = BeautifulSoup(r.text, "html.parser")
+        ul = soup.find("ul", {"class": "table-content table-border"})
+    if not ul:
+        raise Exception("no ul found, no new captcha")
+    li_elements = ul.find_all("li")
+
+    # Create an empty list to hold the extracted data
+    data = []
+
+    # Loop through the <li> elements and extract the data
+    # might need to be more flexible here
+    for li in li_elements:
+        try:
+            row = []
+            for div in li.find_all("div", class_="col-title"):
+                row.append(div.get_text(strip=True))
+            for div in li.find_all("div", class_="col-value"):
+                row.append(div.get_text(strip=True))
+        except Exception as e:
+            print("problem with row", e)
+            continue
+        data.append(row)
+
+    # Create a pandas DataFrame from the extracted data
+    df = pd.DataFrame(data, columns=["Title", "Total", "Per Student"])
+    fdf = df.T
+    fdf.columns = fdf.loc["Title", :]
+    fdf.drop("Title", inplace=True, axis=0)
+    fdf.columns = (
+        fdf.columns.str.lower()
+        .str.replace("/", "")
+        .str.replace(",", "")
+        .str.replace(" ", "_")
+    )
+    # convert integers with , to Decimal and remove $
+    fdf = fdf.applymap(
+        lambda x: x.replace("$", "").replace(",", "").strip()
+        if isinstance(x, str)
+        else x
+    )
+    fdf.convert_dtypes()
+    fdf = fdf[cols]
+    o = {
+        f"{c}_{row[0].lower().replace(' ', '_')}": row[1][c]
+        for row in fdf.iterrows()
+        for c in cols
+    }
+    df = pd.DataFrame.from_dict(o, orient="index", columns=["Value"])
+    df.index.name = "Category"
+    df["Value"] = df["Value"].replace("-", 0)
+    df["Value"] = df["Value"].astype(int)
+    df = df.T
+    df["school_id"] = school_id
+    df["year"] = year
+    df.set_index("school_id", inplace=True)
+    return df

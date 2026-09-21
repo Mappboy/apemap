@@ -77,12 +77,17 @@ SELECT
     ss.snapshot_year,
     ss.total_enrolments,
     ss.icsea,
-    ss.financial_profile_2021
+    ss.financial_profile_2021,
+    sf.recurrent_funding_gov_total AS historical_2021_gov_funding_total,
+    sf.fees_charges_parent_total AS historical_2021_fees_parent_total,
+    sf.total_net_recurrent_income_total AS historical_2021_net_recurrent_income_total,
+    sf.total_net_recurrent_income_per_student AS historical_2021_net_recurrent_income_per_student
 FROM member_education me
 JOIN members m ON me.member_id = m.member_id
 JOIN parliament_service ps ON m.member_id = ps.member_id
 JOIN institutions i ON me.institution_id = i.institution_id
 LEFT JOIN school_snapshots ss ON i.institution_id = ss.institution_id
+LEFT JOIN school_finances_2021 sf ON i.institution_id = sf.institution_id
 WHERE me.level = 'secondary';
 
 -- DuckDB Parameterized Table Macros

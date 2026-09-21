@@ -1,0 +1,113 @@
+[
+  {
+    "RefId": "653ee1a8e64c42b49df6f30552268692",
+    "LocalId": "48250",
+    "StateProvinceId": "000004168",
+    "CommonwealthId": "57684",
+    "ACARAId": "48250",
+    "SchoolName": "Shenton College",
+    "SchoolDistrict": "",
+    "SchoolType": "Sec",
+    "SchoolURL": "https://www.shenton.wa.edu.au/",
+    "OperationalStatus": "O",
+    "Campus": {
+      "ParentSchoolId": "48250",
+      "SchoolCampusId": "48250",
+      "CampusType": "Sec"
+    },
+    "SchoolSector": "Gov",
+    "IndependentSchool": "N",
+    "SchoolGeographicLocation": "50",
+    "LocalGovernmentArea": "",
+    "AddressList": [
+      {
+        "Type": "0765",
+        "Role": "012A",
+        "City": "Shenton Park",
+        "StateProvince": "WA",
+        "PostalCode": "6008",
+        "GridLocation": {
+          "Latitude": -31.9577,
+          "Longitude": 115.804
+        },
+        "Country": "1101",
+        "StatisticalAreas": []
+      }
+    ],
+    "SessionType": "0827"
+  },
+  {
+    "RefId": "a1b2c3d4e5f6789012345678abcdef01",
+    "LocalId": "53105",
+    "StateProvinceId": "0000053105",
+    "CommonwealthId": "53105",
+    "ACARAId": "53105",
+    "SchoolName": "Greater Shepparton Secondary College",
+    "SchoolDistrict": "",
+    "SchoolType": "Sec",
+    "SchoolURL": "https://www.gssc.vic.edu.au/",
+    "OperationalStatus": "O",
+    "Campus": {
+      "ParentSchoolId": "53105",
+      "SchoolCampusId": "53105",
+      "CampusType": "Sec"
+    },
+    "SchoolSector": "Gov",
+    "IndependentSchool": "N",
+    "SchoolGeographicLocation": "30",
+    "LocalGovernmentArea": "",
+    "AddressList": [
+      {
+        "Type": "0765",
+        "Role": "012A",
+        "City": "Shepparton",
+        "StateProvince": "VIC",
+        "PostalCode": "3630",
+        "GridLocation": {
+          "Latitude": -36.3833,
+          "Longitude": 145.4
+        },
+        "Country": "1101",
+        "StatisticalAreas": []
+      }
+    ],
+    "SessionType": "0827"
+  },
+  {
+    "RefId": "b2c3d4e5f6789012345678abcdef012a",
+    "LocalId": "46144",
+    "StateProvinceId": "0000046144",
+    "CommonwealthId": "46144",
+    "ACARAId": "46144",
+    "SchoolName": "Methodist Ladies' College",
+    "SchoolDistrict": "",
+    "SchoolType": "Pri/Sec",
+    "SchoolURL": "https://www.mlc.vic.edu.au/",
+    "OperationalStatus": "O",
+    "Campus": {
+      "ParentSchoolId": "46144",
+      "SchoolCampusId": "46144",
+      "CampusType": "Pri/Sec"
+    },
+    "SchoolSector": "NG",
+    "IndependentSchool": "Y",
+    "SchoolGeographicLocation": "10",
+    "LocalGovernmentArea": "",
+    "AddressList": [
+      {
+        "Type": "0765",
+        "Role": "012A",
+        "City": "Kew",
+        "StateProvince": "VIC",
+        "PostalCode": "3101",
+        "GridLocation": {
+          "Latitude": -37.818,
+          "Longitude": 145.035
+        },
+        "Country": "1101",
+        "StatisticalAreas": []
+      }
+    ],
+    "SessionType": "0827"
+  }
+]
