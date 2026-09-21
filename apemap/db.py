@@ -223,9 +223,10 @@ def migrate_historical_finances(
         # Ensure parent institution exists to satisfy foreign key constraint
         conn.execute(
             """
-            INSERT OR IGNORE INTO institutions (
+            INSERT INTO institutions (
                 institution_id, acara_id, school_name, sector
             ) VALUES (?, ?, ?, 'Other')
+            ON CONFLICT (institution_id) DO NOTHING
             """,
             [inst_id, acara_id, f"ACARA School {acara_id}"],
         )
