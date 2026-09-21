@@ -39,11 +39,16 @@ def test_views_and_macros_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Verify canonical views and backwards-compatibility views exist."""
     views = [
         "v_parliament_members",
+        "v_parliament_members_opening",
+        "v_parliament_members_current",
         "v_member_secondary_education",
+        "v_coverage_metrics",
         "member_aph_46",
         "member_aph_47",
+        "member_aph_48",
         "member_secondary_school_education_46",
         "member_secondary_school_education_47",
+        "member_secondary_school_education_48",
     ]
     for view in views:
         result = db_conn.execute(f"SELECT COUNT(*) FROM {view}").fetchone()
