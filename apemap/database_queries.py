@@ -1,4 +1,5 @@
 """Just some handy queries for the database."""
+
 import pandas as pd
 
 
