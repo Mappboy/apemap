@@ -161,6 +161,9 @@ cython_debug/
 #.idea/
 
 !/.env
-!/.env
-!/.env
 /app/assets/images/
+
+# Local databases and raw caches
+*.duckdb
+*.duckdb.wal
+data/raw/

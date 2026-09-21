@@ -26,6 +26,14 @@ SELECT
 FROM parliament_service ps
 JOIN members m ON ps.member_id = m.member_id;
 
+-- Opening Day Baseline Members View
+CREATE OR REPLACE VIEW v_parliament_members_opening AS
+SELECT * FROM v_parliament_members WHERE is_opening_day_member = TRUE;
+
+-- Current Members View
+CREATE OR REPLACE VIEW v_parliament_members_current AS
+SELECT * FROM v_parliament_members WHERE is_current_member = TRUE;
+
 -- Unified Member Secondary Education View
 CREATE OR REPLACE VIEW v_member_secondary_education AS
 SELECT
@@ -84,15 +92,40 @@ SELECT * FROM v_parliament_members WHERE parliament_number = parl_num;
 CREATE OR REPLACE MACRO get_parliament_education(parl_num) AS TABLE
 SELECT * FROM v_member_secondary_education WHERE parliament_number = parl_num;
 
--- Compatibility views for 46th and 47th parliaments (dynamically filtered)
+-- Compatibility views for 46th, 47th, and 48th parliaments (dynamically filtered)
 CREATE OR REPLACE VIEW member_aph_46 AS
 SELECT * FROM v_parliament_members WHERE parliament_number = 46;
 
 CREATE OR REPLACE VIEW member_aph_47 AS
 SELECT * FROM v_parliament_members WHERE parliament_number = 47;
 
+CREATE OR REPLACE VIEW member_aph_48 AS
+SELECT * FROM v_parliament_members WHERE parliament_number = 48;
+
 CREATE OR REPLACE VIEW member_secondary_school_education_46 AS
 SELECT * FROM v_member_secondary_education WHERE parliament_number = 46;
 
 CREATE OR REPLACE VIEW member_secondary_school_education_47 AS
 SELECT * FROM v_member_secondary_education WHERE parliament_number = 47;
+
+CREATE OR REPLACE VIEW member_secondary_school_education_48 AS
+SELECT * FROM v_member_secondary_education WHERE parliament_number = 48;
+
+-- Coverage and Gap Metrics View
+CREATE OR REPLACE VIEW v_coverage_metrics AS
+SELECT
+    ps.parliament_number,
+    COUNT(DISTINCT ps.member_id) AS total_parliamentarians,
+    COUNT(DISTINCT CASE WHEN ps.is_opening_day_member THEN ps.member_id END) AS opening_day_parliamentarians,
+    COUNT(DISTINCT CASE WHEN ps.is_current_member THEN ps.member_id END) AS current_parliamentarians,
+    COUNT(DISTINCT CASE WHEN me.confidence IN ('verified', 'provisional') THEN me.education_id END) AS matched_education_records,
+    COUNT(DISTINCT CASE WHEN me.confidence = 'unconfirmed' THEN me.education_id END) AS unmatched_education_records,
+    COUNT(DISTINCT CASE WHEN i.sector = 'Government' THEN me.education_id END) AS government_records,
+    COUNT(DISTINCT CASE WHEN i.sector = 'Catholic' THEN me.education_id END) AS catholic_records,
+    COUNT(DISTINCT CASE WHEN i.sector = 'Independent' THEN me.education_id END) AS independent_records,
+    COUNT(DISTINCT CASE WHEN i.sector NOT IN ('Government', 'Catholic', 'Independent') THEN me.education_id END) AS other_unclassified_records
+FROM parliament_service ps
+LEFT JOIN member_education me ON ps.member_id = me.member_id AND me.level = 'secondary'
+LEFT JOIN institutions i ON me.institution_id = i.institution_id
+GROUP BY ps.parliament_number
+ORDER BY ps.parliament_number;
