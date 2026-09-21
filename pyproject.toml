@@ -30,6 +30,14 @@ dev = [
     "ruff>=0.3.0",
     "ty>=0.0.80",
 ]
+analysis = [
+    "ipykernel>=7.3.0",
+    "jupyterlab>=4.6.4",
+    "matplotlib>=3.10.9",
+    "plotly>=7.1.0",
+    "python-dotenv>=1.2.3",
+    "sqlalchemy>=2.0.54",
+]
 
 [dependency-groups]
 dev = [
