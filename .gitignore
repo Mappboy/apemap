@@ -167,3 +167,5 @@ cython_debug/
 *.duckdb
 *.duckdb.wal
 data/raw/
+
+.idea/
