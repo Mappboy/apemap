@@ -1,0 +1,50 @@
+{
+  "46": {
+    "parliament_number": 46,
+    "total_parliamentarians": 238,
+    "opening_day_parliamentarians": 229,
+    "current_parliamentarians": 226,
+    "matched_schools": 166,
+    "unmatched_schools": 90,
+    "international_schools": 2,
+    "unclassified_sectors": 0,
+    "sectors": {
+      "Government": 81,
+      "Catholic": 45,
+      "Independent": 40,
+      "Other": 90
+    }
+  },
+  "47": {
+    "parliament_number": 47,
+    "total_parliamentarians": 237,
+    "opening_day_parliamentarians": 228,
+    "current_parliamentarians": 210,
+    "matched_schools": 160,
+    "unmatched_schools": 96,
+    "international_schools": 1,
+    "unclassified_sectors": 0,
+    "sectors": {
+      "Government": 78,
+      "Catholic": 41,
+      "Independent": 41,
+      "Other": 96
+    }
+  },
+  "48": {
+    "parliament_number": 48,
+    "total_parliamentarians": 230,
+    "opening_day_parliamentarians": 226,
+    "current_parliamentarians": 226,
+    "matched_schools": 150,
+    "unmatched_schools": 86,
+    "international_schools": 1,
+    "unclassified_sectors": 0,
+    "sectors": {
+      "Government": 78,
+      "Catholic": 35,
+      "Independent": 37,
+      "Other": 86
+    }
+  }
+}
