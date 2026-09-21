@@ -256,7 +256,9 @@ def migrate_historical_finances(
                 if pd.notna(row.get("australian_government_recurrent_funding_total"))
                 else None,
                 int(row["state__territory_government_recurring_funding_total"])
-                if pd.notna(row.get("state__territory_government_recurring_funding_total"))
+                if pd.notna(
+                    row.get("state__territory_government_recurring_funding_total")
+                )
                 else None,
                 int(row["fees_charges_and_parent_contributions_total"])
                 if pd.notna(row.get("fees_charges_and_parent_contributions_total"))
@@ -271,13 +273,19 @@ def migrate_historical_finances(
                 if pd.notna(row.get("total_net_recurrent_income_total"))
                 else None,
                 int(row["australian_government_recurrent_funding_per_student"])
-                if pd.notna(row.get("australian_government_recurrent_funding_per_student"))
+                if pd.notna(
+                    row.get("australian_government_recurrent_funding_per_student")
+                )
                 else None,
                 int(row["state__territory_government_recurring_funding_per_student"])
-                if pd.notna(row.get("state__territory_government_recurring_funding_per_student"))
+                if pd.notna(
+                    row.get("state__territory_government_recurring_funding_per_student")
+                )
                 else None,
                 int(row["fees_charges_and_parent_contributions_per_student"])
-                if pd.notna(row.get("fees_charges_and_parent_contributions_per_student"))
+                if pd.notna(
+                    row.get("fees_charges_and_parent_contributions_per_student")
+                )
                 else None,
                 int(row["other_private_sources_per_student"])
                 if pd.notna(row.get("other_private_sources_per_student"))
@@ -294,4 +302,3 @@ def migrate_historical_finances(
         inserted += 1
 
     return inserted
-

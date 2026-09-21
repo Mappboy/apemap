@@ -160,5 +160,3 @@ def get_google_geocode(location: str) -> str:
             return f"Point({address[1][1]} {address[1][0]})"
     except Exception as exc:
         print(f"Error: {exc}")
-
-

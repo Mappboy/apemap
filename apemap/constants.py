@@ -10,6 +10,11 @@ DATA_DIR = PROJECT_ROOT / "data"
 RAW_APH_DIR = DATA_DIR / "raw" / "aph"
 PROCESSED_DIR = DATA_DIR / "processed"
 EXTERNAL_DIR = DATA_DIR / "external"
+REFERENCE_DIR = DATA_DIR / "reference"
+
+ACARA_PROFILE_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202025.xlsx"
+ACARA_PROFILE_LONGITUDINAL_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
+ACARA_LOCATION_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
 
 
 class ParliamentInfo(TypedDict):

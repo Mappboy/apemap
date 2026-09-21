@@ -197,6 +197,11 @@ def run_aph_ingestion(
                     "reviewer_notes": (
                         f"Parsed from APH Handbook text '{cand}'; "
                         f"matched status: {matched.confidence}"
+                        + (
+                            f"; {matched.reviewer_notes}"
+                            if matched.reviewer_notes
+                            else ""
+                        )
                     ),
                 }
             )
@@ -245,15 +250,15 @@ def run_aph_ingestion(
         conn.register("tmp_members", members_df)
         conn.execute(
             """
-            INSERT INTO members SELECT * FROM tmp_members
-            ON CONFLICT (member_id) DO UPDATE SET
-                family_name = EXCLUDED.family_name,
-                given_name = EXCLUDED.given_name,
-                display_name = EXCLUDED.display_name,
-                gender = EXCLUDED.gender,
-                date_of_birth = EXCLUDED.date_of_birth,
-                aph_id = EXCLUDED.aph_id,
-                wikidata_id = EXCLUDED.wikidata_id
+            INSERT INTO members (
+                member_id, family_name, given_name, display_name,
+                gender, date_of_birth, aph_id, wikidata_id
+            )
+            SELECT
+                member_id, family_name, given_name, display_name,
+                gender, date_of_birth, aph_id, wikidata_id
+            FROM tmp_members
+            ON CONFLICT (member_id) DO NOTHING
             """
         )
         conn.unregister("tmp_members")
@@ -263,7 +268,16 @@ def run_aph_ingestion(
         conn.register("tmp_services", services_df)
         conn.execute(
             """
-            INSERT INTO parliament_service SELECT * FROM tmp_services
+            INSERT INTO parliament_service (
+                service_id, member_id, parliament_number, chamber,
+                party, party_abbrev, electorate, state_or_territory,
+                service_start, service_end, is_opening_day_member, is_current_member
+            )
+            SELECT
+                service_id, member_id, parliament_number, chamber,
+                party, party_abbrev, electorate, state_or_territory,
+                service_start, service_end, is_opening_day_member, is_current_member
+            FROM tmp_services
             ON CONFLICT (service_id) DO UPDATE SET
                 member_id = EXCLUDED.member_id,
                 parliament_number = EXCLUDED.parliament_number,
@@ -285,18 +299,15 @@ def run_aph_ingestion(
         conn.register("tmp_institutions", inst_df)
         conn.execute(
             """
-            INSERT INTO institutions SELECT * FROM tmp_institutions
-            ON CONFLICT (institution_id) DO UPDATE SET
-                acara_id = EXCLUDED.acara_id,
-                school_name = EXCLUDED.school_name,
-                school_type = EXCLUDED.school_type,
-                sector = EXCLUDED.sector,
-                campus_type = EXCLUDED.campus_type,
-                state = EXCLUDED.state,
-                suburb = EXCLUDED.suburb,
-                postcode = EXCLUDED.postcode,
-                longitude = EXCLUDED.longitude,
-                latitude = EXCLUDED.latitude
+            INSERT INTO institutions (
+                institution_id, acara_id, school_name, school_type,
+                sector, campus_type, state, suburb, postcode, longitude, latitude
+            )
+            SELECT
+                institution_id, acara_id, school_name, school_type,
+                sector, campus_type, state, suburb, postcode, longitude, latitude
+            FROM tmp_institutions
+            ON CONFLICT (institution_id) DO NOTHING
             """
         )
         conn.unregister("tmp_institutions")
@@ -306,7 +317,12 @@ def run_aph_ingestion(
         conn.register("tmp_snapshots", snaps_df)
         conn.execute(
             """
-            INSERT INTO school_snapshots SELECT * FROM tmp_snapshots
+            INSERT INTO school_snapshots (
+                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
+            )
+            SELECT
+                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
+            FROM tmp_snapshots
             ON CONFLICT (institution_id, snapshot_year) DO UPDATE SET
                 total_enrolments = EXCLUDED.total_enrolments,
                 icsea = EXCLUDED.icsea,
@@ -320,7 +336,16 @@ def run_aph_ingestion(
         conn.register("tmp_edu", edu_df)
         conn.execute(
             """
-            INSERT INTO member_education SELECT * FROM tmp_edu
+            INSERT INTO member_education (
+                education_id, member_id, institution_id, level,
+                years_attended, graduation_year, attended_status,
+                source_url, retrieved_at, confidence, reviewer_notes
+            )
+            SELECT
+                education_id, member_id, institution_id, level,
+                years_attended, graduation_year, attended_status,
+                source_url, retrieved_at, confidence, reviewer_notes
+            FROM tmp_edu
             ON CONFLICT (education_id) DO UPDATE SET
                 member_id = EXCLUDED.member_id,
                 institution_id = EXCLUDED.institution_id,
