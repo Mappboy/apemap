@@ -17,7 +17,7 @@ from apemap.analysis import (
     compute_sector_summary,
     export_analysis_report,
 )
-from apemap.constants import DATA_DIR, PROCESSED_DIR
+from apemap.constants import DATA_DIR, PARLIAMENT_METADATA, PROCESSED_DIR
 from apemap.db import get_connection, init_schema, migrate_historical_finances
 from apemap.export import export_all_artifacts
 from apemap.ingest.acara import run_acara_ingestion
@@ -56,6 +56,18 @@ def parse_parliament_args(raw: str) -> list[int]:
     if not parls:
         raise typer.BadParameter("At least one parliament number must be specified.")
     return sorted(parls)
+
+
+def validate_supported_parliaments(parliaments: list[int]) -> None:
+    """Reject parliament numbers without fixed project metadata at the CLI boundary."""
+    unsupported = [p for p in parliaments if p not in PARLIAMENT_METADATA]
+    if unsupported:
+        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
+        numbers = ", ".join(str(p) for p in unsupported)
+        raise typer.BadParameter(
+            f"Unsupported parliament number(s): {numbers}. "
+            f"Supported values are: {supported}."
+        )
 
 
 @ingest_app.command(name="aph")
@@ -99,6 +111,7 @@ def ingest_aph(
 ) -> None:
     """Ingest parliamentarian demographics and secondary education records from APH."""
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
 
@@ -331,6 +344,7 @@ def validate_cmd(
     """Execute database integrity validation, FK constraints, and parliament coverage gates."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
 
     console.print(
         f"[bold blue]Running Validation on:[/bold blue] [cyan]{effective_db_path}[/cyan]"
@@ -424,6 +438,7 @@ def analyze_cmd(
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
 
     console.print(
         f"[bold blue]Running Deterministic Analysis on:[/bold blue] [cyan]{effective_db_path}[/cyan]"
@@ -538,6 +553,7 @@ def export_cmd(
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
 
     console.print(
         f"[bold blue]Exporting Artifacts from:[/bold blue] [cyan]{effective_db_path}[/cyan]"
@@ -616,6 +632,7 @@ def run_all_cmd(
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
 
     console.print(
         Panel("[bold blue]Starting Full APEMAP End-to-End Pipeline[/bold blue]")

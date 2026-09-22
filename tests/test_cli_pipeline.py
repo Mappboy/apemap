@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import date
 from pathlib import Path
@@ -14,6 +15,7 @@ from typer.testing import CliRunner
 from apemap.analysis import (
     compute_age_at_date,
     compute_funding_summary,
+    compute_parliament_demographics,
     compute_sector_summary,
     get_age_bracket,
 )
@@ -22,6 +24,22 @@ from apemap.db import CANONICAL_TABLES, get_connection, init_schema
 from apemap.validate import validate_database
 
 runner = CliRunner()
+
+
+def artifact_manifest(directory: Path) -> dict[str, str]:
+    """Return relative artifact paths and SHA-256 hashes for a directory."""
+    return {
+        str(path.relative_to(directory)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(directory.rglob("*"))
+        if path.is_file()
+    }
+
+
+def table_row_count(conn: duckdb.DuckDBPyConnection, table: str) -> int:
+    """Return a canonical table row count with an explicit fetch assertion."""
+    row = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
+    assert row is not None
+    return int(row[0])
 
 
 @pytest.fixture
@@ -205,13 +223,110 @@ def test_funding_summary_reports_sample_size_n(
     funding = compute_funding_summary(conn, 47)
 
     sec_gov = funding["by_sector"]["Government"]
-    assert sec_gov["gross_income_sample_size"] == 2  # edu-1 and edu-3 attend inst-gov
+    assert sec_gov["gross_income_sample_size"] == 1  # inst-gov is one unique school
     assert sec_gov["gross_income_per_student_avg"] == 15000
     assert sec_gov["net_recurrent_income_per_student_avg"] == 14000
 
     sec_ind = funding["by_sector"]["Independent"]
     assert sec_ind["gross_income_sample_size"] == 0
     assert sec_ind["gross_income_per_student_avg"] is None
+    assert funding["total_schools_with_finance_data"] == 2
+    assert funding["overall_gross_income_sample_size"] == 2
+    assert funding["overall_net_recurrent_income_sample_size"] == 2
+
+
+def test_funding_summary_does_not_overweight_shared_schools(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Verify school finance averages use each qualifying school once."""
+    _path, conn = populated_db
+    conn.execute(
+        """
+        INSERT INTO institutions (institution_id, school_name, sector)
+        VALUES ('inst-gov-2', 'Second Government School', 'Government')
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level, attended_status,
+            source_url, retrieved_at, confidence
+        ) VALUES (
+            'edu-5', 'mem-1', 'inst-gov-2', 'secondary', 'graduated',
+            'https://example.com', '2025-01-01 00:00:00+00', 'verified'
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO school_finances_2021 (
+            institution_id, acara_id, total_gross_income_per_student,
+            total_net_recurrent_income_per_student, reporting_year
+        ) VALUES ('inst-gov-2', '1004', 21000, 20000, 2021)
+        """
+    )
+
+    funding = compute_funding_summary(conn, 47)
+    sec_gov = funding["by_sector"]["Government"]
+    assert sec_gov["gross_income_sample_size"] == 2
+    assert sec_gov["gross_income_per_student_avg"] == 18000
+    assert sec_gov["net_recurrent_income_sample_size"] == 2
+    assert sec_gov["net_recurrent_income_per_student_avg"] == 17000
+
+
+def test_opening_day_demographics_use_one_opening_service_per_person(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Exclude later entrants and deduplicate duplicate opening service rows."""
+    _path, conn = populated_db
+    conn.execute(
+        """
+        INSERT INTO members (
+            member_id, family_name, given_name, display_name, gender, date_of_birth,
+            aph_id
+        ) VALUES (
+            'mem-late', 'Late', 'Joiner', 'Joiner Late', 'Female',
+            '1988-01-01', 'APH-LATE'
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party, party_abbrev,
+            state_or_territory, service_start, is_opening_day_member, is_current_member
+        ) VALUES (
+            'srv-late', 'mem-late', 47, 'representatives', 'Labor', 'ALP', 'NSW',
+            '2023-01-01', FALSE, TRUE
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party, party_abbrev,
+            state_or_territory, service_start, is_opening_day_member, is_current_member
+        ) VALUES (
+            'srv-mem-1-later', 'mem-1', 47, 'senate', 'Greens', 'GRN', 'VIC',
+            '2023-01-01', TRUE, FALSE
+        )
+        """
+    )
+
+    demographics = compute_parliament_demographics(conn, 47)
+    assert demographics["total_parliamentarians"] == 204
+    assert demographics["opening_day_parliamentarians"] == 204
+    assert demographics["opening_day_current_parliamentarians"] == 204
+    assert demographics["parties"] == {"ALP": 204}
+
+
+def test_unsupported_parliament_is_rejected_by_analysis() -> None:
+    """Do not manufacture a benchmark date for an unsupported parliament."""
+    conn = get_connection()
+    init_schema(conn)
+    with pytest.raises(ValueError, match="Unsupported parliament number 999"):
+        compute_parliament_demographics(conn, 999)
+    conn.close()
 
 
 def test_validate_database_success(
@@ -350,7 +465,7 @@ def test_cli_export_command_and_reproducibility(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
 ) -> None:
-    """Test apemap export produces valid Parquet and GeoJSON layers and is reproducible."""
+    """Test the complete canonical export set is reproducible byte-for-byte."""
     db_file, _conn = populated_db
     out_dir_1 = tmp_path / "export_1"
     out_dir_2 = tmp_path / "export_2"
@@ -384,8 +499,7 @@ def test_cli_export_command_and_reproducibility(
         ],
     )
     assert res2.exit_code == 0
-    geojson_2 = out_dir_2 / "parliament_47_combined.geojson"
-    assert geojson_2.exists()
+    assert (out_dir_2 / "parliament_47_combined.geojson").exists()
 
     # GeoJSON structure check
     geo_data = json.loads(geojson_1.read_text(encoding="utf-8"))
@@ -395,10 +509,33 @@ def test_cli_export_command_and_reproducibility(
     assert first_feat["geometry"]["type"] == "Point"
     assert len(first_feat["geometry"]["coordinates"]) == 2
 
-    # Bit-for-bit reproducibility check on generated GeoJSON text
-    assert geojson_1.read_text(encoding="utf-8") == geojson_2.read_text(
-        encoding="utf-8"
+    manifest_1 = artifact_manifest(out_dir_1)
+    manifest_2 = artifact_manifest(out_dir_2)
+    expected_artifacts = {
+        *(f"{table}.parquet" for table in CANONICAL_TABLES),
+        "analysis_metrics.json",
+        "parliament_47_combined.geojson",
+    }
+    assert set(manifest_1) == expected_artifacts
+    assert manifest_1 == manifest_2
+    analysis_data = json.loads(
+        (out_dir_1 / "analysis_metrics.json").read_text(encoding="utf-8")
     )
+    assert "generated_at" not in analysis_data
+    assert (out_dir_1 / "analysis_metrics.json").read_bytes() == (
+        out_dir_2 / "analysis_metrics.json"
+    ).read_bytes()
+
+
+@pytest.mark.parametrize("command", ["analyze", "export", "validate", "run-all"])
+def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> None:
+    """All parliament-specific CLI commands reject unknown benchmark metadata."""
+    result = runner.invoke(
+        app,
+        [command, "--db-path", str(tmp_path / f"{command}.duckdb"), "-p", "999"],
+    )
+    assert result.exit_code != 0
+    assert "Unsupported parliament number" in result.output
 
 
 def test_cli_run_all_mocked(
@@ -406,7 +543,7 @@ def test_cli_run_all_mocked(
     tmp_path: Path,
 ) -> None:
     """Test apemap run-all pipeline orchestration with mocked ingestion steps."""
-    db_file, _conn = populated_db
+    db_file, conn = populated_db
     out_dir = tmp_path / "run_all_out"
 
     with (
@@ -437,3 +574,32 @@ def test_cli_run_all_mocked(
         mock_aph.assert_called_once()
         assert (out_dir / "parliament_47_combined.geojson").exists()
         assert (out_dir / "members.parquet").exists()
+
+        first_manifest = artifact_manifest(out_dir)
+        first_counts = {
+            table: table_row_count(conn, table) for table in CANONICAL_TABLES
+        }
+
+        result = runner.invoke(
+            app,
+            [
+                "run-all",
+                "--db-path",
+                str(db_file),
+                "-p",
+                "47",
+                "--output-dir",
+                str(out_dir),
+                "--no-download",
+                "--no-refresh",
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert mock_acara.call_count == 2
+        assert mock_aph.call_count == 2
+        second_counts = {
+            table: table_row_count(conn, table) for table in CANONICAL_TABLES
+        }
+        assert second_counts == first_counts
+        assert artifact_manifest(out_dir) == first_manifest

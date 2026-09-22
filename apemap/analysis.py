@@ -73,19 +73,39 @@ def get_age_bracket(age: int | None) -> str:
 def compute_parliament_demographics(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute demographic breakdowns at fixed Opening of Parliament benchmark date.
+    """Compute opening-day demographic breakdowns at a fixed benchmark date.
 
     Args:
         conn: DuckDB database connection.
         parliament: Parliament number (e.g. 46, 47, 48).
 
     Returns:
-        Dictionary of deterministic demographic metrics.
+        Dictionary of deterministic metrics for one person per opening-day member.
+
+    Raises:
+        ValueError: If ``parliament`` is not present in ``PARLIAMENT_METADATA``.
     """
     meta = PARLIAMENT_METADATA.get(parliament)
-    ref_date_str = meta["opening_date"] if meta else "2025-01-01"
+    if meta is None:
+        supported = ", ".join(str(number) for number in sorted(PARLIAMENT_METADATA))
+        raise ValueError(
+            f"Unsupported parliament number {parliament}; "
+            f"supported values are: {supported}."
+        )
+    ref_date_str = meta["opening_date"]
 
     query = """
+    WITH opening_day_services AS (
+        SELECT
+            s.*,
+            ROW_NUMBER() OVER (
+                PARTITION BY s.member_id
+                ORDER BY COALESCE(s.service_start, CAST(? AS DATE)), s.service_id
+            ) AS service_rank
+        FROM parliament_service s
+        WHERE s.parliament_number = ?
+          AND s.is_opening_day_member = TRUE
+    )
     SELECT
         m.member_id,
         m.gender,
@@ -96,14 +116,15 @@ def compute_parliament_demographics(
         s.is_opening_day_member,
         s.is_current_member
     FROM members m
-    JOIN parliament_service s ON m.member_id = s.member_id
-    WHERE s.parliament_number = ?
+    JOIN opening_day_services s ON m.member_id = s.member_id
+    WHERE s.service_rank = 1
+    ORDER BY m.member_id
     """
-    rows = conn.execute(query, [parliament]).fetchall()
+    rows = conn.execute(query, [ref_date_str, parliament]).fetchall()
 
     total_mps = len(rows)
-    opening_day_count = sum(1 for r in rows if r[6] is True)
-    current_count = sum(1 for r in rows if r[7] is True)
+    opening_day_count = total_mps
+    opening_day_current_count = sum(1 for r in rows if r[7] is True)
 
     genders: dict[str, int] = {}
     chambers: dict[str, int] = {}
@@ -153,7 +174,7 @@ def compute_parliament_demographics(
         "reference_opening_date": ref_date_str,
         "total_parliamentarians": total_mps,
         "opening_day_parliamentarians": opening_day_count,
-        "current_parliamentarians": current_count,
+        "opening_day_current_parliamentarians": opening_day_current_count,
         "average_age_at_opening": avg_age,
         "median_age_at_opening": median_age,
         "min_age": ages[0] if ages else None,
@@ -280,23 +301,32 @@ def compute_funding_summary(
         Dictionary of financial metrics with explicit sample size N and averages by sector.
     """
     query = """
+    WITH parliament_schools AS (
+        SELECT DISTINCT e.institution_id
+        FROM member_education e
+        JOIN parliament_service s ON e.member_id = s.member_id
+        WHERE s.parliament_number = ? AND e.level = 'secondary'
+    )
     SELECT
+        ps.institution_id,
         i.sector,
         f.total_gross_income_per_student,
         f.total_net_recurrent_income_per_student
     FROM school_finances_2021 f
-    JOIN institutions i ON f.institution_id = i.institution_id
-    JOIN member_education e ON i.institution_id = e.institution_id
-    JOIN parliament_service s ON e.member_id = s.member_id
-    WHERE s.parliament_number = ? AND e.level = 'secondary'
+    JOIN parliament_schools ps ON f.institution_id = ps.institution_id
+    JOIN institutions i ON ps.institution_id = i.institution_id
+    ORDER BY ps.institution_id
     """
     rows = conn.execute(query, [parliament]).fetchall()
 
     sector_gross: dict[str, list[int]] = {}
     sector_net: dict[str, list[int]] = {}
+    schools_with_finance_data: set[str] = set()
 
-    for sec, gross, net in rows:
+    for institution_id, sec, gross, net in rows:
         sec_name = sec if sec in ("Government", "Catholic", "Independent") else "Other"
+        if gross is not None or net is not None:
+            schools_with_finance_data.add(institution_id)
         if gross is not None:
             sector_gross.setdefault(sec_name, []).append(gross)
         if net is not None:
@@ -324,7 +354,9 @@ def compute_funding_summary(
     return {
         "parliament_number": parliament,
         "reporting_year": 2021,
-        "total_schools_with_finance_data": len(total_gross_vals),
+        "total_schools_with_finance_data": len(schools_with_finance_data),
+        "overall_gross_income_sample_size": len(total_gross_vals),
+        "overall_net_recurrent_income_sample_size": len(total_net_vals),
         "overall_gross_income_avg": round(
             sum(total_gross_vals) / len(total_gross_vals), 0
         )
@@ -357,7 +389,6 @@ def export_analysis_report(
     target_parls = parliaments or [46, 47, 48]
 
     report: dict[str, Any] = {
-        "generated_at": datetime.now().isoformat(),
         "parliaments": {},
     }
 

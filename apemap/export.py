@@ -97,7 +97,7 @@ def export_spatial_geojson(
     WHERE parliament_number = ?
       AND longitude IS NOT NULL
       AND latitude IS NOT NULL
-    ORDER BY display_name, school_name
+    ORDER BY display_name, school_name, education_id, member_id, institution_id
     """
 
     for p in target_parls:

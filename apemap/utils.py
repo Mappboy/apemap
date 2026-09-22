@@ -59,7 +59,10 @@ def get_ph_id_from_wikidata(entitiy_id_or_str):
     :param entitiy_id_or_str: http://www.wikidata.org/entity/Q16732352 or Q16732352
     :return:
     """
-    entitiy_id = re.search(r"(Q\d+)", entitiy_id_or_str).group(0)
+    match = re.search(r"(Q\d+)", entitiy_id_or_str)
+    if match is None:
+        return ""
+    entitiy_id = match.group(0)
     mp_id_query = f"""SELECT ?mp_id WHERE {{
   wd:{entitiy_id} wdt:P10020 ?mp_id .
     }}"""
@@ -73,7 +76,10 @@ def get_ph_id_from_wikidata(entitiy_id_or_str):
 
 def get_dob_gender_from_wikidata(entitiy_id_or_str):
     """Parse entityid to gender, and dob"""
-    entitiy_id = re.search(r"(Q\d+)", entitiy_id_or_str).group(0)
+    match = re.search(r"(Q\d+)", entitiy_id_or_str)
+    if match is None:
+        return ""
+    entitiy_id = match.group(0)
     gender_query = f"""SELECT ?genderLabel ?dob WHERE {{
      wd:{entitiy_id} wdt:P21 ?gender .
               SERVICE wikibase:label {{
@@ -86,6 +92,8 @@ def get_dob_gender_from_wikidata(entitiy_id_or_str):
     dob_gender = get_results(query=gender_query)
     try:
         clean_res = clean_results(dob_gender)
+        if not isinstance(clean_res, pd.DataFrame):
+            return ""
         if "genderLabel" in clean_res.columns and "dob" in clean_res.columns:
             return clean_res.iloc[0][["genderLabel", "dob"]]
         if "genderLabel" in clean_res.columns:
@@ -160,3 +168,4 @@ def get_google_geocode(location: str) -> str:
             return f"Point({address[1][1]} {address[1][0]})"
     except Exception as exc:
         print(f"Error: {exc}")
+    return ""

@@ -52,6 +52,14 @@ def validate_database(
         ValidationReport with test counts and diagnostics.
     """
     target_parls = parliaments or [46, 47, 48]
+    unsupported = [p for p in target_parls if p not in PARLIAMENT_METADATA]
+    if unsupported:
+        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
+        numbers = ", ".join(str(p) for p in unsupported)
+        raise ValueError(
+            f"Unsupported parliament number(s): {numbers}. "
+            f"Supported values are: {supported}."
+        )
     report = ValidationReport(passed=True, checks_run=0, checks_passed=0)
 
     # 1. Canonical Table Existence and Non-Empty Checks
@@ -175,9 +183,6 @@ def validate_database(
     # 4. Parliamentary Benchmarks Coverage
     for p in target_parls:
         report.checks_run += 1
-        meta = PARLIAMENT_METADATA.get(p)
-        if not meta:
-            continue
         try:
             p_res = conn.execute(
                 """

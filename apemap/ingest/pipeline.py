@@ -334,6 +334,7 @@ def run_aph_ingestion(
     if education_records:
         edu_df = pd.DataFrame(education_records)
         conn.register("tmp_edu", edu_df)
+        # Preserve the original source retrieval time so reruns remain idempotent.
         conn.execute(
             """
             INSERT INTO member_education (
@@ -354,7 +355,6 @@ def run_aph_ingestion(
                 graduation_year = EXCLUDED.graduation_year,
                 attended_status = EXCLUDED.attended_status,
                 source_url = EXCLUDED.source_url,
-                retrieved_at = EXCLUDED.retrieved_at,
                 confidence = EXCLUDED.confidence,
                 reviewer_notes = EXCLUDED.reviewer_notes
             """

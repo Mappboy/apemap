@@ -28,6 +28,18 @@ CANONICAL_TABLES = (
     "school_finances_2021",
 )
 
+# Keep physical exports stable even when DuckDB's table scan order changes.
+# These columns are immutable primary keys (or the natural composite key) for
+# the canonical tables and are therefore safe ordering keys for release files.
+CANONICAL_ORDER_BY = {
+    "members": "member_id",
+    "parliament_service": "service_id",
+    "institutions": "institution_id",
+    "member_education": "education_id",
+    "school_snapshots": "institution_id, snapshot_year",
+    "school_finances_2021": "institution_id",
+}
+
 
 def get_connection(db_path: Path | str | None = None) -> DuckDBPyConnection:
     """Obtain a DuckDB connection.
@@ -141,8 +153,9 @@ def export_to_parquet(
     exported: dict[str, Path] = {}
     for table in CANONICAL_TABLES:
         target_path = target_dir / f"{table}.parquet"
+        order_by = CANONICAL_ORDER_BY[table]
         conn.execute(
-            f"COPY {table} TO ? (FORMAT PARQUET)",
+            f"COPY (SELECT * FROM {table} ORDER BY {order_by}) TO ? (FORMAT PARQUET)",
             [str(target_path)],
         )
         exported[table] = target_path
