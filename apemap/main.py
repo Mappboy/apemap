@@ -67,7 +67,7 @@ senate_df = clean_results(senate_results["results"]["bindings"])
 reps_results = get_results(endpoint_url, query_reps)
 reps_df = clean_results(reps_results["results"]["bindings"])
 
-edu_cols = [["edu" "eduLabel"]]
+edu_cols = [["edueduLabel"]]
 education_df: pd.DataFrame = pd.concat(
     [reps_df[["edu", "eduLabel"]], senate_df[["edu", "eduLabel"]]]
 )

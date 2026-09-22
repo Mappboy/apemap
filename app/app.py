@@ -1,4 +1,4 @@
-""" APE Map Dashboard (Deprecated)
+"""APE Map Dashboard (Deprecated)
 
 NOTE: This Dash prototype application is deprecated and no longer actively maintained.
 It has been superseded by the static results page on cpoole.dev.
@@ -12,10 +12,10 @@ TODO - Add age range slider and histogram
 - Create text box for select school funding enrolment and students
 - Add select theme
 """
+
 import math
 import os
 import pathlib
-import random
 from datetime import date
 
 import dash_bootstrap_components as dbc
@@ -66,7 +66,8 @@ def geopackage_col_to_list(df, col, convert_ints=False):
     return df[col]
 
 
-today = date.today()
+# Fixed benchmark opening date for the 47th Parliament (2022-07-26)
+opening_date = date(2022, 7, 26)
 
 parliamentarians = pd.read_sql(
     """
@@ -86,7 +87,13 @@ if not isinstance(parliamentarians["RepresentedParliaments"], list):
 
 parliamentarians = parliamentarians.explode("RepresentedParliaments")
 parliamentarians["age"] = pd.to_datetime(parliamentarians["dob"]).apply(
-    lambda x: today.year - x.year - ((today.month, today.day) < (x.month, x.day))
+    lambda x: (
+        opening_date.year
+        - x.year
+        - ((opening_date.month, opening_date.day) < (x.month, x.day))
+        if pd.notna(x)
+        else None
+    )
 )
 parliamentarians["age_group"] = pd.cut(
     parliamentarians["age"],
@@ -143,9 +150,9 @@ def create_gdf():
     )
     gdf["total_students"] = gdf["total_students"].astype(int)
     gdf.columns = gdf.columns.str.lower().str.replace(" ", "_")
-    # add small random number to lat/lon to avoid overlapping points
-    gdf["lat"] = gdf.geometry.y.apply(lambda x: x + random.uniform(-0.0001, 0.0001))
-    gdf["lon"] = gdf.geometry.x.apply(lambda x: x + random.uniform(-0.0001, 0.0001))
+    # Deterministic point coordinates without random uniform jitter
+    gdf["lat"] = gdf.geometry.y
+    gdf["lon"] = gdf.geometry.x
     gdf["geometry"] = gdf.apply(lambda x: Point(x["lon"], x["lat"]), axis=1)
     return gdf
 
@@ -203,7 +210,7 @@ app = Dash(
 )
 
 # create a plotly express scatter map coloured by school sector with marker size based on the number of students
-hovertemplate = "<b>name</b>: %{name}<br>" "<b>customdata</b>: %{customdata}<br>"
+hovertemplate = "<b>name</b>: %{name}<br><b>customdata</b>: %{customdata}<br>"
 map_cols = [
     "mp_id",
     "member",
@@ -450,7 +457,7 @@ app.layout = html.Div(
                     width={"size": 3},
                 ),
             ]
-        )
+        ),
         #
         # dcc.Graph(figure=px.histogram(parliamentarians_by_parl, x='party_abbrev', y='age', histfunc="avg",
         #                               facet_row="RepresentedParliaments",
@@ -709,17 +716,19 @@ def generate_geo_map(
 def generate_queries(gdf):
     data = {}
     member_grouped = gdf.groupby("member")["school_sector"].transform(
-        lambda x: "Both"
-        if "Government" in x.values
-        and ("Independent" in x.values or "Catholic" in x.values)
-        else "none"
-        if "Government" not in x.values
-        and ("Independent" not in x.values and "Catholic" not in x.values)
-        else "Government"
-        if "Government" in x.values
-        else "Independent"
-        if "Independent" in x.values
-        else "Catholic"
+        lambda x: (
+            "Both"
+            if "Government" in x.values
+            and ("Independent" in x.values or "Catholic" in x.values)
+            else "none"
+            if "Government" not in x.values
+            and ("Independent" not in x.values and "Catholic" not in x.values)
+            else "Government"
+            if "Government" in x.values
+            else "Independent"
+            if "Independent" in x.values
+            else "Catholic"
+        )
     )
     data_school_sector = (
         member_grouped.drop_duplicates(["member", "school_sector"])

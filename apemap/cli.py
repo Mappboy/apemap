@@ -8,11 +8,21 @@ from typing import Annotated
 
 import typer
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
-from apemap.constants import DATA_DIR, PROCESSED_DIR
+from apemap.analysis import (
+    compute_funding_summary,
+    compute_parliament_demographics,
+    compute_sector_summary,
+    export_analysis_report,
+)
+from apemap.constants import DATA_DIR, PARLIAMENT_METADATA, PROCESSED_DIR
+from apemap.db import get_connection, init_schema, migrate_historical_finances
+from apemap.export import export_all_artifacts
 from apemap.ingest.acara import run_acara_ingestion
 from apemap.ingest.pipeline import run_aph_ingestion
+from apemap.validate import validate_database
 
 app = typer.Typer(
     name="apemap",
@@ -46,6 +56,18 @@ def parse_parliament_args(raw: str) -> list[int]:
     if not parls:
         raise typer.BadParameter("At least one parliament number must be specified.")
     return sorted(parls)
+
+
+def validate_supported_parliaments(parliaments: list[int]) -> None:
+    """Reject parliament numbers without fixed project metadata at the CLI boundary."""
+    unsupported = [p for p in parliaments if p not in PARLIAMENT_METADATA]
+    if unsupported:
+        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
+        numbers = ", ".join(str(p) for p in unsupported)
+        raise typer.BadParameter(
+            f"Unsupported parliament number(s): {numbers}. "
+            f"Supported values are: {supported}."
+        )
 
 
 @ingest_app.command(name="aph")
@@ -89,6 +111,7 @@ def ingest_aph(
 ) -> None:
     """Ingest parliamentarian demographics and secondary education records from APH."""
     parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
 
@@ -119,7 +142,6 @@ def ingest_aph(
         f"Education Assertions: {results['education_count']}"
     )
 
-    # Pretty-print coverage metrics table
     table = Table(title="Parliament Coverage & Gap Metrics")
     table.add_column("Parliament", justify="center", style="cyan")
     table.add_column("Total MPs", justify="right")
@@ -246,6 +268,437 @@ def ingest_acara(
     console.print(f"Database: [green]{effective_db_path}[/green]")
     if export_parquet:
         console.print(f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]")
+
+
+@app.command(name="transform")
+def transform_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    gpkg_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--gpkg-path",
+            help="Optional path to legacy aped.gpkg to migrate historical 2021 finances.",
+        ),
+    ] = None,
+) -> None:
+    """Initialize canonical relational schema, analytical views, and macros idempotently."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    console.print(
+        f"[bold blue]Initializing schema and views on:[/bold blue] [cyan]{effective_db_path}[/cyan]"
+    )
+
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        console.print("[green]Schema DDL and views applied successfully.[/green]")
+
+        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        fin_count = res[0] if res else 0
+        if fin_count == 0:
+            console.print("[dim]Migrating historical 2021 school finances...[/dim]")
+            migrated = migrate_historical_finances(conn, gpkg_path)
+            console.print(
+                f"[green]Migrated {migrated:,} historical 2021 finance records.[/green]"
+            )
+        else:
+            console.print(
+                f"[dim]Historical finances already populated ({fin_count:,} records).[/dim]"
+            )
+    finally:
+        conn.close()
+
+    console.print("[bold green]Transform step complete![/bold green]")
+
+
+@app.command(name="validate")
+def validate_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    strict: Annotated[
+        bool,
+        typer.Option(
+            "--strict/--no-strict",
+            help="Exit with non-zero code if any validation check fails.",
+        ),
+    ] = True,
+) -> None:
+    """Execute database integrity validation, FK constraints, and parliament coverage gates."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
+
+    console.print(
+        f"[bold blue]Running Validation on:[/bold blue] [cyan]{effective_db_path}[/cyan]"
+    )
+    conn = get_connection(effective_db_path)
+    try:
+        report = validate_database(conn, parl_list)
+    finally:
+        conn.close()
+
+    # Table counts summary
+    tbl_summary = Table(
+        title="Canonical Database Table Counts", header_style="bold cyan"
+    )
+    tbl_summary.add_column("Canonical Table")
+    tbl_summary.add_column("Row Count", justify="right")
+    for tbl, cnt in report.table_counts.items():
+        tbl_summary.add_row(tbl, f"{cnt:,}")
+    console.print(tbl_summary)
+
+    # Parliament metrics summary
+    if report.parliament_metrics:
+        p_tbl = Table(
+            title="Parliament Benchmark Coverage", header_style="bold magenta"
+        )
+        p_tbl.add_column("Parliament", justify="center")
+        p_tbl.add_column("Total Stints", justify="right")
+        p_tbl.add_column("Unique Members", justify="right")
+        p_tbl.add_column("Opening Day Members", justify="right")
+        p_tbl.add_column("Current Members", justify="right")
+        for p_num, m in report.parliament_metrics.items():
+            p_tbl.add_row(
+                str(p_num),
+                f"{m['total_stints']:,}",
+                f"{m['unique_members']:,}",
+                f"{m['opening_day_members']:,}",
+                f"{m['current_members']:,}",
+            )
+        console.print(p_tbl)
+
+    console.print()
+    if report.passed:
+        console.print(
+            Panel(
+                f"[bold green]ALL {report.checks_run} VALIDATION CHECKS PASSED![/bold green]",
+                style="green",
+            )
+        )
+    else:
+        console.print(
+            Panel(
+                f"[bold red]VALIDATION FAILED:[/bold red] "
+                f"{report.checks_passed}/{report.checks_run} checks passed, "
+                f"{len(report.failures)} failures detected.",
+                style="red",
+            )
+        )
+        for idx, fail in enumerate(report.failures, 1):
+            console.print(f"  [red]{idx}. {fail}[/red]")
+
+        if strict:
+            raise typer.Exit(code=1)
+
+
+@app.command(name="analyze")
+def analyze_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save analytical metrics JSON.",
+        ),
+    ] = None,
+) -> None:
+    """Compute deterministic demographic, sector distribution, and 2021 funding statistics."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+    parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
+
+    console.print(
+        f"[bold blue]Running Deterministic Analysis on:[/bold blue] [cyan]{effective_db_path}[/cyan]"
+    )
+    conn = get_connection(effective_db_path)
+    try:
+        json_path = export_analysis_report(conn, effective_out_dir, parl_list)
+
+        for p in parl_list:
+            dem = compute_parliament_demographics(conn, p)
+            sec = compute_sector_summary(conn, p)
+            fund = compute_funding_summary(conn, p)
+
+            console.print()
+            console.print(
+                f"[bold cyan]--- Parliament {p} Demographic & Education Analysis ---[/bold cyan]"
+            )
+            console.print(
+                f"Opening Benchmark: [green]{dem['reference_opening_date']}[/green] | "
+                f"Total MPs: {dem['total_parliamentarians']} | "
+                f"Avg Age: {dem['average_age_at_opening']} | "
+                f"Median Age: {dem['median_age_at_opening']}"
+            )
+
+            # Sector breakdown table
+            sec_tbl = Table(
+                title=f"Parliament {p} Secondary Sector Distribution",
+                header_style="bold blue",
+            )
+            sec_tbl.add_column("Sector / Category")
+            sec_tbl.add_column("Unique MPs", justify="right")
+            sec_tbl.add_column("% of Known MPs", justify="right")
+            sec_tbl.add_column("Attendance Instances", justify="right")
+
+            pcts = sec["percentage_of_known_parliamentarians"]
+            insts = sec["attendance_instances_by_sector"]
+            for cat, cnt in sec["unique_parliamentarians_by_sector"].items():
+                sec_tbl.add_row(
+                    cat,
+                    str(cnt),
+                    f"{pcts.get(cat, 0.0):.1f}%" if cat in pcts else "-",
+                    str(insts.get(cat, "-")),
+                )
+            console.print(sec_tbl)
+
+            # Funding table
+            fund_tbl = Table(
+                title=f"Parliament {p} School 2021 Financial Averages (N reported)",
+                header_style="bold yellow",
+            )
+            fund_tbl.add_column("Sector")
+            fund_tbl.add_column("Avg Gross Income / Student", justify="right")
+            fund_tbl.add_column("N (Gross)", justify="right")
+            fund_tbl.add_column("Avg Net Recurrent / Student", justify="right")
+            fund_tbl.add_column("N (Net)", justify="right")
+
+            for sname, sdata in fund["by_sector"].items():
+                g_avg = (
+                    f"${sdata['gross_income_per_student_avg']:,.0f}"
+                    if sdata["gross_income_per_student_avg"]
+                    else "N/A"
+                )
+                n_avg = (
+                    f"${sdata['net_recurrent_income_per_student_avg']:,.0f}"
+                    if sdata["net_recurrent_income_per_student_avg"]
+                    else "N/A"
+                )
+                fund_tbl.add_row(
+                    sname,
+                    g_avg,
+                    str(sdata["gross_income_sample_size"]),
+                    n_avg,
+                    str(sdata["net_recurrent_income_sample_size"]),
+                )
+            console.print(fund_tbl)
+
+    finally:
+        conn.close()
+
+    console.print()
+    console.print(
+        f"[bold green]Analysis Complete![/bold green] Report saved to: [cyan]{json_path}[/cyan]"
+    )
+
+
+@app.command(name="export")
+def export_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet and GeoJSON files.",
+        ),
+    ] = None,
+) -> None:
+    """Export canonical Parquet files, GeoJSON layers, and JSON analytical metrics."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+    parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
+
+    console.print(
+        f"[bold blue]Exporting Artifacts from:[/bold blue] [cyan]{effective_db_path}[/cyan]"
+    )
+    conn = get_connection(effective_db_path)
+    try:
+        results = export_all_artifacts(conn, effective_out_dir, parl_list)
+    finally:
+        conn.close()
+
+    console.print("[bold green]Export Complete![/bold green]")
+    console.print(f"Output Directory: [cyan]{results['output_directory']}[/cyan]")
+    console.print(f"Parquet Tables Exported: {len(results['parquet_files'])}")
+    for tbl, pth in results["parquet_files"].items():
+        console.print(f"  - {tbl}: [dim]{pth}[/dim]")
+    console.print(f"GeoJSON Spatial Layers: {len(results['geojson_layers'])}")
+    for p_num, pth in results["geojson_layers"].items():
+        console.print(f"  - Parliament {p_num}: [dim]{pth}[/dim]")
+    console.print(f"Analysis Report: [yellow]{results['analysis_report']}[/yellow]")
+
+
+@app.command(name="run-all")
+def run_all_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save generated artifacts.",
+        ),
+    ] = None,
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    download: Annotated[
+        bool,
+        typer.Option(
+            "--download/--no-download",
+            help="Download latest official 2025 ACARA datasets from ACARA Data Access portal.",
+        ),
+    ] = False,
+    refresh: Annotated[
+        bool,
+        typer.Option(
+            "--refresh/--no-refresh",
+            help="Force re-fetching from live APH Handbook API instead of local disk cache.",
+        ),
+    ] = False,
+    longitudinal: Annotated[
+        bool,
+        typer.Option(
+            "--longitudinal/--single-year",
+            help="Download 2008-2025 longitudinal profile dataset or 2025 single-year profile.",
+        ),
+    ] = True,
+    strict: Annotated[
+        bool,
+        typer.Option(
+            "--strict/--no-strict",
+            help="Exit with non-zero status code if validation checks fail.",
+        ),
+    ] = True,
+) -> None:
+    """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+    parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
+
+    console.print(
+        Panel("[bold blue]Starting Full APEMAP End-to-End Pipeline[/bold blue]")
+    )
+
+    # Step 1: ACARA Ingestion
+    console.print("\n[bold]1. Running ACARA Ingestion...[/bold]")
+    run_acara_ingestion(
+        download_latest=download,
+        use_longitudinal=longitudinal,
+        db_path=effective_db_path,
+        export_parquet_files=False,
+        output_dir=effective_out_dir,
+    )
+
+    # Step 2: APH Ingestion
+    console.print("\n[bold]2. Running APH Ingestion...[/bold]")
+    run_aph_ingestion(
+        parliaments=parl_list,
+        refresh=refresh,
+        db_path=effective_db_path,
+        export_parquet_files=False,
+        output_dir=effective_out_dir,
+    )
+
+    # Step 3: Schema Transform and Views
+    console.print("\n[bold]3. Initializing Schema & Views...[/bold]")
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        fin_count = res[0] if res else 0
+        if fin_count == 0:
+            migrate_historical_finances(conn)
+
+        # Step 4: Validation Gate
+        console.print("\n[bold]4. Validating Canonical Database...[/bold]")
+        report = validate_database(conn, parl_list)
+        if not report.passed:
+            console.print(
+                f"[bold red]Validation failed with {len(report.failures)} errors:[/bold red]"
+            )
+            for f in report.failures:
+                console.print(f"  [red]- {f}[/red]")
+            if strict:
+                raise typer.Exit(code=1)
+        else:
+            console.print(
+                f"[green]Validation passed ({report.checks_run} checks passed).[/green]"
+            )
+
+        # Step 5: Export Artifacts
+        console.print(
+            "\n[bold]5. Exporting Parquet, GeoJSON, and Analysis Metrics...[/bold]"
+        )
+        export_results = export_all_artifacts(conn, effective_out_dir, parl_list)
+    finally:
+        conn.close()
+
+    console.print()
+    console.print(
+        Panel("[bold green]APEMAP Pipeline Completed Successfully![/bold green]")
+    )
+    console.print(f"Database: [cyan]{effective_db_path}[/cyan]")
+    console.print(f"Artifacts: [cyan]{effective_out_dir}[/cyan]")
+    console.print(f"Report: [yellow]{export_results['analysis_report']}[/yellow]")
 
 
 def main() -> None:

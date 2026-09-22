@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -193,6 +194,36 @@ def test_pipeline_dual_snapshot_isolation(
     assert result["parquet_paths"]["members"].exists()
 
     conn.close()
+
+
+def test_pipeline_rerun_is_idempotent(
+    sample_aph_records: list[dict[str, Any]], tmp_path: Path
+) -> None:
+    """Rerunning ingestion into one database keeps exported artifacts stable."""
+    db_file = tmp_path / "idempotent.duckdb"
+    external_dir = tmp_path / "external"
+    first_dir = tmp_path / "first"
+    second_dir = tmp_path / "second"
+
+    for output_dir in (first_dir, second_dir):
+        result = run_aph_ingestion(
+            parliaments=[48],
+            raw_individuals=sample_aph_records,
+            db_path=db_file,
+            output_dir=output_dir,
+            export_parquet_files=True,
+            external_dir=external_dir,
+        )
+        result["connection"].close()
+
+    def manifest(root: Path) -> dict[str, str]:
+        return {
+            str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(root.rglob("*"))
+            if path.is_file()
+        }
+
+    assert manifest(first_dir) == manifest(second_dir)
 
 
 def test_parse_parliament_args() -> None:
