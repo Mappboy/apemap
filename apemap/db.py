@@ -41,11 +41,14 @@ CANONICAL_ORDER_BY = {
 }
 
 
-def get_connection(db_path: Path | str | None = None) -> DuckDBPyConnection:
+def get_connection(
+    db_path: Path | str | None = None, *, read_only: bool = False
+) -> DuckDBPyConnection:
     """Obtain a DuckDB connection.
 
     Args:
         db_path: Path to DuckDB file or None for in-memory database.
+        read_only: Open an existing file without permitting database mutations.
 
     Returns:
         DuckDBPyConnection instance.
@@ -54,6 +57,10 @@ def get_connection(db_path: Path | str | None = None) -> DuckDBPyConnection:
         return duckdb.connect(":memory:")
 
     resolved_path = Path(db_path).resolve()
+    if read_only:
+        if not resolved_path.exists():
+            raise FileNotFoundError(f"Read-only DuckDB file not found: {resolved_path}")
+        return duckdb.connect(str(resolved_path), read_only=True)
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     return duckdb.connect(str(resolved_path))
 

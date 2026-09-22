@@ -1,6 +1,6 @@
 # Australian Parliamentarian Education Map (APEMAP)
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/analysis.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/00_data_overview.ipynb)
 
 ![Australian Politicians Education Map](Australian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')
 ## Background
@@ -18,7 +18,7 @@ There are several intriguing questions that arise from this research:
 The other good reason for doing this make Australian political data easier to find and update.
 There is a good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
 
-See [analysis](notebooks/analysis.html) or [notebook](notebooks/analysis.ipynb) for initial analysis. Interactive results and visualizations are published on [cpoole.dev](https://cpoole.dev).
+See the [reproducible analysis workflow](notebooks/README.md) for the canonical notebooks and validation commands. Interactive results and visualizations are published on [cpoole.dev](https://cpoole.dev).
 
 _*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
 ## Preliminary Results
@@ -112,11 +112,16 @@ As above some may be online in which case I will just pick a headquarters of cam
 
 ## Installation
 
-### Python + Poetry
+### Python + uv
 ```bash
-pip install poetry
-poetry install
+uv sync
+uv sync --extra analysis
 ```
+
+The reusable statistical logic lives in `apemap.analysis`. Notebook analysis
+opens the canonical DuckDB database read-only and exports deterministic chart
+data to `data/processed/analysis/`. The previous notebook suite is preserved
+under `archive/notebooks/2026-09-22/` as historical research material.
 ### Viewing Data
 
 Using [QGIS](https://qgis.org/en/site/forusers/download.html) open the [data/analysis.qgz](data/analysis.qgz) file.

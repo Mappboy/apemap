@@ -514,6 +514,11 @@ def test_cli_export_command_and_reproducibility(
     expected_artifacts = {
         *(f"{table}.parquet" for table in CANONICAL_TABLES),
         "analysis_metrics.json",
+        str(Path("analysis") / "metadata.json"),
+        str(Path("analysis") / "demographics.json"),
+        str(Path("analysis") / "education_sectors.json"),
+        str(Path("analysis") / "school_finance.json"),
+        str(Path("analysis") / "parliament_comparison.json"),
         "parliament_47_combined.geojson",
     }
     assert set(manifest_1) == expected_artifacts
