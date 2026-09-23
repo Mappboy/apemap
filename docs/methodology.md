@@ -69,25 +69,33 @@ Analyses of parliamentary composition can produce misleading conclusions if coho
 
 ## 4. Source Hierarchy & Data Provenance
 
-APEMAP applies a strict source hierarchy:
+APEMAP applies a strict source authority hierarchy to ensure data provenance and prevent secondary crowdsourced data from conflicting with official registers:
 
 ```
-[1. Official APH Handbook API] (Primary biographical & parliamentary service source)
+[1. Official APH Handbook API] (Authoritative biographical & parliamentary service source)
             │
             ▼
-[2. ACARA Official Registers] (Canonical school names, SML IDs, coordinates, sectors)
+[2. ACARA Official Registers] (Authoritative school names, SML IDs, coordinates, sectors)
             │
             ▼
 [3. Curated School Aliases] (Explicit overrides in data/reference/school_aliases.json)
             │
             ▼
-[4. Supplementary Baselines] (SMH 2021 investigation, AEC boundary data, ABS geography)
+[4. Wikipedia / Wikidata] (Supplementary enrichment, identifier-first linking, QA cross-check)
+            │
+            ▼
+[5. Manual Review & Promotion] (Unmatched school review via data/processed/ review CSVs)
 ```
 
-1. **Primary Parliamentary Source**: The Australian Parliament House (APH) Parliamentary Handbook API (`https://handbookapi.aph.gov.au/api/individuals`).
-2. **Primary Educational Source**: Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and School Profile data.
-3. **Curated Overrides**: `data/reference/school_aliases.json` records verified historical name changes, school amalgamations, and disambiguation rules.
-4. **Historical & Supplementary Sources**: Historical baseline data from the 2021 SMH investigation and AEC boundary files.
+1. **Official APH Handbook API**: The Australian Parliament House (APH) Parliamentary Handbook API (`https://handbookapi.aph.gov.au/api/individuals`) is the authoritative source for member identity, parliamentary service, chamber, party, electorate, birth date, gender, and self-reported education text.
+2. **ACARA Official Registers**: The Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and School Profile datasets are the authoritative sources for Australian school identities, SML IDs, coordinates, sectors, and ICSEA values.
+3. **Curated Overrides**: `data/reference/school_aliases.json` records verified historical name changes, school amalgamations, and disambiguation rules promoted from manual reviews into deterministic future runs.
+4. **Wikipedia / Wikidata Supplementary Enrichment**:
+   - **Identifier-first linking**: Parliamentarians are linked to Wikidata entities using their unique Parliament of Australia MP identifier ([Property P10020](https://www.wikidata.org/wiki/Property:P10020)), populating `members.wikidata_id` with a bare QID (e.g. `Q4772000`). Name-based fallback matching is only accepted when unambiguous and confirmed by birth dates.
+   - **Non-mutation of official data**: Wikimedia enrichment **never silently overwrites** non-null verified APH demographics (birth dates, gender) or ACARA institutional attributes.
+   - **Demographic cross-checks**: Discrepancies and supplemental values available in Wikidata are written to structured review files (`data/processed/wikimedia_member_review.csv`).
+   - **Unmatched school suggestions**: Secondary suggestions for unconfirmed or international schools are written to `data/processed/wikimedia_school_review.csv` and remain `unconfirmed` in canonical database tables until promoted through `school_aliases.json`.
+5. **Manual Review & Promotion**: Human verification promotes reviewed ambiguous mappings into deterministic pipelines.
 
 ---
 

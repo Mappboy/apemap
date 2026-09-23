@@ -24,7 +24,8 @@ Usage: apemap [OPTIONS] COMMAND [ARGS]...
 apemap
 ├── ingest
 │   ├── aph       # Ingest parliamentarian demographics & schools from APH
-│   └── acara     # Ingest ACARA school profiles & migrate 2021 finances
+│   ├── acara     # Ingest ACARA school profiles & migrate 2021 finances
+│   └── wikimedia # Enrich members & review unmatched schools via Wikimedia
 ├── transform     # Initialize DuckDB schema, canonical views, and table macros
 ├── validate      # Check DB relational integrity, constraints, & coverage gates
 ├── analyze       # Compute demographic, sector, and school funding summaries
@@ -112,7 +113,47 @@ uv run apemap ingest acara --download --longitudinal
 
 ---
 
-## 3. `apemap transform`
+## 3. `apemap ingest wikimedia`
+
+Enriches canonical members with Wikidata identifiers (`members.wikidata_id`) using identifier-first matching ([P10020](https://www.wikidata.org/wiki/Property:P10020)), cross-checks demographic attributes (birth dates, gender), and suggests institution names, coordinates, and types for unmatched or international secondary schools.
+
+### Invocation
+```bash
+uv run apemap ingest wikimedia [OPTIONS]
+```
+
+### Options
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
+| `--refresh` / `--no-refresh` | `BOOL` | `False` | Force re-fetching live from Wikimedia API instead of local disk cache. |
+| `--members` / `--no-members` | `BOOL` | `True` | Enrich members with Wikidata identifiers and cross-check demographics. |
+| `--schools` / `--no-schools` | `BOOL` | `True` | Generate suggestions for unconfirmed and international schools via Wikimedia. |
+| `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
+| `--output-dir` | `PATH` | `data/processed` | Directory for exported CSV review files. |
+| `--cache-dir` | `PATH` | `data/raw/wikimedia` | Directory for raw Wikimedia disk cache. |
+
+### Pipeline Behavior
+- **Network Access**: Only when `--refresh` is supplied or cached queries are not present on disk in `data/raw/wikimedia/`.
+- **Database Mutation**: Updates `members.wikidata_id` if previously unset. Never mutates birth dates, gender, or verified ACARA records.
+- **Inputs**: `data/aped.duckdb`, local cache files in `data/raw/wikimedia/{members,institutions}/`.
+- **Outputs**:
+  - `data/aped.duckdb` (canonical `members.wikidata_id` populated)
+  - `data/processed/wikimedia_member_review.csv` (discrepancies, missing supplemental values, conflicts)
+  - `data/processed/wikimedia_school_review.csv` (unmatched school candidates with suggested coordinates and QIDs)
+
+### Example Usage
+```bash
+# Enrich 48th Parliament using local cache
+uv run apemap ingest wikimedia -p "48"
+
+# Force live refresh for all parliaments and output review artifacts
+uv run apemap ingest wikimedia --refresh
+```
+
+---
+
+## 4. `apemap transform`
 
 Applies canonical relational DDL, analytical views, and parameterized macros to DuckDB. Idempotently migrates historical 2021 school finances from `data/aped.gpkg` if not yet populated.
 
@@ -140,7 +181,7 @@ uv run apemap transform
 
 ---
 
-## 4. `apemap validate`
+## 5. `apemap validate`
 
 Executes automated integrity gates against the canonical database. Verifies primary keys, foreign key referential integrity, non-null requirements, valid sector/chamber enumerations, and benchmark parliament member counts.
 
@@ -173,7 +214,7 @@ uv run apemap validate --no-strict -p "47"
 
 ---
 
-## 5. `apemap analyze`
+## 6. `apemap analyze`
 
 Computes deterministic demographic summaries (average/median age at opening day), secondary school sector distributions (unique MPs vs. attendance instances), and historical 2021 funding averages.
 
@@ -204,7 +245,7 @@ uv run apemap analyze -p "46,47,48"
 
 ---
 
-## 6. `apemap export`
+## 7. `apemap export`
 
 Exports canonical tables to Parquet, creates GeoJSON layers for each parliament joining member details to school coordinates, and writes analytical summary JSON.
 
@@ -236,11 +277,12 @@ uv run apemap export --parliament "46,47"
 
 ---
 
-## 7. `apemap run-all`
+## 8. `apemap run-all`
 
 Coordinates the complete end-to-end pipeline deterministically:
 1. Ingests ACARA school datasets.
 2. Ingests APH parliamentarians and matches institutions.
+   - Optional step 2b: Enriches members and suggests unmatched schools via Wikimedia (opt-in).
 3. Applies schema transformations, views, and macros.
 4. Validates database integrity against coverage gates.
 5. Exports Parquet tables, GeoJSON layers, and analytical reports.
@@ -260,6 +302,7 @@ uv run apemap run-all [OPTIONS]
 | `--refresh` / `--no-refresh` | `BOOL` | `False` | Force refresh from live APH API (default is cached). |
 | `--longitudinal` / `--single-year` | `BOOL` | `True` | Use ACARA longitudinal profiles or single-year. |
 | `--strict` / `--no-strict` | `BOOL` | `True` | Exit immediately if validation check fails. |
+| `--enrich-wikimedia` / `--no-enrich-wikimedia` | `BOOL` | `False` | Enrich canonical members and unmatched schools with Wikimedia data. |
 
 ### Example Usage
 ```bash
@@ -268,4 +311,7 @@ uv run apemap run-all
 
 # Complete upstream refresh with live downloads and strict validation
 uv run apemap run-all --download --refresh --strict
+
+# Run end-to-end with Wikimedia identity enrichment enabled
+uv run apemap run-all --enrich-wikimedia
 ```
