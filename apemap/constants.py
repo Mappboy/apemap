@@ -8,6 +8,9 @@ from typing import TypedDict
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_APH_DIR = DATA_DIR / "raw" / "aph"
+RAW_WIKIMEDIA_DIR = DATA_DIR / "raw" / "wikimedia"
+RAW_WIKIMEDIA_MEMBERS_DIR = RAW_WIKIMEDIA_DIR / "members"
+RAW_WIKIMEDIA_INSTITUTIONS_DIR = RAW_WIKIMEDIA_DIR / "institutions"
 PROCESSED_DIR = DATA_DIR / "processed"
 EXTERNAL_DIR = DATA_DIR / "external"
 REFERENCE_DIR = DATA_DIR / "reference"
@@ -43,6 +46,18 @@ PARLIAMENT_METADATA: dict[int, ParliamentInfo] = {
 
 APH_HANDBOOK_API_ENDPOINT = "https://handbookapi.aph.gov.au/api/individuals"
 APH_DEFAULT_ORDERBY = "FamilyName,GivenName"
+
+WIKIDATA_SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
+WIKIPEDIA_API_ENDPOINT = "https://en.wikipedia.org/w/api.php"
+WIKIDATA_API_ENDPOINT = "https://www.wikidata.org/w/api.php"
+
+WIKIDATA_APH_ID_PROPERTY = "P10020"
+WIKIDATA_DOB_PROPERTY = "P569"
+WIKIDATA_GENDER_PROPERTY = "P21"
+WIKIDATA_COORDINATES_PROPERTY = "P625"
+WIKIDATA_COUNTRY_PROPERTY = "P17"
+WIKIDATA_ADMIN_TERRITORY_PROPERTY = "P131"
+WIKIDATA_INSTANCE_OF_PROPERTY = "P31"
 
 CANONICAL_SECTORS = ("Government", "Catholic", "Independent", "Tertiary", "Other")
 CANONICAL_CHAMBERS = ("representatives", "senate")

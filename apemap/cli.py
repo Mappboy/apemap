@@ -17,11 +17,17 @@ from apemap.analysis import (
     compute_sector_summary,
     export_analysis_report,
 )
-from apemap.constants import DATA_DIR, PARLIAMENT_METADATA, PROCESSED_DIR
+from apemap.constants import (
+    DATA_DIR,
+    PARLIAMENT_METADATA,
+    PROCESSED_DIR,
+    RAW_WIKIMEDIA_DIR,
+)
 from apemap.db import get_connection, init_schema, migrate_historical_finances
 from apemap.export import export_all_artifacts
 from apemap.ingest.acara import run_acara_ingestion
 from apemap.ingest.pipeline import run_aph_ingestion
+from apemap.ingest.wikimedia import run_wikimedia_enrichment
 from apemap.validate import validate_database
 
 app = typer.Typer(
@@ -268,6 +274,107 @@ def ingest_acara(
     console.print(f"Database: [green]{effective_db_path}[/green]")
     if export_parquet:
         console.print(f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]")
+
+
+@ingest_app.command(name="wikimedia")
+def ingest_wikimedia(
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    refresh: Annotated[
+        bool,
+        typer.Option(
+            "--refresh/--no-refresh",
+            help="Force re-fetching live from Wikimedia API instead of local disk cache.",
+        ),
+    ] = False,
+    members: Annotated[
+        bool,
+        typer.Option(
+            "--members/--no-members",
+            help="Enrich canonical member records with Wikidata identifiers and cross-check demographics.",
+        ),
+    ] = True,
+    schools: Annotated[
+        bool,
+        typer.Option(
+            "--schools/--no-schools",
+            help="Generate suggestions for unconfirmed and international schools via Wikimedia.",
+        ),
+    ] = True,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save generated CSV review files (defaults to data/processed).",
+        ),
+    ] = None,
+    cache_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--cache-dir",
+            help="Directory for local raw disk cache (defaults to data/raw/wikimedia).",
+        ),
+    ] = None,
+) -> None:
+    """Enrich canonical members and review unmatched schools using Wikipedia and Wikidata."""
+    parl_list = parse_parliament_args(parliament)
+    validate_supported_parliaments(parl_list)
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        f"[bold blue]Starting Wikimedia Ingestion & Enrichment[/bold blue] for Parliaments: "
+        f"[green]{parl_list}[/green]"
+    )
+    if refresh:
+        console.print(
+            "[yellow]Notice:[/yellow] Live refresh from Wikimedia API requested."
+        )
+    else:
+        console.print("[dim]Using local disk cache if available.[/dim]")
+
+    results = run_wikimedia_enrichment(
+        parliaments=parl_list,
+        refresh=refresh,
+        enrich_members=members,
+        enrich_schools=schools,
+        db_path=effective_db_path,
+        output_dir=effective_out_dir,
+        cache_dir=cache_dir or RAW_WIKIMEDIA_DIR,
+    )
+
+    console.print()
+    console.print("[bold green]Wikimedia Enrichment Complete![/bold green]")
+    table = Table(title="Wikimedia Enrichment Summary", header_style="bold magenta")
+    table.add_column("Metric", style="cyan")
+    table.add_column("Count / Status", justify="right", style="green")
+
+    if members:
+        table.add_row("Members Processed", str(results["members_processed"]))
+        table.add_row("New Wikidata IDs Populated", str(results["members_enriched"]))
+        table.add_row("Member Identifier Conflicts", str(results["members_conflicts"]))
+        table.add_row("Demographic Discrepancies", str(results["member_discrepancies"]))
+        table.add_row("Member Review CSV", results["member_review_csv"])
+
+    if schools:
+        table.add_row("Schools Processed", str(results["schools_processed"]))
+        table.add_row("School Suggestions Generated", str(results["schools_suggested"]))
+        table.add_row("School Review CSV", results["school_review_csv"])
+
+    console.print(table)
 
 
 @app.command(name="transform")
@@ -627,6 +734,13 @@ def run_all_cmd(
             help="Exit with non-zero status code if validation checks fail.",
         ),
     ] = True,
+    enrich_wikimedia: Annotated[
+        bool,
+        typer.Option(
+            "--enrich-wikimedia/--no-enrich-wikimedia",
+            help="Enrich canonical members and unmatched schools with Wikimedia data.",
+        ),
+    ] = False,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -657,6 +771,16 @@ def run_all_cmd(
         export_parquet_files=False,
         output_dir=effective_out_dir,
     )
+
+    # Step 2b: Optional Wikimedia Enrichment
+    if enrich_wikimedia:
+        console.print("\n[bold]2b. Running Wikimedia Enrichment...[/bold]")
+        run_wikimedia_enrichment(
+            parliaments=parl_list,
+            refresh=refresh,
+            db_path=effective_db_path,
+            output_dir=effective_out_dir,
+        )
 
     # Step 3: Schema Transform and Views
     console.print("\n[bold]3. Initializing Schema & Views...[/bold]")
