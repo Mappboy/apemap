@@ -1,198 +1,128 @@
-# Australian Parliamentarian Education Map (APEMAP)
+# Australian Parliamentarians Education Map (APEMAP)
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Mappboy/apemap/HEAD?urlpath=lab/tree/notebooks/00_data_overview.ipynb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: CC BY 4.0](https://img.shields.io/badge/Data-CC_BY_4.0-lightgrey.svg)](LICENSE)
 
-![Australian Politicians Education Map](Australian%20Politicians%20Education%20Map.png 'Australian Politicians Education Map')
-## Background
-Simply put I wanted to know where all the Parliamentarians went to school and any links that exist between them.
-The closest approximation to this was this [Sydney Morning Herald article](https://www.smh.com.au/interactive/2021/careers-before-politics/) which I used as a starting point.
+![Australian Politicians Education Map](Australian%20Politicians%20Education%20Map.png "Australian Politicians Education Map")
 
-There are several intriguing questions that arise from this research:
- - Where did my local MP and [insert name of any politician my friends keep asking me about] go to school?
- - Which members have attended the same school?
- - Has school funding been affected by the number of politicians as alumni ?
- - Has there been a shift between parliaments ?
- - Are there schools which routinely have MPs ?
- - Does the location of the school impact party and policy ?
+APEMAP (**Australian Parliamentarians Education Map**) is a Python data and analytics project for collecting, normalising, and analysing Australian federal parliamentarians' educational histories and related secondary school information.
 
-The other good reason for doing this make Australian political data easier to find and update.
-There is a good library for it in R https://github.com/RohanAlexander/AustralianPoliticians, but I wanted to make the data a little more agnostic.
+---
 
-See the [reproducible analysis workflow](notebooks/README.md) for the canonical notebooks and validation commands. Interactive results and visualizations are published on [cpoole.dev](https://cpoole.dev).
+## What Does APEMAP Do?
 
-_*Please note that I collated this data to the best of my ability in my free time and for fun. If you plan to use it for research purposes, I recommend conducting some quality assurance and contributing to the dataset. Additionally, please ensure that you provide proper attribution and consult the copyright and licensing information. [copyright](#Copyright-&-Licensing)*_
-## Preliminary Results
-### School Sector
-![school_sector_breakdown.png](images/school_sector_breakdown.png)
-![school_sector_by_party.png](images/school_sector_by_party.png)
-![high_school_47.png](images/high_school_47.png)
-![high_school_46.png](images/high_school_46.png)
-### Demographics
-![gender_vs_party.png](images/gender_vs_party.png)
-![age_vs_chamber.png](images/age_vs_chamber.png)
-![mean_age_by_party.png](images/mean_age_by_party.png)
-### Financial Data
-![total_gross_income_per_student.png](images%2Ftotal_gross_income_per_student.png)
-![other_private_sources_per_student.png](images%2Fother_private_sources_per_student.png)
-## Missing Ministers
-We are missing the exact school for the following ministers and senators.
+APEMAP provides a deterministic, reproducible pipeline to map the secondary education of federal parliamentarians:
 
-### Missing Senators
-- Alex Antic - Public
-- Arthur Sinodinos - Public
-- Jana Stewart - ?
-- Jess Walsh - Non-government
-- Karen Grogan - ?
-- Peter Whish-Wilson - Both
-- Marielle Smith - Both
+- **Parliamentarian Ingestion**: Ingests member biographies and service records from the official Australian Parliament House (APH) Parliamentary Handbook API across the 46th, 47th, and 48th Parliaments.
+- **ACARA School Registers**: Ingests authoritative Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and Longitudinal School Profile datasets.
+- **Deterministic School Matching**: Resolves noisy biographical school names against ACARA school registers using normalized keys, curated alias overrides, and RapidFuzz token matching.
+- **Canonical DuckDB Storage**: Consolidates members, service periods, institutions, education assertions, and historical 2021 financial profiles into an audited relational schema.
+- **Integrity Validation**: Enforces relational integrity, non-null constraints, and opening-day seat benchmarks via automated validation gates.
+- **Deterministic Analytics & Exports**: Generates sector distributions, demographic benchmarks, MySchool funding comparisons, Parquet tables, and spatial GeoJSON layers.
 
-### Missing MPs
-- Graham Perrett - Public
-- Peter Khalil - Non-government
-- Milton Dick - Non-government
-- Rob Mitchell - Public
-- Llew O'Brien -  Did not graduate but left school in year 9
-- Michelle Ananda-Rajah - ?
-- Sam Birrell - ?
-- Susan Templeman - Public
-- Stephen Bates -  International probably
-- Tracey Roberts - ?
-- Vince Connelly - Non-government
-- Julian Simmonds - Non-government
-- Nicolle Flint - Non-government
+---
 
-## Data sources
-### Caveats
-Wikipedia has the best linkage between a member and school attended, it is not as rich as APH.
-The school names in APH are looked up against acara_school_locations_2022 to see if we can find a match.
-Locations are derived from Wikipedia and Google maps.
-Some universities have multiple locations and campuses which may have lead to incorrect locations I use headquarter locations in this case https://www.wikidata.org/wiki/Property:P159
-As above some may be online in which case I will just pick a headquarters of campus
+## Project Status
 
-### Schools search
-- Wikipedia
-- This one is invaluable - https://handbook.aph.gov.au/Parliamentarian
-- Manual search where no school found (Wikipedia text search, LinkedIn, Facebook, Google, APH, blog posts and articles etc) I should've kept track of this to start with
-- School information https://www.acara.edu.au/contact-us/acara-data-access
-- SMH article
+- **Maintained CLI & Package**: Fully supported modern Python package managed with `uv` and Hatchling, featuring the `apemap` Typer CLI.
+- **Canonical Pipeline**: Deterministic end-to-end pipeline backed by DuckDB and portable Parquet/GeoJSON exports.
+- **Analysis Notebooks**: Clean, reproducible Jupyter notebooks in `notebooks/` querying DuckDB read-only.
+- **Legacy Components**: The prototype Dash web application (`app/`) and earlier SQLite/PostGIS workflows are preserved as historical research artifacts; static visualization results are published on [cpoole.dev](https://cpoole.dev).
 
+---
 
-## Datasets
+## Pipeline Overview
 
-### External Datasets
+```text
+APH API / Cache ────────┐
+                        ├──> Canonical DuckDB ──> Validate ──> Analyze ──> Export
+ACARA Registers ────────┘    (data/aped.duckdb)                         (Parquet / GeoJSON / JSON)
+```
 
-- acara_education_finances - Financial data from ACARA only (2021)
-- acara_finance_missing - Schools where no financial data exists
-- acara_school_locations_2022 - School locations from ACARA
-- acara_school_profile_2022 - School profiles from ACARA
-- aec_parties - Party lookup from AEC
-- aec_elb_2021 - AEC 2021 Electoral Boundaries
-- aph_parliamentarians - All Parliamentarians downloaded from APH
-- education - Education data compiled from multiple sources (Originally Wikipedia+APH)
-- education_acara - Matched datasets to ACARA data
-- members_wiki - Members from Wikipedia
-- members_aph - Members from APH
-- members_occupations - Members occupations from APH
-- members_secondary_occupations - Ministers secondary occupations
-- members_secondary_school - Members secondary school from APH (split by "/,")
-- smh_careers - Career data from SMH
-- smh_ministry - Ministry data from SMH
+---
 
-### Compiled Datasets
--  members - All members compiled from multiple sources
--  education - All education compiled from multiple sources
--  member_education - Linking table between members and education
+## Quick Start
 
-### Views
-- member_aph
-- member_aph_47
-- member_aph_46
-- member_secondary_school_education_47
-- member_secondary_school_education_46
+### Installation
 
-## Installation
+APEMAP requires Python `>= 3.10` and [uv](https://docs.astral.sh/uv/):
 
-### Python + uv
 ```bash
+git clone https://github.com/Mappboy/apemap.git
+cd apemap
 uv sync
-uv sync --extra analysis
 ```
 
-The reusable statistical logic lives in `apemap.analysis`. Notebook analysis
-opens the canonical DuckDB database read-only and exports deterministic chart
-data to `data/processed/analysis/`. The previous notebook suite is preserved
-under `archive/notebooks/2026-09-22/` as historical research material.
-### Viewing Data
+Inspect available commands with the Typer CLI:
 
-Using [QGIS](https://qgis.org/en/site/forusers/download.html) open the [data/analysis.qgz](data/analysis.qgz) file.
-
-Using [Datasette](https://datasette.io/) run the following command from the root directory
 ```bash
-datasette install
-datasette data/aped.db --load-extension spatialite
+uv run apemap --help
 ```
 
-### Copyright & Licensing
+### Running the Pipeline
 
-This project is dual-licensed under open-source terms:
-- **Code & Tooling**: [MIT License](LICENSE)
+Execute individual pipeline stages:
+
+```bash
+uv run apemap ingest aph        # Ingest parliamentarians & match schools
+uv run apemap ingest acara      # Ingest ACARA school data & isolate 2021 finances
+uv run apemap transform         # Initialize canonical schema, views, and macros
+uv run apemap validate          # Run database integrity and coverage checks
+uv run apemap analyze           # Compute demographic, sector, and funding stats
+uv run apemap export            # Export Parquet tables and GeoJSON layers
+```
+
+Or run the entire coordinated pipeline in a single step:
+
+```bash
+uv run apemap run-all
+```
+
+For detailed instructions on using local cached data versus live network refreshes, see the [Quickstart Guide](docs/quickstart.md).
+
+---
+
+## Documentation
+
+Comprehensive guides, specifications, and methodologies are available in the [`docs/`](docs/README.md) directory:
+
+| Guide | Description |
+| :--- | :--- |
+| [**Quickstart Guide**](docs/quickstart.md) | Clone-to-useful-result walkthrough and troubleshooting. |
+| [**CLI Reference**](docs/cli.md) | Full command documentation, arguments, and options. |
+| [**Python Package**](docs/package.md) | Programmatic Python API and subsystem architecture. |
+| [**Research Methodology**](docs/methodology.md) | Matching algorithm, cohort definitions, and research caveats. |
+| [**Data Model**](docs/data-model.md) | Canonical DuckDB relational schema, views, and ER diagram. |
+| [**Data Sources & Provenance**](docs/data-sources.md) | Source inventory, licenses, citations, and attributions. |
+| [**Analytical Outputs**](docs/analysis.md) | Analytical metrics, report schemas, and notebook workflows. |
+| [**Reproducibility Guide**](docs/reproducibility.md) | Deterministic reproduction protocol and validation gates. |
+| [**Development Guide**](docs/development.md) | Contributing guidelines, quality gates, and testing procedures. |
+
+*Pre-modernisation documentation and exploratory notes are archived in [`archive/legacy-docs/2026-09-23/`](archive/legacy-docs/2026-09-23/README.md).*
+
+---
+
+## Data Quality & Research Caveats
+
+> [!WARNING]
+> This dataset was collated for research and civic analytics. Secondary schooling data is based on self-reported parliamentary biographies and automated matching against ACARA registers. For high-stakes or formal research applications, independent quality assurance of specific records is strongly recommended. 
+> 
+> Furthermore, historical 2021 school financial data reflects MySchool metrics for 2021 and does not represent school funding levels contemporaneous with when parliamentarians attended school decades ago. See [Research Methodology](docs/methodology.md) for detailed limitations.
+
+---
+
+## Licensing & Attribution
+
+APEMAP is dual-licensed under open terms:
+- **Code & Pipeline Tooling**: [MIT License](LICENSE)
 - **Compiled Datasets & Derived Data**: [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE)
 
-#### Third-Party Data Sources & Attributions
-- **AEC**: © Commonwealth of Australia (Australian Electoral Commission) 2023
-- **ACARA**: © Australian Curriculum, Assessment and Reporting Authority (ACARA) 2023
-- **ABS**: © Commonwealth of Australia (Australian Bureau of Statistics) 2023
-- **APH**: Parliament of Australia Parliamentary Handbook
-- **SMH**: Sydney Morning Herald investigative baseline (Carter, Yim et al.)
+### Third-Party Data Attributions
+- **Parliament of Australia (APH)**: Parliamentary Handbook data, © Commonwealth of Australia.
+- **ACARA**: School Location and Profile data, © Australian Curriculum, Assessment and Reporting Authority.
+- **AEC**: Division boundaries and party registrations, © Commonwealth of Australia.
+- **ABS**: ASGS geographic structures, © Commonwealth of Australia.
+- **SMH Baseline**: Initial investigative baseline based on reporting by Daniel Carter, Noah Yim, Fleta Page, Rob Harris, Mark Stehle, and Matthew Absalom-Wong (Sydney Morning Herald, 2021).
 
-### Online Layers
-- https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis
-- Mapbox
-- Openstreetmap
-- Map tiler
-- Linked Data ? https://asgs.linked.fsdf.org.au/dataset/asgsed3/collections
-
-## Built with
-- Pandas + Geopandas
-- QGIS
-- PostgreSQL + PostGIS
-- Wikidata
-- Jupyter
-- Plotly + Dash
-- Mapbox
-
-## TODO
-- Convert to issues
-- Convert QGIS to using aped.gpkg
-- Add high_school_international to members table
-- Add issue templates for suggesting member data
-- Add at a glance
-- Add related news
-- Fix Age or make generated column
-- Finish Plotly map see [app](/app) (Note: legacy Dash prototype is deprecated; superseded by static results on cpoole.dev)
-- Switch to Indigenous names for Capital cities (Because 2023)
-- Add theyvote for you link https://theyvoteforyou.org.au/people/representatives/grayndler/anthony_albanese
-- Add openpolitics https://openpolitics.au/member/penny-allman-payne
-- https://github.com/openaustralia/openaustralia-parser
-
-## Fun Facts
-- I can never remember how SPARQL entities work exactly so I just got ChatGPT to write them for me
-
-## PostGIS to Geopackage
-
-`ogr2ogr -f GPKG aped.gpkg PG:"service=ape" -oo LIST_ALL_TABLES=YES  -mapFieldType "StringList=String,IntegerList=String" -oo SCHEMAS="public"`
-
-## Existing Data and Articles
-- [Schools should be publicly funded](https://www.theage.com.au/politics/victoria/schools-should-be-publicly-funded-free-and-open-to-all-researchers-20230418-p5d1a6.html)
-- [Latest School Statistics](https://www.abs.gov.au/statistics/people/education/schools/latest-release)
-- [Do politicians know what it's like to do your job?](https://www.abc.net.au/news/2018-03-09/politicians-professions-do-mps-know-how-to-do-your-job/9360836)
-- [Politician Degrees](https://www.torrens.edu.au/blog/what-degrees-ministers-australia-have-and-why-it-matters)
-- [Women in parliament](https://data.ipu.org/node/9/data-on-women?chamber_id=13325)
-- [Demographics of 46th Parliament](https://percapita.org.au/wp-content/uploads/2022/05/The-Way-In-46th-Parliament-May-2022-UPDATED.pdf)
-- [ABS Education Stats](https://www.abs.gov.au/statistics/people/education/schools/latest-release)
-
-
-## Credits
-### Sydney Morning Herald - Article
-*Developers*: Daniel Carter, Noah YimEditors Fleta Page, Rob Harris
-*Design/Production*: Mark Stehle, Matthew Absalom-Wong
+For full details, see [Data Sources & Attribution](docs/data-sources.md).
