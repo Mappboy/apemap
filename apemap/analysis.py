@@ -1,7 +1,9 @@
-"""Deterministic statistical calculations and demographic aggregations.
+"""Deterministic statistical calculations and analytical exports.
 
-Provides reproducible demographic and education summaries evaluated against
-fixed parliament opening dates rather than dynamic runtime clocks.
+The functions in this module are the source of truth for the Jupyter and
+Marimo analysis workflows. They use fixed parliament snapshot dates, explicit
+denominators, and NULL-aware finance summaries so derived charts can be
+reproduced without mutating the canonical database.
 """
 
 from __future__ import annotations
@@ -18,18 +20,20 @@ from apemap.constants import PARLIAMENT_METADATA, PROCESSED_DIR
 
 logger = logging.getLogger(__name__)
 
+ANALYSIS_SCHEMA_VERSION = "1.0"
+
 
 def parse_date_safe(val: date | str | None) -> date | None:
-    """Parse a date from a string (YYYY-MM-DD) or return existing date object."""
+    """Parse a date from a string (YYYY-MM-DD) or return an existing date."""
     if val is None:
         return None
     if isinstance(val, date):
         return val
-    s = str(val).strip()
-    if not s:
+    value = str(val).strip()
+    if not value:
         return None
     try:
-        return datetime.strptime(s[:10], "%Y-%m-%d").date()
+        return datetime.strptime(value[:10], "%Y-%m-%d").date()
     except ValueError:
         return None
 
@@ -37,24 +41,20 @@ def parse_date_safe(val: date | str | None) -> date | None:
 def compute_age_at_date(
     birth_date: date | str | None, reference_date: date | str
 ) -> int | None:
-    """Compute exact age in years at a fixed reference date deterministically.
-
-    Args:
-        birth_date: Date of birth (string YYYY-MM-DD or date object).
-        reference_date: Benchmark date (e.g. parliament opening day).
-
-    Returns:
-        Age in completed years, or None if birth_date cannot be parsed.
-    """
-    b = parse_date_safe(birth_date)
-    r = parse_date_safe(reference_date)
-    if b is None or r is None:
+    """Compute completed years of age at a fixed reference date."""
+    birth = parse_date_safe(birth_date)
+    reference = parse_date_safe(reference_date)
+    if birth is None or reference is None:
         return None
-    return r.year - b.year - ((r.month, r.day) < (b.month, b.day))
+    return (
+        reference.year
+        - birth.year
+        - ((reference.month, reference.day) < (birth.month, birth.day))
+    )
 
 
 def get_age_bracket(age: int | None) -> str:
-    """Assign age to standard demographic bracket."""
+    """Assign an age to the stable demographic brackets used in exports."""
     if age is None:
         return "Unknown"
     if age < 30:
@@ -73,26 +73,15 @@ def get_age_bracket(age: int | None) -> str:
 def compute_parliament_demographics(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute opening-day demographic breakdowns at a fixed benchmark date.
-
-    Args:
-        conn: DuckDB database connection.
-        parliament: Parliament number (e.g. 46, 47, 48).
-
-    Returns:
-        Dictionary of deterministic metrics for one person per opening-day member.
-
-    Raises:
-        ValueError: If ``parliament`` is not present in ``PARLIAMENT_METADATA``.
-    """
+    """Compute opening-day demographics against a fixed parliament date."""
     meta = PARLIAMENT_METADATA.get(parliament)
     if meta is None:
         supported = ", ".join(str(number) for number in sorted(PARLIAMENT_METADATA))
         raise ValueError(
-            f"Unsupported parliament number {parliament}; "
-            f"supported values are: {supported}."
+            f"Unsupported parliament number {parliament}; supported values are: "
+            f"{supported}."
         )
-    ref_date_str = meta["opening_date"]
+    reference_date = meta["opening_date"]
 
     query = """
     WITH opening_day_services AS (
@@ -120,17 +109,15 @@ def compute_parliament_demographics(
     WHERE s.service_rank = 1
     ORDER BY m.member_id
     """
-    rows = conn.execute(query, [ref_date_str, parliament]).fetchall()
+    rows = conn.execute(query, [reference_date, parliament]).fetchall()
 
-    total_mps = len(rows)
-    opening_day_count = total_mps
-    opening_day_current_count = sum(1 for r in rows if r[7] is True)
-
+    total_parliamentarians = len(rows)
+    current_count = sum(1 for row in rows if row[7] is True)
     genders: dict[str, int] = {}
     chambers: dict[str, int] = {}
     parties: dict[str, int] = {}
     ages: list[int] = []
-    age_brackets: dict[str, int] = {
+    age_brackets = {
         "Under 30": 0,
         "30-39": 0,
         "40-49": 0,
@@ -140,46 +127,36 @@ def compute_parliament_demographics(
         "Unknown": 0,
     }
 
-    for r in rows:
-        gen = r[1] or "Unknown"
-        genders[gen] = genders.get(gen, 0) + 1
+    for row in rows:
+        gender = row[1] or "Unknown"
+        genders[gender] = genders.get(gender, 0) + 1
+        chamber = row[3] or "Unknown"
+        chambers[chamber] = chambers.get(chamber, 0) + 1
+        party = row[5] or row[4] or "Unknown"
+        parties[party] = parties.get(party, 0) + 1
 
-        cham = r[3] or "Unknown"
-        chambers[cham] = chambers.get(cham, 0) + 1
-
-        pabbrev = r[5] or r[4] or "Unknown"
-        parties[pabbrev] = parties.get(pabbrev, 0) + 1
-
-        dob = r[2]
-        age = compute_age_at_date(dob, ref_date_str)
-        if age is not None:
-            ages.append(age)
-            bracket = get_age_bracket(age)
-            age_brackets[bracket] += 1
-        else:
+        age = compute_age_at_date(row[2], reference_date)
+        if age is None:
             age_brackets["Unknown"] += 1
+        else:
+            ages.append(age)
+            age_brackets[get_age_bracket(age)] += 1
 
     ages.sort()
-    avg_age = round(sum(ages) / len(ages), 1) if ages else None
-    median_age = (
-        ages[len(ages) // 2]
-        if len(ages) % 2 == 1
-        else round((ages[len(ages) // 2 - 1] + ages[len(ages) // 2]) / 2, 1)
-        if ages
-        else None
-    )
-
+    age_missing = total_parliamentarians - len(ages)
     return {
         "parliament_number": parliament,
-        "reference_opening_date": ref_date_str,
-        "total_parliamentarians": total_mps,
-        "opening_day_parliamentarians": opening_day_count,
-        "opening_day_current_parliamentarians": opening_day_current_count,
-        "average_age_at_opening": avg_age,
-        "median_age_at_opening": median_age,
+        "reference_opening_date": reference_date,
+        "total_parliamentarians": total_parliamentarians,
+        "opening_day_parliamentarians": total_parliamentarians,
+        "opening_day_current_parliamentarians": current_count,
+        "average_age_at_opening": round(sum(ages) / len(ages), 1) if ages else None,
+        "median_age_at_opening": _median(ages),
         "min_age": ages[0] if ages else None,
         "max_age": ages[-1] if ages else None,
         "known_age_sample_size": len(ages),
+        "missing_age_count": age_missing,
+        "age_percentage_denominator": total_parliamentarians,
         "age_brackets": age_brackets,
         "genders": genders,
         "chambers": chambers,
@@ -190,59 +167,43 @@ def compute_parliament_demographics(
 def compute_sector_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute secondary school sector breakdown distinguishing persons from instances.
-
-    Corrects attendance vs person counting by classifying multi-school attendees into
-    a distinct 'Combined/Multiple' category so unique parliamentarian percentages sum to 100%.
-
-    Args:
-        conn: DuckDB database connection.
-        parliament: Parliament number.
-
-    Returns:
-        Dictionary of sector distributions with counts, instances, and percentages.
-    """
-    # 1. Total distinct MPs in this parliament
-    mp_query = """
-    SELECT DISTINCT member_id FROM parliament_service WHERE parliament_number = ?
-    """
-    all_mps = {row[0] for row in conn.execute(mp_query, [parliament]).fetchall()}
-    total_mps = len(all_mps)
-
-    # 2. Get all secondary school attendance records for these MPs
-    edu_query = """
-    SELECT
-        e.member_id,
-        i.sector,
-        e.confidence
-    FROM member_education e
-    JOIN institutions i ON e.institution_id = i.institution_id
-    JOIN parliament_service s ON e.member_id = s.member_id
-    WHERE s.parliament_number = ? AND e.level = 'secondary'
-    """
-    edu_rows = conn.execute(edu_query, [parliament]).fetchall()
-
-    # MP -> set of sectors attended
-    mp_sectors: dict[str, set[str]] = {}
-    attendance_instances_by_sector: dict[str, int] = {
-        "Government": 0,
-        "Catholic": 0,
-        "Independent": 0,
-        "Other": 0,
+    """Return mutually-exclusive person counts and separate attendance counts."""
+    all_mps = {
+        row[0]
+        for row in conn.execute(
+            """
+            SELECT DISTINCT member_id
+            FROM parliament_service
+            WHERE parliament_number = ?
+            """,
+            [parliament],
+        ).fetchall()
     }
+    edu_rows = conn.execute(
+        """
+        SELECT e.member_id, i.sector
+        FROM member_education e
+        JOIN institutions i ON e.institution_id = i.institution_id
+        JOIN (
+            SELECT DISTINCT member_id
+            FROM parliament_service
+            WHERE parliament_number = ?
+        ) s ON e.member_id = s.member_id
+        WHERE e.level = 'secondary'
+        ORDER BY e.member_id, e.education_id
+        """,
+        [parliament],
+    ).fetchall()
 
-    for mid, sec, _conf in edu_rows:
-        sector_name = (
-            sec if sec in ("Government", "Catholic", "Independent") else "Other"
-        )
-        attendance_instances_by_sector[sector_name] = (
-            attendance_instances_by_sector.get(sector_name, 0) + 1
-        )
-        if mid not in mp_sectors:
-            mp_sectors[mid] = set()
-        mp_sectors[mid].add(sector_name)
+    known_sectors = ("Government", "Catholic", "Independent", "Other")
+    mp_sectors: dict[str, set[str]] = {}
+    attendance_instances = {sector: 0 for sector in known_sectors}
+    for member_id, sector in edu_rows:
+        sector_name = sector if sector in known_sectors[:3] else "Other"
+        mp_sectors.setdefault(member_id, set()).add(sector_name)
+        attendance_instances[sector_name] += 1
 
-    unique_mps_by_sector: dict[str, int] = {
+    unique_counts = {
         "Government": 0,
         "Catholic": 0,
         "Independent": 0,
@@ -250,123 +211,176 @@ def compute_sector_summary(
         "Other": 0,
         "No School Recorded": 0,
     }
-
-    for mid in all_mps:
-        secs = mp_sectors.get(mid)
-        if not secs:
-            unique_mps_by_sector["No School Recorded"] += 1
-        elif len(secs) > 1:
-            unique_mps_by_sector["Combined/Multiple"] += 1
+    for member_id in all_mps:
+        sectors = mp_sectors.get(member_id, set())
+        if not sectors:
+            unique_counts["No School Recorded"] += 1
+        elif len(sectors) > 1:
+            unique_counts["Combined/Multiple"] += 1
         else:
-            single_sec = next(iter(secs))
-            unique_mps_by_sector[single_sec] += 1
+            unique_counts[next(iter(sectors))] += 1
 
-    mps_with_known_schools = total_mps - unique_mps_by_sector["No School Recorded"]
-
-    percentages_of_known: dict[str, float] = {}
-    if mps_with_known_schools > 0:
-        for cat in (
+    known_count = len(all_mps) - unique_counts["No School Recorded"]
+    unique_percentages = {
+        sector: unique_counts[sector] / known_count * 100 if known_count else 0.0
+        for sector in (
             "Government",
             "Catholic",
             "Independent",
             "Combined/Multiple",
             "Other",
-        ):
-            count = unique_mps_by_sector[cat]
-            percentages_of_known[cat] = round((count / mps_with_known_schools) * 100, 1)
+        )
+    }
+    attendance_count = sum(attendance_instances.values())
+    attendance_percentages = {
+        sector: count / attendance_count * 100 if attendance_count else 0.0
+        for sector, count in attendance_instances.items()
+    }
 
     return {
         "parliament_number": parliament,
-        "total_parliamentarians": total_mps,
-        "parliamentarians_with_known_schools": mps_with_known_schools,
-        "unique_parliamentarians_by_sector": unique_mps_by_sector,
-        "percentage_of_known_parliamentarians": percentages_of_known,
-        "total_attendance_instances": sum(attendance_instances_by_sector.values()),
-        "attendance_instances_by_sector": attendance_instances_by_sector,
+        "total_parliamentarians": len(all_mps),
+        "parliamentarians_with_known_schools": known_count,
+        "parliamentarians_without_known_schools": unique_counts["No School Recorded"],
+        "known_school_percentage_denominator": known_count,
+        "unique_parliamentarians_by_sector": unique_counts,
+        "percentage_of_known_parliamentarians": unique_percentages,
+        "total_attendance_instances": attendance_count,
+        "attendance_instance_percentage_denominator": attendance_count,
+        "attendance_instances_by_sector": attendance_instances,
+        "percentage_of_attendance_instances": attendance_percentages,
     }
 
 
 def compute_funding_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute financial statistics over valid reporting schools reporting sample sizes (N).
-
-    Excludes NULL/missing values rather than imputing zero.
-
-    Args:
-        conn: DuckDB database connection.
-        parliament: Parliament number.
-
-    Returns:
-        Dictionary of financial metrics with explicit sample size N and averages by sector.
-    """
-    query = """
-    WITH parliament_schools AS (
-        SELECT DISTINCT e.institution_id
-        FROM member_education e
-        JOIN parliament_service s ON e.member_id = s.member_id
-        WHERE s.parliament_number = ? AND e.level = 'secondary'
-    )
-    SELECT
-        ps.institution_id,
-        i.sector,
-        f.total_gross_income_per_student,
-        f.total_net_recurrent_income_per_student
-    FROM school_finances_2021 f
-    JOIN parliament_schools ps ON f.institution_id = ps.institution_id
-    JOIN institutions i ON ps.institution_id = i.institution_id
-    ORDER BY ps.institution_id
-    """
-    rows = conn.execute(query, [parliament]).fetchall()
+    """Summarise 2021 finance with NULL values excluded and counted as missing."""
+    rows = conn.execute(
+        """
+        WITH parliament_schools AS (
+            SELECT DISTINCT e.institution_id
+            FROM member_education e
+            JOIN (
+                SELECT DISTINCT member_id
+                FROM parliament_service
+                WHERE parliament_number = ?
+            ) s ON e.member_id = s.member_id
+            WHERE e.level = 'secondary'
+        )
+        SELECT
+            ps.institution_id,
+            i.sector,
+            f.total_gross_income_per_student,
+            f.total_net_recurrent_income_per_student
+        FROM parliament_schools ps
+        JOIN institutions i ON ps.institution_id = i.institution_id
+        LEFT JOIN school_finances_2021 f ON ps.institution_id = f.institution_id
+        ORDER BY ps.institution_id
+        """,
+        [parliament],
+    ).fetchall()
 
     sector_gross: dict[str, list[int]] = {}
     sector_net: dict[str, list[int]] = {}
+    sector_scope: dict[str, int] = {}
     schools_with_finance_data: set[str] = set()
-
-    for institution_id, sec, gross, net in rows:
-        sec_name = sec if sec in ("Government", "Catholic", "Independent") else "Other"
+    for institution_id, sector, gross, net in rows:
+        sector_name = (
+            sector if sector in ("Government", "Catholic", "Independent") else "Other"
+        )
+        sector_scope[sector_name] = sector_scope.get(sector_name, 0) + 1
         if gross is not None or net is not None:
             schools_with_finance_data.add(institution_id)
         if gross is not None:
-            sector_gross.setdefault(sec_name, []).append(gross)
+            sector_gross.setdefault(sector_name, []).append(gross)
         if net is not None:
-            sector_net.setdefault(sec_name, []).append(net)
+            sector_net.setdefault(sector_name, []).append(net)
 
     metrics_by_sector: dict[str, dict[str, Any]] = {}
-    for sec_name in ("Government", "Catholic", "Independent", "Other"):
-        g_vals = sector_gross.get(sec_name, [])
-        n_vals = sector_net.get(sec_name, [])
-
-        metrics_by_sector[sec_name] = {
-            "gross_income_per_student_avg": round(sum(g_vals) / len(g_vals), 0)
-            if g_vals
-            else None,
-            "gross_income_sample_size": len(g_vals),
-            "net_recurrent_income_per_student_avg": round(sum(n_vals) / len(n_vals), 0)
-            if n_vals
-            else None,
-            "net_recurrent_income_sample_size": len(n_vals),
+    for sector in ("Government", "Catholic", "Independent", "Other"):
+        gross = sector_gross.get(sector, [])
+        net = sector_net.get(sector, [])
+        scope_n = sector_scope.get(sector, 0)
+        gross_summary = _metric_summary(gross, scope_n - len(gross))
+        net_summary = _metric_summary(net, scope_n - len(net))
+        metrics_by_sector[sector] = {
+            "gross_income_per_student_avg": gross_summary["mean"],
+            "gross_income_per_student_median": gross_summary["median"],
+            "gross_income_sample_size": gross_summary["n"],
+            "gross_income_missing_count": gross_summary["missing"],
+            "gross_income": gross_summary,
+            "net_recurrent_income_per_student_avg": net_summary["mean"],
+            "net_recurrent_income_per_student_median": net_summary["median"],
+            "net_recurrent_income_sample_size": net_summary["n"],
+            "net_recurrent_income_missing_count": net_summary["missing"],
+            "net_recurrent_income": net_summary,
+            "schools_in_scope": scope_n,
         }
 
-    total_gross_vals = [g for vals in sector_gross.values() for g in vals]
-    total_net_vals = [n for vals in sector_net.values() for n in vals]
-
+    total_gross = [value for values in sector_gross.values() for value in values]
+    total_net = [value for values in sector_net.values() for value in values]
+    total_scope = sum(sector_scope.values())
+    overall_gross = _metric_summary(total_gross, total_scope - len(total_gross))
+    overall_net = _metric_summary(total_net, total_scope - len(total_net))
     return {
         "parliament_number": parliament,
         "reporting_year": 2021,
+        "total_schools_in_scope": total_scope,
         "total_schools_with_finance_data": len(schools_with_finance_data),
-        "overall_gross_income_sample_size": len(total_gross_vals),
-        "overall_net_recurrent_income_sample_size": len(total_net_vals),
-        "overall_gross_income_avg": round(
-            sum(total_gross_vals) / len(total_gross_vals), 0
-        )
-        if total_gross_vals
-        else None,
-        "overall_net_recurrent_avg": round(sum(total_net_vals) / len(total_net_vals), 0)
-        if total_net_vals
-        else None,
+        "overall_gross_income_sample_size": overall_gross["n"],
+        "overall_gross_income_missing_count": overall_gross["missing"],
+        "overall_gross_income_avg": overall_gross["mean"],
+        "overall_gross_income_median": overall_gross["median"],
+        "overall_gross_income": overall_gross,
+        "overall_net_recurrent_income_sample_size": overall_net["n"],
+        "overall_net_recurrent_income_missing_count": overall_net["missing"],
+        "overall_net_recurrent_avg": overall_net["mean"],
+        "overall_net_recurrent_income_median": overall_net["median"],
+        "overall_net_recurrent_income": overall_net,
         "by_sector": metrics_by_sector,
     }
+
+
+def _median(values: list[int]) -> float | int | None:
+    """Return a deterministic median for a non-null numeric sample."""
+    if not values:
+        return None
+    ordered = sorted(values)
+    middle = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[middle]
+    return round((ordered[middle - 1] + ordered[middle]) / 2, 1)
+
+
+def _metric_summary(values: list[int], missing: int) -> dict[str, Any]:
+    """Build a NULL-aware summary with explicit valid and missing counts."""
+    return {
+        "mean": round(sum(values) / len(values), 0) if values else None,
+        "median": _median(values),
+        "n": len(values),
+        "missing": missing,
+    }
+
+
+def _analysis_metadata(parliaments: list[int]) -> dict[str, Any]:
+    """Return stable metadata shared by all static analysis exports."""
+    return {
+        "schema_version": ANALYSIS_SCHEMA_VERSION,
+        "parliament_numbers": parliaments,
+        "reference_opening_dates": {
+            str(parliament): PARLIAMENT_METADATA[parliament]["opening_date"]
+            for parliament in parliaments
+        },
+        "finance_reporting_year": 2021,
+    }
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    """Write stable, newline-terminated JSON for reviewable Git diffs."""
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def export_analysis_report(
@@ -374,32 +388,83 @@ def export_analysis_report(
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
 ) -> Path:
-    """Compute and export comprehensive statistical report to JSON.
-
-    Args:
-        conn: DuckDB database connection.
-        output_dir: Destination directory.
-        parliaments: List of parliaments to analyze (default: [46, 47, 48]).
-
-    Returns:
-        Path to generated analysis_metrics.json file.
-    """
+    """Export compatibility and static-chart analysis JSON files."""
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = parliaments or [46, 47, 48]
-
-    report: dict[str, Any] = {
-        "parliaments": {},
-    }
-
-    for p in target_parls:
-        report["parliaments"][str(p)] = {
-            "demographics": compute_parliament_demographics(conn, p),
-            "sectors": compute_sector_summary(conn, p),
-            "funding_2021": compute_funding_summary(conn, p),
+    target_parliaments = list(parliaments or [46, 47, 48])
+    metadata = _analysis_metadata(target_parliaments)
+    report: dict[str, dict[str, Any]] = {}
+    for parliament in target_parliaments:
+        report[str(parliament)] = {
+            "demographics": compute_parliament_demographics(conn, parliament),
+            "sectors": compute_sector_summary(conn, parliament),
+            "funding_2021": compute_funding_summary(conn, parliament),
         }
 
-    json_path = out_dir / "analysis_metrics.json"
-    json_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    logger.info("Wrote deterministic analysis report to %s", json_path)
-    return json_path
+    _write_json(
+        out_dir / "analysis_metrics.json",
+        {"metadata": metadata, "parliaments": report},
+    )
+    analysis_dir = out_dir / "analysis"
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    _write_json(analysis_dir / "metadata.json", metadata)
+    _write_json(
+        analysis_dir / "demographics.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["demographics"] for key, value in report.items()
+            },
+        },
+    )
+    _write_json(
+        analysis_dir / "education_sectors.json",
+        {
+            "metadata": metadata,
+            "parliaments": {key: value["sectors"] for key, value in report.items()},
+        },
+    )
+    _write_json(
+        analysis_dir / "school_finance.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["funding_2021"] for key, value in report.items()
+            },
+        },
+    )
+    comparisons = {
+        key: {
+            "parliament_number": int(key),
+            "reference_opening_date": value["demographics"]["reference_opening_date"],
+            "total_parliamentarians": value["demographics"]["total_parliamentarians"],
+            "known_age_n": value["demographics"]["known_age_sample_size"],
+            "missing_age_n": value["demographics"]["missing_age_count"],
+            "known_school_n": value["sectors"]["parliamentarians_with_known_schools"],
+            "missing_school_n": value["sectors"][
+                "parliamentarians_without_known_schools"
+            ],
+            "finance": {
+                "reporting_year": value["funding_2021"]["reporting_year"],
+                "schools_in_scope": value["funding_2021"]["total_schools_in_scope"],
+                "gross_n": value["funding_2021"]["overall_gross_income"]["n"],
+                "gross_missing_n": value["funding_2021"]["overall_gross_income"][
+                    "missing"
+                ],
+                "net_n": value["funding_2021"]["overall_net_recurrent_income"]["n"],
+                "net_missing_n": value["funding_2021"]["overall_net_recurrent_income"][
+                    "missing"
+                ],
+            },
+        }
+        for key, value in report.items()
+    }
+    _write_json(
+        analysis_dir / "parliament_comparison.json",
+        {"metadata": metadata, "parliaments": comparisons},
+    )
+    logger.info(
+        "Wrote deterministic analysis report to %s",
+        out_dir / "analysis_metrics.json",
+    )
+    return out_dir / "analysis_metrics.json"
