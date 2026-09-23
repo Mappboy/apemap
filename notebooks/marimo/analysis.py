@@ -1,31 +1,31 @@
 """Optional interactive companion for the canonical APEMAP analysis API."""
-
 from __future__ import annotations
-
-import os
-import sys
-from pathlib import Path
 
 import marimo
 
-root = Path(os.environ.get("APEMAP_PROJECT_ROOT", Path.cwd())).resolve()
-while not (root / "pyproject.toml").exists() and root != root.parent:
-    root = root.parent
-sys.path.insert(0, str(root))
-
-from apemap.analysis import (  # noqa: E402
-    compute_funding_summary,
-    compute_parliament_demographics,
-    compute_sector_summary,
-)
-from apemap.db import get_connection  # noqa: E402
-
+__generated_with = "0.24.2"
 app = marimo.App()
 
 
+
 @app.cell
-def _():
-    parliament = 47
+def _(get_connection, os, root):
+
+    import os
+    import sys
+    from pathlib import Path
+    root = Path(os.environ.get("APEMAP_PROJECT_ROOT", Path.cwd())).resolve()
+    while not (root / "pyproject.toml").exists() and root != root.parent:
+        root = root.parent
+    sys.path.insert(0, str(root))
+
+    from apemap.analysis import (  # noqa: E402
+        compute_funding_summary,
+        compute_parliament_demographics,
+        compute_sector_summary,
+    )
+    from apemap.db import get_connection  # noqa: E402
+    parliament = 48
     db_path = Path(
         os.environ.get("APEMAP_DB_PATH", root / "data" / "aped.duckdb")
     ).resolve()
@@ -34,7 +34,13 @@ def _():
 
 
 @app.cell
-def _(conn, parliament):
+def _(
+    compute_funding_summary,
+    compute_parliament_demographics,
+    compute_sector_summary,
+    conn,
+    parliament,
+):
     demographics = compute_parliament_demographics(conn, parliament)
     sectors = compute_sector_summary(conn, parliament)
     finance = compute_funding_summary(conn, parliament)
@@ -52,11 +58,13 @@ def _(demographics, finance, sectors):
         "finance_gross_missing": finance["overall_gross_income"]["missing"],
     }
     summary
+    return
 
 
 @app.cell
 def _(conn):
     conn.close()
+    return
 
 
 if __name__ == "__main__":

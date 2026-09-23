@@ -87,6 +87,8 @@ dev = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "ipykernel" },
+    { name = "jupyterlab" },
     { name = "pytest" },
     { name = "ruff" },
     { name = "ty" },
@@ -122,6 +124,8 @@ provides-extras = ["dev", "analysis"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "ipykernel", specifier = ">=7.3.0" },
+    { name = "jupyterlab", specifier = ">=4.6.4" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "ruff", specifier = ">=0.3.0" },
     { name = "ty", specifier = ">=0.0.80" },
