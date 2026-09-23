@@ -173,3 +173,5 @@ data/raw/
 .vscode/
 .uv-cache/
 .ruff_cache/
+
+notebooks/*/__marimo__/
