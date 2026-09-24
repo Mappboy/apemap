@@ -132,6 +132,7 @@ uv run apemap ingest wikimedia [OPTIONS]
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
 | `--output-dir` | `PATH` | `data/processed` | Directory for exported CSV review files. |
 | `--cache-dir` | `PATH` | `data/raw/wikimedia` | Directory for raw Wikimedia disk cache. |
+| `--timeout` | `INT` | `45` | Timeout in seconds for Wikimedia HTTP requests. |
 
 ### Pipeline Behavior
 - **Network Access**: Only when `--refresh` is supplied or cached queries are not present on disk in `data/raw/wikimedia/`.

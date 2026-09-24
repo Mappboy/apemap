@@ -162,6 +162,8 @@ def test_normalize_gender() -> None:
     assert normalize_gender("female") == "female"
     assert normalize_gender("Woman") == "female"
     assert normalize_gender("Q6581097") == "male"
+    assert normalize_gender("http://www.wikidata.org/entity/Q6581072") == "female"
+    assert normalize_gender("http://www.wikidata.org/entity/Q6581097") == "male"
     assert normalize_gender(None) is None
 
 
@@ -172,16 +174,36 @@ def test_normalize_gender() -> None:
 
 def test_client_initialization_defaults(tmp_path: Path) -> None:
     client = WikimediaClient(cache_dir=tmp_path)
-    assert client.timeout == 15
+    assert client.timeout == 45
+    assert client.rate_delay == 0.5
     assert "APEMAP" in client.user_agent
     assert (tmp_path / "members").exists()
     assert (tmp_path / "institutions").exists()
 
 
+def test_lookup_member_by_aph_id_timeout_error(
+    tmp_path: Path, mock_session: MagicMock
+) -> None:
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
+    mock_session.get.side_effect = requests.exceptions.ReadTimeout(
+        "Read timed out (read timeout=45)"
+    )
+
+    res = client.lookup_member_by_aph_id("00AOU")
+    assert res is not None
+    assert res["status"] == "error"
+    assert res["wikidata_id"] is None
+    assert "Read timed out" in res["notes"]
+
+    # Verify no error file was cached to disk so subsequent runs can retry
+    cache_file = tmp_path / "members" / "00AOU.json"
+    assert not cache_file.exists()
+
+
 def test_lookup_member_by_aph_id_success(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
-    client = WikimediaClient(cache_dir=tmp_path, session=mock_session)
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
 
     mock_resp = MagicMock()
     mock_resp.url = "https://query.wikidata.org/sparql?query=..."
@@ -232,7 +254,7 @@ def test_lookup_member_by_aph_id_success(
 def test_lookup_member_by_aph_id_conflict(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
-    client = WikimediaClient(cache_dir=tmp_path, session=mock_session)
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
 
     mock_resp = MagicMock()
     mock_resp.url = "https://query.wikidata.org/sparql?query=..."
@@ -255,7 +277,7 @@ def test_lookup_member_by_aph_id_conflict(
 def test_lookup_member_by_name_fallback_disambiguation(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
-    client = WikimediaClient(cache_dir=tmp_path, session=mock_session)
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
 
     mock_resp = MagicMock()
     mock_resp.url = "https://query.wikidata.org/sparql?query=..."
@@ -300,7 +322,7 @@ def test_lookup_member_by_name_fallback_disambiguation(
 def test_lookup_institution_with_redirect_and_coords(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
-    client = WikimediaClient(cache_dir=tmp_path, session=mock_session)
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
 
     wiki_resp = MagicMock()
     wiki_resp.url = "https://en.wikipedia.org/w/api.php?..."
@@ -574,6 +596,7 @@ def test_cli_ingest_wikimedia_help() -> None:
     assert "--refresh" in res.output
     assert "--members" in res.output
     assert "--schools" in res.output
+    assert "--timeout" in res.output
 
 
 def test_cli_ingest_wikimedia_execution(

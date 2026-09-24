@@ -50,6 +50,7 @@ APH_DEFAULT_ORDERBY = "FamilyName,GivenName"
 WIKIDATA_SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
 WIKIPEDIA_API_ENDPOINT = "https://en.wikipedia.org/w/api.php"
 WIKIDATA_API_ENDPOINT = "https://www.wikidata.org/w/api.php"
+DEFAULT_WIKIMEDIA_TIMEOUT = 45
 
 WIKIDATA_APH_ID_PROPERTY = "P10020"
 WIKIDATA_DOB_PROPERTY = "P569"

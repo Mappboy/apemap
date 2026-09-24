@@ -19,6 +19,7 @@ from apemap.analysis import (
 )
 from apemap.constants import (
     DATA_DIR,
+    DEFAULT_WIKIMEDIA_TIMEOUT,
     PARLIAMENT_METADATA,
     PROCESSED_DIR,
     RAW_WIKIMEDIA_DIR,
@@ -328,6 +329,13 @@ def ingest_wikimedia(
             help="Directory for local raw disk cache (defaults to data/raw/wikimedia).",
         ),
     ] = None,
+    timeout: Annotated[
+        int,
+        typer.Option(
+            "--timeout",
+            help="Timeout in seconds for Wikimedia HTTP requests.",
+        ),
+    ] = DEFAULT_WIKIMEDIA_TIMEOUT,
 ) -> None:
     """Enrich canonical members and review unmatched schools using Wikipedia and Wikidata."""
     parl_list = parse_parliament_args(parliament)
@@ -354,6 +362,7 @@ def ingest_wikimedia(
         db_path=effective_db_path,
         output_dir=effective_out_dir,
         cache_dir=cache_dir or RAW_WIKIMEDIA_DIR,
+        timeout=timeout,
     )
 
     console.print()

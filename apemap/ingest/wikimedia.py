@@ -6,6 +6,7 @@ import csv
 import json
 import logging
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from apemap.constants import (
+    DEFAULT_WIKIMEDIA_TIMEOUT,
     PROCESSED_DIR,
     RAW_WIKIMEDIA_DIR,
     WIKIDATA_ADMIN_TERRITORY_PROPERTY,
@@ -80,13 +82,13 @@ def normalize_date(value: str | None) -> str | None:
 
 
 def normalize_gender(value: str | None) -> str | None:
-    """Normalize gender strings for deterministic cross-source comparisons."""
+    """Normalize gender strings or Wikidata entity URIs/QIDs for deterministic cross-source comparisons."""
     if not value:
         return None
     val = str(value).strip().lower()
-    if val in ("female", "woman", "q6581072"):
+    if val in ("female", "woman", "q6581072") or val.endswith("/q6581072"):
         return "female"
-    if val in ("male", "man", "q6581097"):
+    if val in ("male", "man", "q6581097") or val.endswith("/q6581097"):
         return "male"
     return val
 
@@ -103,7 +105,8 @@ class WikimediaClient:
     def __init__(
         self,
         cache_dir: Path | str | None = None,
-        timeout: int = 15,
+        timeout: int = DEFAULT_WIKIMEDIA_TIMEOUT,
+        rate_delay: float = 0.5,
         user_agent: str = USER_AGENT,
         session: requests.Session | None = None,
     ) -> None:
@@ -114,6 +117,7 @@ class WikimediaClient:
         self.institutions_cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.timeout = timeout
+        self.rate_delay = rate_delay
         self.user_agent = user_agent
 
         if session is not None:
@@ -128,13 +132,21 @@ class WikimediaClient:
             )
             retries = Retry(
                 total=3,
-                backoff_factor=0.5,
+                read=3,
+                connect=3,
+                backoff_factor=1.5,
                 status_forcelist=[429, 500, 502, 503, 504],
                 raise_on_status=False,
+                respect_retry_after_header=True,
             )
             adapter = HTTPAdapter(max_retries=retries)
             self.session.mount("https://", adapter)
             self.session.mount("http://", adapter)
+
+    def _polite_delay(self) -> None:
+        """Enforce polite rate limiting between consecutive network requests."""
+        if self.rate_delay > 0:
+            time.sleep(self.rate_delay)
 
     def lookup_member_by_aph_id(
         self, aph_id: str, refresh: bool = False
@@ -154,13 +166,10 @@ class WikimediaClient:
                 logger.warning("Failed to read member cache %s: %s", cache_file, exc)
 
         sparql_query = f"""
-        SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {{
+        SELECT ?item ?dob ?gender ?genderLabel ?article WHERE {{
           ?item wdt:{WIKIDATA_APH_ID_PROPERTY} "{clean_aph_id}" .
           OPTIONAL {{ ?item wdt:{WIKIDATA_DOB_PROPERTY} ?dob . }}
-          OPTIONAL {{
-            ?item wdt:{WIKIDATA_GENDER_PROPERTY} ?gender .
-            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = "en")
-          }}
+          OPTIONAL {{ ?item wdt:{WIKIDATA_GENDER_PROPERTY} ?gender . }}
           OPTIONAL {{
             ?article schema:about ?item ;
                      schema:isPartOf <https://en.wikipedia.org/> .
@@ -169,6 +178,7 @@ class WikimediaClient:
         """
 
         try:
+            self._polite_delay()
             resp = self.session.get(
                 WIKIDATA_SPARQL_ENDPOINT,
                 params={"query": sparql_query, "format": "json"},
@@ -180,7 +190,19 @@ class WikimediaClient:
             logger.error(
                 "Wikidata SPARQL request failed for APH ID %s: %s", clean_aph_id, exc
             )
-            return None
+            return {
+                "aph_id": clean_aph_id,
+                "wikidata_id": None,
+                "wikipedia_title": None,
+                "wikipedia_url": None,
+                "date_of_birth": None,
+                "gender": None,
+                "retrieved_at": datetime.now(timezone.utc).isoformat(),
+                "source_url": WIKIDATA_SPARQL_ENDPOINT,
+                "source_query": sparql_query.strip(),
+                "status": "error",
+                "notes": f"Request failed: {exc}",
+            }
 
         bindings = data.get("results", {}).get("bindings", [])
         retrieval_iso = datetime.now(timezone.utc).isoformat()
@@ -235,6 +257,8 @@ class WikimediaClient:
         for b in bindings:
             if not dob_val and "dob" in b:
                 dob_val = normalize_date(b["dob"].get("value"))
+            if not gender_val and "gender" in b:
+                gender_val = normalize_gender(b["gender"].get("value"))
             if not gender_val and "genderLabel" in b:
                 gender_val = normalize_gender(b["genderLabel"].get("value"))
             if not article_url and "article" in b:
@@ -283,14 +307,11 @@ class WikimediaClient:
 
         escaped_name = clean_name.replace('"', '\\"')
         sparql_query = f"""
-        SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {{
+        SELECT ?item ?dob ?gender ?genderLabel ?article WHERE {{
           ?item rdfs:label "{escaped_name}"@en .
           ?item wdt:P31 wd:Q5 .
           OPTIONAL {{ ?item wdt:{WIKIDATA_DOB_PROPERTY} ?dob . }}
-          OPTIONAL {{
-            ?item wdt:{WIKIDATA_GENDER_PROPERTY} ?gender .
-            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = "en")
-          }}
+          OPTIONAL {{ ?item wdt:{WIKIDATA_GENDER_PROPERTY} ?gender . }}
           OPTIONAL {{
             ?article schema:about ?item ;
                      schema:isPartOf <https://en.wikipedia.org/> .
@@ -299,6 +320,7 @@ class WikimediaClient:
         """
 
         try:
+            self._polite_delay()
             resp = self.session.get(
                 WIKIDATA_SPARQL_ENDPOINT,
                 params={"query": sparql_query, "format": "json"},
@@ -308,7 +330,19 @@ class WikimediaClient:
             data = resp.json()
         except Exception as exc:
             logger.error("Wikidata name search failed for %s: %s", clean_name, exc)
-            return None
+            return {
+                "display_name": clean_name,
+                "wikidata_id": None,
+                "wikipedia_title": None,
+                "wikipedia_url": None,
+                "date_of_birth": None,
+                "gender": None,
+                "retrieved_at": datetime.now(timezone.utc).isoformat(),
+                "source_url": WIKIDATA_SPARQL_ENDPOINT,
+                "source_query": sparql_query.strip(),
+                "status": "error",
+                "notes": f"Request failed: {exc}",
+            }
 
         bindings = data.get("results", {}).get("bindings", [])
         retrieval_iso = datetime.now(timezone.utc).isoformat()
@@ -336,10 +370,14 @@ class WikimediaClient:
             if not qid:
                 continue
             if qid not in candidate_items:
+                g_val = normalize_gender(
+                    b.get("gender", {}).get("value")
+                    or b.get("genderLabel", {}).get("value")
+                )
                 candidate_items[qid] = {
                     "qid": qid,
                     "dob": normalize_date(b.get("dob", {}).get("value")),
-                    "gender": normalize_gender(b.get("genderLabel", {}).get("value")),
+                    "gender": g_val,
                     "article": b.get("article", {}).get("value"),
                 }
 
@@ -435,6 +473,7 @@ class WikimediaClient:
         }
 
         try:
+            self._polite_delay()
             resp = self.session.get(
                 WIKIPEDIA_API_ENDPOINT,
                 params=wiki_params,
@@ -444,7 +483,22 @@ class WikimediaClient:
             data = resp.json()
         except Exception as exc:
             logger.error("Wikipedia query failed for '%s': %s", clean_name, exc)
-            return None
+            return {
+                "raw_school_text": clean_name,
+                "suggested_institution_name": None,
+                "wikidata_id": None,
+                "wikipedia_url": None,
+                "country": None,
+                "locality": None,
+                "latitude": None,
+                "longitude": None,
+                "institution_type": None,
+                "confidence": "unconfirmed",
+                "retrieved_at": retrieval_iso,
+                "source_url": WIKIPEDIA_API_ENDPOINT,
+                "status": "error",
+                "notes": f"Request failed: {exc}",
+            }
 
         pages = data.get("query", {}).get("pages", {})
         page = next(iter(pages.values())) if pages else {}
@@ -589,6 +643,8 @@ def run_wikimedia_enrichment(
     db_path: Path | str | None = None,
     output_dir: Path | str | None = None,
     cache_dir: Path | str | None = None,
+    timeout: int = DEFAULT_WIKIMEDIA_TIMEOUT,
+    rate_delay: float = 0.5,
     client: WikimediaClient | None = None,
 ) -> dict[str, Any]:
     """Execute Wikimedia enrichment pipeline for canonical members and unmatched schools."""
@@ -598,7 +654,9 @@ def run_wikimedia_enrichment(
     out_dir = Path(output_dir or PROCESSED_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    wm_client = client or WikimediaClient(cache_dir=cache_dir)
+    wm_client = client or WikimediaClient(
+        cache_dir=cache_dir, timeout=timeout, rate_delay=rate_delay
+    )
     conn = get_connection(db_path)
 
     member_reviews: list[dict[str, Any]] = []
@@ -642,8 +700,11 @@ def run_wikimedia_enrichment(
                 if aph_id:
                     result = wm_client.lookup_member_by_aph_id(aph_id, refresh=refresh)
 
-                # Fallback to name search only if APH ID was missing or not found on Wikidata
-                if (not result or result.get("status") == "not_found") and disp_name:
+                # Fallback to name search only if APH ID was missing or confirmed not found on Wikidata
+                # (Do not fallback on network errors or timeouts to prevent compounding server load)
+                if (
+                    not aph_id or (result and result.get("status") == "not_found")
+                ) and disp_name:
                     result = wm_client.lookup_member_by_name(
                         disp_name, dob=dob, refresh=refresh
                     )
@@ -652,6 +713,15 @@ def run_wikimedia_enrichment(
                     continue
 
                 status = result.get("status", "unknown")
+                if status == "error":
+                    logger.warning(
+                        "Wikimedia enrichment skipped %s (%s) due to request error: %s",
+                        disp_name,
+                        aph_id,
+                        result.get("notes"),
+                    )
+                    continue
+
                 matched_qid = result.get("wikidata_id")
                 wiki_title = result.get("wikipedia_title")
                 wiki_url = result.get("wikipedia_url") or result.get("source_url")
