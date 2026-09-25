@@ -79,6 +79,12 @@ By checking in cached raw payloads (`data/raw/aph/individuals.json`), curated al
 
 When an intentional dataset update is desired, supply `--refresh` and `--download` to incorporate live upstream changes.
 
+### Preservation of Manual Review Decisions Across Reruns
+Rerunning `apemap ingest wikimedia` (whether offline against cache or online with `--refresh`) is guaranteed to be idempotent and safe for manual curation:
+- Existing human review decisions (`accepted`, `rejected`, `needs_research`, or any row with manual notes/values) stored in `data/processed/wikimedia_member_review.csv` and `data/processed/wikimedia_school_review.csv` are preserved via key-based merging.
+- Generated metadata columns are updated with current candidate information, while manual resolution columns are kept intact.
+- Obsolete unreviewed candidates (rows still in `pending` without notes that no longer appear in the unmatched query) are cleanly pruned.
+
 ---
 
 ## 4. Supported Parliaments

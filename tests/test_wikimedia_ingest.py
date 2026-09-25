@@ -16,6 +16,14 @@ from typer.testing import CliRunner
 
 from apemap.cli import app
 from apemap.db import get_connection, init_schema
+from apemap.ingest.review import (
+    MEMBER_REVIEW_GENERATED_COLUMNS,
+    MEMBER_REVIEW_MANUAL_COLUMNS,
+    SCHOOL_REVIEW_GENERATED_COLUMNS,
+    SCHOOL_REVIEW_MANUAL_COLUMNS,
+    evaluate_school_candidate,
+    merge_review_rows,
+)
 from apemap.ingest.wikimedia import (
     WikimediaClient,
     normalize_date,
@@ -649,3 +657,352 @@ def test_cli_run_all_includes_enrich_wikimedia_flag() -> None:
     res = runner.invoke(app, ["run-all", "--help"])
     assert res.exit_code == 0
     assert "--enrich-wikimedia" in res.output
+
+
+# --------------------------------------------------------------------------
+# Review Merging and Manual Column Persistence Tests
+# --------------------------------------------------------------------------
+
+
+def test_merge_review_rows_preserves_manual_decisions(tmp_path: Path) -> None:
+    csv_file = tmp_path / "member_review.csv"
+
+    # 1. Initial generation
+    initial_generated = [
+        {
+            "member_id": "mem-1",
+            "field": "wikidata_id",
+            "aph_id": "R36",
+            "display_name": "Anthony Albanese",
+            "wikidata_id": "",
+            "aph_value": "",
+            "wikidata_value": "Q4772000",
+            "wikipedia_title": "Anthony Albanese",
+            "source_url": "https://query.wikidata.org",
+            "status": "ambiguous",
+            "notes": "Ambiguous initial",
+            "historical_value": "",
+            "historical_source": "",
+            "review_status": "pending",
+        },
+        {
+            "member_id": "mem-2",
+            "field": "date_of_birth",
+            "aph_id": "M3C",
+            "display_name": "Adam Bandt",
+            "wikidata_id": "Q4678667",
+            "aph_value": "1972-03-11",
+            "wikidata_value": "1972-03-12",
+            "wikipedia_title": "Adam Bandt",
+            "source_url": "https://query.wikidata.org",
+            "status": "discrepancy",
+            "notes": "DOB discrepancy",
+            "historical_value": "1972-03-11",
+            "historical_source": "APH Parliamentary Handbook",
+            "review_status": "pending",
+        },
+    ]
+
+    merge_review_rows(
+        generated_rows=initial_generated,
+        existing_path=csv_file,
+        key_columns=("member_id", "field"),
+        generated_columns=MEMBER_REVIEW_GENERATED_COLUMNS,
+        manual_columns=MEMBER_REVIEW_MANUAL_COLUMNS,
+    )
+
+    # Simulate reviewer editing mem-1 to accepted, adding manual notes and resolved value
+    rows = []
+    with open(csv_file, mode="r", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["member_id"] == "mem-1":
+                r["review_status"] = "accepted"
+                r["resolved_value"] = "Q4772000"
+                r["manual_source_url"] = "https://handbook.aph.gov.au/individual/R36"
+                r["review_notes"] = "Confirmed against official bio"
+            rows.append(r)
+
+    with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(
+            f, fieldnames=MEMBER_REVIEW_GENERATED_COLUMNS + MEMBER_REVIEW_MANUAL_COLUMNS
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+    # 2. Subsequent pipeline run with updated generated evidence
+    updated_generated = [
+        {
+            "member_id": "mem-1",
+            "field": "wikidata_id",
+            "aph_id": "R36",
+            "display_name": "Anthony Albanese",
+            "wikidata_id": "",
+            "aph_value": "",
+            "wikidata_value": "Q4772000",
+            "wikipedia_title": "Anthony Albanese",
+            "source_url": "https://query.wikidata.org/updated",
+            "status": "ambiguous",
+            "notes": "Updated generated notes",
+            "historical_value": "",
+            "historical_source": "",
+            "review_status": "pending",
+        },
+        # mem-2 is no longer emitted by generator (e.g. resolved in APH)
+        # mem-3 is newly emitted
+        {
+            "member_id": "mem-3",
+            "field": "wikidata_id",
+            "aph_id": "T44",
+            "display_name": "New MP",
+            "wikidata_id": "",
+            "aph_value": "",
+            "wikidata_value": "Q999",
+            "wikipedia_title": "New MP",
+            "source_url": "https://query.wikidata.org",
+            "status": "ambiguous",
+            "notes": "Brand new",
+            "historical_value": "",
+            "historical_source": "",
+            "review_status": "pending",
+        },
+    ]
+
+    merged = merge_review_rows(
+        generated_rows=updated_generated,
+        existing_path=csv_file,
+        key_columns=("member_id", "field"),
+        generated_columns=MEMBER_REVIEW_GENERATED_COLUMNS,
+        manual_columns=MEMBER_REVIEW_MANUAL_COLUMNS,
+    )
+
+    merged_by_key = {(r["member_id"], r["field"]): r for r in merged}
+
+    # Verify mem-1 retained manual decisions while generated fields updated
+    mem1 = merged_by_key[("mem-1", "wikidata_id")]
+    assert mem1["review_status"] == "accepted"
+    assert mem1["resolved_value"] == "Q4772000"
+    assert mem1["manual_source_url"] == "https://handbook.aph.gov.au/individual/R36"
+    assert mem1["review_notes"] == "Confirmed against official bio"
+    assert mem1["source_url"] == "https://query.wikidata.org/updated"
+    assert mem1["notes"] == "Updated generated notes"
+
+    # Verify mem-2 was unreviewed and obsolete so dropped cleanly
+    assert ("mem-2", "date_of_birth") not in merged_by_key
+
+    # Verify mem-3 is present with default pending review_status
+    mem3 = merged_by_key[("mem-3", "wikidata_id")]
+    assert mem3["review_status"] == "pending"
+    assert mem3["notes"] == "Brand new"
+
+
+def test_merge_review_rows_preserves_reviewed_rows_not_in_generator(
+    tmp_path: Path,
+) -> None:
+    csv_file = tmp_path / "school_review.csv"
+
+    # Pre-populate CSV with a row that was previously reviewed as 'accepted'
+    initial_row = {
+        "institution_id": "inst-old-1",
+        "raw_school_text": "Old Closed School",
+        "suggested_institution_name": "Old School",
+        "wikidata_id": "Q12345",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Old_School",
+        "country": "Australia",
+        "locality": "Sydney",
+        "latitude": "-33.8",
+        "longitude": "151.2",
+        "institution_type": "high school",
+        "confidence": "suggested",
+        "notes": "Historical note",
+        "historical_match_name": "Old School Canonical",
+        "historical_acara_id": "40001",
+        "historical_source": "school_aliases.json",
+        "review_status": "accepted",
+        "resolved_school_name": "Old School Canonical",
+        "resolved_acara_id": "40001",
+        "resolved_wikidata_id": "Q12345",
+        "resolved_country": "Australia",
+        "resolved_state": "NSW",
+        "resolved_suburb": "Sydney",
+        "resolved_postcode": "2000",
+        "resolved_address": "123 School St",
+        "resolved_latitude": "-33.8",
+        "resolved_longitude": "151.2",
+        "manual_source_url": "https://acara.edu.au",
+        "address_source_url": "https://acara.edu.au",
+        "review_notes": "Accepted historical mapping",
+    }
+    with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(
+            f, fieldnames=SCHOOL_REVIEW_GENERATED_COLUMNS + SCHOOL_REVIEW_MANUAL_COLUMNS
+        )
+        writer.writeheader()
+        writer.writerow(initial_row)
+
+    # Generator emits an empty list (inst-old-1 no longer appears in unmatched query)
+    merged = merge_review_rows(
+        generated_rows=[],
+        existing_path=csv_file,
+        key_columns=("institution_id",),
+        generated_columns=SCHOOL_REVIEW_GENERATED_COLUMNS,
+        manual_columns=SCHOOL_REVIEW_MANUAL_COLUMNS,
+    )
+
+    # Row must be preserved because it was accepted by a reviewer
+    assert len(merged) == 1
+    assert merged[0]["institution_id"] == "inst-old-1"
+    assert merged[0]["review_status"] == "accepted"
+    assert merged[0]["resolved_acara_id"] == "40001"
+
+
+# --------------------------------------------------------------------------
+# Candidate Filtering & Geographic Sanity Tests
+# --------------------------------------------------------------------------
+
+
+def test_evaluate_school_candidate_filtering() -> None:
+    # 1. Human candidate rejected
+    cand_human = {
+        "suggested_institution_name": "Sally Beauman",
+        "institution_type": "human",
+        "country": "United Kingdom",
+    }
+    acc, reason = evaluate_school_candidate("Beaumans High School", cand_human)
+    assert not acc
+    assert "non-school" in reason
+
+    # 2. Town / Suburb candidate rejected
+    cand_town = {
+        "suggested_institution_name": "Alice Springs",
+        "institution_type": "town",
+        "country": "Australia",
+    }
+    acc, reason = evaluate_school_candidate("Alice Springs High School", cand_town)
+    assert not acc
+    assert "non-school" in reason
+
+    # 3. Disambiguation page rejected
+    cand_disambig = {
+        "suggested_institution_name": "Grammar School (disambiguation)",
+        "institution_type": "Wikimedia disambiguation page",
+    }
+    acc, reason = evaluate_school_candidate("Grammar School", cand_disambig)
+    assert not acc
+
+    # 4. List article rejected
+    cand_list = {
+        "suggested_institution_name": "List of schools in Victoria",
+        "institution_type": "Wikimedia list article",
+    }
+    acc, reason = evaluate_school_candidate("Victoria School", cand_list)
+    assert not acc
+
+    # 5. Plausible Australian school retained
+    cand_good = {
+        "suggested_institution_name": "Academy of Mary Immaculate",
+        "institution_type": "high school",
+        "country": "Australia",
+        "latitude": -37.8,
+        "longitude": 144.97,
+    }
+    acc, reason = evaluate_school_candidate(
+        "Academy of Mary Immaculate Fitzroy", cand_good
+    )
+    assert acc
+    assert "Accepted" in reason
+
+    # 6. Domestic Australian school matched to overseas country rejected
+    cand_us = {
+        "suggested_institution_name": "Lincoln High School",
+        "institution_type": "high school",
+        "country": "United States",
+        "latitude": 40.7,
+        "longitude": -74.0,
+    }
+    acc, reason = evaluate_school_candidate("Lincoln High School", cand_us)
+    assert not acc
+    assert "non-Australian" in reason
+
+    # 7. Coordinates outside broad Australian bounding box rejected
+    cand_bad_coords = {
+        "suggested_institution_name": "Perth Modern School",
+        "institution_type": "high school",
+        "country": "Australia",
+        "latitude": 51.5,
+        "longitude": -0.1,  # London coords
+    }
+    acc, reason = evaluate_school_candidate("Perth Modern School", cand_bad_coords)
+    assert not acc
+    assert "outside Australian bounds" in reason
+
+    # 8. International school retained where appropriate
+    cand_intl = {
+        "suggested_institution_name": "Belilios Public School",
+        "institution_type": "secondary school",
+        "country": "Hong Kong",
+        "latitude": 22.28,
+        "longitude": 114.19,
+    }
+    acc, reason = evaluate_school_candidate(
+        "Belilios Public Girls School, Hong Kong", cand_intl
+    )
+    assert acc
+    assert "Accepted" in reason
+
+    # 9. Low name similarity (< 70) rejected
+    cand_dissimilar = {
+        "suggested_institution_name": "Hunter School of the Performing Arts",
+        "institution_type": "high school",
+        "country": "Australia",
+        "latitude": -32.9,
+        "longitude": 151.7,
+    }
+    acc, reason = evaluate_school_candidate(
+        "Broadmeadows Technical School", cand_dissimilar
+    )
+    assert not acc
+    assert "low name similarity" in reason
+
+    # 10. Historical evidence allows borderline candidate to proceed
+    hist_ev = {
+        "historical_match_name": "Hunter Performing Arts Secondary",
+        "historical_acara_id": "50000",
+        "historical_source": "school_aliases.json",
+    }
+    acc, reason = evaluate_school_candidate(
+        "Broadmeadows Technical School", cand_dissimilar, historical_evidence=hist_ev
+    )
+    assert acc
+    assert "historical evidence" in reason
+
+
+# --------------------------------------------------------------------------
+# Member Fallback Tightening Tests
+# --------------------------------------------------------------------------
+
+
+def test_member_name_fallback_single_unconfirmed_is_ambiguous(
+    tmp_path: Path, mock_session: MagicMock
+) -> None:
+    client = WikimediaClient(cache_dir=tmp_path, session=mock_session, rate_delay=0.0)
+
+    # Exactly 1 exact name match returned by Wikidata, but without DOB and without political article title
+    mock_resp = MagicMock()
+    mock_resp.url = "https://query.wikidata.org/sparql?query=..."
+    mock_resp.json.return_value = {
+        "results": {
+            "bindings": [
+                {
+                    "item": {"value": "http://www.wikidata.org/entity/Q999999"},
+                    "article": {"value": "https://en.wikipedia.org/wiki/John_Smith"},
+                }
+            ]
+        }
+    }
+    mock_session.get.return_value = mock_resp
+
+    res = client.lookup_member_by_name("John Smith", dob=None)
+    assert res is not None
+    assert res["status"] == "ambiguous"
+    assert res["wikidata_id"] is None
+    assert "lacks corroborating" in res["notes"]

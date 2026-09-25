@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import csv
 import json
 import logging
 import re
@@ -30,39 +29,20 @@ from apemap.constants import (
     WIKIPEDIA_API_ENDPOINT,
 )
 from apemap.db import get_connection
+from apemap.ingest.matching import is_international_text, normalize_school_key
+from apemap.ingest.review import (
+    MEMBER_REVIEW_GENERATED_COLUMNS,
+    MEMBER_REVIEW_MANUAL_COLUMNS,
+    SCHOOL_REVIEW_GENERATED_COLUMNS,
+    SCHOOL_REVIEW_MANUAL_COLUMNS,
+    evaluate_school_candidate,
+    load_historical_school_aliases,
+    merge_review_rows,
+)
 
 logger = logging.getLogger(__name__)
 
 USER_AGENT = "APEMAP/0.2.0 (Research data pipeline; https://github.com/Mappboy/apemap)"
-
-MEMBER_REVIEW_COLUMNS = [
-    "member_id",
-    "aph_id",
-    "display_name",
-    "wikidata_id",
-    "field",
-    "aph_value",
-    "wikidata_value",
-    "wikipedia_title",
-    "source_url",
-    "status",
-    "notes",
-]
-
-SCHOOL_REVIEW_COLUMNS = [
-    "institution_id",
-    "raw_school_text",
-    "suggested_institution_name",
-    "wikidata_id",
-    "wikipedia_url",
-    "country",
-    "locality",
-    "latitude",
-    "longitude",
-    "institution_type",
-    "confidence",
-    "notes",
-]
 
 
 def normalize_qid(value: str | None) -> str | None:
@@ -394,12 +374,32 @@ class WikimediaClient:
                 if cand["dob"] == norm_target_dob:
                     chosen_candidate = cand
                     status = "matched"
+                    notes = f"Corroborated by birth date match {norm_target_dob}"
                 else:
                     status = "ambiguous"
                     notes = f"Single candidate {qids[0]} has birth date {cand['dob']} differing from APH {norm_target_dob}"
-            else:
+            elif cand.get("article") and any(
+                term in str(cand["article"]).lower()
+                for term in (
+                    "australian",
+                    "politician",
+                    "parliament",
+                    "senator",
+                    "member_of",
+                )
+            ):
                 chosen_candidate = cand
                 status = "matched"
+                notes = (
+                    "Corroborated by Australian political context in Wikipedia article"
+                )
+            else:
+                chosen_candidate = cand
+                status = "ambiguous"
+                notes = (
+                    f"Single candidate {qids[0]} found by name but lacks corroborating birth date "
+                    "or parliamentary context; manual review required"
+                )
         else:
             # Multiple candidates: check if exactly one matches birth date
             matching_dob = [
@@ -423,7 +423,11 @@ class WikimediaClient:
 
         payload = {
             "display_name": clean_name,
-            "wikidata_id": chosen_candidate["qid"] if chosen_candidate else None,
+            "wikidata_id": (
+                chosen_candidate["qid"]
+                if (chosen_candidate and status == "matched")
+                else None
+            ),
             "wikipedia_title": wiki_title,
             "wikipedia_url": (
                 chosen_candidate.get("article") if chosen_candidate else None
@@ -744,6 +748,14 @@ def run_wikimedia_enrichment(
                             "status": "conflict",
                             "notes": result.get("notes")
                             or "Multiple conflicting Wikidata entities",
+                            "historical_value": current_qid or "",
+                            "historical_source": "members.wikidata_id"
+                            if current_qid
+                            else "",
+                            "review_status": "pending",
+                            "resolved_value": "",
+                            "manual_source_url": "",
+                            "review_notes": "",
                         }
                     )
                 elif status == "ambiguous":
@@ -761,6 +773,14 @@ def run_wikimedia_enrichment(
                             "status": "ambiguous",
                             "notes": result.get("notes")
                             or "Ambiguous name match; manual review required",
+                            "historical_value": current_qid or "",
+                            "historical_source": "members.wikidata_id"
+                            if current_qid
+                            else "",
+                            "review_status": "pending",
+                            "resolved_value": "",
+                            "manual_source_url": "",
+                            "review_notes": "",
                         }
                     )
                 elif status == "matched" and matched_qid:
@@ -783,6 +803,12 @@ def run_wikimedia_enrichment(
                                 "source_url": wiki_url or "",
                                 "status": "conflict",
                                 "notes": f"Wikidata entity {matched_qid} conflicts with existing {current_qid}; preserved original",
+                                "historical_value": current_qid,
+                                "historical_source": "members.wikidata_id",
+                                "review_status": "pending",
+                                "resolved_value": "",
+                                "manual_source_url": "",
+                                "review_notes": "",
                             }
                         )
 
@@ -805,6 +831,12 @@ def run_wikimedia_enrichment(
                                     "source_url": wiki_url or "",
                                     "status": "discrepancy",
                                     "notes": "Date of birth discrepancy between APH and Wikidata",
+                                    "historical_value": str(dob),
+                                    "historical_source": "APH Parliamentary Handbook",
+                                    "review_status": "pending",
+                                    "resolved_value": "",
+                                    "manual_source_url": "",
+                                    "review_notes": "",
                                 }
                             )
                     elif not dob and wiki_dob:
@@ -821,6 +853,12 @@ def run_wikimedia_enrichment(
                                 "source_url": wiki_url or "",
                                 "status": "supplemental_available",
                                 "notes": "Date of birth present in Wikidata but missing in APH record",
+                                "historical_value": "",
+                                "historical_source": "",
+                                "review_status": "pending",
+                                "resolved_value": "",
+                                "manual_source_url": "",
+                                "review_notes": "",
                             }
                         )
 
@@ -843,6 +881,12 @@ def run_wikimedia_enrichment(
                                     "source_url": wiki_url or "",
                                     "status": "discrepancy",
                                     "notes": "Gender discrepancy between APH and Wikidata",
+                                    "historical_value": str(gender),
+                                    "historical_source": "APH Parliamentary Handbook",
+                                    "review_status": "pending",
+                                    "resolved_value": "",
+                                    "manual_source_url": "",
+                                    "review_notes": "",
                                 }
                             )
                     elif not gender and wiki_gender:
@@ -859,6 +903,12 @@ def run_wikimedia_enrichment(
                                 "source_url": wiki_url or "",
                                 "status": "supplemental_available",
                                 "notes": "Gender present in Wikidata but missing in APH record",
+                                "historical_value": "",
+                                "historical_source": "",
+                                "review_status": "pending",
+                                "resolved_value": "",
+                                "manual_source_url": "",
+                                "review_notes": "",
                             }
                         )
 
@@ -895,24 +945,61 @@ def run_wikimedia_enrichment(
         # Part 2: Unmatched-School Wikimedia Suggestions
         # -------------------------------------------------------------
         if enrich_schools:
+            school_aliases = load_historical_school_aliases()
             schools_query = f"""
-            SELECT DISTINCT
+            SELECT
                 i.institution_id,
                 i.school_name,
-                me.confidence
+                string_agg(DISTINCT me.confidence, '; ') AS confidence,
+                string_agg(DISTINCT COALESCE(me.reviewer_notes, ''), '; ') AS reviewer_notes
             FROM institutions i
             JOIN member_education me ON i.institution_id = me.institution_id
             JOIN parliament_service ps ON me.member_id = ps.member_id
             WHERE (me.confidence = 'unconfirmed' OR i.acara_id IS NULL)
               AND ps.parliament_number IN ({parl_placeholders})
+            GROUP BY i.institution_id, i.school_name
             ORDER BY i.school_name
             """
             school_rows = conn.execute(schools_query).fetchall()
 
-            for inst_id, school_name, confidence in school_rows:
+            for inst_id, school_name, confidence, reviewer_notes in school_rows:
                 schools_processed += 1
+
+                # Lookup supporting historical evidence if present
+                norm_key = normalize_school_key(school_name)
+                hist_alias = school_aliases.get(norm_key) or school_aliases.get(
+                    school_name.strip().lower()
+                )
+                hist_evidence: dict[str, Any] | None = None
+                if hist_alias:
+                    hist_evidence = {
+                        "historical_match_name": hist_alias.get("canonical_name", ""),
+                        "historical_acara_id": str(
+                            hist_alias.get("canonical_acara_id", "")
+                        ),
+                        "historical_source": "data/reference/school_aliases.json",
+                    }
+
+                is_intl = is_international_text(school_name) or bool(
+                    reviewer_notes and "international" in reviewer_notes.lower()
+                )
+
                 suggestion = wm_client.lookup_institution(school_name, refresh=refresh)
                 if suggestion and suggestion.get("wikidata_id"):
+                    accepted_for_review, reason = evaluate_school_candidate(
+                        school_name,
+                        suggestion,
+                        is_international=is_intl,
+                        historical_evidence=hist_evidence,
+                    )
+                    if not accepted_for_review:
+                        logger.info(
+                            "Filtered school candidate for '%s': %s",
+                            school_name,
+                            reason,
+                        )
+                        continue
+
                     schools_suggested += 1
                     school_reviews.append(
                         {
@@ -926,30 +1013,76 @@ def run_wikimedia_enrichment(
                             "wikipedia_url": suggestion.get("wikipedia_url") or "",
                             "country": suggestion.get("country") or "",
                             "locality": suggestion.get("locality") or "",
-                            "latitude": suggestion.get("latitude") or "",
-                            "longitude": suggestion.get("longitude") or "",
-                            "institution_type": suggestion.get("institution_type")
-                            or "",
+                            "latitude": (
+                                suggestion.get("latitude")
+                                if suggestion.get("latitude") is not None
+                                else ""
+                            ),
+                            "longitude": (
+                                suggestion.get("longitude")
+                                if suggestion.get("longitude") is not None
+                                else ""
+                            ),
+                            "institution_type": (
+                                suggestion.get("institution_type") or ""
+                            ),
                             "confidence": "suggested",
                             "notes": suggestion.get("notes") or "",
+                            # Historical supporting evidence
+                            "historical_match_name": (
+                                hist_evidence["historical_match_name"]
+                                if hist_evidence
+                                else ""
+                            ),
+                            "historical_acara_id": (
+                                hist_evidence["historical_acara_id"]
+                                if hist_evidence
+                                else ""
+                            ),
+                            "historical_source": (
+                                hist_evidence["historical_source"]
+                                if hist_evidence
+                                else ""
+                            ),
+                            # Manual review columns with defaults
+                            "review_status": "pending",
+                            "resolved_school_name": "",
+                            "resolved_acara_id": "",
+                            "resolved_wikidata_id": "",
+                            "resolved_country": "",
+                            "resolved_state": "",
+                            "resolved_suburb": "",
+                            "resolved_postcode": "",
+                            "resolved_address": "",
+                            "resolved_latitude": "",
+                            "resolved_longitude": "",
+                            "manual_source_url": "",
+                            "address_source_url": "",
+                            "review_notes": "",
                         }
                     )
 
     finally:
         conn.close()
 
-    # Write review artifacts
+    # Write review artifacts preserving manual review decisions across runs
     member_review_path = out_dir / "wikimedia_member_review.csv"
-    with open(member_review_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=MEMBER_REVIEW_COLUMNS)
-        writer.writeheader()
-        writer.writerows(member_reviews)
+    merge_review_rows(
+        generated_rows=member_reviews,
+        existing_path=member_review_path,
+        key_columns=("member_id", "field"),
+        generated_columns=MEMBER_REVIEW_GENERATED_COLUMNS,
+        manual_columns=MEMBER_REVIEW_MANUAL_COLUMNS,
+    )
 
     school_review_path = out_dir / "wikimedia_school_review.csv"
-    with open(school_review_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=SCHOOL_REVIEW_COLUMNS)
-        writer.writeheader()
-        writer.writerows(school_reviews)
+    merge_review_rows(
+        generated_rows=school_reviews,
+        existing_path=school_review_path,
+        key_columns=("institution_id",),
+        generated_columns=SCHOOL_REVIEW_GENERATED_COLUMNS,
+        manual_columns=SCHOOL_REVIEW_MANUAL_COLUMNS,
+    )
 
     return {
         "members_processed": members_processed,

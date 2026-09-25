@@ -140,8 +140,15 @@ uv run apemap ingest wikimedia [OPTIONS]
 - **Inputs**: `data/aped.duckdb`, local cache files in `data/raw/wikimedia/{members,institutions}/`.
 - **Outputs**:
   - `data/aped.duckdb` (canonical `members.wikidata_id` populated)
-  - `data/processed/wikimedia_member_review.csv` (discrepancies, missing supplemental values, conflicts)
-  - `data/processed/wikimedia_school_review.csv` (unmatched school candidates with suggested coordinates and QIDs)
+  - `data/processed/wikimedia_member_review.csv` (discrepancies, missing supplemental values, conflicts, manual decisions)
+  - `data/processed/wikimedia_school_review.csv` (filtered unmatched school suggestions and manual review decisions)
+
+### Review & Promotion Workflow
+1. **Inspect Review CSVs**: Reviewers inspect the generated candidate rows in `data/processed/wikimedia_member_review.csv` and `data/processed/wikimedia_school_review.csv`.
+2. **Record Decisions Directly**: Set `review_status` to `accepted`, `rejected`, or `needs_research`, and populate resolved attributes (`resolved_school_name`, `resolved_acara_id`, `resolved_wikidata_id`, etc.) and `review_notes`.
+3. **Commit Review Decisions**: Commit modified review CSVs to version control. Reviewer decisions and rationale are tracked transparently through Git history.
+4. **Promote Accepted School Mappings**: For accepted domestic school resolutions, add the mapping to `data/reference/school_aliases.json`. When the pipeline next runs (`apemap ingest aph`), the alias is matched deterministically via Tier 0.
+5. **Idempotent Reruns**: Rerunning `apemap ingest wikimedia` updates generated metadata while strictly preserving existing manual review statuses and notes.
 
 ### Example Usage
 ```bash
