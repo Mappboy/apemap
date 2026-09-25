@@ -66,7 +66,7 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
             "APH-3",
         ),
     ]
-    for i in range(4, 205):
+    for i in range(4, 228):
         members_data.append(
             (
                 f"mem-{i}",
@@ -79,7 +79,7 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
             )
         )
 
-    for mid, fam, giv, disp, gen, dob, aph in members_data:
+    for idx, (mid, fam, giv, disp, gen, dob, aph) in enumerate(members_data, 1):
         conn.execute(
             """
             INSERT INTO members (member_id, family_name, given_name, display_name, gender, date_of_birth, aph_id)
@@ -87,14 +87,16 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
             """,
             [mid, fam, giv, disp, gen, dob, aph],
         )
+        chamber = "representatives" if idx <= 151 else "senate"
         conn.execute(
             """
             INSERT INTO parliament_service (
                 service_id, member_id, parliament_number, chamber,
-                party, party_abbrev, state_or_territory, is_opening_day_member, is_current_member
-            ) VALUES (?, ?, 47, 'representatives', 'Labor', 'ALP', 'NSW', TRUE, TRUE)
+                party, party_abbrev, state_or_territory, service_start, service_end,
+                is_opening_day_member, is_current_member
+            ) VALUES (?, ?, 47, ?, 'Labor', 'ALP', 'NSW', '2022-07-26', '2025-04-11', TRUE, TRUE)
             """,
-            [f"srv-{mid}", mid],
+            [f"srv-{mid}", mid, chamber],
         )
 
     # Institutions
@@ -314,10 +316,10 @@ def test_opening_day_demographics_use_one_opening_service_per_person(
     )
 
     demographics = compute_parliament_demographics(conn, 47)
-    assert demographics["total_parliamentarians"] == 204
-    assert demographics["opening_day_parliamentarians"] == 204
-    assert demographics["opening_day_current_parliamentarians"] == 204
-    assert demographics["parties"] == {"ALP": 204}
+    assert demographics["total_parliamentarians"] == 227
+    assert demographics["opening_day_parliamentarians"] == 227
+    assert demographics["opening_day_current_parliamentarians"] == 227
+    assert demographics["parties"] == {"ALP": 227}
 
 
 def test_unsupported_parliament_is_rejected_by_analysis() -> None:
@@ -400,6 +402,43 @@ def test_validate_database_detects_foreign_key_orphan(
     report = validate_database(conn, [47])
     assert report.passed is False
     assert any("member_education -> members" in f for f in report.failures)
+
+
+def test_validate_database_detects_invalid_opening_chamber_benchmark(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Verify validation fails when Parliament 47 opening-day chamber benchmark is not 151+76."""
+    _path, conn = populated_db
+    conn.execute(
+        """
+        UPDATE parliament_service
+        SET chamber = 'representatives'
+        WHERE service_id = 'srv-mem-152'
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any(
+        "Parliament 47 opening-day chamber benchmark failed" in f
+        for f in report.failures
+    )
+
+
+def test_validate_database_detects_service_overlap_failure(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Verify validation detects service records that do not overlap the declared parliament term."""
+    _path, conn = populated_db
+    conn.execute(
+        """
+        UPDATE parliament_service
+        SET service_start = '2019-07-02', service_end = '2022-04-11'
+        WHERE service_id = 'srv-mem-1'
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any("service records that do not overlap" in f for f in report.failures)
 
 
 def test_cli_transform(tmp_path: Path) -> None:

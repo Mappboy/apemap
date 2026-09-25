@@ -137,6 +137,65 @@ def test_sector_people_and_attendance_have_distinct_denominators(
     assert summary["attendance_instance_percentage_denominator"] == 5
 
 
+def test_sector_and_funding_summary_exclude_non_opening_day_members(
+    tmp_path: Path,
+) -> None:
+    """Verify sector and funding summaries exclude later entrants (non-opening day members)."""
+    db_path = create_analysis_fixture(tmp_path / "analysis_late.duckdb")
+    conn = get_connection(db_path)
+    # Insert a non-opening day member who attended a new Government school
+    conn.execute(
+        """
+        INSERT INTO members (member_id, family_name, given_name, display_name, gender, aph_id)
+        VALUES ('m-late', 'Late', 'Entrant', 'Late Entrant', 'Female', 'APH-late')
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party, party_abbrev,
+            state_or_territory, service_start, is_opening_day_member, is_current_member
+        ) VALUES (
+            'srv-late', 'm-late', 47, 'representatives', 'Test', 'TST',
+            'NSW', '2023-06-01', FALSE, TRUE
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO institutions (institution_id, school_name, sector)
+        VALUES ('school-late', 'Late School', 'Government')
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level, attended_status,
+            source_url, retrieved_at, confidence
+        ) VALUES ('edu-late', 'm-late', 'school-late', 'secondary', 'graduated', 'fixture',
+                  '2025-01-01 00:00:00+00', 'verified')
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO school_finances_2021 (
+            institution_id, acara_id, total_gross_income_per_student,
+            total_net_recurrent_income_per_student, reporting_year
+        ) VALUES ('school-late', '400', 9999, 9999, 2021)
+        """
+    )
+
+    sector_summary = compute_sector_summary(conn, 47)
+    # The late entrant should NOT increase total_parliamentarians (should still be 5)
+    assert sector_summary["total_parliamentarians"] == 5
+    assert sector_summary["unique_parliamentarians_by_sector"]["Government"] == 1
+
+    funding_summary = compute_funding_summary(conn, 47)
+    # The late school should NOT be in scope for Parliament 47 opening-day baseline
+    assert funding_summary["total_schools_in_scope"] == 3
+    conn.close()
+
+
 def test_analysis_exports_are_schema_versioned_and_deterministic(
     tmp_path: Path,
 ) -> None:
