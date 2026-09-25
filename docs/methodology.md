@@ -69,25 +69,37 @@ Analyses of parliamentary composition can produce misleading conclusions if coho
 
 ## 4. Source Hierarchy & Data Provenance
 
-APEMAP applies a strict source hierarchy:
+APEMAP applies a strict source authority hierarchy to ensure data provenance and prevent secondary crowdsourced data from conflicting with official registers:
 
 ```
-[1. Official APH Handbook API] (Primary biographical & parliamentary service source)
+[1. Official APH Handbook API] (Authoritative biographical & parliamentary service source)
             │
             ▼
-[2. ACARA Official Registers] (Canonical school names, SML IDs, coordinates, sectors)
+[2. ACARA Official Registers] (Authoritative school names, SML IDs, coordinates, sectors)
             │
             ▼
 [3. Curated School Aliases] (Explicit overrides in data/reference/school_aliases.json)
             │
             ▼
-[4. Supplementary Baselines] (SMH 2021 investigation, AEC boundary data, ABS geography)
+[4. Wikipedia / Wikidata] (Supplementary enrichment, identifier-first linking, QA cross-check)
+            │
+            ▼
+[5. Manual Review & Promotion] (Unmatched school review via data/processed/ review CSVs)
 ```
 
-1. **Primary Parliamentary Source**: The Australian Parliament House (APH) Parliamentary Handbook API (`https://handbookapi.aph.gov.au/api/individuals`).
-2. **Primary Educational Source**: Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and School Profile data.
-3. **Curated Overrides**: `data/reference/school_aliases.json` records verified historical name changes, school amalgamations, and disambiguation rules.
-4. **Historical & Supplementary Sources**: Historical baseline data from the 2021 SMH investigation and AEC boundary files.
+1. **Official APH Handbook API**: The Australian Parliament House (APH) Parliamentary Handbook API (`https://handbookapi.aph.gov.au/api/individuals`) is the authoritative source for member identity, parliamentary service, chamber, party, electorate, birth date, gender, and self-reported education text.
+2. **ACARA Official Registers**: The Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and School Profile datasets are the authoritative sources for Australian school identities, SML IDs, coordinates, sectors, and ICSEA values.
+3. **Curated Overrides**: `data/reference/school_aliases.json` records verified historical name changes, school amalgamations, and disambiguation rules promoted from manual reviews into deterministic future runs.
+4. **Wikipedia / Wikidata Supplementary Enrichment**:
+   - **Identifier-first linking**: Parliamentarians are linked to Wikidata entities using their unique Parliament of Australia MP identifier ([Property P10020](https://www.wikidata.org/wiki/Property:P10020)), populating `members.wikidata_id` with a bare QID (e.g. `Q4772000`). Name-based fallback matching is only accepted when unambiguous and corroborated by birth date or Australian political context; ambiguous single candidates are flagged for review rather than auto-linked.
+   - **Non-mutation of official data**: Wikimedia enrichment **never silently overwrites** non-null verified APH demographics (birth dates, gender) or ACARA institutional attributes. APH and ACARA remain authoritative.
+   - **Automated candidate sanity filtering**: Unmatched school suggestions undergo automated sanity filtering before reaching human reviewers. Suggestions are rejected if they represent non-school entity types (`human`, `town`, `suburb`, `city`, `list article`, `disambiguation page`, `religious order`, `company`, etc.), fall outside Australian geographic bounds (unless verified as international), or fail token similarity thresholds (`similarity < 70` without supporting historical evidence).
+   - **Demographic cross-checks & school suggestions**: Discrepancies and supplemental values available in Wikidata are written to `data/processed/wikimedia_member_review.csv`. Filtered school suggestions are written to `data/processed/wikimedia_school_review.csv`. Both remain `unconfirmed` in canonical database tables until promoted.
+5. **Manual Review & Promotion**:
+   - **CSV-based review storage**: Manual decisions are recorded directly in the review CSVs via explicit decision columns (`review_status`, `resolved_*`, `manual_source_url`, `review_notes`).
+   - **Allowed statuses**: Review decisions use a controlled vocabulary: `pending`, `accepted`, `rejected`, and `needs_research`.
+   - **Idempotent rerun preservation**: Rerunning `apemap ingest wikimedia` never deletes manual review decisions. A key-based merge preserves existing decisions and user notes while updating generated candidate columns and pruning obsolete unreviewed candidates.
+   - **Promotion via `school_aliases.json`**: Accepted school mappings are promoted into `data/reference/school_aliases.json` where they flow deterministically into subsequent pipeline runs (`apemap ingest aph`). Review decisions are tracked through Git history without requiring bespoke database review tables or web curation frameworks.
 
 ---
 

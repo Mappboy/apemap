@@ -26,6 +26,7 @@ These sources are actively fetched or read during pipeline execution:
 | **ACARA School Profile** | ACARA | Longitudinal School Profile 2008–2025 (`.xlsx`) | Portal HTTPS GET | © ACARA (CC BY 4.0 / Data Access) |
 | **ACARA 2021 Finances** | ACARA | 2021 School Financial Snapshot | Isolated snapshot in `school_finances_2021` | © ACARA MySchool |
 | **School Aliases** | APEMAP Project | `data/reference/school_aliases.json` | Project repository | CC BY 4.0 |
+| **Wikipedia / Wikidata** | Wikimedia Foundation | MediaWiki Action API & Wikidata SPARQL | HTTPS GET / Disk cache (`data/raw/wikimedia/`) | CC0 / CC BY-SA 4.0 |
 
 ### Detailed Source Profiles
 
@@ -53,6 +54,19 @@ These sources are actively fetched or read during pipeline execution:
 - **Attribution**: *© Australian Curriculum, Assessment and Reporting Authority (ACARA).*
 - **Limitations**: Reflects the 2021 reporting year only. Does **not** reflect funding levels when parliamentarians attended school.
 
+### 4. Wikipedia & Wikidata (Supplementary Enrichment Source)
+- **Publisher**: Wikimedia Foundation
+- **Endpoints**:
+  - Wikidata SPARQL: `https://query.wikidata.org/sparql`
+  - Wikipedia Action API: `https://en.wikipedia.org/w/api.php`
+- **Purpose**:
+  - Populates canonical `members.wikidata_id` using identifier-first linking via Parliament of Australia MP identifier ([Wikidata Property P10020](https://www.wikidata.org/wiki/Property:P10020)).
+  - Provides QA and demographic cross-checking (dates of birth, gender) against APH records without silently overwriting authoritative values.
+  - Suggests institution names, QIDs, Wikipedia URLs, geographic coordinates, and localities for unmatched/international schools for manual reviewer inspection.
+- **Caching & Provenance**: Cached on local disk under `data/raw/wikimedia/members/` and `data/raw/wikimedia/institutions/`. Normal pipeline runs execute completely offline from cache; live network requests occur only when `--refresh` is explicitly supplied.
+- **Attribution & Licensing**: *Data from Wikidata is available under CC0 Public Domain Dedication; text and sitelinks from Wikipedia are available under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).*
+- **Limitations**: Crowdsourced and secondary. Used strictly for cross-referencing and supplementary enrichment; never treated as an authoritative replacement for official APH or ACARA data.
+
 ---
 
 ## 3. Reference & Historical Research Sources
@@ -74,9 +88,6 @@ These sources informed the project's background research, baseline validation, o
 - **Portal**: [ASGS Edition 3 Boundaries](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis)
 - **Datasets**: ASGS Edition 3 Remoteness Areas and Statistical Areas.
 - **Attribution**: *© Commonwealth of Australia (Australian Bureau of Statistics).*
-
-### 4. Wikidata & Wikipedia
-- **Purpose**: Cross-reference for parliamentarian Q-identifiers (`wikidata_id`), university headquarters coordinates ([Wikidata Property P159](https://www.wikidata.org/wiki/Property:P159)), and disambiguation of international institutions.
 
 ---
 

@@ -110,7 +110,7 @@ Records unique natural persons who have served in federal parliament.
 - `gender` (`VARCHAR`): Declared gender (`Male`, `Female`, `Other`).
 - `date_of_birth` (`DATE`): Date of birth for age calculation at cohort baselines.
 - `aph_id` (`VARCHAR UNIQUE`): Official APH Handbook identifier.
-- `wikidata_id` (`VARCHAR UNIQUE`): Wikidata Q-identifier (e.g. `Q348126`).
+- `wikidata_id` (`VARCHAR UNIQUE`): Canonical bare Wikidata Q-identifier (e.g. `Q4772000`), linked via APH ID property ([P10020](https://www.wikidata.org/wiki/Property:P10020)). Full entity URLs are normalized to bare QIDs.
 
 ### `parliament_service`
 Records distinct terms of parliamentary service per parliament and chamber.
@@ -195,7 +195,71 @@ SELECT * FROM get_parliament_education(47);
 
 ---
 
-## 4. Repository Data Layout
+## 4. Review Artifacts & Provenance Files
+
+To ensure that secondary enrichment does not silently overwrite authoritative records, APEMAP produces structured review artifacts under `data/processed/` that store both automated suggestions and manual review decisions:
+
+### `data/processed/wikimedia_member_review.csv`
+Captures demographic discrepancies between APH records and Wikidata, missing supplemental data, or identifier conflicts.
+
+**Generated & Historical Columns:**
+- `member_id`: Canonical member identifier.
+- `aph_id`: Official APH Handbook identifier.
+- `display_name`: Standardized member name.
+- `wikidata_id`: Resolved Wikidata Q-identifier (if matched).
+- `field`: Field evaluated (`date_of_birth`, `gender`, or `wikidata_id`).
+- `aph_value`: Value recorded in official APH biography.
+- `wikidata_value`: Corresponding value extracted from Wikidata claims.
+- `wikipedia_title`: English Wikipedia article title.
+- `source_url`: URL or query endpoint used for verification.
+- `status`: Classification (`discrepancy`, `supplemental_available`, `conflict`, `ambiguous`).
+- `notes`: Human-readable context and disambiguation details.
+- `historical_value`: Prior baseline or recorded value.
+- `historical_source`: Source of historical value (e.g. `members.wikidata_id`, `APH Parliamentary Handbook`).
+
+**Manual Decision Columns:**
+- `review_status`: Review decision. Allowed values: `pending`, `accepted`, `rejected`, `needs_research`.
+- `resolved_value`: Canonical resolved value decided by human reviewer.
+- `manual_source_url`: Reference URL supporting manual resolution.
+- `review_notes`: Human reviewer rationale or notes.
+
+### `data/processed/wikimedia_school_review.csv`
+Provides suggestions for unconfirmed or international secondary schools. Obvious bad candidates are filtered before reaching reviewers.
+
+**Generated & Historical Columns:**
+- `institution_id`: Synthetic institution identifier (`inst-unmatched-...`).
+- `raw_school_text`: School string extracted from parliamentary biography.
+- `suggested_institution_name`: Canonical institution title on Wikipedia.
+- `wikidata_id`: Wikidata Q-identifier for the institution.
+- `wikipedia_url`: English Wikipedia sitelink.
+- `country`: Country of location (e.g. `United Kingdom`, `New Zealand`).
+- `locality`: Suburb, city, or administrative region.
+- `latitude`, `longitude`: Geographic coordinates where present on Wikipedia/Wikidata.
+- `institution_type`: Institutional classification (e.g. `independent boarding school`, `grammar school`).
+- `confidence`: Review confidence status (`suggested`).
+- `notes`: Additional provenance notes.
+- `historical_match_name`: Supporting match name from `data/reference/school_aliases.json` (if any).
+- `historical_acara_id`: Supporting ACARA ID from historical aliases (if any).
+- `historical_source`: Provenance of supporting evidence (e.g. `data/reference/school_aliases.json`).
+
+**Manual Decision Columns:**
+- `review_status`: Review decision. Allowed values: `pending`, `accepted`, `rejected`, `needs_research`.
+- `resolved_school_name`: Canonical resolved school name decided by reviewer.
+- `resolved_acara_id`: Canonical ACARA SML ID decided by reviewer (if domestic school).
+- `resolved_wikidata_id`: Confirmed Wikidata QID for the institution.
+- `resolved_country`: Confirmed country name.
+- `resolved_state`: Confirmed Australian state/territory or regional division.
+- `resolved_suburb`: Confirmed suburb or locality.
+- `resolved_postcode`: Confirmed postal code.
+- `resolved_address`: Confirmed physical address.
+- `resolved_latitude`, `resolved_longitude`: Confirmed geographic coordinates.
+- `manual_source_url`: URL or authoritative document verifying institution identity.
+- `address_source_url`: URL or document verifying geographic location.
+- `review_notes`: Human reviewer notes or rationale.
+
+---
+
+## 5. Repository Data Layout
 
 The repository organizes data according to data lifecycle stages:
 
@@ -209,14 +273,19 @@ data/
 ├── reference/                   # Curated reference files maintained in Git
 │   └── school_aliases.json      # Verified school mergers, aliases, and overrides
 ├── raw/                         # Raw cached responses from external APIs
-│   └── aph/
-│       └── individuals.json     # Cached APH Handbook API JSON payload
+│   ├── aph/
+│   │   └── individuals.json     # Cached APH Handbook API JSON payload
+│   └── wikimedia/               # Raw cached Wikimedia JSON responses
+│       ├── members/             # Cached member SPARQL queries ({aph_id}.json)
+│       └── institutions/        # Cached Wikipedia pageprops and claims
 ├── processed/                   # Canonical output artifacts generated by CLI
 │   ├── *.parquet                # Portable Parquet table exports
 │   ├── parliament_*_combined.geojson  # Spatial layers for mapping
 │   ├── analysis_report.json     # Deterministic analytical metrics
 │   ├── coverage_metrics.json    # Parliament coverage benchmarks
-│   └── unmatched_schools.csv    # Unmatched school review queue
+│   ├── unmatched_schools.csv    # Unmatched school review queue
+│   ├── wikimedia_member_review.csv  # Member demographic QA & discrepancy review
+│   └── wikimedia_school_review.csv  # Wikimedia unmatched school suggestions
 ├── aped.duckdb                  # Canonical DuckDB database
 │
 ├── [Legacy Research Artifacts]  # Preserved historical files (not canonical)

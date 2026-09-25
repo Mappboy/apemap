@@ -104,10 +104,12 @@ def test_cli_documentation_matches_cli_commands():
 
     assert "aph" in ingest_commands
     assert "acara" in ingest_commands
+    assert "wikimedia" in ingest_commands
 
     # Verify that each command has its dedicated section in docs/cli.md
     assert "apemap ingest aph" in cli_doc
     assert "apemap ingest acara" in cli_doc
+    assert "apemap ingest wikimedia" in cli_doc
     assert "apemap transform" in cli_doc
     assert "apemap validate" in cli_doc
     assert "apemap analyze" in cli_doc
