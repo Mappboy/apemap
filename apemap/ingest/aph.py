@@ -231,24 +231,58 @@ def parse_individual(
         opening_d = parse_date(parl_info["opening_date"]) if parl_info else None
         end_d = parse_date(parl_info["end_date"]) if parl_info else None
 
+        # Determine parliament-specific service dates:
+        # Check PartyParliamentaryService for overlapping stint dates
+        matching_pps: list[tuple[date, date | None]] = []
+        for item in raw.get("PartyParliamentaryService", []):
+            if not isinstance(item, dict):
+                continue
+            ds = parse_date(item.get("DateStart"))
+            de = parse_date(item.get("DateEnd"))
+            if ds is not None:
+                if end_d is not None and ds > end_d:
+                    continue
+                if de is not None and opening_d is not None and de < opening_d:
+                    continue
+                matching_pps.append((ds, de))
+
+        if matching_pps:
+            matching_pps.sort(key=lambda x: x[0])
+            stint_start = matching_pps[0][0]
+            stint_end = matching_pps[-1][1]
+        else:
+            stint_start = overall_start
+            stint_end = overall_end
+
+        # Overlap gate:
+        # Before appending a ServiceStint, require the actual service interval to overlap
+        # the parliament interval: effectively service_start <= parliament_end and
+        # (service_end is null or service_end >= opening_date).
+        # Do not use a missing service start as though it were the parliament opening date.
+        if stint_start is None:
+            continue
+        if end_d is not None and stint_start > end_d:
+            continue
+        if opening_d is not None and stint_end is not None and stint_end < opening_d:
+            continue
+
         # Determine opening day membership:
         # Active if start <= opening_date and (end is null or end >= opening_date)
         is_opening = False
-        if opening_d:
-            st = overall_start or opening_d
-            en = overall_end
-            if st <= opening_d and (en is None or en >= opening_d):
-                is_opening = True
+        if (
+            opening_d is not None
+            and stint_start <= opening_d
+            and (stint_end is None or stint_end >= opening_d)
+        ):
+            is_opening = True
 
         # Determine current member status
         is_current = False
         if parl_num == 48:
-            is_current = in_curr or overall_end is None
+            is_current = in_curr or stint_end is None
         elif end_d:
             # For past parliaments, active on dissolution/end
-            st = overall_start or opening_d
-            en = overall_end
-            if st and st <= end_d and (en is None or en >= end_d):
+            if stint_start <= end_d and (stint_end is None or stint_end >= end_d):
                 is_current = True
 
         stint = ServiceStint(
@@ -260,11 +294,9 @@ def parse_individual(
             party_abbrev=party_abbrev,
             electorate=electorate,
             state_or_territory=state_or_territory,
-            service_start=overall_start.isoformat()
-            if overall_start
-            else (opening_d.isoformat() if opening_d else None),
-            service_end=overall_end.isoformat()
-            if overall_end
+            service_start=stint_start.isoformat(),
+            service_end=stint_end.isoformat()
+            if stint_end
             else (end_d.isoformat() if end_d else None),
             is_opening_day_member=is_opening,
             is_current_member=is_current,

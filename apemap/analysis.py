@@ -175,6 +175,7 @@ def compute_sector_summary(
             SELECT DISTINCT member_id
             FROM parliament_service
             WHERE parliament_number = ?
+              AND is_opening_day_member = TRUE
             """,
             [parliament],
         ).fetchall()
@@ -188,6 +189,7 @@ def compute_sector_summary(
             SELECT DISTINCT member_id
             FROM parliament_service
             WHERE parliament_number = ?
+              AND is_opening_day_member = TRUE
         ) s ON e.member_id = s.member_id
         WHERE e.level = 'secondary'
         ORDER BY e.member_id, e.education_id
@@ -265,6 +267,7 @@ def compute_funding_summary(
                 SELECT DISTINCT member_id
                 FROM parliament_service
                 WHERE parliament_number = ?
+                  AND is_opening_day_member = TRUE
             ) s ON e.member_id = s.member_id
             WHERE e.level = 'secondary'
         )

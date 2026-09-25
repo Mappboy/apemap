@@ -1,3 +1,4 @@
+-- LEGACY: Superseded by canonical DuckDB schema and views in apemap/schema/02_views.sql.
 DROP VIEW IF EXISTS public.member_secondary_school_education_47, public.member_aph_47;
 create view public.member_aph_47
 as

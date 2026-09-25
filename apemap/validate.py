@@ -217,7 +217,84 @@ def validate_database(
         except Exception as e:
             report.add_failure(f"Error checking parliament {p} metrics: {e}")
 
-    # 5. Core View Existence and Queryability
+        # Service interval overlap check: ensure every record overlaps declared parliament
+        report.checks_run += 1
+        try:
+            meta = PARLIAMENT_METADATA.get(p)
+            op = meta["opening_date"] if meta else None
+            en = meta["end_date"] if meta else None
+            if en is not None and op is not None:
+                res_overlap = conn.execute(
+                    """
+                    SELECT count(*)
+                    FROM parliament_service
+                    WHERE parliament_number = ?
+                      AND (
+                          service_start IS NULL
+                          OR service_start > CAST(? AS DATE)
+                          OR (service_end IS NOT NULL AND service_end < CAST(? AS DATE))
+                      )
+                    """,
+                    [p, en, op],
+                ).fetchone()
+            elif op is not None:
+                res_overlap = conn.execute(
+                    """
+                    SELECT count(*)
+                    FROM parliament_service
+                    WHERE parliament_number = ?
+                      AND (
+                          service_start IS NULL
+                          OR (service_end IS NOT NULL AND service_end < CAST(? AS DATE))
+                      )
+                    """,
+                    [p, op],
+                ).fetchone()
+            else:
+                res_overlap = (0,)
+
+            non_overlap_count = res_overlap[0] if res_overlap else 0
+            if non_overlap_count > 0:
+                report.add_failure(
+                    f"Parliament {p} has {non_overlap_count} service records that do not overlap the declared parliament term"
+                )
+            else:
+                report.checks_passed += 1
+        except Exception as e:
+            report.add_failure(
+                f"Error checking service overlap for Parliament {p}: {e}"
+            )
+
+    # 5. Opening-Day Chamber Benchmarks (Parliament 47: 151 Reps + 76 Senators)
+    if 47 in target_parls:
+        report.checks_run += 1
+        try:
+            ch_rows = conn.execute(
+                """
+                SELECT chamber, count(*)
+                FROM parliament_service
+                WHERE parliament_number = 47
+                  AND is_opening_day_member = TRUE
+                GROUP BY chamber
+                """
+            ).fetchall()
+            ch_counts = dict(ch_rows)
+            reps_count = ch_counts.get("representatives", 0)
+            senate_count = ch_counts.get("senate", 0)
+            if reps_count != 151 or senate_count != 76:
+                report.add_failure(
+                    f"Parliament 47 opening-day chamber benchmark failed: "
+                    f"expected 151 representatives and 76 senators, found "
+                    f"{reps_count} representatives and {senate_count} senators"
+                )
+            else:
+                report.checks_passed += 1
+        except Exception as e:
+            report.add_failure(
+                f"Error checking Parliament 47 opening-day chamber benchmarks: {e}"
+            )
+
+    # 6. Core View Existence and Queryability
     views = [
         "v_parliament_members",
         "v_parliament_members_opening",
