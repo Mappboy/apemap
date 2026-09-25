@@ -26,10 +26,13 @@ from apemap.constants import (
 )
 from apemap.db import get_connection, init_schema, migrate_historical_finances
 from apemap.export import export_all_artifacts
+from apemap.ingest.abs import run_abs_ingestion
 from apemap.ingest.acara import run_acara_ingestion
+from apemap.ingest.aec import run_aec_ingestion
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
 from apemap.validate import validate_database
+
 
 app = typer.Typer(
     name="apemap",
@@ -384,6 +387,137 @@ def ingest_wikimedia(
         table.add_row("School Review CSV", results["school_review_csv"])
 
     console.print(table)
+
+
+@ingest_app.command(name="aec")
+@app.command(name="ingest-aec")
+def ingest_aec(
+    election_year: Annotated[
+        int,
+        typer.Option(
+            "--election-year",
+            "-y",
+            help="Federal election year for boundaries (default: 2025).",
+        ),
+    ] = 2025,
+    refresh: Annotated[
+        bool,
+        typer.Option(
+            "--refresh",
+            help="Force re-fetching AEC boundary shapefile archive instead of local disk cache.",
+        ),
+    ] = False,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    raw_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--raw-dir",
+            help="Directory for cached raw shapefile archive.",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest official AEC 2025 federal electoral boundaries and export canonical GeoParquet."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        f"[bold blue]Starting AEC Ingestion[/bold blue] for Election Year: "
+        f"[green]{election_year}[/green]"
+    )
+    if refresh:
+        console.print("[yellow]Notice:[/yellow] Live refresh from AEC requested.")
+    else:
+        console.print("[dim]Using local disk cache if available.[/dim]")
+
+    results = run_aec_ingestion(
+        election_year=election_year,
+        refresh=refresh,
+        db_path=effective_db_path,
+        raw_dir=raw_dir,
+        export_parquet_files=export_parquet,
+        output_dir=effective_out_dir,
+    )
+
+    console.print()
+    console.print("[bold green]AEC Boundary Ingestion Complete![/bold green]")
+    console.print(
+        f"Database: [cyan]{effective_db_path}[/cyan] | "
+        f"Divisions Loaded: [green]{results['divisions_loaded']}[/green] | "
+        f"Source: [dim]{results['source_dataset']}[/dim]"
+    )
+    if export_parquet and results.get("parquet_path"):
+        console.print(f"GeoParquet written to: [cyan]{results['parquet_path']}[/cyan]")
+
+
+@ingest_app.command(name="benchmarks")
+@app.command(name="ingest-benchmarks")
+def ingest_benchmarks(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest official ABS statistical education sector benchmarks into canonical tables."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        "[bold blue]Starting ABS Reference Benchmarks Ingestion...[/bold blue]"
+    )
+
+    results = run_abs_ingestion(
+        db_path=effective_db_path,
+        export_parquet_files=export_parquet,
+        output_dir=effective_out_dir,
+    )
+
+    console.print()
+    console.print("[bold green]ABS Benchmarks Ingestion Complete![/bold green]")
+    console.print(
+        f"Database: [cyan]{effective_db_path}[/cyan] | "
+        f"Benchmark Year: [green]{results['benchmark_year']}[/green] | "
+        f"Records Loaded: [green]{results['benchmarks_loaded']}[/green] | "
+        f"Source: [dim]{results['source_title']} ({results['source_url']})[/dim]"
+    )
+    if export_parquet and results.get("parquet_path"):
+        console.print(f"Parquet written to: [cyan]{results['parquet_path']}[/cyan]")
 
 
 @app.command(name="transform")
@@ -761,8 +895,25 @@ def run_all_cmd(
         Panel("[bold blue]Starting Full APEMAP End-to-End Pipeline[/bold blue]")
     )
 
-    # Step 1: ACARA Ingestion
-    console.print("\n[bold]1. Running ACARA Ingestion...[/bold]")
+    # Step 1: Reference Data Ingestion (AEC Boundaries & ABS Benchmarks)
+    console.print("\n[bold]1. Running Reference Data Ingestion...[/bold]")
+    console.print("[dim]1a. Ingesting AEC Federal Electoral Boundaries...[/dim]")
+    run_aec_ingestion(
+        election_year=2025,
+        refresh=refresh,
+        db_path=effective_db_path,
+        export_parquet_files=False,
+        output_dir=effective_out_dir,
+    )
+    console.print("[dim]1b. Ingesting ABS Schools Sector Benchmarks...[/dim]")
+    run_abs_ingestion(
+        db_path=effective_db_path,
+        export_parquet_files=False,
+        output_dir=effective_out_dir,
+    )
+
+    # Step 2: ACARA Ingestion
+    console.print("\n[bold]2. Running ACARA Ingestion...[/bold]")
     run_acara_ingestion(
         download_latest=download,
         use_longitudinal=longitudinal,
@@ -771,8 +922,8 @@ def run_all_cmd(
         output_dir=effective_out_dir,
     )
 
-    # Step 2: APH Ingestion
-    console.print("\n[bold]2. Running APH Ingestion...[/bold]")
+    # Step 3: APH Ingestion
+    console.print("\n[bold]3. Running APH Ingestion...[/bold]")
     run_aph_ingestion(
         parliaments=parl_list,
         refresh=refresh,
@@ -781,9 +932,9 @@ def run_all_cmd(
         output_dir=effective_out_dir,
     )
 
-    # Step 2b: Optional Wikimedia Enrichment
+    # Step 3b: Optional Wikimedia Enrichment
     if enrich_wikimedia:
-        console.print("\n[bold]2b. Running Wikimedia Enrichment...[/bold]")
+        console.print("\n[bold]3b. Running Wikimedia Enrichment...[/bold]")
         run_wikimedia_enrichment(
             parliaments=parl_list,
             refresh=refresh,
@@ -791,8 +942,8 @@ def run_all_cmd(
             output_dir=effective_out_dir,
         )
 
-    # Step 3: Schema Transform and Views
-    console.print("\n[bold]3. Initializing Schema & Views...[/bold]")
+    # Step 4: Schema Transform and Views
+    console.print("\n[bold]4. Initializing Schema & Views...[/bold]")
     conn = get_connection(effective_db_path)
     try:
         init_schema(conn)
@@ -801,8 +952,8 @@ def run_all_cmd(
         if fin_count == 0:
             migrate_historical_finances(conn)
 
-        # Step 4: Validation Gate
-        console.print("\n[bold]4. Validating Canonical Database...[/bold]")
+        # Step 5: Validation Gate
+        console.print("\n[bold]5. Validating Canonical Database...[/bold]")
         report = validate_database(conn, parl_list)
         if not report.passed:
             console.print(
@@ -817,9 +968,9 @@ def run_all_cmd(
                 f"[green]Validation passed ({report.checks_run} checks passed).[/green]"
             )
 
-        # Step 5: Export Artifacts
+        # Step 6: Export Artifacts
         console.print(
-            "\n[bold]5. Exporting Parquet, GeoJSON, and Analysis Metrics...[/bold]"
+            "\n[bold]6. Exporting Parquet, GeoJSON, and Analysis Metrics...[/bold]"
         )
         export_results = export_all_artifacts(conn, effective_out_dir, parl_list)
     finally:
