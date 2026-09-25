@@ -72,7 +72,10 @@ from apemap.analysis import compute_sector_summary
 
 conn = get_connection(read_only=True)
 sector_data = compute_sector_summary(conn, parliament_number=47)
-print("47th Parliament Sector Distribution:", sector_data["percentage_of_known_parliamentarians"])
+print(
+    "47th Parliament Sector Distribution:",
+    sector_data["percentage_of_known_parliamentarians"],
+)
 conn.close()
 ```
 
@@ -112,10 +115,14 @@ from apemap.ingest.matching import SchoolMatcher
 
 matcher = SchoolMatcher()
 match = matcher.match("Sydney Grammar School")
-print(f"Matched: {match.school_name} (ACARA ID: {match.acara_id}, Sector: {match.sector}, Confidence: {match.confidence})")
+print(
+    f"Matched: {match.school_name} (ACARA ID: {match.acara_id}, Sector: {match.sector}, Confidence: {match.confidence})"
+)
 
 unmatched = matcher.match("Eton College, Berkshire")
-print(f"Unmatched: {unmatched.school_name} (ID: {unmatched.institution_id}, International: {unmatched.is_international})")
+print(
+    f"Unmatched: {unmatched.school_name} (ID: {unmatched.institution_id}, International: {unmatched.is_international})"
+)
 ```
 
 ### `apemap.ingest.aph` & `apemap.ingest.acara`
