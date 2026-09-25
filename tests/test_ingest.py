@@ -17,6 +17,7 @@ from apemap.ingest.matching import (
     is_international_text,
     split_school_string,
 )
+from apemap.ingest.aph import parse_individual
 from apemap.ingest.pipeline import run_aph_ingestion
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -271,3 +272,51 @@ def test_cli_ingest_aph(
     assert db_file.exists()
     assert (out_dir / "unmatched_schools.csv").exists()
     assert (out_dir / "coverage_metrics.json").exists()
+
+
+def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) -> None:
+    """Verify that an individual whose RepresentedParliaments contains 47 but whose
+    service ended before Parliament 47 does NOT produce a Parliament 47 service record."""
+    raw_record = {
+        "PHID": "PAST46",
+        "GivenName": "Retired",
+        "FamilyName": "MEMBER",
+        "DisplayName": "MEMBER, Retired",
+        "Party": "Australian Labor Party",
+        "PartyAbbrev": "ALP",
+        "Electorate": "Grayndler",
+        "StateAbbrev": "NSW",
+        "MPorSenator": ["Member"],
+        "RepresentedParliaments": [46, 47],
+        "InCurrentParliament": "False",
+        "ServiceHistory_Start": "2019-07-02",
+        "ServiceHistory_End": "2022-04-11",
+        "SecondarySchool": "St Mary's Cathedral College",
+    }
+    # 1. Domain parser assertion
+    parsed = parse_individual(raw_record, target_parliaments={46, 47})
+    assert parsed is not None
+    assert len(parsed.services) == 1
+    assert parsed.services[0].parliament_number == 46
+    assert not any(s.parliament_number == 47 for s in parsed.services)
+
+    # 2. Pipeline assertion
+    db_file = tmp_path / "test_reject_p47.duckdb"
+    out_dir = tmp_path / "processed_reject"
+    result = run_aph_ingestion(
+        parliaments=[46, 47],
+        raw_individuals=[raw_record],
+        db_path=db_file,
+        output_dir=out_dir,
+    )
+    conn = result["connection"]
+    p47_count = conn.execute(
+        "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 47"
+    ).fetchone()[0]
+    p46_count = conn.execute(
+        "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 46"
+    ).fetchone()[0]
+    conn.close()
+
+    assert p47_count == 0
+    assert p46_count == 1
