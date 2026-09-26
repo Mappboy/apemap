@@ -1,4 +1,5 @@
 """Optional interactive companion for the canonical APEMAP analysis API."""
+
 from __future__ import annotations
 
 import marimo
@@ -7,13 +8,13 @@ __generated_with = "0.24.2"
 app = marimo.App()
 
 
-
 @app.cell
 def _(get_connection, os, root):
 
     import os
     import sys
     from pathlib import Path
+
     root = Path(os.environ.get("APEMAP_PROJECT_ROOT", Path.cwd())).resolve()
     while not (root / "pyproject.toml").exists() and root != root.parent:
         root = root.parent
@@ -25,12 +26,19 @@ def _(get_connection, os, root):
         compute_sector_summary,
     )
     from apemap.db import get_connection  # noqa: E402
+
     parliament = 48
     db_path = Path(
         os.environ.get("APEMAP_DB_PATH", root / "data" / "aped.duckdb")
     ).resolve()
     conn = get_connection(db_path, read_only=True)
-    return conn, parliament
+    return (
+        compute_funding_summary,
+        compute_parliament_demographics,
+        compute_sector_summary,
+        conn,
+        parliament,
+    )
 
 
 @app.cell

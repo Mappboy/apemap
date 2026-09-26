@@ -26,6 +26,8 @@ CANONICAL_TABLES = (
     "member_education",
     "school_snapshots",
     "school_finances_2021",
+    "electoral_boundaries",
+    "education_sector_benchmarks",
 )
 
 # Keep physical exports stable even when DuckDB's table scan order changes.
@@ -38,7 +40,18 @@ CANONICAL_ORDER_BY = {
     "member_education": "education_id",
     "school_snapshots": "institution_id, snapshot_year",
     "school_finances_2021": "institution_id",
+    "electoral_boundaries": "boundary_id",
+    "education_sector_benchmarks": "benchmark_year, sector",
 }
+
+
+def ensure_spatial(conn: DuckDBPyConnection) -> None:
+    """Ensure DuckDB spatial extension is loaded and configured."""
+    try:
+        conn.execute("LOAD spatial;")
+    except Exception:
+        conn.execute("INSTALL spatial; LOAD spatial;")
+    conn.execute("SET geometry_always_xy = true;")
 
 
 def get_connection(
@@ -104,6 +117,7 @@ def load_parquet_sources(
         )
 
     counts: dict[str, int] = {}
+    ensure_spatial(conn)
     for table in CANONICAL_TABLES:
         parquet_file = source_dir / f"{table}.parquet"
         if parquet_file.exists():
@@ -157,6 +171,7 @@ def export_to_parquet(
     target_dir = Path(output_dir).resolve()
     target_dir.mkdir(parents=True, exist_ok=True)
 
+    ensure_spatial(conn)
     exported: dict[str, Path] = {}
     for table in CANONICAL_TABLES:
         target_path = target_dir / f"{table}.parquet"

@@ -301,6 +301,7 @@ def validate_database(
         "v_parliament_members_current",
         "v_member_secondary_education",
         "v_coverage_metrics",
+        "v_house_electorates",
     ]
     for v in views:
         report.checks_run += 1
@@ -309,6 +310,114 @@ def validate_database(
             report.checks_passed += 1
         except Exception as e:
             report.add_failure(f"View '{v}' is invalid or failed querying: {e}")
+
+    # 7. Electoral Boundaries Linkage and Geometry Validity
+    if 48 in target_parls:
+        report.checks_run += 1
+        try:
+            # Verify every 48th Parliament House member has exactly one matching 2025 boundary
+            unmatched = conn.execute(
+                """
+                SELECT count(*)
+                FROM parliament_service ps
+                LEFT JOIN electoral_boundaries eb
+                  ON LOWER(ps.electorate) = LOWER(eb.electorate)
+                 AND eb.election_year = 2025
+                WHERE ps.parliament_number = 48
+                  AND ps.chamber = 'representatives'
+                  AND eb.boundary_id IS NULL
+                """
+            ).fetchone()
+            unmatched_count = unmatched[0] if unmatched else 0
+            if unmatched_count > 0:
+                report.add_failure(
+                    f"48th Parliament House boundary linkage failed: "
+                    f"{unmatched_count} service records have no matching 2025 boundary"
+                )
+            else:
+                report.checks_passed += 1
+        except Exception as e:
+            report.add_failure(
+                f"Error checking 48th Parliament House boundary linkage: {e}"
+            )
+
+        report.checks_run += 1
+        try:
+            # Check for multiple polygon matches per House service
+            multi_res = conn.execute(
+                """
+                SELECT count(*) FROM (
+                    SELECT ps.service_id, count(eb.boundary_id) AS cnt
+                    FROM parliament_service ps
+                    JOIN electoral_boundaries eb
+                      ON LOWER(ps.electorate) = LOWER(eb.electorate)
+                     AND eb.election_year = 2025
+                    WHERE ps.parliament_number = 48
+                      AND ps.chamber = 'representatives'
+                    GROUP BY ps.service_id
+                    HAVING count(eb.boundary_id) != 1
+                )
+                """
+            ).fetchone()
+            multi_count = multi_res[0] if multi_res else 0
+            if multi_count > 0:
+                report.add_failure(
+                    f"48th Parliament House boundary multiplicity error: "
+                    f"{multi_count} services have != 1 polygon matches"
+                )
+            else:
+                report.checks_passed += 1
+        except Exception as e:
+            report.add_failure(f"Error checking boundary multiplicity: {e}")
+
+    # 8. Boundary Geometry and Benchmark Data Integrity
+    report.checks_run += 1
+    try:
+        from apemap.db import ensure_spatial
+
+        ensure_spatial(conn)
+        geom_invalid = conn.execute(
+            """
+            SELECT count(*)
+            FROM electoral_boundaries
+            WHERE geometry IS NULL OR NOT ST_IsValid(geometry)
+            """
+        ).fetchone()
+        inv_count = geom_invalid[0] if geom_invalid else 0
+        if inv_count > 0:
+            report.add_failure(
+                f"Electoral boundary geometry invalid or NULL for {inv_count} records"
+            )
+        else:
+            report.checks_passed += 1
+    except Exception as e:
+        report.add_failure(f"Error validating electoral boundary geometries: {e}")
+
+    report.checks_run += 1
+    try:
+        benchmarks = conn.execute(
+            """
+            SELECT sector, student_enrolment_share, source_url
+            FROM education_sector_benchmarks
+            WHERE benchmark_year = 2025
+            """
+        ).fetchall()
+        b_dict = {row[0]: row[1] for row in benchmarks}
+        expected_sectors = {"Government", "Catholic", "Independent"}
+        if set(b_dict.keys()) != expected_sectors:
+            report.add_failure(
+                f"ABS 2025 benchmark sectors mismatch: expected {expected_sectors}, found {set(b_dict.keys())}"
+            )
+        else:
+            total_share = sum(b_dict.values())
+            if abs(total_share - 1.0) > 1e-4:
+                report.add_failure(
+                    f"ABS 2025 benchmark shares do not sum to 1.0 (sum={total_share})"
+                )
+            else:
+                report.checks_passed += 1
+    except Exception as e:
+        report.add_failure(f"Error validating education sector benchmarks: {e}")
 
     logger.info(
         "Validation completed: %d checks run, %d passed, %d failures",

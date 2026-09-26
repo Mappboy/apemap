@@ -91,3 +91,29 @@ CREATE TABLE IF NOT EXISTS school_finances_2021 (
     reporting_year INTEGER NOT NULL DEFAULT 2021
 );
 
+-- 7. Electoral Boundaries: Official Commonwealth electoral division boundaries
+CREATE TABLE IF NOT EXISTS electoral_boundaries (
+    boundary_id VARCHAR PRIMARY KEY,
+    election_year INTEGER NOT NULL,
+    electorate VARCHAR NOT NULL,
+    state_or_territory VARCHAR NOT NULL,
+    geometry GEOMETRY NOT NULL,
+    source_url VARCHAR NOT NULL,
+    source_dataset VARCHAR NOT NULL,
+    retrieved_at TIMESTAMPTZ NOT NULL
+);
+
+-- 8. Education Sector Benchmarks: Official statistical reference benchmarks (e.g. ABS Schools)
+CREATE TABLE IF NOT EXISTS education_sector_benchmarks (
+    benchmark_year INTEGER NOT NULL,
+    sector VARCHAR NOT NULL CHECK (sector IN ('Government', 'Catholic', 'Independent')),
+    student_enrolment_share DOUBLE NOT NULL,
+    student_enrolments BIGINT NOT NULL,
+    total_student_enrolments BIGINT NOT NULL,
+    source_title VARCHAR NOT NULL,
+    source_url VARCHAR NOT NULL,
+    released_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (benchmark_year, sector)
+);
+
+

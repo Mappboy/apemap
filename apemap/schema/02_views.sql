@@ -134,3 +134,42 @@ LEFT JOIN member_education me ON ps.member_id = me.member_id AND me.level = 'sec
 LEFT JOIN institutions i ON me.institution_id = i.institution_id
 GROUP BY ps.parliament_number
 ORDER BY ps.parliament_number;
+
+-- House Electorates Spatial Link View
+-- Connects House of Representatives service records to canonical electoral boundary polygons
+CREATE OR REPLACE VIEW v_house_electorates AS
+SELECT
+    ps.service_id,
+    ps.member_id,
+    m.display_name,
+    m.family_name,
+    m.given_name,
+    ps.parliament_number,
+    ps.chamber,
+    ps.party,
+    ps.party_abbrev,
+    ps.electorate,
+    ps.state_or_territory,
+    ps.service_start,
+    ps.service_end,
+    ps.is_opening_day_member,
+    ps.is_current_member,
+    eb.boundary_id,
+    eb.election_year,
+    eb.geometry,
+    eb.source_url AS boundary_source_url,
+    eb.source_dataset AS boundary_source_dataset,
+    eb.retrieved_at AS boundary_retrieved_at
+FROM parliament_service ps
+JOIN members m ON ps.member_id = m.member_id
+JOIN electoral_boundaries eb ON (
+    LOWER(ps.electorate) = LOWER(eb.electorate)
+    AND eb.election_year = CASE
+        WHEN ps.parliament_number = 48 THEN 2025
+        WHEN ps.parliament_number = 47 THEN 2022
+        WHEN ps.parliament_number = 46 THEN 2019
+        ELSE 2025
+    END
+)
+WHERE ps.chamber = 'representatives';
+

@@ -27,6 +27,8 @@ These sources are actively fetched or read during pipeline execution:
 | **ACARA 2021 Finances** | ACARA | 2021 School Financial Snapshot | Isolated snapshot in `school_finances_2021` | © ACARA MySchool |
 | **School Aliases** | APEMAP Project | `data/reference/school_aliases.json` | Project repository | CC BY 4.0 |
 | **Wikipedia / Wikidata** | Wikimedia Foundation | MediaWiki Action API & Wikidata SPARQL | HTTPS GET / Disk cache (`data/raw/wikimedia/`) | CC0 / CC BY-SA 4.0 |
+| **AEC Federal Boundaries** | Australian Electoral Commission | National 2025 Federal Boundaries (`AUS-March-2025-esri.zip`) | HTTPS GET / Disk cache (`data/raw/aec/2025/`) | © Commonwealth of Australia (CC BY 4.0) |
+| **ABS Schools Benchmark** | Australian Bureau of Statistics | Schools, 2025 Statistical Release | Canonical reference in `education_sector_benchmarks` | © Commonwealth of Australia (CC BY 4.0) |
 
 ### Detailed Source Profiles
 
@@ -67,6 +69,23 @@ These sources are actively fetched or read during pipeline execution:
 - **Attribution & Licensing**: *Data from Wikidata is available under CC0 Public Domain Dedication; text and sitelinks from Wikipedia are available under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).*
 - **Limitations**: Crowdsourced and secondary. Used strictly for cross-referencing and supplementary enrichment; never treated as an authoritative replacement for official APH or ACARA data.
 
+### 5. Australian Electoral Commission (AEC) 2025 Federal Electoral Boundaries
+- **Publisher**: Australian Electoral Commission, Commonwealth of Australia
+- **Portal**: [AEC GIS Data Download](https://www.aec.gov.au/electorates/gis/gis_datadownload.htm)
+- **Dataset**: National 2025 Federal Electoral Boundaries ESRI Shapefile (`AUS-March-2025-esri.zip`, current as 4 March 2025).
+- **Purpose**: Authoritative spatial boundaries for the 150 federal electoral divisions applied at the 2025 federal election, linked to House of Representatives service records via `v_house_electorates` and exported as canonical GeoParquet (`data/processed/electoral_boundaries.parquet`).
+- **Caching & Provenance**: Cached on local disk under `data/raw/aec/2025/`. Pipeline runs use the cached shapefile by default; `--refresh` re-downloads the archive.
+- **Attribution**: *© Commonwealth of Australia (Australian Electoral Commission 2025).*
+- **Limitations**: Reflects the boundary redistribution for the 2025 federal election (150 divisions).
+
+### 6. Australian Bureau of Statistics (ABS) Schools, 2025 Benchmark
+- **Publisher**: Australian Bureau of Statistics, Commonwealth of Australia
+- **Release**: [ABS Schools, 2025](https://www.abs.gov.au/statistics/people/education/schools/2025) (released 5 March 2026).
+- **Purpose**: Official national benchmark measuring student enrolments by school affiliation, establishing baseline sector shares: Government 62.8% (2,613,404 enrolments), Catholic 20.0% (831,692 enrolments), and Independent 17.2% (715,822 enrolments) from 4,160,918 total enrolments.
+- **Crucial Distinction**: Measures **student enrolments by school affiliation**, not Australian population shares. Consistently labeled as "Student Enrolment Share" throughout APEMAP.
+- **Attribution**: *© Commonwealth of Australia (Australian Bureau of Statistics 2026, Schools 2025).*
+- **Limitations**: Reflects 2025 annual census enrolment counts; does not reflect historical student proportions when older parliamentarians attended school.
+
 ---
 
 ## 3. Reference & Historical Research Sources
@@ -79,15 +98,11 @@ These sources informed the project's background research, baseline validation, o
 - **Role in APEMAP**: Provided the conceptual inspiration and early manual baseline for linking 46th/47th parliamentarians to secondary institutions.
 - **Attribution**: *Sydney Morning Herald investigative baseline (Carter, Yim et al.).*
 
-### 2. Australian Electoral Commission (AEC)
-- **Portal**: [AEC Boundary Downloads](https://www.aec.gov.au/Electorates/gis/gis_datadownload.htm)
-- **Datasets**: 2021 Commonwealth Electoral Boundaries (`aec_elb_2021`), Registered Political Parties (`aec_parties`).
-- **Attribution**: *© Commonwealth of Australia (Australian Electoral Commission).*
-
-### 3. Australian Bureau of Statistics (ABS)
+### 2. Australian Bureau of Statistics (ABS) Statistical Geography
 - **Portal**: [ASGS Edition 3 Boundaries](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/data-services-and-apis)
 - **Datasets**: ASGS Edition 3 Remoteness Areas and Statistical Areas.
 - **Attribution**: *© Commonwealth of Australia (Australian Bureau of Statistics).*
+
 
 ---
 

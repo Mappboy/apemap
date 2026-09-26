@@ -20,7 +20,12 @@ from apemap.analysis import (
     get_age_bracket,
 )
 from apemap.cli import app
-from apemap.db import CANONICAL_TABLES, get_connection, init_schema
+from apemap.db import (
+    CANONICAL_TABLES,
+    ensure_spatial,
+    get_connection,
+    init_schema,
+)
 from apemap.validate import validate_database
 
 runner = CliRunner()
@@ -47,6 +52,7 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
     """Provide a temporary DuckDB database populated with deterministic test data."""
     db_file = tmp_path / "test_aped.duckdb"
     conn = get_connection(db_file)
+    ensure_spatial(conn)
     init_schema(conn)
 
     # Insert 200+ members to pass parliament size sanity check
@@ -156,6 +162,34 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         ) VALUES
         ('inst-gov', '1001', 15000, 14000, 2021),
         ('inst-cath', '1002', 18000, 17000, 2021)
+        """
+    )
+
+    # Electoral boundaries (mock)
+    conn.execute(
+        """
+        INSERT INTO electoral_boundaries (
+            boundary_id, election_year, electorate, state_or_territory,
+            geometry, source_url, source_dataset, retrieved_at
+        ) VALUES (
+            'bnd-2025-test', 2025, 'Test Electorate', 'NSW',
+            ST_GeomFromText('POLYGON((150 -33, 151 -33, 151 -34, 150 -34, 150 -33))'),
+            'https://www.aec.gov.au', 'AUS-March-2025-esri.zip', '2026-03-26 00:00:00+00'
+        )
+        """
+    )
+
+    # Education sector benchmarks (mock)
+    conn.execute(
+        """
+        INSERT INTO education_sector_benchmarks (
+            benchmark_year, sector, student_enrolment_share,
+            student_enrolments, total_student_enrolments,
+            source_title, source_url, released_at
+        ) VALUES
+        (2025, 'Government', 0.628, 2613404, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00'),
+        (2025, 'Catholic', 0.200, 831692, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00'),
+        (2025, 'Independent', 0.172, 715822, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00')
         """
     )
 

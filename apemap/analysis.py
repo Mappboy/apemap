@@ -238,6 +238,7 @@ def compute_sector_summary(
         sector: count / attendance_count * 100 if attendance_count else 0.0
         for sector, count in attendance_instances.items()
     }
+    benchmark_comparison = compute_sector_benchmarks(conn, parliament)
 
     return {
         "parliament_number": parliament,
@@ -251,7 +252,102 @@ def compute_sector_summary(
         "attendance_instance_percentage_denominator": attendance_count,
         "attendance_instances_by_sector": attendance_instances,
         "percentage_of_attendance_instances": attendance_percentages,
+        "benchmark_comparison": benchmark_comparison,
     }
+
+
+def compute_sector_benchmarks(
+    conn: duckdb.DuckDBPyConnection,
+    parliament: int,
+    benchmark_year: int = 2025,
+) -> dict[str, dict[str, Any]]:
+    """Compare parliamentary education sector representation against statistical benchmarks.
+
+    Returns for each benchmarked sector:
+    - parliamentary_share (float proportion)
+    - student_enrolment_share (float proportion)
+    - difference_percentage_points (float percentage points)
+    - benchmark_year (int)
+    - benchmark_source (str)
+    """
+    all_mps = {
+        row[0]
+        for row in conn.execute(
+            """
+            SELECT DISTINCT member_id
+            FROM parliament_service
+            WHERE parliament_number = ?
+              AND is_opening_day_member = TRUE
+            """,
+            [parliament],
+        ).fetchall()
+    }
+    edu_rows = conn.execute(
+        """
+        SELECT e.member_id, i.sector
+        FROM member_education e
+        JOIN institutions i ON e.institution_id = i.institution_id
+        JOIN (
+            SELECT DISTINCT member_id
+            FROM parliament_service
+            WHERE parliament_number = ?
+              AND is_opening_day_member = TRUE
+        ) s ON e.member_id = s.member_id
+        WHERE e.level = 'secondary'
+        ORDER BY e.member_id, e.education_id
+        """,
+        [parliament],
+    ).fetchall()
+
+    known_sectors = ("Government", "Catholic", "Independent")
+    mp_sectors: dict[str, set[str]] = {}
+    for member_id, sector in edu_rows:
+        sector_name = sector if sector in known_sectors else "Other"
+        mp_sectors.setdefault(member_id, set()).add(sector_name)
+
+    unique_counts: dict[str, int] = {s: 0 for s in known_sectors}
+    no_school = 0
+    for member_id in all_mps:
+        sectors = mp_sectors.get(member_id, set())
+        if not sectors:
+            no_school += 1
+        elif len(sectors) == 1:
+            sec = next(iter(sectors))
+            if sec in unique_counts:
+                unique_counts[sec] += 1
+
+    known_count = len(all_mps) - no_school
+
+    # Check if education_sector_benchmarks table exists and has rows
+    try:
+        benchmarks_rows = conn.execute(
+            """
+            SELECT sector, student_enrolment_share, source_title
+            FROM education_sector_benchmarks
+            WHERE benchmark_year = ?
+            ORDER BY sector
+            """,
+            [benchmark_year],
+        ).fetchall()
+    except Exception:
+        benchmarks_rows = []
+
+    result: dict[str, dict[str, Any]] = {}
+    for sector, benchmark_share, source_title in benchmarks_rows:
+        parl_count = unique_counts.get(sector, 0)
+        parl_share = round(parl_count / known_count, 3) if known_count else 0.0
+        bench_share = round(float(benchmark_share), 3)
+        diff_pts = round((parl_share - bench_share) * 100, 1)
+
+        result[sector] = {
+            "parliamentary_share": parl_share,
+            "student_enrolment_share": bench_share,
+            "difference_percentage_points": diff_pts,
+            "benchmark_year": benchmark_year,
+            "benchmark_source": source_title,
+        }
+
+    return result
 
 
 def compute_funding_summary(

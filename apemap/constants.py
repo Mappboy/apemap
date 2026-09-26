@@ -11,6 +11,8 @@ RAW_APH_DIR = DATA_DIR / "raw" / "aph"
 RAW_WIKIMEDIA_DIR = DATA_DIR / "raw" / "wikimedia"
 RAW_WIKIMEDIA_MEMBERS_DIR = RAW_WIKIMEDIA_DIR / "members"
 RAW_WIKIMEDIA_INSTITUTIONS_DIR = RAW_WIKIMEDIA_DIR / "institutions"
+RAW_AEC_DIR = DATA_DIR / "raw" / "aec"
+RAW_AEC_2025_DIR = RAW_AEC_DIR / "2025"
 PROCESSED_DIR = DATA_DIR / "processed"
 EXTERNAL_DIR = DATA_DIR / "external"
 REFERENCE_DIR = DATA_DIR / "reference"
@@ -18,6 +20,49 @@ REFERENCE_DIR = DATA_DIR / "reference"
 ACARA_PROFILE_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202025.xlsx"
 ACARA_PROFILE_LONGITUDINAL_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
 ACARA_LOCATION_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
+
+AEC_2025_SHAPEFILE_URL = (
+    "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+)
+AEC_2025_SOURCE_DATASET = (
+    "Australian Electoral Commission (AEC) 2025 Federal Electoral Boundaries "
+    "(National ESRI Shapefile, 4 March 2025)"
+)
+AEC_2025_RETRIEVED_AT = "2025-03-04T00:00:00+11:00"
+
+ABS_SCHOOLS_2025_URL = "https://www.abs.gov.au/statistics/people/education/schools/2025"
+ABS_SCHOOLS_2025_TITLE = "Schools, 2025"
+ABS_SCHOOLS_2025_RELEASED_AT = "2026-03-05T00:00:00+11:00"
+
+
+class SectorBenchmark(TypedDict):
+    student_enrolments: int
+    student_enrolment_share: float
+
+
+class AbsBenchmarkData(TypedDict):
+    total_student_enrolments: int
+    sectors: dict[str, SectorBenchmark]
+
+
+# ABS Schools, 2025 official benchmark: student enrolments by school affiliation
+ABS_BENCHMARK_2025: AbsBenchmarkData = {
+    "total_student_enrolments": 4_160_918,
+    "sectors": {
+        "Government": {
+            "student_enrolments": 2_613_404,
+            "student_enrolment_share": 0.628,
+        },
+        "Catholic": {
+            "student_enrolments": 831_692,
+            "student_enrolment_share": 0.200,
+        },
+        "Independent": {
+            "student_enrolments": 715_822,
+            "student_enrolment_share": 0.172,
+        },
+    },
+}
 
 
 class ParliamentInfo(TypedDict):
