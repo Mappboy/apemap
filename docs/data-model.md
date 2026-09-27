@@ -12,7 +12,7 @@ erDiagram
     members ||--o{ member_education : "attended"
     institutions ||--o{ member_education : "enrolled at"
     institutions ||--o{ school_snapshots : "has annual"
-    institutions ||--o| school_finances_2021 : "has 2021"
+    institutions ||--o{ school_finances : "has annual finances"
     parliament_service }o--o| electoral_boundaries : "represents (via v_house_electorates)"
 
     electoral_boundaries {
@@ -100,9 +100,10 @@ erDiagram
         json financial_profile_2021
     }
 
-    school_finances_2021 {
+    school_finances {
         varchar institution_id PK,FK
         varchar acara_id
+        integer reporting_year PK
         bigint recurrent_funding_gov_total
         bigint recurrent_funding_state_total
         bigint fees_charges_parent_total
@@ -115,7 +116,13 @@ erDiagram
         bigint other_private_sources_per_student
         bigint total_gross_income_per_student
         bigint total_net_recurrent_income_per_student
-        integer reporting_year
+        boolean is_rolled_reporting
+        varchar parent_acara_id
+        varchar source_dataset
+        varchar source_url
+        varchar licence
+        timestamptz retrieved_at
+        varchar notes
     }
 ```
 
@@ -183,17 +190,27 @@ Annual institutional snapshots containing enrolment and socio-educational index 
 - `icsea` (`INTEGER`): Index of Community Socio-Educational Advantage.
 - `financial_profile_2021` (`JSON`): Extended financial details if present.
 
-### `school_finances_2021`
-Historical 2021 school income and recurrent funding metrics isolated from runtime scraping.
-- `institution_id` (`VARCHAR PRIMARY KEY REFERENCES institutions(institution_id)`).
-- `acara_id` (`VARCHAR NOT NULL`).
+### `school_finances`
+Generalised annual school income and recurrent funding metrics keyed by institution and reporting year.
+- `institution_id` (`VARCHAR NOT NULL REFERENCES institutions(institution_id)`).
+- `acara_id` (`VARCHAR NOT NULL`): ACARA School SML ID.
+- `reporting_year` (`INTEGER NOT NULL`): Calendar reporting year.
 - `recurrent_funding_gov_total`, `recurrent_funding_state_total` (`BIGINT`).
 - `fees_charges_parent_total`, `other_private_sources_total` (`BIGINT`).
 - `total_gross_income_total`, `total_net_recurrent_income_total` (`BIGINT`).
 - `recurrent_funding_gov_per_student`, `recurrent_funding_state_per_student` (`BIGINT`).
 - `fees_charges_parent_per_student`, `other_private_sources_per_student` (`BIGINT`).
 - `total_gross_income_per_student`, `total_net_recurrent_income_per_student` (`BIGINT`).
-- `reporting_year` (`INTEGER NOT NULL DEFAULT 2021`).
+- `is_rolled_reporting` (`BOOLEAN DEFAULT FALSE`): Indicates whether school finance was reported as a rolled/combined campus entity.
+- `parent_acara_id` (`VARCHAR`): Parent entity or main campus SML ID for rolled reporting.
+- `source_dataset` (`VARCHAR NOT NULL`): Upstream dataset title and provenance.
+- `source_url` (`VARCHAR NOT NULL`): Source portal URL.
+- `licence` (`VARCHAR NOT NULL`): Applicable terms of use declaration.
+- `retrieved_at` (`TIMESTAMPTZ`): Record ingestion or retrieval timestamp.
+- `notes` (`VARCHAR`): Reviewer or audit notes.
+- Composite Primary Key: `(institution_id, reporting_year)`.
+
+> **Backward Compatibility**: A canonical analytical view, `school_finances_2021`, exposes `SELECT * FROM school_finances WHERE reporting_year = 2021` to preserve full backwards compatibility for existing queries and external consumers.
 
 ### `electoral_boundaries`
 Official Commonwealth electoral division boundary polygons published by the Australian Electoral Commission.

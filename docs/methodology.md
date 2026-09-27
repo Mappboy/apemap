@@ -174,15 +174,27 @@ Institutions matched to an ACARA SML ID inherit authoritative metadata from the 
 
 ---
 
-## 8. Historical 2021 Financial Data Treatment
+## 8. School Financial Data Treatment & Annual Modelling
 
-APEMAP includes a dedicated table, `school_finances_2021`, containing school-level income and recurrent funding metrics derived from ACARA MySchool reporting for the 2021 calendar year.
+APEMAP models school-level finances in a canonical annual table, `school_finances`, keyed by `(institution_id, reporting_year)`.
+
+### Attribution and Terms of Use
+All published analyses and visualizations derived from My School finance must carry the mandatory ACARA attribution:
+> *Source: Australian Curriculum, Assessment and Reporting Authority (ACARA)*
+
+Finance records are processed in strict accordance with the My School Terms of Use (July 2020), which permit internal educational and non-commercial research use while restricting public republication of the raw school-level collection without prior written consent. Raw authorized school-level extracts are maintained locally and excluded from Git version control.
+
+### Multi-Campus Rolled Reporting
+Certain multi-campus educational institutions submit financial reporting aggregated at the parent school entity or main campus level. Rather than silently categorizing secondary or branch campuses as missing financial data, APEMAP marks rolled reporting entities with `is_rolled_reporting = TRUE` and links `parent_acara_id`.
+
+### Distinction from Supplementary Jurisdictional Funding
+Supplementary public datasets (such as NSW RAM or Tasmanian School Resource Package allocations) measure state-specific resourcing formulas. Because these funding models do not correspond directly to ACARA's national total gross income or net recurrent income methodology, they are modelled and presented under distinct metric definitions.
 
 > [!WARNING]
 > **Temporal Disconnect Warning**:
-> The 2021 financial figures reflect funding and parental fees for the year 2021. They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s). 
+> The financial figures reflect funding and parental contributions for the stated reporting year (e.g. 2021). They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s). 
 > 
-> In all analyses, 2021 finances are treated strictly as an indicator of modern institutional resource profiles, not historical student expenditure.
+> In all analyses, modern finances are treated strictly as an indicator of modern institutional resource profiles, not historical student expenditure.
 
 ---
 

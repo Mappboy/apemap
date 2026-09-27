@@ -50,11 +50,32 @@ These sources are actively fetched or read during pipeline execution:
 - **Attribution**: *© Australian Curriculum, Assessment and Reporting Authority (ACARA).*
 - **Limitations**: SML IDs reflect schools active during reporting years. Closed or merged schools may not appear in single-year files, necessitating longitudinal registers and alias mappings.
 
-### 3. ACARA 2021 School Financial Snapshot
-- **Publisher**: ACARA / MySchool
-- **Purpose**: Institutional income and recurrent funding metrics per student.
-- **Attribution**: *© Australian Curriculum, Assessment and Reporting Authority (ACARA).*
-- **Limitations**: Reflects the 2021 reporting year only. Does **not** reflect funding levels when parliamentarians attended school.
+### 3. ACARA My School Financial Data (`school_finances`)
+- **Publisher**: Australian Curriculum, Assessment and Reporting Authority (ACARA)
+- **Portal**: [My School](https://myschool.edu.au) / [ACARA Data Access](https://www.acara.edu.au/contact-us/acara-data-access)
+- **Table**: Canonical `school_finances` table (keyed by `institution_id, reporting_year`) with backward-compatible view `school_finances_2021`.
+- **Purpose**: Institutional income and recurrent funding metrics per student (total gross income, total net recurrent income, government funding allocations, fees/parent contributions).
+- **Required Attribution**:
+  > *Source: Australian Curriculum, Assessment and Reporting Authority (ACARA)*
+- **Terms of Use & Legal Restrictions**:
+  My School site content is governed by specific [My School Terms of Use](https://myschool.edu.au/copyright) (July 2020), which are distinct from generic CC BY releases:
+  - **Clause 6.1**: Permits reproduction/distribution for personal, private, non-commercial educational use within an organisation.
+  - **Clause 6.2**: Mandates preservation of copyright notices and explicit ACARA attribution.
+  - **Clause 6.4**: Explicitly states that permission in 6.1 does **not** extend to reproducing or distributing content on a publicly accessible website or media without prior written consent.
+  - **Clause 6.6**: Requires written approval from ACARA for any use outside the permitted scope.
+  - **Do not label school-level My School finance data as CC BY 4.0** unless ACARA explicitly confirms that licence applies.
+- **Acquisition Protocol & Decision**:
+  - Zero runtime web scraping of `myschool.edu.au`.
+  - Acquisition seeks written ACARA approval for the **smallest necessary dataset/use**: financial data for the specific list of ACARA SML IDs associated with parliamentarians, or permission for controlled programmatic retrieval.
+  - Retain school-level values locally for non-commercial research; publish aggregated/derived APEMAP analysis without redistributing restricted raw school-level records in Git.
+  - Ingestion supports local authorised files (`--finance-file` or `data/restricted/` which is ignored in Git) keyed strictly by ACARA SML ID.
+  - Tests and CI use synthetic fixtures and do not access restricted live data.
+- **Multi-Campus Rolled Reporting**:
+  - Certain multi-campus schools report finances combined at the parent entity or main campus level.
+  - APEMAP flags rolled reporting using `is_rolled_reporting = TRUE` and `parent_acara_id = <parent_id>` rather than silently classifying secondary campuses as missing finance.
+- **Distinction from Supplementary Funding Datasets**:
+  - Jurisdictional funding datasets (such as NSW RAM, Tasmanian SRP, or Department of Education Commonwealth funding) measure specific government funding allocations under distinct jurisdictional models.
+  - These metrics are **not equivalent** to ACARA total gross income or net recurrent income and must remain separately modelled and labelled.
 
 ### 4. Wikipedia & Wikidata (Supplementary Enrichment Source)
 - **Publisher**: Wikimedia Foundation

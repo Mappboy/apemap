@@ -89,17 +89,20 @@ uv run apemap ingest acara [OPTIONS]
 | `--download` / `--no-download` | `BOOL` | `True` | Download latest official 2025 ACARA datasets from Data Access portal. |
 | `--longitudinal` / `--single-year` | `BOOL` | `True` | Download 2008–2025 longitudinal profile workbook or 2025 single-year profile. |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
+| `--finance-file` | `PATH` | `None` | Path to local authorised school finances CSV or Parquet file. |
+| `--finance-year` | `INT` | `2021` | Reporting calendar year for school finances. |
 | `--export-parquet` / `--no-export-parquet` | `BOOL` | `True` | Export updated canonical tables to Parquet files. |
 | `--output-dir` | `PATH` | `data/processed` | Directory for Parquet exports. |
 
 ### Pipeline Behavior
-- **Network Access**: Yes if `--download` is specified; No if `--no-download` is specified.
-- **Database Mutation**: Yes (populates `institutions`, `school_snapshots`, `school_finances_2021`).
-- **Inputs**: Excel or CSV files in `data/external/` (or downloaded from ACARA portal).
+- **Network Access**: Yes if `--download` is specified; No if `--no-download` is specified (zero scraping of myschool).
+- **Database Mutation**: Yes (populates `institutions`, `school_snapshots`, `school_finances`).
+- **Inputs**: Excel or CSV files in `data/external/` (or downloaded from ACARA portal, or authorised finance file).
 - **Outputs**:
   - `data/aped.duckdb`
   - `data/processed/institutions.parquet`
   - `data/processed/school_snapshots.parquet`
+  - `data/processed/school_finances.parquet`
   - `data/processed/school_finances_2021.parquet`
 
 ### Example Usage
@@ -109,6 +112,9 @@ uv run apemap ingest acara --no-download
 
 # Download fresh official ACARA workbooks and parse longitudinal profiles
 uv run apemap ingest acara --download --longitudinal
+
+# Ingest authorised school finances from local CSV file
+uv run apemap ingest finances -f data/restricted/acara_finances_2024.csv -y 2024
 ```
 
 ---
@@ -274,7 +280,7 @@ uv run apemap export [OPTIONS]
 - **Database Mutation**: None (read-only queries).
 - **Inputs**: `data/aped.duckdb`.
 - **Outputs**:
-  - `data/processed/{members,parliament_service,institutions,member_education,school_snapshots,school_finances_2021}.parquet`
+  - `data/processed/{members,parliament_service,institutions,member_education,school_snapshots,school_finances,school_finances_2021}.parquet`
   - `data/processed/parliament_{46,47,48}_combined.geojson`
   - `data/processed/analysis_report.json`
 
