@@ -34,6 +34,27 @@ SELECT * FROM v_parliament_members WHERE is_opening_day_member = TRUE;
 CREATE OR REPLACE VIEW v_parliament_members_current AS
 SELECT * FROM v_parliament_members WHERE is_current_member = TRUE;
 
+-- Backward-compatibility view for 2021 financial baseline
+CREATE OR REPLACE VIEW school_finances_2021 AS
+SELECT
+    institution_id,
+    acara_id,
+    recurrent_funding_gov_total,
+    recurrent_funding_state_total,
+    fees_charges_parent_total,
+    other_private_sources_total,
+    total_gross_income_total,
+    total_net_recurrent_income_total,
+    recurrent_funding_gov_per_student,
+    recurrent_funding_state_per_student,
+    fees_charges_parent_per_student,
+    other_private_sources_per_student,
+    total_gross_income_per_student,
+    total_net_recurrent_income_per_student,
+    reporting_year
+FROM school_finances
+WHERE reporting_year = 2021;
+
 -- Unified Member Secondary Education View
 CREATE OR REPLACE VIEW v_member_secondary_education AS
 SELECT

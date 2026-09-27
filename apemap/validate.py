@@ -111,6 +111,14 @@ def validate_database(
             """,
         ),
         (
+            "school_finances -> institutions",
+            """
+            SELECT count(*) FROM school_finances f
+            LEFT JOIN institutions i ON f.institution_id = i.institution_id
+            WHERE i.institution_id IS NULL
+            """,
+        ),
+        (
             "school_finances_2021 -> institutions",
             """
             SELECT count(*) FROM school_finances_2021 f

@@ -72,10 +72,12 @@ CREATE TABLE IF NOT EXISTS school_snapshots (
     PRIMARY KEY (institution_id, snapshot_year)
 );
 
--- 6. School Finances 2021: Standalone historical snapshot table isolated from runtime scraping
-CREATE TABLE IF NOT EXISTS school_finances_2021 (
-    institution_id VARCHAR PRIMARY KEY REFERENCES institutions(institution_id),
+-- 6. School Finances: Annual school-level income and recurrent funding metrics
+-- Generalised annual finance table keyed by (institution_id, reporting_year)
+CREATE TABLE IF NOT EXISTS school_finances (
+    institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
     acara_id VARCHAR NOT NULL,
+    reporting_year INTEGER NOT NULL,
     recurrent_funding_gov_total BIGINT,
     recurrent_funding_state_total BIGINT,
     fees_charges_parent_total BIGINT,
@@ -88,7 +90,16 @@ CREATE TABLE IF NOT EXISTS school_finances_2021 (
     other_private_sources_per_student BIGINT,
     total_gross_income_per_student BIGINT,
     total_net_recurrent_income_per_student BIGINT,
-    reporting_year INTEGER NOT NULL DEFAULT 2021
+    -- Multi-campus rolled reporting flags
+    is_rolled_reporting BOOLEAN DEFAULT FALSE,
+    parent_acara_id VARCHAR,
+    -- Audit Provenance & Licensing Fields
+    source_dataset VARCHAR NOT NULL DEFAULT 'ACARA My School Finance',
+    source_url VARCHAR NOT NULL DEFAULT 'https://myschool.edu.au',
+    licence VARCHAR NOT NULL DEFAULT 'ACARA My School Terms of Use (July 2020)',
+    retrieved_at TIMESTAMPTZ,
+    notes VARCHAR,
+    PRIMARY KEY (institution_id, reporting_year)
 );
 
 -- 7. Electoral Boundaries: Official Commonwealth electoral division boundaries
