@@ -157,7 +157,7 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
     # inst-ind has NULL finance to test omission from N
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student, total_net_recurrent_income_per_student, reporting_year
         ) VALUES
         ('inst-gov', '1001', 15000, 14000, 2021),
@@ -295,7 +295,7 @@ def test_funding_summary_does_not_overweight_shared_schools(
     )
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student,
             total_net_recurrent_income_per_student, reporting_year
         ) VALUES ('inst-gov-2', '1004', 21000, 20000, 2021)
