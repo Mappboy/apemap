@@ -10,7 +10,10 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from duckdb import DuckDBPyConnection
 
 import openpyxl
 import pandas as pd
@@ -363,11 +366,163 @@ def load_snapshots_dataframe(
     return pd.DataFrame(list(snapshots.values()))
 
 
+def ingest_school_finances(
+    conn: DuckDBPyConnection,
+    source_path: Path | str,
+    reporting_year: int = 2021,
+    source_dataset: str = "ACARA My School Finance",
+    source_url: str = "https://myschool.edu.au",
+    licence: str = "ACARA My School Terms of Use (July 2020)",
+    notes: str | None = None,
+) -> int:
+    """Ingest authorised school finance records into canonical school_finances table.
+
+    Requires local, authorised source input (CSV or Parquet) keyed by ACARA SML ID.
+    Flags rolled multi-campus reporting where specified in input data.
+    Never initiates network requests to myschool.edu.au.
+
+    Args:
+        conn: Active DuckDB connection.
+        source_path: Path to local authorised CSV or Parquet file.
+        reporting_year: Reporting calendar year for the finance data.
+        source_dataset: Provenance dataset identifier.
+        source_url: Upstream reference URL.
+        licence: Terms of use or license declaration.
+        notes: Audit reviewer notes.
+
+    Returns:
+        Number of ingested school finance records.
+    """
+    path = Path(source_path).resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Authorised finance source file not found at: {path}")
+
+    if path.suffix.lower() == ".csv":
+        df = pd.read_csv(path)
+    elif path.suffix.lower() in (".parquet", ".pq"):
+        df = pd.read_parquet(path)
+    else:
+        raise ValueError(f"Unsupported file format for school finances: {path.suffix}")
+
+    if df.empty:
+        return 0
+
+    if "acara_id" not in df.columns:
+        raise ValueError("School finances source data must contain 'acara_id' column")
+
+    inserted = 0
+    for _, row in df.iterrows():
+        acara_val = str(row["acara_id"]).strip()
+        if acara_val.endswith(".0"):
+            acara_val = acara_val[:-2]
+        acara_id = acara_val
+        inst_id = f"acara-{acara_id}"
+        rec_year = (
+            int(row["reporting_year"])
+            if "reporting_year" in row and pd.notna(row["reporting_year"])
+            else reporting_year
+        )
+
+        is_rolled = (
+            bool(row["is_rolled_reporting"])
+            if "is_rolled_reporting" in row and pd.notna(row["is_rolled_reporting"])
+            else False
+        )
+        parent_id = None
+        if "parent_acara_id" in row and pd.notna(row["parent_acara_id"]):
+            p_val = str(row["parent_acara_id"]).strip()
+            if p_val and p_val.lower() != "nan":
+                if p_val.endswith(".0"):
+                    p_val = p_val[:-2]
+                parent_id = p_val
+
+        # Ensure institution exists in institutions table to preserve FK integrity
+        conn.execute(
+            """
+            INSERT INTO institutions (
+                institution_id, acara_id, school_name, sector
+            ) VALUES (?, ?, ?, 'Other')
+            ON CONFLICT (institution_id) DO NOTHING
+            """,
+            [inst_id, acara_id, f"ACARA School {acara_id}"],
+        )
+
+        def _val(col_name: str) -> int | None:
+            if col_name in row and pd.notna(row[col_name]):
+                try:
+                    return int(float(row[col_name]))
+                except (ValueError, TypeError):
+                    return None
+            return None
+
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO school_finances (
+                institution_id,
+                acara_id,
+                reporting_year,
+                recurrent_funding_gov_total,
+                recurrent_funding_state_total,
+                fees_charges_parent_total,
+                other_private_sources_total,
+                total_gross_income_total,
+                total_net_recurrent_income_total,
+                recurrent_funding_gov_per_student,
+                recurrent_funding_state_per_student,
+                fees_charges_parent_per_student,
+                other_private_sources_per_student,
+                total_gross_income_per_student,
+                total_net_recurrent_income_per_student,
+                is_rolled_reporting,
+                parent_acara_id,
+                source_dataset,
+                source_url,
+                licence,
+                retrieved_at,
+                notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+            """,
+            [
+                inst_id,
+                acara_id,
+                rec_year,
+                _val("recurrent_funding_gov_total"),
+                _val("recurrent_funding_state_total"),
+                _val("fees_charges_parent_total"),
+                _val("other_private_sources_total"),
+                _val("total_gross_income_total"),
+                _val("total_net_recurrent_income_total"),
+                _val("recurrent_funding_gov_per_student"),
+                _val("recurrent_funding_state_per_student"),
+                _val("fees_charges_parent_per_student"),
+                _val("other_private_sources_per_student"),
+                _val("total_gross_income_per_student"),
+                _val("total_net_recurrent_income_per_student"),
+                is_rolled,
+                parent_id,
+                str(row.get("source_dataset") or source_dataset),
+                str(row.get("source_url") or source_url),
+                str(row.get("licence") or licence),
+                notes
+                or (
+                    str(row.get("notes"))
+                    if "notes" in row and pd.notna(row["notes"])
+                    else None
+                ),
+            ],
+        )
+        inserted += 1
+
+    return inserted
+
+
 def run_acara_ingestion(
     download_latest: bool = True,
     use_longitudinal: bool = True,
     db_path: Path | str | None = None,
     gpkg_path: Path | str | None = None,
+    finance_path: Path | str | None = None,
+    finance_year: int = 2021,
     export_parquet_files: bool = True,
     output_dir: Path | str | None = None,
     external_dir: Path | str | None = None,
@@ -378,7 +533,7 @@ def run_acara_ingestion(
     2. Converts XLSX sheets to canonical CSV files in external_dir.
     3. Builds and populates `institutions` table.
     4. Builds and populates `school_snapshots` table.
-    5. Migrates historical 2021 financial data from GeoPackage into `school_finances_2021`.
+    5. Ingests authorised finance records or migrates historical finances into `school_finances`.
     6. Optionally exports updated canonical tables to Parquet.
 
     Args:
@@ -386,6 +541,8 @@ def run_acara_ingestion(
         use_longitudinal: Whether to download and process the 2008-2025 longitudinal profile.
         db_path: Path to DuckDB file or None for in-memory.
         gpkg_path: Optional path to legacy aped.gpkg for financial migration.
+        finance_path: Optional path to local authorised school finances file.
+        finance_year: School finances reporting year (defaults to 2021).
         export_parquet_files: Whether to export canonical tables to Parquet.
         output_dir: Destination directory for Parquet exports.
         external_dir: Directory containing or receiving ACARA external data.
@@ -461,16 +618,21 @@ def run_acara_ingestion(
         )
         conn.unregister("df_snapshots_staging")
 
-    # 4. Migrate historical 2021 finances
-    migrate_historical_finances(conn, gpkg_path=gpkg_path)
+    # 4. Ingest or migrate school finances
+    if finance_path:
+        ingest_school_finances(conn, finance_path, reporting_year=finance_year)
+    else:
+        migrate_historical_finances(conn, gpkg_path=gpkg_path)
 
     # Count final tables
     res_inst = conn.execute("SELECT count(*) FROM institutions").fetchone()
     inst_count = res_inst[0] if res_inst is not None else 0
     res_snap = conn.execute("SELECT count(*) FROM school_snapshots").fetchone()
     snap_count = res_snap[0] if res_snap is not None else 0
-    res_fin = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+    res_fin = conn.execute("SELECT count(*) FROM school_finances").fetchone()
     fin_count = res_fin[0] if res_fin is not None else 0
+    res_fin_2021 = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+    fin_2021_count = res_fin_2021[0] if res_fin_2021 is not None else 0
 
     # 5. Export Parquet if requested
     exported_files: dict[str, Path] = {}
@@ -480,7 +642,8 @@ def run_acara_ingestion(
     summary = {
         "institutions_loaded": inst_count,
         "school_snapshots_loaded": snap_count,
-        "school_finances_2021_migrated": fin_count,
+        "school_finances_loaded": fin_count,
+        "school_finances_2021_migrated": fin_2021_count,
         "parquet_exported": export_parquet_files,
         "exported_files": {k: str(v) for k, v in exported_files.items()},
     }

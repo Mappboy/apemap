@@ -24,10 +24,15 @@ from apemap.constants import (
     PROCESSED_DIR,
     RAW_WIKIMEDIA_DIR,
 )
-from apemap.db import get_connection, init_schema, migrate_historical_finances
+from apemap.db import (
+    export_to_parquet,
+    get_connection,
+    init_schema,
+    migrate_historical_finances,
+)
 from apemap.export import export_all_artifacts
 from apemap.ingest.abs import run_abs_ingestion
-from apemap.ingest.acara import run_acara_ingestion
+from apemap.ingest.acara import ingest_school_finances, run_acara_ingestion
 from apemap.ingest.aec import run_aec_ingestion
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
@@ -232,8 +237,22 @@ def ingest_acara(
             help="Directory to save Parquet exports.",
         ),
     ] = None,
+    finance_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--finance-file",
+            help="Path to local authorised school finances CSV or Parquet file.",
+        ),
+    ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            help="Reporting calendar year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
-    """Ingest official 2025 ACARA datasets and isolate 2021 historical finances."""
+    """Ingest official 2025 ACARA datasets and isolate or ingest annual school finances."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
 
@@ -242,12 +261,14 @@ def ingest_acara(
         f"(download={download}, longitudinal={longitudinal})"
     )
     with console.status(
-        "[bold green]Processing ACARA datasets and migrating finances..."
+        "[bold green]Processing ACARA datasets and updating finances..."
     ):
         results = run_acara_ingestion(
             download_latest=download,
             use_longitudinal=longitudinal,
             db_path=effective_db_path,
+            finance_path=finance_file,
+            finance_year=finance_year,
             export_parquet_files=export_parquet,
             output_dir=effective_out_dir,
         )
@@ -264,9 +285,14 @@ def ingest_acara(
     )
     table.add_row("School Snapshots Loaded", f"{results['school_snapshots_loaded']:,}")
     table.add_row(
-        "2021 Historical Finances Migrated",
-        f"{results['school_finances_2021_migrated']:,}",
+        "School Finances Loaded",
+        f"{results.get('school_finances_loaded', results.get('school_finances_2021_migrated', 0)):,}",
     )
+    if "school_finances_2021_migrated" in results:
+        table.add_row(
+            "2021 Historical Finances Migrated",
+            f"{results['school_finances_2021_migrated']:,}",
+        )
     table.add_row(
         "Parquet Exports Generated",
         "Yes" if results.get("parquet_exported") else "No",
@@ -278,6 +304,70 @@ def ingest_acara(
     console.print(f"Database: [green]{effective_db_path}[/green]")
     if export_parquet:
         console.print(f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]")
+
+
+@ingest_app.command(name="finances")
+def ingest_finances_cmd(
+    source_file: Annotated[
+        Path,
+        typer.Option(
+            "--source-file",
+            "-f",
+            help="Path to local authorised school finances CSV or Parquet file.",
+        ),
+    ],
+    reporting_year: Annotated[
+        int,
+        typer.Option(
+            "--year",
+            "-y",
+            help="Reporting calendar year (e.g. 2021, 2024).",
+        ),
+    ] = 2021,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest authorised school finance records into canonical DuckDB."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        f"[bold blue]Ingesting authorised school finances for {reporting_year}[/bold blue] "
+        f"from [cyan]{source_file}[/cyan]"
+    )
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        loaded = ingest_school_finances(
+            conn, source_file, reporting_year=reporting_year
+        )
+        if export_parquet:
+            export_to_parquet(conn, effective_out_dir)
+    finally:
+        conn.close()
+
+    console.print(
+        f"[bold green]Successfully ingested {loaded:,} finance records![/bold green]"
+    )
 
 
 @ingest_app.command(name="wikimedia")
@@ -548,13 +638,13 @@ def transform_cmd(
         init_schema(conn)
         console.print("[green]Schema DDL and views applied successfully.[/green]")
 
-        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        res = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res[0] if res else 0
         if fin_count == 0:
-            console.print("[dim]Migrating historical 2021 school finances...[/dim]")
+            console.print("[dim]Migrating historical school finances...[/dim]")
             migrated = migrate_historical_finances(conn, gpkg_path)
             console.print(
-                f"[green]Migrated {migrated:,} historical 2021 finance records.[/green]"
+                f"[green]Migrated {migrated:,} historical finance records.[/green]"
             )
         else:
             console.print(
@@ -947,7 +1037,7 @@ def run_all_cmd(
     conn = get_connection(effective_db_path)
     try:
         init_schema(conn)
-        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        res = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res[0] if res else 0
         if fin_count == 0:
             migrate_historical_finances(conn)
