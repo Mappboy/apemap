@@ -351,9 +351,21 @@ def compute_sector_benchmarks(
 
 
 def compute_funding_summary(
-    conn: duckdb.DuckDBPyConnection, parliament: int
+    conn: duckdb.DuckDBPyConnection,
+    parliament: int,
+    reporting_year: int = 2021,
 ) -> dict[str, Any]:
-    """Summarise 2021 finance with NULL values excluded and counted as missing."""
+    """Summarise school finance with NULL values excluded and counted as missing.
+
+    Args:
+        conn: Active DuckDB connection.
+        parliament: Parliament number (e.g. 47).
+        reporting_year: Calendar reporting year for school finances (defaults to 2021).
+
+    Returns:
+        Dictionary containing overall and sector-specific financial metrics,
+        sample sizes, missing counts, and ACARA attribution.
+    """
     rows = conn.execute(
         """
         WITH parliament_schools AS (
@@ -374,10 +386,12 @@ def compute_funding_summary(
             f.total_net_recurrent_income_per_student
         FROM parliament_schools ps
         JOIN institutions i ON ps.institution_id = i.institution_id
-        LEFT JOIN school_finances_2021 f ON ps.institution_id = f.institution_id
+        LEFT JOIN school_finances f
+          ON ps.institution_id = f.institution_id
+         AND f.reporting_year = ?
         ORDER BY ps.institution_id
         """,
-        [parliament],
+        [parliament, reporting_year],
     ).fetchall()
 
     sector_gross: dict[str, list[int]] = {}
@@ -424,7 +438,9 @@ def compute_funding_summary(
     overall_net = _metric_summary(total_net, total_scope - len(total_net))
     return {
         "parliament_number": parliament,
-        "reporting_year": 2021,
+        "reporting_year": reporting_year,
+        "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+        "licence": "ACARA My School Terms of Use (July 2020)",
         "total_schools_in_scope": total_scope,
         "total_schools_with_finance_data": len(schools_with_finance_data),
         "overall_gross_income_sample_size": overall_gross["n"],
@@ -462,7 +478,10 @@ def _metric_summary(values: list[int], missing: int) -> dict[str, Any]:
     }
 
 
-def _analysis_metadata(parliaments: list[int]) -> dict[str, Any]:
+def _analysis_metadata(
+    parliaments: list[int],
+    finance_reporting_year: int = 2021,
+) -> dict[str, Any]:
     """Return stable metadata shared by all static analysis exports."""
     return {
         "schema_version": ANALYSIS_SCHEMA_VERSION,
@@ -471,7 +490,9 @@ def _analysis_metadata(parliaments: list[int]) -> dict[str, Any]:
             str(parliament): PARLIAMENT_METADATA[parliament]["opening_date"]
             for parliament in parliaments
         },
-        "finance_reporting_year": 2021,
+        "finance_reporting_year": finance_reporting_year,
+        "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+        "finance_licence": "ACARA My School Terms of Use (July 2020)",
     }
 
 
@@ -486,18 +507,23 @@ def export_analysis_report(
     conn: duckdb.DuckDBPyConnection,
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
+    finance_reporting_year: int = 2021,
 ) -> Path:
     """Export compatibility and static-chart analysis JSON files."""
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     target_parliaments = list(parliaments or [46, 47, 48])
-    metadata = _analysis_metadata(target_parliaments)
+    metadata = _analysis_metadata(
+        target_parliaments, finance_reporting_year=finance_reporting_year
+    )
     report: dict[str, dict[str, Any]] = {}
     for parliament in target_parliaments:
         report[str(parliament)] = {
             "demographics": compute_parliament_demographics(conn, parliament),
             "sectors": compute_sector_summary(conn, parliament),
-            "funding_2021": compute_funding_summary(conn, parliament),
+            "funding_2021": compute_funding_summary(
+                conn, parliament, reporting_year=finance_reporting_year
+            ),
         }
 
     _write_json(
