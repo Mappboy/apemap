@@ -25,6 +25,12 @@ These sources are actively fetched or read during pipeline execution:
 | **ACARA School Location** | ACARA | School Location 2022 & 2025 (`.csv`/`.xlsx`) | Portal HTTPS GET | © ACARA (CC BY 4.0 / Data Access) |
 | **ACARA School Profile** | ACARA | Longitudinal School Profile 2008–2025 (`.xlsx`) | Portal HTTPS GET | © ACARA (CC BY 4.0 / Data Access) |
 | **ACARA 2021 Finances** | ACARA | 2021 School Financial Snapshot | Isolated snapshot in `school_finances_2021` | © ACARA MySchool |
+| **ACARA Finance Benchmarks** | ACARA | National Report on Schooling Public School Income Benchmarks | Reference CSV in `school_finance_benchmarks` | © ACARA (National Report on Schooling) |
+| **NSW RAM Funding** | NSW Department of Education | Data.NSW Education Resource Allocation Model | Downloadable CSV / API in `school_public_funding` | © State of New South Wales (CC BY 4.0) |
+| **Tasmania DECYP SRP** | Tasmania DECYP | School Resource Package (Fairer Funding Model) | Resourcing Workbooks in `school_public_funding` | © State of Tasmania (CC BY 4.0) |
+| **NT School Funding** | NT Department of Education | School Needs Based Funding Formula Allocations | Public Resourcing Releases in `school_public_funding` | © Northern Territory Government (CC BY 4.0) |
+| **Queensland Grants** | QLD Department of Education | State Recurrent Grant Scheme for Non-State Schools | Public Allocation Tables in `school_public_funding` | © State of Queensland (CC BY 4.0) |
+| **Manual Disclosures** | Authoritative School Reports | Annual report financial statements | Canonical CSV `manual_school_funding.csv` | Authoritative Public Disclosures |
 | **School Aliases** | APEMAP Project | `data/reference/school_aliases.json` | Project repository | CC BY 4.0 |
 | **Wikipedia / Wikidata** | Wikimedia Foundation | MediaWiki Action API & Wikidata SPARQL | HTTPS GET / Disk cache (`data/raw/wikimedia/`) | CC0 / CC BY-SA 4.0 |
 | **AEC Federal Boundaries** | Australian Electoral Commission | National 2025 Federal Boundaries (`AUS-March-2025-esri.zip`) | HTTPS GET / Disk cache (`data/raw/aec/2025/`) | © Commonwealth of Australia (CC BY 4.0) |
@@ -77,7 +83,76 @@ These sources are actively fetched or read during pipeline execution:
   - Jurisdictional funding datasets (such as NSW RAM, Tasmanian SRP, or Department of Education Commonwealth funding) measure specific government funding allocations under distinct jurisdictional models.
   - These metrics are **not equivalent** to ACARA total gross income or net recurrent income and must remain separately modelled and labelled.
 
-### 4. Wikipedia & Wikidata (Supplementary Enrichment Source)
+### 4. ACARA National Report on Schooling Finance Benchmarks (`school_finance_benchmarks`)
+- **Publisher**: Australian Curriculum, Assessment and Reporting Authority (ACARA)
+- **Portal**: [National Report on Schooling in Australia Data Portal](https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/school-income)
+- **Table**: Canonical `school_finance_benchmarks` table (keyed by `reporting_year, state_or_territory, sector, geolocation, metric`).
+- **Purpose**: Authoritative statistical school income benchmarks derived from the National Report on Schooling, reporting average per-student recurrent and gross income metrics disaggregated by calendar year, state/territory, school sector, and ASGS Remoteness geolocation.
+- **Attribution**: *Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) National Report on Schooling.*
+- **Role in Estimation**: Provides the empirical foundation for indexed benchmark estimates and peer-group averages when individual-school ACARA financial disclosures are unavailable or restricted.
+
+### 5. Jurisdictional Public School Funding Datasets (`school_public_funding`)
+
+#### A. New South Wales — Resource Allocation Model (RAM)
+- **Publisher**: NSW Department of Education, State of New South Wales
+- **Portal**: [Data.NSW Education Resource Allocation Model](https://data.nsw.gov.au/data/dataset/nsw-education-resource-allocation-model)
+- **Licence**: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Model**: Resource Allocation Model (RAM)
+- **Metrics**:
+  - `ram_allocation_total`: Total school-level RAM allocation (AUD).
+  - `ram_base_allocation`: Base operational funding component (AUD).
+  - `ram_equity_loading`: Targeted socio-economic, Aboriginal background, English proficiency, and disability loadings (AUD).
+  - `ram_operational_funding`: Site-specific operational funding allocation (AUD).
+- **Matching Protocol**: Deterministic matching on stable NSW School Codes and ACARA SML IDs.
+
+#### B. Tasmania — School Resource Package (SRP)
+- **Publisher**: Department for Education, Children and Young People (DECYP), State of Tasmania
+- **Portal**: [Tasmania DECYP School Resourcing Data](https://www.decyp.tas.gov.au/about-us/policies-legislation-data/data-and-statistics/school-resourcing-data/)
+- **Licence**: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Model**: School Resource Package (Fairer Funding Model)
+- **Metrics**:
+  - `srp_allocation_total`: Total School Resource Package allocation (AUD).
+  - `srp_core_staffing`: Core staffing allocation (AUD).
+  - `srp_operational_allocation`: Operational resourcing allocation (AUD).
+- **Matching Protocol**: Deterministic matching via DECYP school identifiers and ACARA SML IDs.
+
+#### C. Northern Territory — School Needs Based Funding Formula
+- **Publisher**: Department of Education, Northern Territory Government
+- **Portal**: [NT Department of Education School Funding](https://education.nt.gov.au/statistics-research-and-strategies/increasing-school-autonomy/school-funding)
+- **Licence**: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Model**: School Needs Based Funding Formula
+- **Metrics**:
+  - `annual_school_resourcing_allocation`: Total annual school resourcing allocation (AUD).
+  - `per_student_funding_rate`: Published per-student formula funding rate (AUD per student).
+
+#### D. Queensland — Non-State School Recurrent Grants
+- **Publisher**: Department of Education, State of Queensland
+- **Portal**: [Queensland Non-State School Recurrent Grants](https://education.qld.gov.au/about-us/budgets-funding-grants/grants/non-state-school/state-recurrent-grant) / [Queensland Non-State Schools Dataset](https://www.data.qld.gov.au/dataset/queensland-non-state-schools)
+- **Licence**: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Model**: State Recurrent Grant Scheme for Non-State Schools
+- **Metrics**:
+  - `state_recurrent_grant_rate_secondary`: Published per-student secondary recurrent grant rate (AUD per student).
+  - `state_recurrent_grant_rate_primary`: Published per-student primary recurrent grant rate (AUD per student).
+  - `state_recurrent_grant_total`: Estimated/actual school-level State recurrent grant allocation (AUD).
+
+#### E. Victoria — Public Lookup Investigation & No-Ingest Decision
+- **Portal**: [Find Your School's Funding (Victoria)](https://www.vic.gov.au/find-your-schools-funding)
+- **Findings**: The Victorian Department of Education publishes an interactive public lookup service for individual government school allocations (displaying total funding, equity funding, and student enrolment counts). However, no documented, versioned public API or bulk CSV download exists.
+- **Architecture Decision**: In accordance with project policy against fragile, unmaintained browser scraping, APEMAP adopts a **documented no-ingest decision** for bulk Victorian government allocations. Victorian schools rely on canonical ACARA benchmark estimates and reviewed manual disclosures.
+
+#### F. South Australia, Western Australia, and Australian Capital Territory Fallback
+- **Status**: While public funding formula frameworks (e.g. Student Centred Funding Model in WA, Resource Allocation Model in SA) are published as policy guidelines, complete, official school-level allocation datasets are not published as bulk open-data releases.
+- **Architecture Decision**: APEMAP does not attempt to reverse-engineer formula allocations from policy papers without official inputs. These jurisdictions standardise on:
+  1. ACARA peer-group benchmark estimates; and
+  2. Authoritative manual enrichment from published school annual reports.
+
+#### G. Authoritative Manual School Funding Enrichment (`data/reference/manual_school_funding.csv`)
+- **Format**: Reviewable CSV file stored in Git.
+- **Columns**: `acara_id, reporting_year, metric, value, unit, source_url, source_type, reviewed_at, notes`.
+- **Criteria**: Authoritative public publications only (e.g. school annual financial statements, official governance disclosures).
+- **Semantics**: Preserves original metric meanings without synthetic conversion to ACARA net recurrent income.
+
+### 6. Wikipedia & Wikidata (Supplementary Enrichment Source)
 - **Publisher**: Wikimedia Foundation
 - **Endpoints**:
   - Wikidata SPARQL: `https://query.wikidata.org/sparql`

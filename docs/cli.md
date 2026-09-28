@@ -25,9 +25,13 @@ apemap
 ├── ingest
 │   ├── aph       # Ingest parliamentarian demographics & schools from APH
 │   ├── acara     # Ingest ACARA school profiles & migrate 2021 finances
+│   ├── finances  # Ingest authorised school finance records
+│   ├── funding   # Ingest ACARA benchmarks & jurisdictional public funding
+│   ├── benchmarks# Ingest ABS education sector benchmarks
 │   └── wikimedia # Enrich members & review unmatched schools via Wikimedia
 ├── transform     # Initialize DuckDB schema, canonical views, and table macros
 ├── validate      # Check DB relational integrity, constraints, & coverage gates
+├── backtest-benchmarks # Empirical backtesting of finance benchmarks
 ├── analyze       # Compute demographic, sector, and school funding summaries
 ├── export        # Export Parquet tables, GeoJSON layers, & analysis JSON
 └── run-all       # Coordinated end-to-end pipeline execution
@@ -167,7 +171,49 @@ uv run apemap ingest wikimedia --refresh
 
 ---
 
-## 4. `apemap transform`
+## 4. `apemap ingest funding`
+
+Ingests ACARA National Report on Schooling public finance benchmarks and jurisdictional public school funding allocations (NSW RAM, Tasmania SRP, NT Needs-Based Resourcing, Queensland Non-State Recurrent Grants, and reviewed manual disclosures).
+
+### Invocation
+```bash
+uv run apemap ingest funding [OPTIONS]
+```
+
+### Options
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--benchmarks-file` | `PATH` | `data/reference/acara_school_finance_benchmarks.csv` | Path to ACARA finance benchmarks CSV. |
+| `--nsw-file` | `PATH` | `data/reference/nsw_ram_allocations.csv` | Path to NSW RAM allocations CSV. |
+| `--tas-file` | `PATH` | `data/reference/tasmania_srp_allocations.csv` | Path to Tasmania SRP allocations CSV. |
+| `--nt-file` | `PATH` | `data/reference/nt_school_funding.csv` | Path to Northern Territory school funding CSV. |
+| `--qld-file` | `PATH` | `data/reference/qld_non_state_grants.csv` | Path to Queensland non-state recurrent grants CSV. |
+| `--manual-file` | `PATH` | `data/reference/manual_school_funding.csv` | Path to manual school funding CSV. |
+| `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
+| `--export-parquet` / `--no-export-parquet` | `BOOL` | `True` | Export updated canonical tables to Parquet files. |
+| `--output-dir` | `PATH` | `data/processed` | Directory for exported Parquet files. |
+
+### Pipeline Behavior
+- **Network Access**: None (operates deterministically from local reference datasets or user-specified CSV files).
+- **Database Mutation**: Yes (populates `school_finance_benchmarks` and `school_public_funding`).
+- **Inputs**: Reference CSV files under `data/reference/`.
+- **Outputs**:
+  - `data/aped.duckdb` (canonical tables populated)
+  - `data/processed/school_finance_benchmarks.parquet`
+  - `data/processed/school_public_funding.parquet`
+
+### Example Usage
+```bash
+# Ingest all funding streams using canonical reference datasets
+uv run apemap ingest funding
+
+# Ingest custom NSW RAM allocation file into test database
+uv run apemap ingest funding --nsw-file path/to/nsw_ram_custom.csv --db-path data/test.duckdb
+```
+
+---
+
+## 5. `apemap transform`
 
 Applies canonical relational DDL, analytical views, and parameterized macros to DuckDB. Idempotently migrates historical 2021 school finances from `data/aped.gpkg` if not yet populated.
 
@@ -228,7 +274,40 @@ uv run apemap validate --no-strict -p "47"
 
 ---
 
-## 6. `apemap analyze`
+## 7. `apemap backtest-benchmarks`
+
+Empirically evaluates the ACARA benchmark estimation methodology against historical observed school finances, reporting median actual/benchmark ratio, Median Absolute Deviation (MAD), Median Absolute Percentage Error (MAPE), and identifying high-dispersion peer groups that fall back to peer-group averages.
+
+### Invocation
+```bash
+uv run apemap backtest-benchmarks [OPTIONS]
+```
+
+### Options
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `-y`, `--year` | `INT` | `2021` | Historical calendar year for backtesting. |
+| `-m`, `--metric` | `TEXT` | `total_net_recurrent_income_per_student` | Finance metric to backtest. |
+| `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
+
+### Pipeline Behavior
+- **Network Access**: None.
+- **Database Mutation**: None (read-only queries).
+- **Inputs**: `data/aped.duckdb`.
+- **Outputs**: Rich console tables of overall, sector, and peer-group backtesting statistics and high-dispersion flags.
+
+### Example Usage
+```bash
+# Backtest net recurrent income across 2021 historical actuals
+uv run apemap backtest-benchmarks
+
+# Backtest total gross income
+uv run apemap backtest-benchmarks --metric total_gross_income_per_student
+```
+
+---
+
+## 8. `apemap analyze`
 
 Computes deterministic demographic summaries (average/median age at opening day), secondary school sector distributions (unique MPs vs. attendance instances), and historical 2021 funding averages.
 

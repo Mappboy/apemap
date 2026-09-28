@@ -235,6 +235,35 @@ Statistical reference benchmarks published by the Australian Bureau of Statistic
 - `released_at` (`TIMESTAMPTZ NOT NULL`): Official publication timestamp.
 - Composite Primary Key: `(benchmark_year, sector)`.
 
+### `school_finance_benchmarks`
+Official aggregated school income benchmarks derived from the ACARA National Report on Schooling.
+- `reporting_year` (`INTEGER NOT NULL`): Annual statistical reporting year (e.g. `2021`, `2024`).
+- `state_or_territory` (`VARCHAR NOT NULL`): State/territory jurisdiction or `'All'`.
+- `sector` (`VARCHAR NOT NULL CHECK (sector IN ('Government', 'Catholic', 'Independent', 'All'))`): Educational sector.
+- `geolocation` (`VARCHAR NOT NULL CHECK (geolocation IN ('Major Cities', 'Inner Regional', 'Outer Regional', 'Remote', 'Very Remote', 'All'))`): ASGS Remoteness geolocation classification.
+- `metric` (`VARCHAR NOT NULL`): Finance metric name (e.g. `total_net_recurrent_income_per_student`, `recurrent_funding_gov_per_student`).
+- `value` (`DOUBLE NOT NULL`): Benchmark per-student amount.
+- `unit` (`VARCHAR NOT NULL DEFAULT 'AUD_per_student'`): Currency unit.
+- `source_dataset` (`VARCHAR NOT NULL`): Dataset title (`ACARA National Report on Schooling`).
+- `source_url` (`VARCHAR NOT NULL`): Portal documentation URL.
+- `retrieved_at` (`TIMESTAMPTZ NOT NULL`): Publication or ingestion timestamp.
+- Composite Primary Key: `(reporting_year, state_or_territory, sector, geolocation, metric)`.
+
+### `school_public_funding`
+School-level public funding allocations and resourcing metrics published under jurisdictional funding models (e.g. NSW RAM, Tasmania SRP, NT Needs-Based Formula).
+- `institution_id` (`VARCHAR NOT NULL REFERENCES institutions(institution_id)`): Canonical institution ID.
+- `reporting_year` (`INTEGER NOT NULL`): Calendar funding year.
+- `jurisdiction` (`VARCHAR NOT NULL`): State/territory or publisher (e.g. `'NSW'`, `'TAS'`, `'NT'`, `'QLD'`).
+- `metric` (`VARCHAR NOT NULL`): Native funding model metric name (e.g. `ram_allocation_total`, `srp_allocation_total`, `per_student_funding_rate`).
+- `value` (`DOUBLE NOT NULL`): Funding allocation or per-student rate.
+- `unit` (`VARCHAR NOT NULL`): Unit of measurement (`'AUD'` or `'AUD_per_student'`).
+- `funding_model` (`VARCHAR NOT NULL`): Official program name (e.g. `Resource Allocation Model (RAM)`).
+- `source_dataset` (`VARCHAR NOT NULL`): Upstream dataset title.
+- `source_url` (`VARCHAR NOT NULL`): Public dataset release URL.
+- `source_record_id` (`VARCHAR`): Upstream identifier (e.g. NSW school code).
+- `retrieved_at` (`TIMESTAMPTZ NOT NULL`): Retrieval timestamp.
+- Composite Primary Key: `(institution_id, reporting_year, metric, source_dataset)`.
+
 ---
 
 ## 3. Canonical Views & Parameterized Macros
@@ -247,6 +276,8 @@ Defined in `apemap/schema/02_views.sql`:
 - **`v_parliament_members_current`**: Filters `v_parliament_members` where `is_current_member = TRUE`.
 - **`v_member_secondary_education`**: Complete analytical join linking members, their secondary institutions, coordinates, ICSEA, and 2021 financial metrics.
 - **`v_house_electorates`**: Joins `parliament_service` with `electoral_boundaries` for House of Representatives members for the matching election/boundary year (e.g. 48th Parliament maps to 2025 boundaries).
+- **`v_school_public_funding`**: Joins `school_public_funding` with `institutions` to display school-level public funding allocations alongside school name, sector, state, and geographic coordinates.
+- **`v_school_finance_benchmarks`**: Exposes canonical ACARA National Report on Schooling benchmarks ordered chronologically by year, state, sector, and geolocation.
 
 
 ### DuckDB Table Macros
