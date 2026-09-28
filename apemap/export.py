@@ -13,7 +13,10 @@ from typing import Any
 
 import duckdb
 
-from apemap.analysis import export_analysis_report
+from apemap.analysis import (
+    compute_school_finance_estimate,
+    export_analysis_report,
+)
 from apemap.constants import PROCESSED_DIR
 from apemap.db import export_to_parquet
 
@@ -149,6 +152,62 @@ def export_spatial_geojson(
                 ).isdigit()
                 else None,
             }
+
+            # Retrieve finance estimate or observed value for 2024
+            inst_id = str(row["institution_id"])
+            fin_est = compute_school_finance_estimate(conn, inst_id, target_year=2024)
+
+            # Retrieve jurisdictional public funding if available
+            pub_fund_row = conn.execute(
+                """
+                SELECT
+                    reporting_year,
+                    jurisdiction,
+                    funding_model,
+                    metric,
+                    value,
+                    unit,
+                    source_dataset
+                FROM school_public_funding
+                WHERE institution_id = ?
+                ORDER BY reporting_year DESC, CASE WHEN metric LIKE '%total%' THEN 0 ELSE 1 END, value DESC
+                LIMIT 1
+                """,
+                [inst_id],
+            ).fetchone()
+
+            props.update(
+                {
+                    "finance_year": fin_est["reporting_year"],
+                    "finance_metric": fin_est["metric"],
+                    "finance_value": fin_est["value"],
+                    "finance_status": fin_est["status"],
+                    "finance_method": fin_est["method"],
+                    "finance_peer_group": fin_est["peer_group"],
+                    "finance_source": fin_est["source"],
+                    "public_funding_year": int(pub_fund_row[0])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_jurisdiction": str(pub_fund_row[1])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_model": str(pub_fund_row[2])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_metric": str(pub_fund_row[3])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_value": float(pub_fund_row[4])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_unit": str(pub_fund_row[5])
+                    if pub_fund_row
+                    else None,
+                    "public_funding_source": str(pub_fund_row[6])
+                    if pub_fund_row
+                    else None,
+                }
+            )
             feature = {
                 "type": "Feature",
                 "geometry": {
