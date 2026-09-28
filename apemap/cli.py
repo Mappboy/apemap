@@ -12,6 +12,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from apemap.analysis import (
+    backtest_finance_benchmarks,
     compute_funding_summary,
     compute_parliament_demographics,
     compute_sector_summary,
@@ -34,6 +35,7 @@ from apemap.export import export_all_artifacts
 from apemap.ingest.abs import run_abs_ingestion
 from apemap.ingest.acara import ingest_school_finances, run_acara_ingestion
 from apemap.ingest.aec import run_aec_ingestion
+from apemap.ingest.funding import ingest_all_funding
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
 from apemap.validate import validate_database
@@ -608,6 +610,205 @@ def ingest_benchmarks(
     )
     if export_parquet and results.get("parquet_path"):
         console.print(f"Parquet written to: [cyan]{results['parquet_path']}[/cyan]")
+
+
+@ingest_app.command(name="funding")
+@app.command(name="ingest-funding")
+def ingest_funding_cmd(
+    benchmarks_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--benchmarks-file",
+            help="Path to ACARA finance benchmarks CSV.",
+        ),
+    ] = None,
+    nsw_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--nsw-file",
+            help="Path to NSW RAM allocations CSV.",
+        ),
+    ] = None,
+    tas_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--tas-file",
+            help="Path to Tasmania SRP allocations CSV.",
+        ),
+    ] = None,
+    nt_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--nt-file",
+            help="Path to NT school funding CSV.",
+        ),
+    ] = None,
+    qld_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--qld-file",
+            help="Path to QLD non-state grants CSV.",
+        ),
+    ] = None,
+    manual_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--manual-file",
+            help="Path to manual school funding CSV.",
+        ),
+    ] = None,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest public school funding data and ACARA finance benchmarks."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        "[bold blue]Starting Public School Funding & Benchmarks Ingestion...[/bold blue]"
+    )
+
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        counts = ingest_all_funding(
+            conn,
+            benchmarks_path=benchmarks_file,
+            nsw_path=nsw_file,
+            tas_path=tas_file,
+            nt_path=nt_file,
+            qld_path=qld_file,
+            manual_path=manual_file,
+        )
+
+        table = Table(
+            title="Public School Funding & Benchmarks Ingestion Summary",
+            header_style="bold magenta",
+        )
+        table.add_column("Dataset / Stream", style="cyan")
+        table.add_column("Records Ingested", justify="right", style="green")
+
+        table.add_row("ACARA Finance Benchmarks", f"{counts['acara_benchmarks']:,}")
+        table.add_row("NSW RAM Public Funding", f"{counts['nsw_ram']:,}")
+        table.add_row(
+            "Tasmania DECYP Fairer Funding SRP", f"{counts['tasmania_srp']:,}"
+        )
+        table.add_row(
+            "Northern Territory Needs-Based Resourcing",
+            f"{counts['nt_funding']:,}",
+        )
+        table.add_row(
+            "Queensland Non-State Recurrent Grants", f"{counts['qld_grants']:,}"
+        )
+        table.add_row(
+            "Manual Authoritative Disclosures", f"{counts['manual_enrichment']:,}"
+        )
+
+        console.print()
+        console.print(table)
+        console.print()
+
+        if export_parquet:
+            console.print("[dim]Exporting canonical parquet tables...[/dim]")
+            export_to_parquet(conn, effective_out_dir)
+            console.print(
+                f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]"
+            )
+    finally:
+        conn.close()
+
+    console.print("[bold green]Funding & Benchmarks Ingestion Complete![/bold green]")
+
+
+@app.command(name="backtest-benchmarks")
+def backtest_benchmarks_cmd(
+    year: Annotated[
+        int,
+        typer.Option(
+            "--year",
+            "-y",
+            help="Historical calendar year for backtesting (defaults to 2021).",
+        ),
+    ] = 2021,
+    metric: Annotated[
+        str,
+        typer.Option(
+            "--metric",
+            "-m",
+            help="Finance metric to backtest.",
+        ),
+    ] = "total_net_recurrent_income_per_student",
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+) -> None:
+    """Backtest benchmark estimation model against historical observed school finances."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    conn = get_connection(effective_db_path, read_only=True)
+    try:
+        results = backtest_finance_benchmarks(conn, historical_year=year, metric=metric)
+
+        console.print(
+            f"[bold blue]Backtesting Results for Historical Year {year}[/bold blue] "
+            f"(Metric: [cyan]{metric}[/cyan])"
+        )
+        console.print(
+            f"Evaluated Schools: [green]{results['sample_size']}[/green] | "
+            f"Overall Median Ratio: [green]{results['overall_median_ratio']}[/green] | "
+            f"Overall MAD: [green]{results['overall_mad']}[/green] | "
+            f"Overall MAPE: [green]{results['overall_mape']}%[/green]"
+        )
+
+        table = Table(title="Sector Backtest Performance", header_style="bold magenta")
+        table.add_column("Sector", style="cyan")
+        table.add_column("Sample Size", justify="right", style="white")
+        table.add_column("Median Ratio", justify="right", style="green")
+        table.add_column("MAD", justify="right", style="green")
+        table.add_column("MAPE (%)", justify="right", style="yellow")
+
+        for sec, stats in results["sector_metrics"].items():
+            table.add_row(
+                sec,
+                str(stats["sample_size"]),
+                str(stats["median_ratio"]),
+                str(stats["mad"]),
+                f"{stats['mape']}%",
+            )
+        console.print()
+        console.print(table)
+        console.print()
+
+        if results["high_dispersion_groups"]:
+            console.print(
+                f"[bold yellow]Identified {len(results['high_dispersion_groups'])} High-Dispersion Groups (Fallback to Peer Average):[/bold yellow]"
+            )
+            for grp in results["high_dispersion_groups"][:10]:
+                console.print(f"  - [dim]{grp}[/dim]")
+    finally:
+        conn.close()
 
 
 @app.command(name="transform")
