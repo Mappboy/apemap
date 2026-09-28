@@ -1,0 +1,77 @@
+<div id="apemap-design-review">
+<style>
+#apemap-design-review{color-scheme:light dark;font-family:Arial,sans-serif;color:light-dark(#24322d,#e2ebe5)}
+#apemap-design-review .ap-stage{min-height:790px}
+#apemap-design-review .ap-page{--ap-bg:light-dark(#fbfcfa,#16221b);--ap-ink:light-dark(#24322d,#e2ebe5);--ap-line:light-dark(#cbd4cb,#48594d);--ap-fill:light-dark(#edf1eb,#26362c);background:var(--ap-bg);color:var(--ap-ink);padding:22px;border:1px solid var(--ap-line);border-radius:8px;font-size:14px;line-height:1.5;box-sizing:border-box}
+#apemap-design-review .ap-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--ap-line);padding-bottom:12px;font-size:12px}
+#apemap-design-review h2{font-size:26px;line-height:1.2;font-weight:500;margin:20px 0 8px}
+#apemap-design-review h3{font-size:18px;font-weight:500;margin:0 0 8px}
+#apemap-design-review p{margin:8px 0}
+#apemap-design-review .ap-note{font-size:12px}
+#apemap-design-review .ap-band{background:var(--ap-fill);padding:12px;margin:14px 0;border-radius:4px}
+#apemap-design-review .ap-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+#apemap-design-review .ap-stat{padding:12px 0;border-top:2px solid var(--ap-line)}
+#apemap-design-review .ap-stat strong{display:block;font-size:18px;font-weight:500}
+#apemap-design-review .ap-section{border-top:1px solid var(--ap-line);margin-top:20px;padding-top:18px}
+#apemap-design-review .ap-chart{background:var(--ap-fill);min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:12px;box-sizing:border-box}
+#apemap-design-review .ap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#apemap-design-review .ap-grid>section{min-width:0}
+#apemap-design-review summary{padding:10px 0;text-decoration:underline;text-underline-offset:3px}
+#apemap-design-review .ap-link{display:inline-block;margin:8px 12px 8px 0;color:inherit;text-decoration:underline;text-underline-offset:3px}
+#apemap-design-review .ap-explorer{display:grid;grid-template-columns:2fr 1.15fr;gap:14px;margin-top:18px}
+#apemap-design-review .ap-map{background:var(--ap-fill);min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px}
+#apemap-design-review .ap-filters{padding:12px;border:1px solid var(--ap-line)}
+#apemap-design-review .ap-field{padding:10px;border:1px solid var(--ap-line);margin:8px 0}
+#apemap-design-review .ap-row{padding:10px 0;border-bottom:1px solid var(--ap-line)}
+#apemap-design-review .ap-map-mobile{display:none}
+#apemap-design-review footer{font-size:12px;border-top:1px solid var(--ap-line);padding-top:14px;margin-top:20px}
+@media(max-width:560px){#apemap-design-review .ap-page{padding:16px}#apemap-design-review h2{font-size:22px}#apemap-design-review .ap-grid,#apemap-design-review .ap-stats,#apemap-design-review .ap-explorer{grid-template-columns:1fr}#apemap-design-review .ap-stat{padding:8px 0}#apemap-design-review .ap-explorer .ap-map{display:none}#apemap-design-review .ap-map-mobile{display:block}#apemap-design-review .ap-stage{min-height:1110px}}
+</style>
+<div class="viz-carousel" aria-label="APEMAP low-fidelity layout options">
+<section class="ap-stage" data-variant="Editorial" aria-label="Editorial results wireframe">
+<article class="ap-page">
+<div class="ap-top"><span>cpoole.dev / APEMAP</span><span>WIREFRAME · NO RESEARCH VALUES</span></div>
+<h2>Where did our parliamentarians go to school?</h2>
+<p>Secondary education, representation and the limits of what we know.</p>
+<div class="ap-band">48th Parliament · Opening-day cohort<br><span class="ap-note">Dataset date · Coverage · <a class="ap-link" href="#ap-method-a">How to read these results</a></span></div>
+<div class="ap-stats"><div class="ap-stat"><strong>Cohort size</strong>Unique members</div><div class="ap-stat"><strong>Known schooling</strong>Known / all members</div><div class="ap-stat"><strong>Distinct schools</strong>Institutions, not attendance records</div></div>
+<section class="ap-section"><h3>Understand the school-sector mix</h3><p>[One validated finding, written in plain language]</p><div class="ap-chart"><span>School-sector chart</span><span class="ap-note">Government · Catholic · Independent · Combined/Multiple · Other</span></div><p class="ap-note">Denominator: members with recorded schooling. Missing count shown separately.</p><details><summary>View data and definitions</summary><p>Counts, percentages, sample sizes and classification rules appear here in the implemented page.</p></details></section>
+<section class="ap-section"><h3>Compare parliaments</h3><div class="ap-chart">Small multiples on the same scale</div><p class="ap-note">Available snapshots only · Coverage beside each cohort · No interpolation across gaps</p></section>
+<section class="ap-section"><h3>Explore schools and members</h3><p>Searchable list first; activate the map when geography is useful.</p><details><summary>Preview explorer entry</summary><div class="ap-field">School or member search</div><div class="ap-row">Results count · Active filters · Clear filters</div><p class="ap-note">Explorer filters apply here; published findings above stay unchanged.</p></details></section>
+<footer id="ap-method-a">Sources · Methodology · Dataset version · Downloads<br>Attendance does not equate to graduation.</footer>
+</article>
+</section>
+<section class="ap-stage" data-variant="Compact report" aria-label="Compact research report wireframe" hidden>
+<article class="ap-page">
+<div class="ap-top"><span>cpoole.dev / APEMAP</span><span>WIREFRAME · NO RESEARCH VALUES</span></div>
+<h2>Parliament and school education</h2><p>Comparable snapshots, with definitions beside the results.</p>
+<div class="ap-band">48th Parliament · Opening-day cohort · Dataset date</div>
+<div class="ap-stats"><div class="ap-stat"><strong>Cohort size</strong>Unique members</div><div class="ap-stat"><strong>Coverage</strong>Known / all members</div><div class="ap-stat"><strong>School count</strong>Distinct institutions</div></div>
+<div class="ap-grid">
+<section><h3>School sectors</h3><div class="ap-chart">Aligned bars</div><p class="ap-note">Known cohort · Missing count</p></section>
+<section><h3>Student benchmark</h3><div class="ap-chart">Separate comparison panel</div><p class="ap-note">Population and year mismatch explained</p></section>
+<section><h3>Party and chamber</h3><div class="ap-chart">Small multiples</div><p class="ap-note">Counts before subgroup percentages</p></section>
+<section><h3>Across parliaments</h3><div class="ap-chart">Comparable snapshots</div><p class="ap-note">Shared scale · Coverage per snapshot</p></section>
+</div>
+<section class="ap-section"><h3>Shared schools</h3><div class="ap-row">School name · Distinct members · Sector</div><div class="ap-row">School name · Distinct members · Sector</div><p class="ap-note">Attendance does not equate to graduation.</p></section>
+<section class="ap-section"><h3>Explore the records</h3><details><summary>Preview list and map entry</summary><p>Search schools or members, then choose list or map view.</p></details></section>
+<footer>Sources · Definitions · Accessible data tables · Downloads</footer>
+</article>
+</section>
+<section class="ap-stage" data-variant="Explorer" aria-label="Dedicated explorer wireframe" hidden>
+<article class="ap-page">
+<div class="ap-top"><span>cpoole.dev / APEMAP / Explore</span><span>WIREFRAME · NO RESEARCH VALUES</span></div>
+<h2>Find a school or parliamentarian</h2><p>Entity lookup with an optional geographic view.</p>
+<div class="ap-band">Explorer scope: 48th Parliament · Opening-day cohort<br><span class="ap-note">These filters do not change the published editorial findings.</span></div>
+<div class="ap-explorer">
+<div class="ap-map"><strong>Map region</strong><p class="ap-note">One marker per institution<br>Details shared with the result list</p><p class="ap-note">Loaded after explicit activation</p></div>
+<div class="ap-filters"><div class="ap-field">Search schools or members</div><div class="ap-field">Parliament · Sector</div><div class="ap-field">Party · Chamber</div><p class="ap-note">Result count · Active filters</p><div class="ap-row">School name<br><span class="ap-note">Sector · Location · Distinct members</span></div><div class="ap-row">Member name<br><span class="ap-note">Party · Chamber · Recorded schools</span></div><details><summary>Preview selected record</summary><p>School/member details, source, confidence and attendance status.</p></details></div>
+</div>
+<details class="ap-map-mobile"><summary>Map view</summary><div class="ap-chart">Optional map region<br><span class="ap-note">Keep filters, result list and selection available.</span></div></details>
+<section class="ap-section"><h3>Matching records without coordinates</h3><p class="ap-note">Remain in results and analytical totals; listed with an explanation.</p></section>
+<section class="ap-section"><h3>Published findings</h3><p>Return to the editorial overview and cross-parliament comparisons.</p></section>
+<footer>Dataset version · Sources · Methodology · Downloads</footer>
+</article>
+</section>
+</div>
+</div>
