@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "finance_reporting_year": 2021,
+    "parliament_numbers": [
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "46": {
+      "finance": {
+        "gross_missing_n": 174,
+        "gross_n": 124,
+        "net_missing_n": 174,
+        "net_n": 124,
+        "reporting_year": 2021,
+        "schools_in_scope": 298
+      },
+      "known_age_n": 221,
+      "known_school_n": 188,
+      "missing_age_n": 6,
+      "missing_school_n": 39,
+      "parliament_number": 46,
+      "reference_opening_date": "2019-07-02",
+      "total_parliamentarians": 227
+    },
+    "47": {
+      "finance": {
+        "gross_missing_n": 186,
+        "gross_n": 120,
+        "net_missing_n": 186,
+        "net_n": 120,
+        "reporting_year": 2021,
+        "schools_in_scope": 306
+      },
+      "known_age_n": 215,
+      "known_school_n": 194,
+      "missing_age_n": 12,
+      "missing_school_n": 33,
+      "parliament_number": 47,
+      "reference_opening_date": "2022-07-26",
+      "total_parliamentarians": 227
+    },
+    "48": {
+      "finance": {
+        "gross_missing_n": 188,
+        "gross_n": 101,
+        "net_missing_n": 188,
+        "net_n": 101,
+        "reporting_year": 2021,
+        "schools_in_scope": 289
+      },
+      "known_age_n": 194,
+      "known_school_n": 179,
+      "missing_age_n": 32,
+      "missing_school_n": 47,
+      "parliament_number": 48,
+      "reference_opening_date": "2025-07-22",
+      "total_parliamentarians": 226
+    }
+  }
+}

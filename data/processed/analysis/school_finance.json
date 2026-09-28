@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "finance_reporting_year": 2021,
+    "parliament_numbers": [
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "46": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": 22423.0,
+            "median": 21660,
+            "missing": 36,
+            "n": 25
+          },
+          "gross_income_missing_count": 36,
+          "gross_income_per_student_avg": 22423.0,
+          "gross_income_per_student_median": 21660,
+          "gross_income_sample_size": 25,
+          "net_recurrent_income": {
+            "mean": 19404.0,
+            "median": 19331,
+            "missing": 36,
+            "n": 25
+          },
+          "net_recurrent_income_missing_count": 36,
+          "net_recurrent_income_per_student_avg": 19404.0,
+          "net_recurrent_income_per_student_median": 19331,
+          "net_recurrent_income_sample_size": 25,
+          "schools_in_scope": 61
+        },
+        "Government": {
+          "gross_income": {
+            "mean": 18080.0,
+            "median": 17371.0,
+            "missing": 39,
+            "n": 68
+          },
+          "gross_income_missing_count": 39,
+          "gross_income_per_student_avg": 18080.0,
+          "gross_income_per_student_median": 17371.0,
+          "gross_income_sample_size": 68,
+          "net_recurrent_income": {
+            "mean": 18062.0,
+            "median": 17371.0,
+            "missing": 39,
+            "n": 68
+          },
+          "net_recurrent_income_missing_count": 39,
+          "net_recurrent_income_per_student_avg": 18062.0,
+          "net_recurrent_income_per_student_median": 17371.0,
+          "net_recurrent_income_sample_size": 68,
+          "schools_in_scope": 107
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": 31431.0,
+            "median": 31525,
+            "missing": 14,
+            "n": 31
+          },
+          "gross_income_missing_count": 14,
+          "gross_income_per_student_avg": 31431.0,
+          "gross_income_per_student_median": 31525,
+          "gross_income_sample_size": 31,
+          "net_recurrent_income": {
+            "mean": 28257.0,
+            "median": 28933,
+            "missing": 14,
+            "n": 31
+          },
+          "net_recurrent_income_missing_count": 14,
+          "net_recurrent_income_per_student_avg": 28257.0,
+          "net_recurrent_income_per_student_median": 28933,
+          "net_recurrent_income_sample_size": 31,
+          "schools_in_scope": 45
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 85,
+            "n": 0
+          },
+          "gross_income_missing_count": 85,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 85,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 85,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 85
+        }
+      },
+      "overall_gross_income": {
+        "mean": 22294.0,
+        "median": 20303.5,
+        "missing": 174,
+        "n": 124
+      },
+      "overall_gross_income_avg": 22294.0,
+      "overall_gross_income_median": 20303.5,
+      "overall_gross_income_missing_count": 174,
+      "overall_gross_income_sample_size": 124,
+      "overall_net_recurrent_avg": 20881.0,
+      "overall_net_recurrent_income": {
+        "mean": 20881.0,
+        "median": 19219.0,
+        "missing": 174,
+        "n": 124
+      },
+      "overall_net_recurrent_income_median": 19219.0,
+      "overall_net_recurrent_income_missing_count": 174,
+      "overall_net_recurrent_income_sample_size": 124,
+      "parliament_number": 46,
+      "reporting_year": 2021,
+      "total_schools_in_scope": 298,
+      "total_schools_with_finance_data": 124
+    },
+    "47": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": 23054.0,
+            "median": 22002.5,
+            "missing": 40,
+            "n": 22
+          },
+          "gross_income_missing_count": 40,
+          "gross_income_per_student_avg": 23054.0,
+          "gross_income_per_student_median": 22002.5,
+          "gross_income_sample_size": 22,
+          "net_recurrent_income": {
+            "mean": 19754.0,
+            "median": 19654.0,
+            "missing": 40,
+            "n": 22
+          },
+          "net_recurrent_income_missing_count": 40,
+          "net_recurrent_income_per_student_avg": 19754.0,
+          "net_recurrent_income_per_student_median": 19654.0,
+          "net_recurrent_income_sample_size": 22,
+          "schools_in_scope": 62
+        },
+        "Government": {
+          "gross_income": {
+            "mean": 17877.0,
+            "median": 17534.0,
+            "missing": 43,
+            "n": 64
+          },
+          "gross_income_missing_count": 43,
+          "gross_income_per_student_avg": 17877.0,
+          "gross_income_per_student_median": 17534.0,
+          "gross_income_sample_size": 64,
+          "net_recurrent_income": {
+            "mean": 17857.0,
+            "median": 17534.0,
+            "missing": 43,
+            "n": 64
+          },
+          "net_recurrent_income_missing_count": 43,
+          "net_recurrent_income_per_student_avg": 17857.0,
+          "net_recurrent_income_per_student_median": 17534.0,
+          "net_recurrent_income_sample_size": 64,
+          "schools_in_scope": 107
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": 31704.0,
+            "median": 31564.5,
+            "missing": 12,
+            "n": 34
+          },
+          "gross_income_missing_count": 12,
+          "gross_income_per_student_avg": 31704.0,
+          "gross_income_per_student_median": 31564.5,
+          "gross_income_sample_size": 34,
+          "net_recurrent_income": {
+            "mean": 28389.0,
+            "median": 28796.5,
+            "missing": 12,
+            "n": 34
+          },
+          "net_recurrent_income_missing_count": 12,
+          "net_recurrent_income_per_student_avg": 28389.0,
+          "net_recurrent_income_per_student_median": 28796.5,
+          "net_recurrent_income_sample_size": 34,
+          "schools_in_scope": 46
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 91,
+            "n": 0
+          },
+          "gross_income_missing_count": 91,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 91,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 91,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 91
+        }
+      },
+      "overall_gross_income": {
+        "mean": 22744.0,
+        "median": 20594.5,
+        "missing": 186,
+        "n": 120
+      },
+      "overall_gross_income_avg": 22744.0,
+      "overall_gross_income_median": 20594.5,
+      "overall_gross_income_missing_count": 186,
+      "overall_gross_income_sample_size": 120,
+      "overall_net_recurrent_avg": 21189.0,
+      "overall_net_recurrent_income": {
+        "mean": 21189.0,
+        "median": 19575.5,
+        "missing": 186,
+        "n": 120
+      },
+      "overall_net_recurrent_income_median": 19575.5,
+      "overall_net_recurrent_income_missing_count": 186,
+      "overall_net_recurrent_income_sample_size": 120,
+      "parliament_number": 47,
+      "reporting_year": 2021,
+      "total_schools_in_scope": 306,
+      "total_schools_with_finance_data": 120
+    },
+    "48": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": 22912.0,
+            "median": 21839,
+            "missing": 41,
+            "n": 19
+          },
+          "gross_income_missing_count": 41,
+          "gross_income_per_student_avg": 22912.0,
+          "gross_income_per_student_median": 21839,
+          "gross_income_sample_size": 19,
+          "net_recurrent_income": {
+            "mean": 19426.0,
+            "median": 19392,
+            "missing": 41,
+            "n": 19
+          },
+          "net_recurrent_income_missing_count": 41,
+          "net_recurrent_income_per_student_avg": 19426.0,
+          "net_recurrent_income_per_student_median": 19392,
+          "net_recurrent_income_sample_size": 19,
+          "schools_in_scope": 60
+        },
+        "Government": {
+          "gross_income": {
+            "mean": 17569.0,
+            "median": 17120,
+            "missing": 49,
+            "n": 53
+          },
+          "gross_income_missing_count": 49,
+          "gross_income_per_student_avg": 17569.0,
+          "gross_income_per_student_median": 17120,
+          "gross_income_sample_size": 53,
+          "net_recurrent_income": {
+            "mean": 17566.0,
+            "median": 17120,
+            "missing": 49,
+            "n": 53
+          },
+          "net_recurrent_income_missing_count": 49,
+          "net_recurrent_income_per_student_avg": 17566.0,
+          "net_recurrent_income_per_student_median": 17120,
+          "net_recurrent_income_sample_size": 53,
+          "schools_in_scope": 102
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": 32190.0,
+            "median": 31604,
+            "missing": 14,
+            "n": 29
+          },
+          "gross_income_missing_count": 14,
+          "gross_income_per_student_avg": 32190.0,
+          "gross_income_per_student_median": 31604,
+          "gross_income_sample_size": 29,
+          "net_recurrent_income": {
+            "mean": 29109.0,
+            "median": 29099,
+            "missing": 14,
+            "n": 29
+          },
+          "net_recurrent_income_missing_count": 14,
+          "net_recurrent_income_per_student_avg": 29109.0,
+          "net_recurrent_income_per_student_median": 29099,
+          "net_recurrent_income_sample_size": 29,
+          "schools_in_scope": 43
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 84,
+            "n": 0
+          },
+          "gross_income_missing_count": 84,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 84,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 84,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 84
+        }
+      },
+      "overall_gross_income": {
+        "mean": 22772.0,
+        "median": 20446,
+        "missing": 188,
+        "n": 101
+      },
+      "overall_gross_income_avg": 22772.0,
+      "overall_gross_income_median": 20446,
+      "overall_gross_income_missing_count": 188,
+      "overall_gross_income_sample_size": 101,
+      "overall_net_recurrent_avg": 21230.0,
+      "overall_net_recurrent_income": {
+        "mean": 21230.0,
+        "median": 19392,
+        "missing": 188,
+        "n": 101
+      },
+      "overall_net_recurrent_income_median": 19392,
+      "overall_net_recurrent_income_missing_count": 188,
+      "overall_net_recurrent_income_sample_size": 101,
+      "parliament_number": 48,
+      "reporting_year": 2021,
+      "total_schools_in_scope": 289,
+      "total_schools_with_finance_data": 101
+    }
+  }
+}
