@@ -193,6 +193,29 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         """
     )
 
+    # School finance benchmarks (mock)
+    conn.execute(
+        """
+        INSERT INTO school_finance_benchmarks (
+            reporting_year, state_or_territory, sector, geolocation,
+            metric, value, unit, source_dataset, source_url, retrieved_at
+        ) VALUES
+        (2024, 'NSW', 'Government', 'Major Cities', 'total_net_recurrent_income_per_student', 20000.0, 'AUD_per_student', 'ACARA Test', 'https://example.com', '2026-09-28 00:00:00+00'),
+        (2021, 'NSW', 'Government', 'Major Cities', 'total_net_recurrent_income_per_student', 16000.0, 'AUD_per_student', 'ACARA Test', 'https://example.com', '2026-09-28 00:00:00+00')
+        """
+    )
+
+    # School public funding (mock)
+    conn.execute(
+        """
+        INSERT INTO school_public_funding (
+            institution_id, reporting_year, jurisdiction, metric,
+            value, unit, funding_model, source_dataset, source_url, retrieved_at
+        ) VALUES
+        ('inst-gov', 2024, 'NSW', 'ram_allocation_total', 5000000.0, 'AUD', 'Resource Allocation Model (RAM)', 'Data.NSW', 'https://example.com', '2026-09-28 00:00:00+00')
+        """
+    )
+
     return db_file, conn
 
 
