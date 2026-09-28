@@ -126,6 +126,14 @@ def validate_database(
             WHERE i.institution_id IS NULL
             """,
         ),
+        (
+            "school_public_funding -> institutions",
+            """
+            SELECT count(*) FROM school_public_funding f
+            LEFT JOIN institutions i ON f.institution_id = i.institution_id
+            WHERE i.institution_id IS NULL
+            """,
+        ),
     ]
 
     for check_name, sql in fk_checks:

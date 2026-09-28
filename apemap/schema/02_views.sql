@@ -194,3 +194,46 @@ JOIN electoral_boundaries eb ON (
 )
 WHERE ps.chamber = 'representatives';
 
+-- Unified School Public Funding View
+CREATE OR REPLACE VIEW v_school_public_funding AS
+SELECT
+    spf.institution_id,
+    spf.reporting_year,
+    spf.jurisdiction,
+    spf.metric,
+    spf.value,
+    spf.unit,
+    spf.funding_model,
+    spf.source_dataset,
+    spf.source_url,
+    spf.source_record_id,
+    spf.retrieved_at,
+    i.acara_id,
+    i.school_name,
+    i.school_type,
+    i.sector AS school_sector,
+    i.state AS school_state,
+    i.suburb AS school_suburb,
+    i.postcode AS school_postcode,
+    i.longitude,
+    i.latitude
+FROM school_public_funding spf
+JOIN institutions i ON spf.institution_id = i.institution_id;
+
+-- Unified School Finance Benchmarks View
+CREATE OR REPLACE VIEW v_school_finance_benchmarks AS
+SELECT
+    reporting_year,
+    state_or_territory,
+    sector,
+    geolocation,
+    metric,
+    value,
+    unit,
+    source_dataset,
+    source_url,
+    retrieved_at
+FROM school_finance_benchmarks
+ORDER BY reporting_year DESC, state_or_territory, sector, geolocation, metric;
+
+

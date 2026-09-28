@@ -29,6 +29,8 @@ CANONICAL_TABLES = (
     "school_finances_2021",
     "electoral_boundaries",
     "education_sector_benchmarks",
+    "school_finance_benchmarks",
+    "school_public_funding",
 )
 
 # Keep physical exports stable even when DuckDB's table scan order changes.
@@ -44,6 +46,8 @@ CANONICAL_ORDER_BY = {
     "school_finances_2021": "institution_id",
     "electoral_boundaries": "boundary_id",
     "education_sector_benchmarks": "benchmark_year, sector",
+    "school_finance_benchmarks": "reporting_year, state_or_territory, sector, geolocation, metric",
+    "school_public_funding": "institution_id, reporting_year, metric, source_dataset",
 }
 
 
