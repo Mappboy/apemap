@@ -1,0 +1,5 @@
+acara_id,reporting_year,metric,value,unit,source_url,source_type,reviewed_at,notes
+49813,2024,total_net_recurrent_income_per_student,31500.0,AUD_per_student,https://www.stpeters.sa.edu.au/annual-reports,annual_report,2026-09-28T00:00:00+00:00,St Peter's College SA published annual financial report
+48148,2024,total_net_recurrent_income_per_student,21800.0,AUD_per_student,https://www.perthmodern.wa.edu.au/reports,annual_report,2026-09-28T00:00:00+00:00,Perth Modern School WA annual report finance disclosure
+49990,2024,total_net_recurrent_income_per_student,30200.0,AUD_per_student,https://www.cgs.act.edu.au/governance,annual_report,2026-09-28T00:00:00+00:00,Canberra Grammar School ACT annual report
+46137,2024,total_net_recurrent_income_per_student,33800.0,AUD_per_student,https://www.mgs.vic.edu.au/about/governance,annual_report,2026-09-28T00:00:00+00:00,Melbourne Grammar School VIC annual report
