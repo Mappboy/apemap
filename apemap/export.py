@@ -186,6 +186,7 @@ def export_all_artifacts(
     conn: duckdb.DuckDBPyConnection,
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
+    finance_reporting_year: int = 2021,
 ) -> dict[str, Any]:
     """Export all canonical artifacts: Parquet, GeoJSON, and analytical metrics.
 
@@ -193,6 +194,7 @@ def export_all_artifacts(
         conn: DuckDB database connection.
         output_dir: Destination directory.
         parliaments: List of parliaments to process.
+        finance_reporting_year: Calendar reporting year for school finances (defaults to 2021).
 
     Returns:
         Summary dictionary with paths to all generated artifacts.
@@ -202,7 +204,12 @@ def export_all_artifacts(
 
     parquet_paths = export_canonical_parquet(conn, out_dir)
     geojson_paths = export_spatial_geojson(conn, out_dir, target_parls)
-    analysis_path = export_analysis_report(conn, out_dir, target_parls)
+    analysis_path = export_analysis_report(
+        conn,
+        out_dir,
+        target_parls,
+        finance_reporting_year=finance_reporting_year,
+    )
 
     return {
         "output_directory": str(out_dir),

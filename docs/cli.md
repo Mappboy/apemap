@@ -243,18 +243,20 @@ uv run apemap analyze [OPTIONS]
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
 | `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers to analyze. |
 | `--output-dir` | `PATH` | `data/processed` | Directory to save `analysis_report.json`. |
+| `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances. |
 
 ### Pipeline Behavior
 - **Network Access**: None.
 - **Database Mutation**: None (read-only queries).
 - **Inputs**: `data/aped.duckdb`.
 - **Outputs**:
-  - `data/processed/analysis_report.json`
+  - `data/processed/analysis_metrics.json`
   - Formatted Rich console tables for demographics, sectors, and funding.
 
 ### Example Usage
 ```bash
 uv run apemap analyze -p "46,47,48"
+uv run apemap analyze --finance-year 2024
 ```
 
 ---
@@ -274,6 +276,7 @@ uv run apemap export [OPTIONS]
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
 | `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
 | `--output-dir` | `PATH` | `data/processed` | Output directory for exported files. |
+| `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances in analytical reports. |
 
 ### Pipeline Behavior
 - **Network Access**: None.
@@ -282,11 +285,12 @@ uv run apemap export [OPTIONS]
 - **Outputs**:
   - `data/processed/{members,parliament_service,institutions,member_education,school_snapshots,school_finances,school_finances_2021}.parquet`
   - `data/processed/parliament_{46,47,48}_combined.geojson`
-  - `data/processed/analysis_report.json`
+  - `data/processed/analysis_metrics.json`
 
 ### Example Usage
 ```bash
 uv run apemap export --parliament "46,47"
+uv run apemap export --finance-year 2024
 ```
 
 ---
@@ -317,6 +321,7 @@ uv run apemap run-all [OPTIONS]
 | `--longitudinal` / `--single-year` | `BOOL` | `True` | Use ACARA longitudinal profiles or single-year. |
 | `--strict` / `--no-strict` | `BOOL` | `True` | Exit immediately if validation check fails. |
 | `--enrich-wikimedia` / `--no-enrich-wikimedia` | `BOOL` | `False` | Enrich canonical members and unmatched schools with Wikimedia data. |
+| `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances in analytical reports. |
 
 ### Example Usage
 ```bash

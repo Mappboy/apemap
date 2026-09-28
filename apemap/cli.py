@@ -773,8 +773,16 @@ def analyze_cmd(
             help="Directory to save analytical metrics JSON.",
         ),
     ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
-    """Compute deterministic demographic, sector distribution, and 2021 funding statistics."""
+    """Compute deterministic demographic, sector distribution, and school funding statistics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
@@ -785,12 +793,17 @@ def analyze_cmd(
     )
     conn = get_connection(effective_db_path)
     try:
-        json_path = export_analysis_report(conn, effective_out_dir, parl_list)
+        json_path = export_analysis_report(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
 
         for p in parl_list:
             dem = compute_parliament_demographics(conn, p)
             sec = compute_sector_summary(conn, p)
-            fund = compute_funding_summary(conn, p)
+            fund = compute_funding_summary(conn, p, reporting_year=finance_year)
 
             console.print()
             console.print(
@@ -826,7 +839,7 @@ def analyze_cmd(
 
             # Funding table
             fund_tbl = Table(
-                title=f"Parliament {p} School 2021 Financial Averages (N reported)",
+                title=f"Parliament {p} School {finance_year} Financial Averages (N reported)",
                 header_style="bold yellow",
             )
             fund_tbl.add_column("Sector")
@@ -888,6 +901,14 @@ def export_cmd(
             help="Directory to save Parquet and GeoJSON files.",
         ),
     ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
     """Export canonical Parquet files, GeoJSON layers, and JSON analytical metrics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -900,7 +921,12 @@ def export_cmd(
     )
     conn = get_connection(effective_db_path)
     try:
-        results = export_all_artifacts(conn, effective_out_dir, parl_list)
+        results = export_all_artifacts(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
     finally:
         conn.close()
 
@@ -974,6 +1000,14 @@ def run_all_cmd(
             help="Enrich canonical members and unmatched schools with Wikimedia data.",
         ),
     ] = False,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -1062,7 +1096,12 @@ def run_all_cmd(
         console.print(
             "\n[bold]6. Exporting Parquet, GeoJSON, and Analysis Metrics...[/bold]"
         )
-        export_results = export_all_artifacts(conn, effective_out_dir, parl_list)
+        export_results = export_all_artifacts(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
     finally:
         conn.close()
 

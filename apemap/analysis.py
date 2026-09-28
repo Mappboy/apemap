@@ -518,13 +518,17 @@ def export_analysis_report(
     )
     report: dict[str, dict[str, Any]] = {}
     for parliament in target_parliaments:
-        report[str(parliament)] = {
+        funding_data = compute_funding_summary(
+            conn, parliament, reporting_year=finance_reporting_year
+        )
+        parl_report: dict[str, Any] = {
             "demographics": compute_parliament_demographics(conn, parliament),
             "sectors": compute_sector_summary(conn, parliament),
-            "funding_2021": compute_funding_summary(
-                conn, parliament, reporting_year=finance_reporting_year
-            ),
+            "school_finance": funding_data,
         }
+        if finance_reporting_year == 2021:
+            parl_report["funding_2021"] = funding_data
+        report[str(parliament)] = parl_report
 
     _write_json(
         out_dir / "analysis_metrics.json",
@@ -554,12 +558,14 @@ def export_analysis_report(
         {
             "metadata": metadata,
             "parliaments": {
-                key: value["funding_2021"] for key, value in report.items()
+                key: value["school_finance"] for key, value in report.items()
             },
         },
     )
-    comparisons = {
-        key: {
+    comparisons = {}
+    for key, value in report.items():
+        finance_data = value["school_finance"]
+        comparisons[key] = {
             "parliament_number": int(key),
             "reference_opening_date": value["demographics"]["reference_opening_date"],
             "total_parliamentarians": value["demographics"]["total_parliamentarians"],
@@ -570,20 +576,16 @@ def export_analysis_report(
                 "parliamentarians_without_known_schools"
             ],
             "finance": {
-                "reporting_year": value["funding_2021"]["reporting_year"],
-                "schools_in_scope": value["funding_2021"]["total_schools_in_scope"],
-                "gross_n": value["funding_2021"]["overall_gross_income"]["n"],
-                "gross_missing_n": value["funding_2021"]["overall_gross_income"][
-                    "missing"
-                ],
-                "net_n": value["funding_2021"]["overall_net_recurrent_income"]["n"],
-                "net_missing_n": value["funding_2021"]["overall_net_recurrent_income"][
+                "reporting_year": finance_data["reporting_year"],
+                "schools_in_scope": finance_data["total_schools_in_scope"],
+                "gross_n": finance_data["overall_gross_income"]["n"],
+                "gross_missing_n": finance_data["overall_gross_income"]["missing"],
+                "net_n": finance_data["overall_net_recurrent_income"]["n"],
+                "net_missing_n": finance_data["overall_net_recurrent_income"][
                     "missing"
                 ],
             },
         }
-        for key, value in report.items()
-    }
     _write_json(
         analysis_dir / "parliament_comparison.json",
         {"metadata": metadata, "parliaments": comparisons},

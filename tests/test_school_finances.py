@@ -279,3 +279,147 @@ def test_migrate_historical_finances_populates_school_finances(tmp_path: Path) -
     )
     assert migrated == 0
     conn.close()
+
+
+def test_finance_reporting_year_wiring_and_compatibility(tmp_path: Path) -> None:
+    """Test annual finance-year threading through analysis, export, and CLI options."""
+    import json
+    from typer.testing import CliRunner
+    from apemap.analysis import (
+        compute_funding_summary,
+        export_analysis_report,
+    )
+    from apemap.cli import app
+    from apemap.export import export_all_artifacts
+
+    db_path = tmp_path / "test_wiring.duckdb"
+    conn = get_connection(db_path)
+    init_schema(conn)
+
+    # Insert test data: 1 MP, 1 secondary school, 2021 and 2024 finances
+    conn.execute(
+        """
+        INSERT INTO members (member_id, aph_id, given_name, family_name, display_name, gender)
+        VALUES ('mem-1', 'APH1', 'Jane', 'Doe', 'Jane Doe', 'Female');
+
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party, party_abbrev, state_or_territory,
+            service_start, is_opening_day_member, is_current_member
+        ) VALUES ('serv-1', 'mem-1', 47, 'representatives', 'Labor', 'ALP', 'ACT', '2022-05-21', TRUE, TRUE);
+
+        INSERT INTO institutions (institution_id, school_name, sector, state)
+        VALUES ('acara-1001', 'Test High', 'Government', 'ACT');
+
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level,
+            attended_status, source_url, retrieved_at, confidence
+        ) VALUES (
+            'edu-1', 'mem-1', 'acara-1001', 'secondary',
+            'graduated', 'https://www.aph.gov.au', CURRENT_TIMESTAMP, 'verified'
+        );
+
+        INSERT INTO school_finances (
+            institution_id, acara_id, reporting_year,
+            total_gross_income_per_student, total_net_recurrent_income_per_student
+        ) VALUES
+            ('acara-1001', '1001', 2021, 15000, 14000),
+            ('acara-1001', '1001', 2024, 22000, 20500);
+        """
+    )
+
+    # 1. Direct function call test for compute_funding_summary
+    fund_2021 = compute_funding_summary(conn, 47, reporting_year=2021)
+    assert fund_2021["reporting_year"] == 2021
+    assert fund_2021["overall_gross_income_avg"] == 15000
+
+    fund_2024 = compute_funding_summary(conn, 47, reporting_year=2024)
+    assert fund_2024["reporting_year"] == 2024
+    assert fund_2024["overall_gross_income_avg"] == 22000
+
+    # 2. Test export_analysis_report default (2021) retains funding_2021 alias and school_finance
+    out_dir_2021 = tmp_path / "analysis_2021"
+    export_analysis_report(conn, out_dir_2021, [47], finance_reporting_year=2021)
+    data_2021 = json.loads(
+        (out_dir_2021 / "analysis_metrics.json").read_text(encoding="utf-8")
+    )
+    assert data_2021["metadata"]["finance_reporting_year"] == 2021
+    p47_2021 = data_2021["parliaments"]["47"]
+    assert "school_finance" in p47_2021
+    assert "funding_2021" in p47_2021  # Compatibility alias present
+    assert p47_2021["school_finance"]["overall_gross_income_avg"] == 15000
+    assert p47_2021["funding_2021"]["overall_gross_income_avg"] == 15000
+
+    # 3. Test export_analysis_report for 2024: NO funding_2021 key, only school_finance, year=2024
+    out_dir_2024 = tmp_path / "analysis_2024"
+    export_analysis_report(conn, out_dir_2024, [47], finance_reporting_year=2024)
+    data_2024 = json.loads(
+        (out_dir_2024 / "analysis_metrics.json").read_text(encoding="utf-8")
+    )
+    assert data_2024["metadata"]["finance_reporting_year"] == 2024
+    p47_2024 = data_2024["parliaments"]["47"]
+    assert "school_finance" in p47_2024
+    assert "funding_2021" not in p47_2024  # Semantic mismatch removed
+    assert p47_2024["school_finance"]["reporting_year"] == 2024
+    assert p47_2024["school_finance"]["overall_gross_income_avg"] == 22000
+
+    # 4. Test export_all_artifacts threads finance_reporting_year
+    out_dir_artifacts = tmp_path / "artifacts_2024"
+    export_all_artifacts(conn, out_dir_artifacts, [47], finance_reporting_year=2024)
+    data_art = json.loads(
+        (out_dir_artifacts / "analysis_metrics.json").read_text(encoding="utf-8")
+    )
+    assert data_art["metadata"]["finance_reporting_year"] == 2024
+    assert "funding_2021" not in data_art["parliaments"]["47"]
+
+    conn.close()
+
+    # 5. Test CLI commands (analyze, export) propagate --finance-year
+    runner = CliRunner()
+    cli_analyze_out = tmp_path / "cli_analyze_2024"
+    res = runner.invoke(
+        app,
+        [
+            "analyze",
+            "--db-path",
+            str(db_path),
+            "-p",
+            "47",
+            "--finance-year",
+            "2024",
+            "--output-dir",
+            str(cli_analyze_out),
+        ],
+    )
+    assert res.exit_code == 0, res.output
+    assert "School 2024 Financial Averages" in res.output
+    cli_data = json.loads(
+        (cli_analyze_out / "analysis_metrics.json").read_text(encoding="utf-8")
+    )
+    assert cli_data["metadata"]["finance_reporting_year"] == 2024
+    assert "funding_2021" not in cli_data["parliaments"]["47"]
+    assert (
+        cli_data["parliaments"]["47"]["school_finance"]["overall_gross_income_avg"]
+        == 22000
+    )
+
+    cli_export_out = tmp_path / "cli_export_2024"
+    res_exp = runner.invoke(
+        app,
+        [
+            "export",
+            "--db-path",
+            str(db_path),
+            "-p",
+            "47",
+            "--finance-year",
+            "2024",
+            "--output-dir",
+            str(cli_export_out),
+        ],
+    )
+    assert res_exp.exit_code == 0, res_exp.output
+    cli_exp_data = json.loads(
+        (cli_export_out / "analysis_metrics.json").read_text(encoding="utf-8")
+    )
+    assert cli_exp_data["metadata"]["finance_reporting_year"] == 2024
+    assert "funding_2021" not in cli_exp_data["parliaments"]["47"]
