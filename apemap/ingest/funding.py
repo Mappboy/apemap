@@ -35,6 +35,14 @@ def resolve_institution_id(
 ) -> str | None:
     """Deterministically resolve an institution_id from ACARA ID or name/state.
 
+    Resolution hierarchy:
+    1. ACARA SML ID direct match (highest precedence).
+    2. If state is supplied: match exact (LOWER(school_name), state).
+       Must match exactly one institution; multiple or zero returns None.
+       Never falls back to another state when state is specified.
+    3. If state is NOT supplied: match exact LOWER(school_name).
+       Must match exactly one institution; multiple (ambiguous) or zero returns None.
+
     Args:
         conn: Active DuckDB connection.
         acara_id: ACARA SML ID string or integer.
@@ -42,7 +50,7 @@ def resolve_institution_id(
         state: Optional state or territory to disambiguate school names.
 
     Returns:
-        Matched institution_id or None if unmatched.
+        Matched institution_id or None if unmatched/ambiguous.
     """
     if acara_id is not None:
         aid_clean = str(acara_id).strip()
@@ -50,38 +58,59 @@ def resolve_institution_id(
             aid_clean = aid_clean[:-2]
         if aid_clean and aid_clean.lower() != "nan":
             # Direct ACARA ID lookup
-            row = conn.execute(
+            rows = conn.execute(
                 "SELECT institution_id FROM institutions WHERE acara_id = ?",
                 [aid_clean],
-            ).fetchone()
-            if row:
-                return str(row[0])
+            ).fetchall()
+            if len(rows) == 1:
+                return str(rows[0][0])
+            elif len(rows) > 1:
+                logger.warning(
+                    "Ambiguous ACARA ID %s matched multiple institutions", aid_clean
+                )
+                return None
 
     if school_name is not None:
         name_clean = school_name.strip()
         if name_clean:
             if state:
-                row = conn.execute(
+                state_clean = state.strip()
+                rows = conn.execute(
                     """
                     SELECT institution_id FROM institutions
                     WHERE LOWER(school_name) = LOWER(?) AND state = ?
-                    LIMIT 1
                     """,
-                    [name_clean, state],
-                ).fetchone()
-                if row:
-                    return str(row[0])
-            # Fallback to case-insensitive name match
-            row = conn.execute(
+                    [name_clean, state_clean],
+                ).fetchall()
+                if len(rows) == 1:
+                    return str(rows[0][0])
+                if len(rows) > 1:
+                    logger.warning(
+                        "Ambiguous school name '%s' in state '%s' matched %d institutions",
+                        name_clean,
+                        state_clean,
+                        len(rows),
+                    )
+                # When state is supplied, do NOT fall back to matching outside the state
+                return None
+
+            # Name-only matching (when state is NOT supplied)
+            rows = conn.execute(
                 """
                 SELECT institution_id FROM institutions
                 WHERE LOWER(school_name) = LOWER(?)
-                LIMIT 1
                 """,
                 [name_clean],
-            ).fetchone()
-            if row:
-                return str(row[0])
+            ).fetchall()
+            if len(rows) == 1:
+                return str(rows[0][0])
+            elif len(rows) > 1:
+                logger.warning(
+                    "Ambiguous school name '%s' without state matched %d institutions",
+                    name_clean,
+                    len(rows),
+                )
+                return None
 
     return None
 
