@@ -157,7 +157,7 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
     # inst-ind has NULL finance to test omission from N
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student, total_net_recurrent_income_per_student, reporting_year
         ) VALUES
         ('inst-gov', '1001', 15000, 14000, 2021),
@@ -190,6 +190,29 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         (2025, 'Government', 0.628, 2613404, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00'),
         (2025, 'Catholic', 0.200, 831692, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00'),
         (2025, 'Independent', 0.172, 715822, 4160918, 'Schools, 2025', 'https://www.abs.gov.au', '2026-03-05 00:00:00+00')
+        """
+    )
+
+    # School finance benchmarks (mock)
+    conn.execute(
+        """
+        INSERT INTO school_finance_benchmarks (
+            reporting_year, state_or_territory, sector, geolocation,
+            metric, value, unit, source_dataset, source_url, retrieved_at
+        ) VALUES
+        (2024, 'NSW', 'Government', 'Major Cities', 'total_net_recurrent_income_per_student', 20000.0, 'AUD_per_student', 'ACARA Test', 'https://example.com', '2026-09-28 00:00:00+00'),
+        (2021, 'NSW', 'Government', 'Major Cities', 'total_net_recurrent_income_per_student', 16000.0, 'AUD_per_student', 'ACARA Test', 'https://example.com', '2026-09-28 00:00:00+00')
+        """
+    )
+
+    # School public funding (mock)
+    conn.execute(
+        """
+        INSERT INTO school_public_funding (
+            institution_id, reporting_year, jurisdiction, metric,
+            value, unit, funding_model, source_dataset, source_url, retrieved_at
+        ) VALUES
+        ('inst-gov', 2024, 'NSW', 'ram_allocation_total', 5000000.0, 'AUD', 'Resource Allocation Model (RAM)', 'Data.NSW', 'https://example.com', '2026-09-28 00:00:00+00')
         """
     )
 
@@ -295,7 +318,7 @@ def test_funding_summary_does_not_overweight_shared_schools(
     )
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student,
             total_net_recurrent_income_per_student, reporting_year
         ) VALUES ('inst-gov-2', '1004', 21000, 20000, 2021)

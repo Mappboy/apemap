@@ -25,9 +25,12 @@ CANONICAL_TABLES = (
     "institutions",
     "member_education",
     "school_snapshots",
+    "school_finances",
     "school_finances_2021",
     "electoral_boundaries",
     "education_sector_benchmarks",
+    "school_finance_benchmarks",
+    "school_public_funding",
 )
 
 # Keep physical exports stable even when DuckDB's table scan order changes.
@@ -39,9 +42,12 @@ CANONICAL_ORDER_BY = {
     "institutions": "institution_id",
     "member_education": "education_id",
     "school_snapshots": "institution_id, snapshot_year",
+    "school_finances": "institution_id, reporting_year",
     "school_finances_2021": "institution_id",
     "electoral_boundaries": "boundary_id",
     "education_sector_benchmarks": "benchmark_year, sector",
+    "school_finance_benchmarks": "reporting_year, state_or_territory, sector, geolocation, metric",
+    "school_public_funding": "institution_id, reporting_year, metric, source_dataset",
 }
 
 
@@ -66,7 +72,7 @@ def get_connection(
     Returns:
         DuckDBPyConnection instance.
     """
-    if db_path is None:
+    if db_path is None or str(db_path) == ":memory:":
         return duckdb.connect(":memory:")
 
     resolved_path = Path(db_path).resolve()
@@ -81,6 +87,9 @@ def get_connection(
 def init_schema(conn: DuckDBPyConnection) -> None:
     """Initialize canonical tables and views from schema DDL scripts.
 
+    Migrates legacy physical school_finances_2021 tables to the generalised
+    school_finances table and compatibility view when upgrading existing databases.
+
     Args:
         conn: Active DuckDB connection.
     """
@@ -93,6 +102,41 @@ def init_schema(conn: DuckDBPyConnection) -> None:
         raise FileNotFoundError(f"Views DDL script not found at {views_sql_path}")
 
     conn.execute(schema_sql_path.read_text(encoding="utf-8"))
+
+    # If school_finances_2021 exists as a physical TABLE (from previous schema),
+    # migrate records to school_finances and drop the table so the compatibility VIEW can be created.
+    try:
+        res = conn.execute(
+            "SELECT table_type FROM information_schema.tables WHERE table_name = 'school_finances_2021'"
+        ).fetchone()
+        if res and res[0] in ("BASE TABLE", "Table"):
+            conn.execute(
+                """
+                INSERT INTO school_finances (
+                    institution_id, acara_id, reporting_year,
+                    recurrent_funding_gov_total, recurrent_funding_state_total,
+                    fees_charges_parent_total, other_private_sources_total,
+                    total_gross_income_total, total_net_recurrent_income_total,
+                    recurrent_funding_gov_per_student, recurrent_funding_state_per_student,
+                    fees_charges_parent_per_student, other_private_sources_per_student,
+                    total_gross_income_per_student, total_net_recurrent_income_per_student
+                )
+                SELECT
+                    institution_id, acara_id, reporting_year,
+                    recurrent_funding_gov_total, recurrent_funding_state_total,
+                    fees_charges_parent_total, other_private_sources_total,
+                    total_gross_income_total, total_net_recurrent_income_total,
+                    recurrent_funding_gov_per_student, recurrent_funding_state_per_student,
+                    fees_charges_parent_per_student, other_private_sources_per_student,
+                    total_gross_income_per_student, total_net_recurrent_income_per_student
+                FROM school_finances_2021
+                ON CONFLICT (institution_id, reporting_year) DO NOTHING;
+                DROP TABLE school_finances_2021;
+                """
+            )
+    except Exception:
+        pass
+
     conn.execute(views_sql_path.read_text(encoding="utf-8"))
 
 
@@ -119,15 +163,51 @@ def load_parquet_sources(
     counts: dict[str, int] = {}
     ensure_spatial(conn)
     for table in CANONICAL_TABLES:
+        # school_finances_2021 is a compatibility view over school_finances
+        if table == "school_finances_2021":
+            res = conn.execute("SELECT COUNT(*) FROM school_finances_2021").fetchone()
+            counts[table] = int(res[0]) if res else 0
+            continue
+
         parquet_file = source_dir / f"{table}.parquet"
         if parquet_file.exists():
-            # Parameterize file path safely
             conn.execute(
                 f"INSERT INTO {table} SELECT * FROM read_parquet(?)",
                 [str(parquet_file)],
             )
             result = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
             counts[table] = int(result[0]) if result else 0
+        elif table == "school_finances":
+            legacy_p = source_dir / "school_finances_2021.parquet"
+            if legacy_p.exists():
+                conn.execute(
+                    """
+                    INSERT INTO school_finances (
+                        institution_id, acara_id, reporting_year,
+                        recurrent_funding_gov_total, recurrent_funding_state_total,
+                        fees_charges_parent_total, other_private_sources_total,
+                        total_gross_income_total, total_net_recurrent_income_total,
+                        recurrent_funding_gov_per_student, recurrent_funding_state_per_student,
+                        fees_charges_parent_per_student, other_private_sources_per_student,
+                        total_gross_income_per_student, total_net_recurrent_income_per_student
+                    )
+                    SELECT
+                        institution_id, acara_id, reporting_year,
+                        recurrent_funding_gov_total, recurrent_funding_state_total,
+                        fees_charges_parent_total, other_private_sources_total,
+                        total_gross_income_total, total_net_recurrent_income_total,
+                        recurrent_funding_gov_per_student, recurrent_funding_state_per_student,
+                        fees_charges_parent_per_student, other_private_sources_per_student,
+                        total_gross_income_per_student, total_net_recurrent_income_per_student
+                    FROM read_parquet(?)
+                    ON CONFLICT (institution_id, reporting_year) DO NOTHING
+                    """,
+                    [str(legacy_p)],
+                )
+                result = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
+                counts[table] = int(result[0]) if result else 0
+            else:
+                counts[table] = 0
         else:
             counts[table] = 0
 
@@ -224,8 +304,8 @@ def migrate_historical_finances(
 ) -> int:
     """Migrate historical 2021 school finances from GeoPackage into DuckDB.
 
-    Isolates historical 2021 financial metrics from the legacy aped.gpkg database
-    into the dedicated canonical table `school_finances_2021`.
+    Isolates historical financial metrics from the legacy aped.gpkg database
+    into the dedicated canonical table `school_finances`.
 
     Args:
         conn: Active DuckDB connection.
@@ -255,6 +335,7 @@ def migrate_historical_finances(
     for _, row in df.iterrows():
         acara_id = str(row["acara_id"]).strip()
         inst_id = f"acara-{acara_id}"
+        reporting_year = int(row["year"]) if pd.notna(row.get("year")) else 2021
         # Ensure parent institution exists to satisfy foreign key constraint
         conn.execute(
             """
@@ -267,9 +348,10 @@ def migrate_historical_finances(
         )
         conn.execute(
             """
-            INSERT OR REPLACE INTO school_finances_2021 (
+            INSERT OR REPLACE INTO school_finances (
                 institution_id,
                 acara_id,
+                reporting_year,
                 recurrent_funding_gov_total,
                 recurrent_funding_state_total,
                 fees_charges_parent_total,
@@ -282,12 +364,24 @@ def migrate_historical_finances(
                 other_private_sources_per_student,
                 total_gross_income_per_student,
                 total_net_recurrent_income_per_student,
-                reporting_year
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                is_rolled_reporting,
+                parent_acara_id,
+                source_dataset,
+                source_url,
+                licence,
+                retrieved_at,
+                notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, NULL,
+                      'ACARA My School Finance (Historical Archive)',
+                      'https://myschool.edu.au',
+                      'ACARA My School Terms of Use (July 2020)',
+                      '2022-01-01 00:00:00+00',
+                      'Migrated from historical aped.gpkg baseline')
             """,
             [
                 inst_id,
                 acara_id,
+                reporting_year,
                 int(row["australian_government_recurrent_funding_total"])
                 if pd.notna(row.get("australian_government_recurrent_funding_total"))
                 else None,
@@ -332,7 +426,6 @@ def migrate_historical_finances(
                 int(row["total_net_recurrent_income_per_student"])
                 if pd.notna(row.get("total_net_recurrent_income_per_student"))
                 else None,
-                int(row["year"]) if pd.notna(row.get("year")) else 2021,
             ],
         )
         inserted += 1

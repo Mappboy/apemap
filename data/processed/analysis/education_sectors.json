@@ -1,0 +1,195 @@
+{
+  "metadata": {
+    "finance_reporting_year": 2021,
+    "parliament_numbers": [
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "46": {
+      "attendance_instance_percentage_denominator": 332,
+      "attendance_instances_by_sector": {
+        "Catholic": 70,
+        "Government": 117,
+        "Independent": 54,
+        "Other": 91
+      },
+      "benchmark_comparison": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -5.1,
+          "parliamentary_share": 0.149,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -35.1,
+          "parliamentary_share": 0.277,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -3.9,
+          "parliamentary_share": 0.133,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "known_school_percentage_denominator": 188,
+      "parliament_number": 46,
+      "parliamentarians_with_known_schools": 188,
+      "parliamentarians_without_known_schools": 39,
+      "percentage_of_attendance_instances": {
+        "Catholic": 21.084337349397593,
+        "Government": 35.24096385542169,
+        "Independent": 16.265060240963855,
+        "Other": 27.40963855421687
+      },
+      "percentage_of_known_parliamentarians": {
+        "Catholic": 14.893617021276595,
+        "Combined/Multiple": 41.48936170212766,
+        "Government": 27.659574468085108,
+        "Independent": 13.297872340425531,
+        "Other": 2.6595744680851063
+      },
+      "total_attendance_instances": 332,
+      "total_parliamentarians": 227,
+      "unique_parliamentarians_by_sector": {
+        "Catholic": 28,
+        "Combined/Multiple": 78,
+        "Government": 52,
+        "Independent": 25,
+        "No School Recorded": 39,
+        "Other": 5
+      }
+    },
+    "47": {
+      "attendance_instance_percentage_denominator": 342,
+      "attendance_instances_by_sector": {
+        "Catholic": 69,
+        "Government": 121,
+        "Independent": 55,
+        "Other": 97
+      },
+      "benchmark_comparison": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -6.1,
+          "parliamentary_share": 0.139,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -37.0,
+          "parliamentary_share": 0.258,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -1.2,
+          "parliamentary_share": 0.16,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "known_school_percentage_denominator": 194,
+      "parliament_number": 47,
+      "parliamentarians_with_known_schools": 194,
+      "parliamentarians_without_known_schools": 33,
+      "percentage_of_attendance_instances": {
+        "Catholic": 20.175438596491226,
+        "Government": 35.38011695906433,
+        "Independent": 16.08187134502924,
+        "Other": 28.362573099415204
+      },
+      "percentage_of_known_parliamentarians": {
+        "Catholic": 13.917525773195877,
+        "Combined/Multiple": 39.69072164948454,
+        "Government": 25.773195876288657,
+        "Independent": 15.979381443298967,
+        "Other": 4.639175257731959
+      },
+      "total_attendance_instances": 342,
+      "total_parliamentarians": 227,
+      "unique_parliamentarians_by_sector": {
+        "Catholic": 27,
+        "Combined/Multiple": 77,
+        "Government": 50,
+        "Independent": 31,
+        "No School Recorded": 33,
+        "Other": 9
+      }
+    },
+    "48": {
+      "attendance_instance_percentage_denominator": 321,
+      "attendance_instances_by_sector": {
+        "Catholic": 66,
+        "Government": 116,
+        "Independent": 51,
+        "Other": 88
+      },
+      "benchmark_comparison": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -8.8,
+          "parliamentary_share": 0.112,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -36.0,
+          "parliamentary_share": 0.268,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -1.6,
+          "parliamentary_share": 0.156,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "known_school_percentage_denominator": 179,
+      "parliament_number": 48,
+      "parliamentarians_with_known_schools": 179,
+      "parliamentarians_without_known_schools": 47,
+      "percentage_of_attendance_instances": {
+        "Catholic": 20.5607476635514,
+        "Government": 36.13707165109034,
+        "Independent": 15.887850467289718,
+        "Other": 27.41433021806853
+      },
+      "percentage_of_known_parliamentarians": {
+        "Catholic": 11.1731843575419,
+        "Combined/Multiple": 41.340782122905026,
+        "Government": 26.81564245810056,
+        "Independent": 15.64245810055866,
+        "Other": 5.027932960893855
+      },
+      "total_attendance_instances": 321,
+      "total_parliamentarians": 226,
+      "unique_parliamentarians_by_sector": {
+        "Catholic": 20,
+        "Combined/Multiple": 74,
+        "Government": 48,
+        "Independent": 28,
+        "No School Recorded": 47,
+        "Other": 9
+      }
+    }
+  }
+}

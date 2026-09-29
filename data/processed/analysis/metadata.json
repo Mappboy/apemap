@@ -1,0 +1,14 @@
+{
+  "finance_reporting_year": 2021,
+  "parliament_numbers": [
+    46,
+    47,
+    48
+  ],
+  "reference_opening_dates": {
+    "46": "2019-07-02",
+    "47": "2022-07-26",
+    "48": "2025-07-22"
+  },
+  "schema_version": "1.0"
+}

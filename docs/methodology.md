@@ -174,19 +174,73 @@ Institutions matched to an ACARA SML ID inherit authoritative metadata from the 
 
 ---
 
-## 8. Historical 2021 Financial Data Treatment
+## 8. School Financial Data Treatment & Annual Modelling
 
-APEMAP includes a dedicated table, `school_finances_2021`, containing school-level income and recurrent funding metrics derived from ACARA MySchool reporting for the 2021 calendar year.
+APEMAP models school-level finances in a canonical annual table, `school_finances`, keyed by `(institution_id, reporting_year)`.
+
+### Attribution and Terms of Use
+All published analyses and visualizations derived from My School finance must carry the mandatory ACARA attribution:
+> *Source: Australian Curriculum, Assessment and Reporting Authority (ACARA)*
+
+Finance records are processed in strict accordance with the My School Terms of Use (July 2020), which permit internal educational and non-commercial research use while restricting public republication of the raw school-level collection without prior written consent. Raw authorized school-level extracts are maintained locally and excluded from Git version control.
+
+### Multi-Campus Rolled Reporting
+Certain multi-campus educational institutions submit financial reporting aggregated at the parent school entity or main campus level. Rather than silently categorizing secondary or branch campuses as missing financial data, APEMAP marks rolled reporting entities with `is_rolled_reporting = TRUE` and links `parent_acara_id`.
+
+### Distinction from Supplementary Jurisdictional Funding
+Supplementary public datasets (such as NSW RAM or Tasmanian School Resource Package allocations) measure state-specific resourcing formulas. Because these funding models do not correspond directly to ACARA's national total gross income or net recurrent income methodology, they are modelled and presented under distinct metric definitions.
 
 > [!WARNING]
 > **Temporal Disconnect Warning**:
-> The 2021 financial figures reflect funding and parental fees for the year 2021. They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s). 
+> The financial figures reflect funding and parental contributions for the stated reporting year (e.g. 2021). They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s). 
 > 
-> In all analyses, 2021 finances are treated strictly as an indicator of modern institutional resource profiles, not historical student expenditure.
+> In all analyses, modern finances are treated strictly as an indicator of modern institutional resource profiles, not historical student expenditure.
 
 ---
 
-## 9. Automated Integrity & Coverage Gates
+## 9. Public School Funding, ACARA Benchmark Estimation & Backtesting
+
+To provide up-to-date, attributable financial context across the interactive map while exact school-level 2024 ACARA figures are being acquired or restricted, APEMAP implements an **empirical benchmark estimation and public funding integration framework**.
+
+### Source Precedence
+For any school-level finance metric:
+1. **Observed Authoritative School-Level Value**: Direct observation from ACARA My School finance (`status = "observed"`, `method = "direct_observation"`). Never overwritten by estimates.
+2. **Public Jurisdictional School-Level Allocations**: Supplemental state/territory funding programs (e.g. NSW RAM, Tasmania SRP, NT Needs-Based Formula). Preserved as distinct properties, never combined numerically with ACARA income measures.
+3. **Indexed ACARA Benchmark Estimate**: Estimated value scaled from historical school actuals using official ACARA peer group movements (`status = "estimated_indexed"`).
+4. **ACARA Peer-Group Benchmark Average**: Unweighted peer average when historical actuals are absent or backtesting group dispersion is too high (`status = "benchmark_average"`).
+5. **Unavailable**: When neither observed finance nor peer benchmarks can be matched (`status = "unavailable"`).
+
+### Estimation Formula & Worked Example
+For a target year $t_{target}$ (e.g. 2024) and baseline historical year $t_{hist}$ (e.g. 2021):
+1. **Peer Group Benchmark**: School $i$ is assigned a peer benchmark $B_{\text{peer}}$ based on its tuple:
+   $$\text{Peer Group} = (\text{State}, \text{Sector}, \text{ASGS Remoteness Geolocation})$$
+   Hierarchical fallback resolves sparse combinations:
+   $$(\text{State}, \text{Sector}, \text{Geo}) \rightarrow (\text{State}, \text{Sector}, \text{All}) \rightarrow (\text{All}, \text{Sector}, \text{Geo}) \rightarrow (\text{All}, \text{Sector}, \text{All})$$
+
+2. **Relative Multiplier**: The school's historical relative position against its peer group is computed:
+   $$R_i = \frac{Y_{i, t_{hist}}}{B_{\text{peer}, t_{hist}}}$$
+
+3. **Target Estimate**:
+   $$\hat{Y}_{i, t_{target}} = B_{\text{peer}, t_{target}} \times R_i$$
+
+**Worked Example**:
+- School: Independent secondary school in Major Cities NSW.
+- 2021 School Actual: $29,991 per student.
+- 2021 NSW Independent Major Cities Benchmark: $28,702 per student.
+- Multiplier: $R = 29,991 / 28,702 = 1.0449$ (+4.5% above peer benchmark).
+- 2024 NSW Independent Major Cities Benchmark: $29,765 per student.
+- 2024 Indexed Estimate: $29,765 \times 1.0449 = \$31,101$ per student (`status = "estimated_indexed"`).
+
+### Backtesting Validation Against Historical Actuals
+The benchmark indexing methodology is empirically backtested against observed historical school finances (2021 baseline across 259 schools):
+- **Median Ratio**: $\text{median}(\text{actual} / \text{benchmark}) = 1.0007$ (demonstrating zero systematic bias across the cohort).
+- **Median Absolute Deviation (MAD)**: $0.1203$ (12.0% median relative dispersion).
+- **Median Absolute Percentage Error (MAPE)**: $11.9\%$.
+- **High-Dispersion Group Fallback**: Groups where MAD exceeds $0.25$ or sample size is insufficient are classified as high dispersion (`"high_dispersion"`). For these groups, individual school indexing is suppressed, and the map explicitly presents the peer-group average (`"benchmark_average"`).
+
+---
+
+## 10. Automated Integrity & Coverage Gates
 
 Database consistency is validated by `apemap validate`, which enforces 11 mandatory checks:
 1. Primary key uniqueness across all canonical tables.

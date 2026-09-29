@@ -12,6 +12,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from apemap.analysis import (
+    backtest_finance_benchmarks,
     compute_funding_summary,
     compute_parliament_demographics,
     compute_sector_summary,
@@ -24,11 +25,17 @@ from apemap.constants import (
     PROCESSED_DIR,
     RAW_WIKIMEDIA_DIR,
 )
-from apemap.db import get_connection, init_schema, migrate_historical_finances
+from apemap.db import (
+    export_to_parquet,
+    get_connection,
+    init_schema,
+    migrate_historical_finances,
+)
 from apemap.export import export_all_artifacts
 from apemap.ingest.abs import run_abs_ingestion
-from apemap.ingest.acara import run_acara_ingestion
+from apemap.ingest.acara import ingest_school_finances, run_acara_ingestion
 from apemap.ingest.aec import run_aec_ingestion
+from apemap.ingest.funding import ingest_all_funding
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
 from apemap.validate import validate_database
@@ -232,8 +239,22 @@ def ingest_acara(
             help="Directory to save Parquet exports.",
         ),
     ] = None,
+    finance_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--finance-file",
+            help="Path to local authorised school finances CSV or Parquet file.",
+        ),
+    ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            help="Reporting calendar year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
-    """Ingest official 2025 ACARA datasets and isolate 2021 historical finances."""
+    """Ingest official 2025 ACARA datasets and isolate or ingest annual school finances."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
 
@@ -242,12 +263,14 @@ def ingest_acara(
         f"(download={download}, longitudinal={longitudinal})"
     )
     with console.status(
-        "[bold green]Processing ACARA datasets and migrating finances..."
+        "[bold green]Processing ACARA datasets and updating finances..."
     ):
         results = run_acara_ingestion(
             download_latest=download,
             use_longitudinal=longitudinal,
             db_path=effective_db_path,
+            finance_path=finance_file,
+            finance_year=finance_year,
             export_parquet_files=export_parquet,
             output_dir=effective_out_dir,
         )
@@ -264,9 +287,14 @@ def ingest_acara(
     )
     table.add_row("School Snapshots Loaded", f"{results['school_snapshots_loaded']:,}")
     table.add_row(
-        "2021 Historical Finances Migrated",
-        f"{results['school_finances_2021_migrated']:,}",
+        "School Finances Loaded",
+        f"{results.get('school_finances_loaded', results.get('school_finances_2021_migrated', 0)):,}",
     )
+    if "school_finances_2021_migrated" in results:
+        table.add_row(
+            "2021 Historical Finances Migrated",
+            f"{results['school_finances_2021_migrated']:,}",
+        )
     table.add_row(
         "Parquet Exports Generated",
         "Yes" if results.get("parquet_exported") else "No",
@@ -278,6 +306,70 @@ def ingest_acara(
     console.print(f"Database: [green]{effective_db_path}[/green]")
     if export_parquet:
         console.print(f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]")
+
+
+@ingest_app.command(name="finances")
+def ingest_finances_cmd(
+    source_file: Annotated[
+        Path,
+        typer.Option(
+            "--source-file",
+            "-f",
+            help="Path to local authorised school finances CSV or Parquet file.",
+        ),
+    ],
+    reporting_year: Annotated[
+        int,
+        typer.Option(
+            "--year",
+            "-y",
+            help="Reporting calendar year (e.g. 2021, 2024).",
+        ),
+    ] = 2021,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest authorised school finance records into canonical DuckDB."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        f"[bold blue]Ingesting authorised school finances for {reporting_year}[/bold blue] "
+        f"from [cyan]{source_file}[/cyan]"
+    )
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        loaded = ingest_school_finances(
+            conn, source_file, reporting_year=reporting_year
+        )
+        if export_parquet:
+            export_to_parquet(conn, effective_out_dir)
+    finally:
+        conn.close()
+
+    console.print(
+        f"[bold green]Successfully ingested {loaded:,} finance records![/bold green]"
+    )
 
 
 @ingest_app.command(name="wikimedia")
@@ -520,6 +612,205 @@ def ingest_benchmarks(
         console.print(f"Parquet written to: [cyan]{results['parquet_path']}[/cyan]")
 
 
+@ingest_app.command(name="funding")
+@app.command(name="ingest-funding")
+def ingest_funding_cmd(
+    benchmarks_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--benchmarks-file",
+            help="Path to ACARA finance benchmarks CSV.",
+        ),
+    ] = None,
+    nsw_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--nsw-file",
+            help="Path to NSW RAM allocations CSV.",
+        ),
+    ] = None,
+    tas_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--tas-file",
+            help="Path to Tasmania SRP allocations CSV.",
+        ),
+    ] = None,
+    nt_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--nt-file",
+            help="Path to NT school funding CSV.",
+        ),
+    ] = None,
+    qld_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--qld-file",
+            help="Path to QLD non-state grants CSV.",
+        ),
+    ] = None,
+    manual_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--manual-file",
+            help="Path to manual school funding CSV.",
+        ),
+    ] = None,
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    export_parquet: Annotated[
+        bool,
+        typer.Option(
+            "--export-parquet/--no-export-parquet",
+            help="Export updated canonical tables to Parquet files.",
+        ),
+    ] = True,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            help="Directory to save Parquet exports.",
+        ),
+    ] = None,
+) -> None:
+    """Ingest public school funding data and ACARA finance benchmarks."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    effective_out_dir = output_dir or PROCESSED_DIR
+
+    console.print(
+        "[bold blue]Starting Public School Funding & Benchmarks Ingestion...[/bold blue]"
+    )
+
+    conn = get_connection(effective_db_path)
+    try:
+        init_schema(conn)
+        counts = ingest_all_funding(
+            conn,
+            benchmarks_path=benchmarks_file,
+            nsw_path=nsw_file,
+            tas_path=tas_file,
+            nt_path=nt_file,
+            qld_path=qld_file,
+            manual_path=manual_file,
+        )
+
+        table = Table(
+            title="Public School Funding & Benchmarks Ingestion Summary",
+            header_style="bold magenta",
+        )
+        table.add_column("Dataset / Stream", style="cyan")
+        table.add_column("Records Ingested", justify="right", style="green")
+
+        table.add_row("ACARA Finance Benchmarks", f"{counts['acara_benchmarks']:,}")
+        table.add_row("NSW RAM Public Funding", f"{counts['nsw_ram']:,}")
+        table.add_row(
+            "Tasmania DECYP Fairer Funding SRP", f"{counts['tasmania_srp']:,}"
+        )
+        table.add_row(
+            "Northern Territory Needs-Based Resourcing",
+            f"{counts['nt_funding']:,}",
+        )
+        table.add_row(
+            "Queensland Non-State Recurrent Grants", f"{counts['qld_grants']:,}"
+        )
+        table.add_row(
+            "Manual Authoritative Disclosures", f"{counts['manual_enrichment']:,}"
+        )
+
+        console.print()
+        console.print(table)
+        console.print()
+
+        if export_parquet:
+            console.print("[dim]Exporting canonical parquet tables...[/dim]")
+            export_to_parquet(conn, effective_out_dir)
+            console.print(
+                f"Parquet exports written to: [cyan]{effective_out_dir}[/cyan]"
+            )
+    finally:
+        conn.close()
+
+    console.print("[bold green]Funding & Benchmarks Ingestion Complete![/bold green]")
+
+
+@app.command(name="backtest-benchmarks")
+def backtest_benchmarks_cmd(
+    year: Annotated[
+        int,
+        typer.Option(
+            "--year",
+            "-y",
+            help="Historical calendar year for backtesting (defaults to 2021).",
+        ),
+    ] = 2021,
+    metric: Annotated[
+        str,
+        typer.Option(
+            "--metric",
+            "-m",
+            help="Finance metric to backtest.",
+        ),
+    ] = "total_net_recurrent_income_per_student",
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+) -> None:
+    """Backtest benchmark estimation model against historical observed school finances."""
+    effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
+    conn = get_connection(effective_db_path, read_only=True)
+    try:
+        results = backtest_finance_benchmarks(conn, historical_year=year, metric=metric)
+
+        console.print(
+            f"[bold blue]Backtesting Results for Historical Year {year}[/bold blue] "
+            f"(Metric: [cyan]{metric}[/cyan])"
+        )
+        console.print(
+            f"Evaluated Schools: [green]{results['sample_size']}[/green] | "
+            f"Overall Median Ratio: [green]{results['overall_median_ratio']}[/green] | "
+            f"Overall MAD: [green]{results['overall_mad']}[/green] | "
+            f"Overall MAPE: [green]{results['overall_mape']}%[/green]"
+        )
+
+        table = Table(title="Sector Backtest Performance", header_style="bold magenta")
+        table.add_column("Sector", style="cyan")
+        table.add_column("Sample Size", justify="right", style="white")
+        table.add_column("Median Ratio", justify="right", style="green")
+        table.add_column("MAD", justify="right", style="green")
+        table.add_column("MAPE (%)", justify="right", style="yellow")
+
+        for sec, stats in results["sector_metrics"].items():
+            table.add_row(
+                sec,
+                str(stats["sample_size"]),
+                str(stats["median_ratio"]),
+                str(stats["mad"]),
+                f"{stats['mape']}%",
+            )
+        console.print()
+        console.print(table)
+        console.print()
+
+        if results["high_dispersion_groups"]:
+            console.print(
+                f"[bold yellow]Identified {len(results['high_dispersion_groups'])} High-Dispersion Groups (Fallback to Peer Average):[/bold yellow]"
+            )
+            for grp in results["high_dispersion_groups"][:10]:
+                console.print(f"  - [dim]{grp}[/dim]")
+    finally:
+        conn.close()
+
+
 @app.command(name="transform")
 def transform_cmd(
     db_path: Annotated[
@@ -548,13 +839,13 @@ def transform_cmd(
         init_schema(conn)
         console.print("[green]Schema DDL and views applied successfully.[/green]")
 
-        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        res = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res[0] if res else 0
         if fin_count == 0:
-            console.print("[dim]Migrating historical 2021 school finances...[/dim]")
+            console.print("[dim]Migrating historical school finances...[/dim]")
             migrated = migrate_historical_finances(conn, gpkg_path)
             console.print(
-                f"[green]Migrated {migrated:,} historical 2021 finance records.[/green]"
+                f"[green]Migrated {migrated:,} historical finance records.[/green]"
             )
         else:
             console.print(
@@ -683,8 +974,16 @@ def analyze_cmd(
             help="Directory to save analytical metrics JSON.",
         ),
     ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
-    """Compute deterministic demographic, sector distribution, and 2021 funding statistics."""
+    """Compute deterministic demographic, sector distribution, and school funding statistics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
@@ -695,12 +994,17 @@ def analyze_cmd(
     )
     conn = get_connection(effective_db_path)
     try:
-        json_path = export_analysis_report(conn, effective_out_dir, parl_list)
+        json_path = export_analysis_report(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
 
         for p in parl_list:
             dem = compute_parliament_demographics(conn, p)
             sec = compute_sector_summary(conn, p)
-            fund = compute_funding_summary(conn, p)
+            fund = compute_funding_summary(conn, p, reporting_year=finance_year)
 
             console.print()
             console.print(
@@ -736,7 +1040,7 @@ def analyze_cmd(
 
             # Funding table
             fund_tbl = Table(
-                title=f"Parliament {p} School 2021 Financial Averages (N reported)",
+                title=f"Parliament {p} School {finance_year} Financial Averages (N reported)",
                 header_style="bold yellow",
             )
             fund_tbl.add_column("Sector")
@@ -798,6 +1102,14 @@ def export_cmd(
             help="Directory to save Parquet and GeoJSON files.",
         ),
     ] = None,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
     """Export canonical Parquet files, GeoJSON layers, and JSON analytical metrics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -810,7 +1122,12 @@ def export_cmd(
     )
     conn = get_connection(effective_db_path)
     try:
-        results = export_all_artifacts(conn, effective_out_dir, parl_list)
+        results = export_all_artifacts(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
     finally:
         conn.close()
 
@@ -884,6 +1201,14 @@ def run_all_cmd(
             help="Enrich canonical members and unmatched schools with Wikimedia data.",
         ),
     ] = False,
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            "--finance-reporting-year",
+            help="Calendar reporting year for school finances (defaults to 2021).",
+        ),
+    ] = 2021,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -922,6 +1247,21 @@ def run_all_cmd(
         output_dir=effective_out_dir,
     )
 
+    # Step 2b: Public Funding & ACARA Finance Benchmarks Ingestion
+    console.print(
+        "\n[bold]2b. Running Public Funding & Finance Benchmarks Ingestion...[/bold]"
+    )
+    funding_conn = get_connection(effective_db_path)
+    try:
+        init_schema(funding_conn)
+        counts = ingest_all_funding(funding_conn)
+        console.print(
+            f"[dim]Ingested {counts['acara_benchmarks']} benchmarks and "
+            f"{sum(v for k, v in counts.items() if k != 'acara_benchmarks')} public funding records.[/dim]"
+        )
+    finally:
+        funding_conn.close()
+
     # Step 3: APH Ingestion
     console.print("\n[bold]3. Running APH Ingestion...[/bold]")
     run_aph_ingestion(
@@ -947,7 +1287,7 @@ def run_all_cmd(
     conn = get_connection(effective_db_path)
     try:
         init_schema(conn)
-        res = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        res = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res[0] if res else 0
         if fin_count == 0:
             migrate_historical_finances(conn)
@@ -972,7 +1312,12 @@ def run_all_cmd(
         console.print(
             "\n[bold]6. Exporting Parquet, GeoJSON, and Analysis Metrics...[/bold]"
         )
-        export_results = export_all_artifacts(conn, effective_out_dir, parl_list)
+        export_results = export_all_artifacts(
+            conn,
+            effective_out_dir,
+            parl_list,
+            finance_reporting_year=finance_year,
+        )
     finally:
         conn.close()
 

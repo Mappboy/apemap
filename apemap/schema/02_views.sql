@@ -34,6 +34,27 @@ SELECT * FROM v_parliament_members WHERE is_opening_day_member = TRUE;
 CREATE OR REPLACE VIEW v_parliament_members_current AS
 SELECT * FROM v_parliament_members WHERE is_current_member = TRUE;
 
+-- Backward-compatibility view for 2021 financial baseline
+CREATE OR REPLACE VIEW school_finances_2021 AS
+SELECT
+    institution_id,
+    acara_id,
+    recurrent_funding_gov_total,
+    recurrent_funding_state_total,
+    fees_charges_parent_total,
+    other_private_sources_total,
+    total_gross_income_total,
+    total_net_recurrent_income_total,
+    recurrent_funding_gov_per_student,
+    recurrent_funding_state_per_student,
+    fees_charges_parent_per_student,
+    other_private_sources_per_student,
+    total_gross_income_per_student,
+    total_net_recurrent_income_per_student,
+    reporting_year
+FROM school_finances
+WHERE reporting_year = 2021;
+
 -- Unified Member Secondary Education View
 CREATE OR REPLACE VIEW v_member_secondary_education AS
 SELECT
@@ -172,4 +193,47 @@ JOIN electoral_boundaries eb ON (
     END
 )
 WHERE ps.chamber = 'representatives';
+
+-- Unified School Public Funding View
+CREATE OR REPLACE VIEW v_school_public_funding AS
+SELECT
+    spf.institution_id,
+    spf.reporting_year,
+    spf.jurisdiction,
+    spf.metric,
+    spf.value,
+    spf.unit,
+    spf.funding_model,
+    spf.source_dataset,
+    spf.source_url,
+    spf.source_record_id,
+    spf.retrieved_at,
+    i.acara_id,
+    i.school_name,
+    i.school_type,
+    i.sector AS school_sector,
+    i.state AS school_state,
+    i.suburb AS school_suburb,
+    i.postcode AS school_postcode,
+    i.longitude,
+    i.latitude
+FROM school_public_funding spf
+JOIN institutions i ON spf.institution_id = i.institution_id;
+
+-- Unified School Finance Benchmarks View
+CREATE OR REPLACE VIEW v_school_finance_benchmarks AS
+SELECT
+    reporting_year,
+    state_or_territory,
+    sector,
+    geolocation,
+    metric,
+    value,
+    unit,
+    source_dataset,
+    source_url,
+    retrieved_at
+FROM school_finance_benchmarks
+ORDER BY reporting_year DESC, state_or_territory, sector, geolocation, metric;
+
 

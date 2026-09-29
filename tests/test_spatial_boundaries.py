@@ -60,7 +60,11 @@ def test_every_48th_parliament_house_member_matches_one_boundary(
     if not canonical_db.exists():
         pytest.skip("data/aped.duckdb not available for test")
 
-    conn = get_connection(canonical_db)
+    import shutil
+
+    test_db = tmp_path / "test_spatial_48.duckdb"
+    shutil.copy2(canonical_db, test_db)
+    conn = get_connection(test_db)
     init_schema(conn)
     ensure_spatial(conn)
     ingest_aec_boundaries(conn, shp_path, 2025)

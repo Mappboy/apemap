@@ -72,10 +72,12 @@ CREATE TABLE IF NOT EXISTS school_snapshots (
     PRIMARY KEY (institution_id, snapshot_year)
 );
 
--- 6. School Finances 2021: Standalone historical snapshot table isolated from runtime scraping
-CREATE TABLE IF NOT EXISTS school_finances_2021 (
-    institution_id VARCHAR PRIMARY KEY REFERENCES institutions(institution_id),
+-- 6. School Finances: Annual school-level income and recurrent funding metrics
+-- Generalised annual finance table keyed by (institution_id, reporting_year)
+CREATE TABLE IF NOT EXISTS school_finances (
+    institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
     acara_id VARCHAR NOT NULL,
+    reporting_year INTEGER NOT NULL,
     recurrent_funding_gov_total BIGINT,
     recurrent_funding_state_total BIGINT,
     fees_charges_parent_total BIGINT,
@@ -88,7 +90,16 @@ CREATE TABLE IF NOT EXISTS school_finances_2021 (
     other_private_sources_per_student BIGINT,
     total_gross_income_per_student BIGINT,
     total_net_recurrent_income_per_student BIGINT,
-    reporting_year INTEGER NOT NULL DEFAULT 2021
+    -- Multi-campus rolled reporting flags
+    is_rolled_reporting BOOLEAN DEFAULT FALSE,
+    parent_acara_id VARCHAR,
+    -- Audit Provenance & Licensing Fields
+    source_dataset VARCHAR NOT NULL DEFAULT 'ACARA My School Finance',
+    source_url VARCHAR NOT NULL DEFAULT 'https://myschool.edu.au',
+    licence VARCHAR NOT NULL DEFAULT 'ACARA My School Terms of Use (July 2020)',
+    retrieved_at TIMESTAMPTZ,
+    notes VARCHAR,
+    PRIMARY KEY (institution_id, reporting_year)
 );
 
 -- 7. Electoral Boundaries: Official Commonwealth electoral division boundaries
@@ -114,6 +125,37 @@ CREATE TABLE IF NOT EXISTS education_sector_benchmarks (
     source_url VARCHAR NOT NULL,
     released_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (benchmark_year, sector)
+);
+
+-- 9. School Finance Benchmarks: Official aggregated school finance benchmarks (ACARA National Report on Schooling)
+CREATE TABLE IF NOT EXISTS school_finance_benchmarks (
+    reporting_year INTEGER NOT NULL,
+    state_or_territory VARCHAR NOT NULL,
+    sector VARCHAR NOT NULL CHECK (sector IN ('Government', 'Catholic', 'Independent', 'All')),
+    geolocation VARCHAR NOT NULL CHECK (geolocation IN ('Major Cities', 'Inner Regional', 'Outer Regional', 'Remote', 'Very Remote', 'All')),
+    metric VARCHAR NOT NULL,
+    value DOUBLE NOT NULL,
+    unit VARCHAR NOT NULL DEFAULT 'AUD_per_student',
+    source_dataset VARCHAR NOT NULL DEFAULT 'ACARA National Report on Schooling',
+    source_url VARCHAR NOT NULL,
+    retrieved_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (reporting_year, state_or_territory, sector, geolocation, metric)
+);
+
+-- 10. School Public Funding: Jurisdictional school-level public funding and resourcing allocations
+CREATE TABLE IF NOT EXISTS school_public_funding (
+    institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
+    reporting_year INTEGER NOT NULL,
+    jurisdiction VARCHAR NOT NULL,
+    metric VARCHAR NOT NULL,
+    value DOUBLE NOT NULL,
+    unit VARCHAR NOT NULL,
+    funding_model VARCHAR NOT NULL,
+    source_dataset VARCHAR NOT NULL,
+    source_url VARCHAR NOT NULL,
+    source_record_id VARCHAR,
+    retrieved_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (institution_id, reporting_year, metric, source_dataset)
 );
 
 

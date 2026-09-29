@@ -82,7 +82,7 @@ def create_analysis_fixture(db_path: Path) -> Path:
 
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student,
             total_net_recurrent_income_per_student, reporting_year
         ) VALUES
@@ -178,7 +178,7 @@ def test_sector_and_funding_summary_exclude_non_opening_day_members(
     )
     conn.execute(
         """
-        INSERT INTO school_finances_2021 (
+        INSERT INTO school_finances (
             institution_id, acara_id, total_gross_income_per_student,
             total_net_recurrent_income_per_student, reporting_year
         ) VALUES ('school-late', '400', 9999, 9999, 2021)
@@ -224,3 +224,41 @@ def test_analysis_exports_are_schema_versioned_and_deterministic(
     assert metadata["schema_version"] == "1.0"
     assert metadata["parliament_numbers"] == [47]
     assert metadata["finance_reporting_year"] == 2021
+    assert "ACARA" in metadata["finance_source_attribution"]
+    assert "Terms of Use" in metadata["finance_licence"]
+
+
+def test_compute_funding_summary_explicit_reporting_year(tmp_path: Path) -> None:
+    """compute_funding_summary accurately filters by explicit reporting_year and includes attribution."""
+    db_path = create_analysis_fixture(tmp_path / "analysis_multi_year.duckdb")
+    conn = get_connection(db_path)
+
+    # Insert 2024 finance record for school-gov
+    conn.execute(
+        """
+        INSERT INTO school_finances (
+            institution_id, acara_id, total_gross_income_per_student,
+            total_net_recurrent_income_per_student, reporting_year
+        ) VALUES ('school-gov', '100', 500, 450, 2024)
+        """
+    )
+
+    # 2021 query
+    summary_2021 = compute_funding_summary(conn, 47, reporting_year=2021)
+    assert summary_2021["reporting_year"] == 2021
+    assert "ACARA" in summary_2021["source_attribution"]
+    assert (
+        summary_2021["by_sector"]["Government"]["gross_income_per_student_avg"] == 100.0
+    )
+
+    # 2024 query
+    summary_2024 = compute_funding_summary(conn, 47, reporting_year=2024)
+    assert summary_2024["reporting_year"] == 2024
+    assert (
+        summary_2024["by_sector"]["Government"]["gross_income_per_student_avg"] == 500.0
+    )
+    # Other schools don't have 2024 data, so missing count is higher
+    assert summary_2024["overall_gross_income"]["missing"] == 2
+    assert summary_2024["overall_gross_income"]["n"] == 1
+
+    conn.close()
