@@ -702,7 +702,6 @@ def get_peer_group_benchmark(
         (state_val, sector_val, "All", 2),
         ("All", sector_val, geo_val, 3),
         ("All", sector_val, "All", 4),
-        ("All", "All", "All", 5),
     ]
 
     seen: set[tuple[str, str, str]] = set()
@@ -754,6 +753,54 @@ def get_peer_group_benchmark(
     return None
 
 
+def get_peer_group_reliability(
+    conn: duckdb.DuckDBPyConnection,
+    peer_group: str,
+    historical_year: int = 2021,
+    metric: str = "total_net_recurrent_income_per_student",
+    dispersion_mad_threshold: float = 0.25,
+    min_sample_size: int = 3,
+    peer_group_metrics: dict[str, Any] | None = None,
+) -> tuple[bool, dict[str, Any]]:
+    """Determine whether a peer group has sufficient sample size and low dispersion.
+
+    Args:
+        conn: Active DuckDB connection.
+        peer_group: Peer group string formatted as 'state / sector / geolocation'.
+        historical_year: Baseline year to test.
+        metric: Finance metric to evaluate.
+        dispersion_mad_threshold: Maximum MAD threshold for reliability.
+        min_sample_size: Minimum sample size required.
+        peer_group_metrics: Optional precomputed peer_group_metrics dict from backtesting.
+
+    Returns:
+        Tuple of (is_reliable: bool, stats_dict: dict[str, Any]).
+    """
+    if peer_group_metrics is None:
+        backtest_res = backtest_finance_benchmarks(
+            conn,
+            historical_year=historical_year,
+            metric=metric,
+            dispersion_mad_threshold=dispersion_mad_threshold,
+            min_sample_size=min_sample_size,
+        )
+        peer_group_metrics = backtest_res.get("peer_group_metrics", {})
+
+    stats = peer_group_metrics.get(peer_group)
+    if not stats:
+        return False, {
+            "sample_size": 0,
+            "median_ratio": None,
+            "mad": None,
+            "mape": None,
+            "is_reliable": False,
+            "dispersion_status": "insufficient_sample",
+        }
+
+    is_reliable = bool(stats.get("is_reliable", False))
+    return is_reliable, stats
+
+
 def compute_school_finance_estimate(
     conn: duckdb.DuckDBPyConnection,
     institution_id: str,
@@ -761,6 +808,8 @@ def compute_school_finance_estimate(
     metric: str = "total_net_recurrent_income_per_student",
     historical_year: int = 2021,
     dispersion_mad_threshold: float = 0.25,
+    min_sample_size: int = 3,
+    peer_group_metrics: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Calculate deterministic school finance estimate or retrieve observed value.
 
@@ -779,6 +828,8 @@ def compute_school_finance_estimate(
         metric: Finance metric (defaults to total_net_recurrent_income_per_student).
         historical_year: Baseline year for indexing (defaults to 2021).
         dispersion_mad_threshold: Maximum MAD ratio allowed before group fallback.
+        min_sample_size: Minimum peer group sample size required for indexed estimates.
+        peer_group_metrics: Optional precomputed backtest peer group reliability metrics.
 
     Returns:
         Structured dictionary containing value, status, method, peer_group,
@@ -876,7 +927,32 @@ def compute_school_finance_estimate(
         if b_hist and b_hist["value"] > 0:
             rel_mult = hist_val / b_hist["value"]
 
-            # Outlier / high dispersion guard
+            # Check peer group reliability using backtesting rules
+            is_reliable, _ = get_peer_group_reliability(
+                conn,
+                b_hist["peer_group"],
+                historical_year=historical_year,
+                metric=metric,
+                dispersion_mad_threshold=dispersion_mad_threshold,
+                min_sample_size=min_sample_size,
+                peer_group_metrics=peer_group_metrics,
+            )
+
+            if not is_reliable:
+                return {
+                    "institution_id": institution_id,
+                    "reporting_year": target_year,
+                    "metric": metric,
+                    "value": round(b_target["value"]),
+                    "status": "benchmark_average",
+                    "method": "peer_group_average_high_dispersion_fallback",
+                    "peer_group": b_target["peer_group"],
+                    "relative_multiplier": round(rel_mult, 4),
+                    "benchmark_value": b_target["value"],
+                    "source": "ACARA National Report on Schooling",
+                }
+
+            # Outlier guard on individual school multiplier
             if rel_mult > 3.0 or rel_mult < 0.25:
                 return {
                     "institution_id": institution_id,
