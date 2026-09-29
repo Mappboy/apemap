@@ -435,6 +435,25 @@ def validate_database(
     except Exception as e:
         report.add_failure(f"Error validating education sector benchmarks: {e}")
 
+    # 13. Public school funding and benchmark data integrity
+    try:
+        tables_exist = conn.execute(
+            """
+            SELECT count(*) FROM information_schema.tables
+            WHERE table_name IN ('school_finance_benchmarks', 'school_public_funding')
+            """
+        ).fetchone()
+        if tables_exist and tables_exist[0] == 2:
+            from apemap.analysis import validate_funding_records
+
+            fund_res = validate_funding_records(conn)
+            report.checks_run += fund_res["checks_run"]
+            report.checks_passed += fund_res["checks_passed"]
+            for fail in fund_res["failures"]:
+                report.add_failure(fail)
+    except Exception as e:
+        logger.debug("validate_funding_records skipped or failed: %s", e)
+
     logger.info(
         "Validation completed: %d checks run, %d passed, %d failures",
         report.checks_run,

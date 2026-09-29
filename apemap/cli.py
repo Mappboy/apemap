@@ -1247,6 +1247,21 @@ def run_all_cmd(
         output_dir=effective_out_dir,
     )
 
+    # Step 2b: Public Funding & ACARA Finance Benchmarks Ingestion
+    console.print(
+        "\n[bold]2b. Running Public Funding & Finance Benchmarks Ingestion...[/bold]"
+    )
+    funding_conn = get_connection(effective_db_path)
+    try:
+        init_schema(funding_conn)
+        counts = ingest_all_funding(funding_conn)
+        console.print(
+            f"[dim]Ingested {counts['acara_benchmarks']} benchmarks and "
+            f"{sum(v for k, v in counts.items() if k != 'acara_benchmarks')} public funding records.[/dim]"
+        )
+    finally:
+        funding_conn.close()
+
     # Step 3: APH Ingestion
     console.print("\n[bold]3. Running APH Ingestion...[/bold]")
     run_aph_ingestion(
