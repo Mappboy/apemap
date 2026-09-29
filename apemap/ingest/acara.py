@@ -279,6 +279,39 @@ def load_institutions_dataframe(
     return pd.DataFrame(list(records_by_id.values()))
 
 
+def _clean_int(val: Any) -> int | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none"):
+        return None
+    try:
+        return int(round(float(s)))
+    except (ValueError, TypeError):
+        return None
+
+
+def _clean_float(val: Any) -> float | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none"):
+        return None
+    try:
+        return float(s)
+    except (ValueError, TypeError):
+        return None
+
+
+def _clean_str(val: Any) -> str | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none", "nan"):
+        return None
+    return s
+
+
 def load_snapshots_dataframe(
     external_dir: Path | str | None = None,
 ) -> pd.DataFrame:
@@ -325,19 +358,50 @@ def load_snapshots_dataframe(
                     except ValueError:
                         year_val = 2025
 
-                icsea_val = None
-                if (
-                    pd.notna(row.get("ICSEA"))
-                    and str(row.get("ICSEA")).strip().isdigit()
-                ):
-                    icsea_val = int(row["ICSEA"])
-
-                enrol_val = None
-                if (
-                    pd.notna(row.get("Total Enrolments"))
-                    and str(row.get("Total Enrolments")).strip().isdigit()
-                ):
-                    enrol_val = int(row["Total Enrolments"])
+                total_enrolments = _clean_int(row.get("Total Enrolments"))
+                girls_enrolments = _clean_int(
+                    row.get("Girls Enrolments") or row.get("Girls")
+                )
+                boys_enrolments = _clean_int(
+                    row.get("Boys Enrolments") or row.get("Boys")
+                )
+                fte_enrolments = _clean_float(
+                    row.get("Full Time Equivalent Enrolments")
+                    or row.get("FTE Enrolments")
+                )
+                icsea = _clean_int(row.get("ICSEA"))
+                icsea_percentile = _clean_int(
+                    row.get("ICSEA Percentile") or row.get("ICSEA Percentile (%)")
+                )
+                sea_bottom_quarter_pct = _clean_float(
+                    row.get("Bottom SEA Quarter (%)") or row.get("Bottom SEA Quarter")
+                )
+                sea_lower_middle_quarter_pct = _clean_float(
+                    row.get("Lower Middle SEA Quarter (%)")
+                    or row.get("Lower Middle SEA Quarter")
+                )
+                sea_upper_middle_quarter_pct = _clean_float(
+                    row.get("Upper Middle SEA Quarter (%)")
+                    or row.get("Upper Middle SEA Quarter")
+                )
+                sea_top_quarter_pct = _clean_float(
+                    row.get("Top SEA Quarter (%)") or row.get("Top SEA Quarter")
+                )
+                indigenous_enrolments_pct = _clean_float(
+                    row.get("Indigenous Enrolments (%)")
+                    or row.get("Indigenous Enrolments")
+                )
+                lbote_pct = _clean_float(
+                    row.get("Language Background Other Than English - Yes (%)")
+                    or row.get("LBOTE (%)")
+                    or row.get("LBOTE")
+                )
+                year_range = _clean_str(row.get("Year Range"))
+                remoteness_category = _clean_str(
+                    row.get("Geolocation")
+                    or row.get("Remoteness Category")
+                    or row.get("Remoteness")
+                )
 
                 inst_id = f"acara-{aid}"
                 key = (inst_id, year_val)
@@ -345,8 +409,20 @@ def load_snapshots_dataframe(
                     snapshots[key] = {
                         "institution_id": inst_id,
                         "snapshot_year": year_val,
-                        "total_enrolments": enrol_val,
-                        "icsea": icsea_val,
+                        "total_enrolments": total_enrolments,
+                        "girls_enrolments": girls_enrolments,
+                        "boys_enrolments": boys_enrolments,
+                        "fte_enrolments": fte_enrolments,
+                        "icsea": icsea,
+                        "icsea_percentile": icsea_percentile,
+                        "sea_bottom_quarter_pct": sea_bottom_quarter_pct,
+                        "sea_lower_middle_quarter_pct": sea_lower_middle_quarter_pct,
+                        "sea_upper_middle_quarter_pct": sea_upper_middle_quarter_pct,
+                        "sea_top_quarter_pct": sea_top_quarter_pct,
+                        "indigenous_enrolments_pct": indigenous_enrolments_pct,
+                        "lbote_pct": lbote_pct,
+                        "year_range": year_range,
+                        "remoteness_category": remoteness_category,
                         "financial_profile_2021": None,
                     }
         except Exception as e:
@@ -358,7 +434,19 @@ def load_snapshots_dataframe(
                 "institution_id",
                 "snapshot_year",
                 "total_enrolments",
+                "girls_enrolments",
+                "boys_enrolments",
+                "fte_enrolments",
                 "icsea",
+                "icsea_percentile",
+                "sea_bottom_quarter_pct",
+                "sea_lower_middle_quarter_pct",
+                "sea_upper_middle_quarter_pct",
+                "sea_top_quarter_pct",
+                "indigenous_enrolments_pct",
+                "lbote_pct",
+                "year_range",
+                "remoteness_category",
                 "financial_profile_2021",
             ]
         )
@@ -609,9 +697,16 @@ def run_acara_ingestion(
         conn.execute(
             """
             INSERT OR REPLACE INTO school_snapshots (
-                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
+                institution_id, snapshot_year, total_enrolments, girls_enrolments, boys_enrolments,
+                fte_enrolments, icsea, icsea_percentile, sea_bottom_quarter_pct, sea_lower_middle_quarter_pct,
+                sea_upper_middle_quarter_pct, sea_top_quarter_pct, indigenous_enrolments_pct, lbote_pct,
+                year_range, remoteness_category, financial_profile_2021
             )
-            SELECT s.institution_id, s.snapshot_year, s.total_enrolments, s.icsea, s.financial_profile_2021
+            SELECT
+                s.institution_id, s.snapshot_year, s.total_enrolments, s.girls_enrolments, s.boys_enrolments,
+                s.fte_enrolments, s.icsea, s.icsea_percentile, s.sea_bottom_quarter_pct, s.sea_lower_middle_quarter_pct,
+                s.sea_upper_middle_quarter_pct, s.sea_top_quarter_pct, s.indigenous_enrolments_pct, s.lbote_pct,
+                s.year_range, s.remoteness_category, s.financial_profile_2021
             FROM df_snapshots_staging s
             WHERE s.institution_id IN (SELECT institution_id FROM institutions)
             """

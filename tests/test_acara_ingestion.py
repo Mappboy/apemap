@@ -121,7 +121,19 @@ def mock_external_dir(tmp_path: Path) -> Path:
                 "Sector": "Government",
                 "School Type": "Secondary",
                 "Total Enrolments": "1250",
+                "Girls Enrolments": "620",
+                "Boys Enrolments": "630",
+                "Full Time Equivalent Enrolments": "1240.5",
                 "ICSEA": "1080",
+                "ICSEA Percentile": "75",
+                "Bottom SEA Quarter (%)": "10.0",
+                "Lower Middle SEA Quarter (%)": "25.0",
+                "Upper Middle SEA Quarter (%)": "35.0",
+                "Top SEA Quarter (%)": "30.0",
+                "Indigenous Enrolments (%)": "5.0",
+                "Language Background Other Than English - Yes (%)": "15.0",
+                "Year Range": "7-12",
+                "Geolocation": "Major Cities",
             },
             {
                 "Calendar Year": "2025",
@@ -131,7 +143,19 @@ def mock_external_dir(tmp_path: Path) -> Path:
                 "Sector": "Catholic",
                 "School Type": "Combined",
                 "Total Enrolments": "850",
+                "Girls Enrolments": "400",
+                "Boys Enrolments": "450",
+                "Full Time Equivalent Enrolments": "845.0",
                 "ICSEA": "1120",
+                "ICSEA Percentile": "85",
+                "Bottom SEA Quarter (%)": "5.0",
+                "Lower Middle SEA Quarter (%)": "15.0",
+                "Upper Middle SEA Quarter (%)": "40.0",
+                "Top SEA Quarter (%)": "40.0",
+                "Indigenous Enrolments (%)": "2.0",
+                "Language Background Other Than English - Yes (%)": "20.0",
+                "Year Range": "Prep-12",
+                "Geolocation": "Inner Regional",
             },
         ]
     )
@@ -200,7 +224,7 @@ def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
 
 
 def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
-    """Verify snapshots dataframe parses year, enrolments, ICSEA, and institution_id."""
+    """Verify snapshots dataframe parses year, enrolments, ICSEA, and socio-educational profile."""
     df = load_snapshots_dataframe(external_dir=mock_external_dir)
 
     assert len(df) == 2
@@ -208,14 +232,80 @@ def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
         "institution_id",
         "snapshot_year",
         "total_enrolments",
+        "girls_enrolments",
+        "boys_enrolments",
+        "fte_enrolments",
         "icsea",
+        "icsea_percentile",
+        "sea_bottom_quarter_pct",
+        "sea_lower_middle_quarter_pct",
+        "sea_upper_middle_quarter_pct",
+        "sea_top_quarter_pct",
+        "indigenous_enrolments_pct",
+        "lbote_pct",
+        "year_range",
+        "remoteness_category",
         "financial_profile_2021",
     }
 
     row1 = df[df["institution_id"] == "acara-40001"].iloc[0]
     assert row1["snapshot_year"] == 2025
     assert row1["total_enrolments"] == 1250
+    assert row1["girls_enrolments"] == 620
+    assert row1["boys_enrolments"] == 630
+    assert row1["fte_enrolments"] == 1240.5
     assert row1["icsea"] == 1080
+    assert row1["icsea_percentile"] == 75
+    assert row1["sea_bottom_quarter_pct"] == 10.0
+    assert row1["sea_lower_middle_quarter_pct"] == 25.0
+    assert row1["sea_upper_middle_quarter_pct"] == 35.0
+    assert row1["sea_top_quarter_pct"] == 30.0
+    assert row1["indigenous_enrolments_pct"] == 5.0
+    assert row1["lbote_pct"] == 15.0
+    assert row1["year_range"] == "7-12"
+    assert row1["remoteness_category"] == "Major Cities"
+    assert row1["financial_profile_2021"] is None
+
+
+def test_load_snapshots_null_and_missing_handling(tmp_path: Path) -> None:
+    """Verify missing value conventions ('NP', 'NA', empty string) resolve to None."""
+    ext_dir = tmp_path / "external"
+    ext_dir.mkdir(parents=True)
+    df_raw = pd.DataFrame(
+        [
+            {
+                "Calendar Year": "2025",
+                "ACARA SML ID": "99999",
+                "Total Enrolments": "NP",
+                "Girls Enrolments": "NA",
+                "Boys Enrolments": "",
+                "Full Time Equivalent Enrolments": "None",
+                "ICSEA": "NP",
+                "ICSEA Percentile": "N/A",
+                "Bottom SEA Quarter (%)": "NP",
+                "Indigenous Enrolments (%)": "",
+                "Language Background Other Than English - Yes (%)": "null",
+                "Year Range": "None",
+                "Geolocation": "nan",
+            }
+        ]
+    )
+    df_raw.to_csv(ext_dir / "school-profile-2025.csv", index=False)
+
+    df = load_snapshots_dataframe(external_dir=ext_dir)
+    assert len(df) == 1
+    row = df.iloc[0]
+    assert row["total_enrolments"] is None
+    assert row["girls_enrolments"] is None
+    assert row["boys_enrolments"] is None
+    assert row["fte_enrolments"] is None
+    assert row["icsea"] is None
+    assert row["icsea_percentile"] is None
+    assert row["sea_bottom_quarter_pct"] is None
+    assert row["indigenous_enrolments_pct"] is None
+    assert row["lbote_pct"] is None
+    assert row["year_range"] is None
+    assert row["remoteness_category"] is None
 
 
 def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) -> None:

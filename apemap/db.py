@@ -136,6 +136,46 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             )
     except Exception:
         pass
+    # Ensure school_snapshots schema migration for older databases
+    try:
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS girls_enrolments INTEGER;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS boys_enrolments INTEGER;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS fte_enrolments DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS icsea_percentile INTEGER;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_bottom_quarter_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_lower_middle_quarter_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_upper_middle_quarter_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_top_quarter_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS indigenous_enrolments_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS lbote_pct DOUBLE;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS year_range VARCHAR;"
+        )
+        conn.execute(
+            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS remoteness_category VARCHAR;"
+        )
+    except Exception:
+        pass
 
     conn.execute(views_sql_path.read_text(encoding="utf-8"))
 

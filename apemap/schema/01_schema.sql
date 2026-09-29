@@ -62,12 +62,24 @@ CREATE TABLE IF NOT EXISTS member_education (
     reviewer_notes VARCHAR
 );
 
--- 5. School Snapshots: Annual school metrics (enrolments, ICSEA, finances)
+-- 5. School Snapshots: Annual school metrics (enrolments, ICSEA, socio-educational profile)
 CREATE TABLE IF NOT EXISTS school_snapshots (
     institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
     snapshot_year INTEGER NOT NULL,
     total_enrolments INTEGER,
+    girls_enrolments INTEGER,
+    boys_enrolments INTEGER,
+    fte_enrolments DOUBLE,
     icsea INTEGER,
+    icsea_percentile INTEGER,
+    sea_bottom_quarter_pct DOUBLE,
+    sea_lower_middle_quarter_pct DOUBLE,
+    sea_upper_middle_quarter_pct DOUBLE,
+    sea_top_quarter_pct DOUBLE,
+    indigenous_enrolments_pct DOUBLE,
+    lbote_pct DOUBLE,
+    year_range VARCHAR,
+    remoteness_category VARCHAR,
     financial_profile_2021 JSON,
     PRIMARY KEY (institution_id, snapshot_year)
 );

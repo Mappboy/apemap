@@ -454,6 +454,105 @@ def validate_database(
     except Exception as e:
         logger.debug("validate_funding_records skipped or failed: %s", e)
 
+    # 14. School Snapshots socio-educational assertions
+    try:
+        has_snapshots = conn.execute(
+            "SELECT count(*) FROM information_schema.tables WHERE table_name = 'school_snapshots'"
+        ).fetchone()
+        if has_snapshots and has_snapshots[0] > 0:
+            # Check enrolment non-negativity
+            report.checks_run += 1
+            neg_enrol = conn.execute(
+                """
+                SELECT count(*) FROM school_snapshots
+                WHERE total_enrolments < 0 OR girls_enrolments < 0 OR boys_enrolments < 0 OR fte_enrolments < 0
+                """
+            ).fetchone()
+            neg_enrol_cnt = neg_enrol[0] if neg_enrol else 0
+            if neg_enrol_cnt > 0:
+                report.add_failure(
+                    f"Found {neg_enrol_cnt} negative enrolment values in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+
+            # Check percentage bounds (0-100)
+            report.checks_run += 1
+            inv_pct = conn.execute(
+                """
+                SELECT count(*) FROM school_snapshots
+                WHERE (sea_bottom_quarter_pct IS NOT NULL AND (sea_bottom_quarter_pct < 0 OR sea_bottom_quarter_pct > 100))
+                   OR (sea_lower_middle_quarter_pct IS NOT NULL AND (sea_lower_middle_quarter_pct < 0 OR sea_lower_middle_quarter_pct > 100))
+                   OR (sea_upper_middle_quarter_pct IS NOT NULL AND (sea_upper_middle_quarter_pct < 0 OR sea_upper_middle_quarter_pct > 100))
+                   OR (sea_top_quarter_pct IS NOT NULL AND (sea_top_quarter_pct < 0 OR sea_top_quarter_pct > 100))
+                   OR (indigenous_enrolments_pct IS NOT NULL AND (indigenous_enrolments_pct < 0 OR indigenous_enrolments_pct > 100))
+                   OR (lbote_pct IS NOT NULL AND (lbote_pct < 0 OR lbote_pct > 100))
+                   OR (icsea_percentile IS NOT NULL AND (icsea_percentile < 0 OR icsea_percentile > 100))
+                """
+            ).fetchone()
+            inv_pct_cnt = inv_pct[0] if inv_pct else 0
+            if inv_pct_cnt > 0:
+                report.add_failure(
+                    f"Found {inv_pct_cnt} percentage values outside 0-100 in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+
+            # Check SEA quarters sum (~100%)
+            report.checks_run += 1
+            sea_sum_inv = conn.execute(
+                """
+                SELECT count(*) FROM school_snapshots
+                WHERE sea_bottom_quarter_pct IS NOT NULL
+                  AND sea_lower_middle_quarter_pct IS NOT NULL
+                  AND sea_upper_middle_quarter_pct IS NOT NULL
+                  AND sea_top_quarter_pct IS NOT NULL
+                  AND ABS((sea_bottom_quarter_pct + sea_lower_middle_quarter_pct + sea_upper_middle_quarter_pct + sea_top_quarter_pct) - 100.0) > 3.0
+                """
+            ).fetchone()
+            sea_sum_cnt = sea_sum_inv[0] if sea_sum_inv else 0
+            if sea_sum_cnt > 0:
+                report.add_failure(
+                    f"Found {sea_sum_cnt} records with SEA quarters summing outside ~100% in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+
+            # Check snapshot year bounds
+            report.checks_run += 1
+            inv_yr = conn.execute(
+                "SELECT count(*) FROM school_snapshots WHERE snapshot_year < 2000 OR snapshot_year > 2030"
+            ).fetchone()
+            inv_yr_cnt = inv_yr[0] if inv_yr else 0
+            if inv_yr_cnt > 0:
+                report.add_failure(
+                    f"Found {inv_yr_cnt} invalid snapshot years in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+
+            # Check primary key uniqueness
+            report.checks_run += 1
+            dup_pk = conn.execute(
+                """
+                SELECT count(*) FROM (
+                    SELECT institution_id, snapshot_year, count(*)
+                    FROM school_snapshots
+                    GROUP BY institution_id, snapshot_year
+                    HAVING count(*) > 1
+                )
+                """
+            ).fetchone()
+            dup_pk_cnt = dup_pk[0] if dup_pk else 0
+            if dup_pk_cnt > 0:
+                report.add_failure(
+                    f"Found {dup_pk_cnt} duplicate (institution_id, snapshot_year) in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+    except Exception as e:
+        logger.debug("school_snapshots validation skipped or failed: %s", e)
+
     logger.info(
         "Validation completed: %d checks run, %d passed, %d failures",
         report.checks_run,
