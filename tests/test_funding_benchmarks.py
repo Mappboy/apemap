@@ -346,12 +346,20 @@ def test_compute_school_finance_estimate_precedence(
         """
     )
 
-    # 1. School with historical 2021 finance -> should compute indexed estimate
+    # 1. School with historical 2021 finance in a reliable group -> should compute indexed estimate
     db_conn.execute(
         """
+        INSERT INTO institutions (
+            institution_id, acara_id, school_name, school_type, sector, campus_type, state, suburb, postcode
+        ) VALUES
+            ('acara-1006', '1006', 'Sydney Test 6', 'Secondary', 'Government', 'School Single Entity', 'NSW', 'Sydney', '2000'),
+            ('acara-1007', '1007', 'Sydney Test 7', 'Secondary', 'Government', 'School Single Entity', 'NSW', 'Sydney', '2000');
         INSERT INTO school_finances (
             institution_id, acara_id, reporting_year, total_net_recurrent_income_per_student
-        ) VALUES ('acara-1001', '1001', 2021, 17600); -- 10% above benchmark (17600 / 16000 = 1.10)
+        ) VALUES
+            ('acara-1001', '1001', 2021, 17600), -- 10% above benchmark (17600 / 16000 = 1.10)
+            ('acara-1006', '1006', 2021, 17400),
+            ('acara-1007', '1007', 2021, 17800);
         """
     )
     est1 = compute_school_finance_estimate(db_conn, "acara-1001", target_year=2024)
@@ -374,10 +382,18 @@ def test_compute_school_finance_estimate_precedence(
     assert est_obs["value"] == 23500.0
 
     # 3. School without historical finance -> should fall back to peer group average
-    est2 = compute_school_finance_estimate(db_conn, "acara-1002", target_year=2024)
+    # acara-1005 is SA Independent with no 2021 finance record
+    db_conn.execute(
+        """
+        INSERT INTO school_finance_benchmarks (
+            reporting_year, state_or_territory, sector, geolocation, metric, value, unit, source_dataset, source_url, retrieved_at
+        ) VALUES (2024, 'SA', 'Independent', 'All', 'total_net_recurrent_income_per_student', 25000.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z');
+        """
+    )
+    est2 = compute_school_finance_estimate(db_conn, "acara-1005", target_year=2024)
     assert est2["status"] == "benchmark_average"
     assert est2["method"] == "peer_group_average"
-    assert est2["value"] == 21000
+    assert est2["value"] == 25000
 
     # 4. Unknown institution -> unavailable
     est_none = compute_school_finance_estimate(
@@ -385,6 +401,321 @@ def test_compute_school_finance_estimate_precedence(
     )
     assert est_none["status"] == "unavailable"
     assert est_none["value"] is None
+
+
+def test_peer_group_dispersion_reliability_controls_estimates(
+    db_conn: duckdb.DuckDBPyConnection,
+) -> None:
+    """Test that peer group dispersion and sample size strictly control estimate generation."""
+    # Seed benchmarks for 2021 and 2024
+    db_conn.execute(
+        """
+        UPDATE institutions SET state = 'NSW' WHERE institution_id IN ('acara-1002', 'acara-1003');
+        INSERT INTO school_finance_benchmarks (
+            reporting_year, state_or_territory, sector, geolocation, metric, value, unit, source_dataset, source_url, retrieved_at
+        ) VALUES
+            (2021, 'NSW', 'Government', 'All', 'total_net_recurrent_income_per_student', 15000.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z'),
+            (2024, 'NSW', 'Government', 'All', 'total_net_recurrent_income_per_student', 20000.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z');
+        """
+    )
+
+    # Scenario A: Sample size below threshold (only 1 school, but min_sample_size=3)
+    db_conn.execute(
+        """
+        DELETE FROM school_finances;
+        INSERT INTO school_finances (
+            institution_id, acara_id, reporting_year, total_net_recurrent_income_per_student
+        ) VALUES ('acara-1001', '1001', 2021, 16500); -- ratio = 1.10
+        """
+    )
+    est_low_n = compute_school_finance_estimate(
+        db_conn, "acara-1001", target_year=2024, min_sample_size=3
+    )
+    assert est_low_n["status"] == "benchmark_average"
+    assert est_low_n["method"] == "peer_group_average_high_dispersion_fallback"
+    assert est_low_n["value"] == 20000
+
+    # Scenario B: High dispersion (sample size = 3, but ratios vary wildly: 0.5, 1.0, 2.0 -> MAD > 0.25)
+    db_conn.execute(
+        """
+        DELETE FROM school_finances;
+        INSERT INTO school_finances (
+            institution_id, acara_id, reporting_year, total_net_recurrent_income_per_student
+        ) VALUES
+            ('acara-1001', '1001', 2021, 7500),   -- ratio = 0.50
+            ('acara-1002', '1002', 2021, 15000),  -- ratio = 1.00
+            ('acara-1003', '1003', 2021, 30000);  -- ratio = 2.00
+        """
+    )
+    est_high_mad = compute_school_finance_estimate(
+        db_conn,
+        "acara-1002",
+        target_year=2024,
+        dispersion_mad_threshold=0.25,
+        min_sample_size=3,
+    )
+    assert est_high_mad["status"] == "benchmark_average"
+    assert est_high_mad["method"] == "peer_group_average_high_dispersion_fallback"
+    assert est_high_mad["value"] == 20000
+
+    # Scenario C: Reliable peer group (sample size = 3, ratios 1.0, 1.02, 0.98 -> MAD = 0.02 <= 0.25)
+    db_conn.execute(
+        """
+        DELETE FROM school_finances;
+        INSERT INTO school_finances (
+            institution_id, acara_id, reporting_year, total_net_recurrent_income_per_student
+        ) VALUES
+            ('acara-1001', '1001', 2021, 15000),  -- ratio = 1.00
+            ('acara-1002', '1002', 2021, 15300),  -- ratio = 1.02
+            ('acara-1003', '1003', 2021, 14700);  -- ratio = 0.98
+        """
+    )
+    est_reliable = compute_school_finance_estimate(
+        db_conn,
+        "acara-1002",
+        target_year=2024,
+        dispersion_mad_threshold=0.25,
+        min_sample_size=3,
+    )
+    assert est_reliable["status"] == "estimated_indexed"
+    assert est_reliable["method"] == "acara_state_sector_geolocation_index"
+    assert est_reliable["value"] == 20400  # 20000 * 1.02
+
+    # Scenario D: Extreme individual multiplier outlier guard (multiplier > 3.0)
+    db_conn.execute(
+        """
+        DELETE FROM school_finances;
+        INSERT INTO school_finances (
+            institution_id, acara_id, reporting_year, total_net_recurrent_income_per_student
+        ) VALUES
+            ('acara-1001', '1001', 2021, 50000),  -- ratio = 3.33 (> 3.0 outlier)
+            ('acara-1002', '1002', 2021, 50000),
+            ('acara-1003', '1003', 2021, 50000);
+        """
+    )
+    # Even if group has low MAD among themselves, individual multiplier > 3.0 triggers outlier fallback
+    est_outlier = compute_school_finance_estimate(
+        db_conn,
+        "acara-1001",
+        target_year=2024,
+        dispersion_mad_threshold=0.5,
+        min_sample_size=3,
+    )
+    assert est_outlier["status"] == "benchmark_average"
+    assert est_outlier["method"] == "peer_group_average_outlier_fallback"
+
+
+def test_resolve_institution_id_hardening(db_conn: duckdb.DuckDBPyConnection) -> None:
+    """Test resolution hierarchy: ACARA ID precedence, state strictness, and ambiguity rejection."""
+    # Seed institutions with duplicate school names across states
+    db_conn.execute(
+        """
+        INSERT INTO institutions (institution_id, acara_id, school_name, state, sector)
+        VALUES
+            ('inst-nsw-1', '8001', 'Trinity Grammar School', 'NSW', 'Independent'),
+            ('inst-vic-1', '8002', 'Trinity Grammar School', 'VIC', 'Independent'),
+            ('inst-unique', '8003', 'Unique Regional High', 'QLD', 'Government');
+        """
+    )
+
+    # 1. ACARA ID is highest precedence
+    assert resolve_institution_id(db_conn, acara_id="8001") == "inst-nsw-1"
+    assert resolve_institution_id(db_conn, acara_id="8002") == "inst-vic-1"
+
+    # 2. Supplied state matches correct institution
+    assert (
+        resolve_institution_id(
+            db_conn, school_name="Trinity Grammar School", state="NSW"
+        )
+        == "inst-nsw-1"
+    )
+    assert (
+        resolve_institution_id(
+            db_conn, school_name="Trinity Grammar School", state="VIC"
+        )
+        == "inst-vic-1"
+    )
+
+    # 3. Supplied state mismatch does NOT fall back to another state
+    assert (
+        resolve_institution_id(
+            db_conn, school_name="Trinity Grammar School", state="WA"
+        )
+        is None
+    )
+    assert (
+        resolve_institution_id(
+            db_conn, school_name="Trinity Grammar School", state="TAS"
+        )
+        is None
+    )
+
+    # 4. Ambiguous name-only match (2 candidates in different states) returns None
+    assert resolve_institution_id(db_conn, school_name="Trinity Grammar School") is None
+
+    # 5. Unique name-only match succeeds
+    assert (
+        resolve_institution_id(db_conn, school_name="Unique Regional High")
+        == "inst-unique"
+    )
+
+    # 6. Unknown school returns None
+    assert resolve_institution_id(db_conn, school_name="Nonexistent School") is None
+
+
+def test_benchmark_hierarchy_and_unsupported_sectors(
+    db_conn: duckdb.DuckDBPyConnection,
+) -> None:
+    """Test that unsupported sectors produce unavailable and do not fall back to All/All/All."""
+    db_conn.execute(
+        """
+        INSERT INTO school_finance_benchmarks (
+            reporting_year, state_or_territory, sector, geolocation, metric, value, unit, source_dataset, source_url, retrieved_at
+        ) VALUES
+            (2024, 'NSW', 'Government', 'Major Cities', 'total_net_recurrent_income_per_student', 21000.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z'),
+            (2024, 'All', 'Government', 'All', 'total_net_recurrent_income_per_student', 20000.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z');
+
+        INSERT INTO institutions (institution_id, school_name, sector, state)
+        VALUES ('inst-other-sec', 'Other Sector School', 'Other', 'NSW');
+        """
+    )
+
+    # Sector 'Other' or 'Tertiary' is unsupported -> produces None
+    b_unsupported = get_peer_group_benchmark(
+        db_conn, 2024, "NSW", "Other", "Major Cities"
+    )
+    assert b_unsupported is None
+
+    # School with unsupported sector produces status 'unavailable'
+    est = compute_school_finance_estimate(db_conn, "inst-other-sec", target_year=2024)
+    assert est["status"] == "unavailable"
+    assert est["value"] is None
+
+
+def test_validate_funding_records_comprehensive(
+    db_conn: duckdb.DuckDBPyConnection,
+) -> None:
+    """Test full spectrum of data integrity assertions."""
+    # 1. Clean state passes
+    assert validate_funding_records(db_conn)["passed"] is True
+
+    # 2. Negative funding value in school_public_funding
+    db_conn.execute(
+        """
+        INSERT INTO school_public_funding (
+            institution_id, reporting_year, jurisdiction, metric, value, unit, funding_model, source_dataset, source_url, retrieved_at
+        ) VALUES ('acara-1001', 2024, 'NSW', 'ram_total', -100.0, 'AUD', 'RAM', 'NSW', 'url', '2026-09-28T00:00:00Z');
+        """
+    )
+    res = validate_funding_records(db_conn)
+    assert res["passed"] is False
+    assert any("negative values in school_public_funding" in f for f in res["failures"])
+    db_conn.execute("DELETE FROM school_public_funding;")
+
+    # 3. Invalid reporting year (< 2000)
+    db_conn.execute(
+        """
+        INSERT INTO school_public_funding (
+            institution_id, reporting_year, jurisdiction, metric, value, unit, funding_model, source_dataset, source_url, retrieved_at
+        ) VALUES ('acara-1001', 1980, 'NSW', 'ram_total', 1000.0, 'AUD', 'RAM', 'NSW', 'url', '2026-09-28T00:00:00Z');
+        """
+    )
+    res = validate_funding_records(db_conn)
+    assert res["passed"] is False
+    assert any("invalid reporting years" in f for f in res["failures"])
+    db_conn.execute("DELETE FROM school_public_funding;")
+
+    # 4. Orphan institution reference (recreate without FK to test validator)
+    db_conn.execute("DROP TABLE school_public_funding;")
+    db_conn.execute(
+        """
+        CREATE TABLE school_public_funding (
+            institution_id VARCHAR NOT NULL,
+            reporting_year INTEGER NOT NULL,
+            jurisdiction VARCHAR NOT NULL,
+            metric VARCHAR NOT NULL,
+            value DOUBLE NOT NULL,
+            unit VARCHAR NOT NULL,
+            funding_model VARCHAR NOT NULL,
+            source_dataset VARCHAR NOT NULL,
+            source_url VARCHAR NOT NULL,
+            source_record_id VARCHAR,
+            retrieved_at TIMESTAMPTZ NOT NULL,
+            PRIMARY KEY (institution_id, reporting_year, metric, source_dataset)
+        );
+        """
+    )
+    db_conn.execute(
+        """
+        INSERT INTO school_public_funding (
+            institution_id, reporting_year, jurisdiction, metric, value, unit, funding_model, source_dataset, source_url, retrieved_at
+        ) VALUES ('inst-ghost', 2024, 'NSW', 'ram_total', 1000.0, 'AUD', 'RAM', 'NSW', 'url', '2026-09-28T00:00:00Z');
+        """
+    )
+    res = validate_funding_records(db_conn)
+    assert res["passed"] is False
+    assert any("orphan institution_id" in f for f in res["failures"])
+    db_conn.execute("DROP TABLE school_public_funding;")
+    db_conn.execute(
+        """
+        CREATE TABLE school_public_funding (
+            institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
+            reporting_year INTEGER NOT NULL,
+            jurisdiction VARCHAR NOT NULL,
+            metric VARCHAR NOT NULL,
+            value DOUBLE NOT NULL,
+            unit VARCHAR NOT NULL,
+            funding_model VARCHAR NOT NULL,
+            source_dataset VARCHAR NOT NULL,
+            source_url VARCHAR NOT NULL,
+            source_record_id VARCHAR,
+            retrieved_at TIMESTAMPTZ NOT NULL,
+            PRIMARY KEY (institution_id, reporting_year, metric, source_dataset)
+        );
+        """
+    )
+
+
+def test_clean_db_run_all_with_funding_tables(tmp_path: Path) -> None:
+    """Integration test proving clean run-all populates funding tables and passes strict validation."""
+    db_path = tmp_path / "clean_run_all.duckdb"
+
+    # Run the ingestion stages on a fresh database:
+    # Ingest ACARA institutions, then public funding & benchmarks, then validate
+    conn = duckdb.connect(str(db_path))
+    init_schema(conn)
+
+    # Seed test institution corresponding to NSW RAM reference data
+    conn.execute(
+        """
+        INSERT INTO institutions (
+            institution_id, acara_id, school_name, school_type, sector, campus_type, state, suburb, postcode
+        ) VALUES
+            ('acara-42689', '42689', 'Albury High School', 'Secondary', 'Government', 'School Single Entity', 'NSW', 'Albury', '2640');
+        """
+    )
+
+    # Ingest reference funding and benchmarks
+    counts = ingest_all_funding(conn)
+    assert counts["acara_benchmarks"] > 0
+    assert counts["nsw_ram"] > 0
+
+    # Ensure tables are non-empty
+    bench_row = conn.execute(
+        "SELECT count(*) FROM school_finance_benchmarks"
+    ).fetchone()
+    assert bench_row is not None
+    assert bench_row[0] > 0
+
+    fund_row = conn.execute("SELECT count(*) FROM school_public_funding").fetchone()
+    assert fund_row is not None
+    assert fund_row[0] > 0
+
+    # Validate funding records directly
+    fund_val = validate_funding_records(conn)
+    assert fund_val["passed"] is True, fund_val["failures"]
+
+    conn.close()
 
 
 def test_backtest_finance_benchmarks(
@@ -414,25 +745,6 @@ def test_backtest_finance_benchmarks(
     assert report["overall_mad"] is not None
     assert report["overall_mape"] is not None
     assert "Government" in report["sector_metrics"]
-
-
-def test_validate_funding_records(db_conn: duckdb.DuckDBPyConnection) -> None:
-    """Assert integrity assertions detect negative values, invalid years, and orphans."""
-    # 1. Initially valid (empty or clean)
-    res = validate_funding_records(db_conn)
-    assert res["passed"] is True
-
-    # 2. Insert negative value
-    db_conn.execute(
-        """
-        INSERT INTO school_finance_benchmarks (
-            reporting_year, state_or_territory, sector, geolocation, metric, value, unit, source_dataset, source_url, retrieved_at
-        ) VALUES (2024, 'NSW', 'Government', 'All', 'total_net_recurrent_income_per_student', -500.0, 'AUD_per_student', 'ACARA', 'https://example.com', '2026-09-28T00:00:00Z');
-        """
-    )
-    res_bad = validate_funding_records(db_conn)
-    assert res_bad["passed"] is False
-    assert any("negative values" in f for f in res_bad["failures"])
 
 
 def test_export_spatial_geojson_properties(
