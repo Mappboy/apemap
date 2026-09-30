@@ -117,6 +117,16 @@ Generate Parquet tables, GeoJSON map layers, and metrics JSON:
 uv run apemap export --parliament "46,47,48"
 ```
 
+To also generate the versioned website bundle:
+
+```bash
+uv run apemap export --parliament "46,47,48" --web-release \
+  --data-release-version 2026.09.30 --output-dir data/processed/releases/2026.09.30
+```
+
+See the [website release contract](web-release.md) for source-date metadata,
+opening-day cohort rules, and the CSV and GeoJSON schemas.
+
 ---
 
 ## 5. Running the Complete Coordinated Pipeline

@@ -399,6 +399,52 @@ def test_validate_database_success(
     assert report.checks_passed == report.checks_run
 
 
+def test_profile_query_failures_fail_validation_and_do_not_skip_year_check(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """A legacy view and missing profile column cannot hide an invalid year."""
+    _, conn = populated_db
+    conn.execute(
+        """
+        CREATE OR REPLACE VIEW v_member_secondary_education AS
+        SELECT education_id FROM member_education WHERE level = 'secondary';
+        ALTER TABLE school_snapshots DROP COLUMN girls_enrolments;
+        UPDATE school_snapshots SET snapshot_year = 1999 WHERE institution_id = 'inst-gov';
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any(
+        "girls_enrolments" in failure and "apemap transform" in failure
+        for failure in report.failures
+    )
+    assert any("invalid snapshot years" in failure for failure in report.failures)
+    assert report.checks_run > report.checks_passed
+
+
+def test_profile_validation_accepts_nulls_and_reports_invalid_values(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Source nulls are valid; invalid counts, percentages and SEA totals fail."""
+    _, conn = populated_db
+    assert validate_database(conn, [47]).passed is True
+    conn.execute(
+        """
+        UPDATE school_snapshots SET girls_enrolments = -1, lbote_pct = 101,
+            sea_bottom_quarter_pct = 10, sea_lower_middle_quarter_pct = 10,
+            sea_upper_middle_quarter_pct = 10, sea_top_quarter_pct = 10
+        WHERE institution_id = 'inst-gov'
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any("negative enrolment values" in failure for failure in report.failures)
+    assert any(
+        "percentage values outside 0-100" in failure for failure in report.failures
+    )
+    assert any("SEA quarters summing" in failure for failure in report.failures)
+
+
 def test_validate_database_detects_empty_table(tmp_path: Path) -> None:
     """Verify validation fails when canonical tables are empty."""
     db_file = tmp_path / "empty.duckdb"
@@ -628,6 +674,84 @@ def test_cli_export_command_and_reproducibility(
     ).read_bytes()
 
 
+def test_cli_export_web_release_with_provenance(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The public CLI generates all web files and forwards release provenance."""
+    db_file, conn = populated_db
+    out_dir = tmp_path / "web-release"
+    dates_path = tmp_path / "source-dates.json"
+    dates_path.write_text(json.dumps({"aph": "2026-09-28", "acara": "2026-09-29"}))
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "1780000000")
+    before = {table: table_row_count(conn, table) for table in CANONICAL_TABLES}
+    result = runner.invoke(
+        app,
+        [
+            "export",
+            "--db-path",
+            str(db_file),
+            "-p",
+            "47",
+            "--output-dir",
+            str(out_dir),
+            "--web-release",
+            "--data-release-version",
+            "2026.09.30",
+            "--source-commit",
+            "b" * 40,
+            "--source-snapshot-dates",
+            str(dates_path),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    manifest = json.loads((out_dir / "manifest.json").read_text())
+    assert manifest["data_release_version"] == "2026.09.30"
+    assert manifest["source_commit"] == "b" * 40
+    assert manifest["source_snapshot_dates"]["acara"] == "2026-09-29"
+    assert set(manifest["files"]) == {
+        "results-summary.json",
+        "schools.geojson",
+        "downloads/parliament-education.csv",
+        "downloads/school-profiles.parquet",
+    }
+    for name, entry in manifest["files"].items():
+        data = (out_dir / name).read_bytes()
+        assert entry["sha256"] == hashlib.sha256(data).hexdigest()
+        assert entry["size_bytes"] == len(data)
+    assert before == {table: table_row_count(conn, table) for table in CANONICAL_TABLES}
+    assert "Web Release Manifest:" in result.output
+
+
+@pytest.mark.parametrize(
+    "metadata", ["not json", "[]", '{"acara": 2025}', '{"acara": "yesterday"}']
+)
+def test_cli_export_rejects_invalid_source_snapshot_dates_before_writing(
+    tmp_path: Path,
+    metadata: str,
+) -> None:
+    dates_path = tmp_path / "source-dates.json"
+    dates_path.write_text(metadata)
+    out_dir = tmp_path / "release"
+    result = runner.invoke(
+        app,
+        [
+            "export",
+            "--db-path",
+            str(tmp_path / "missing.duckdb"),
+            "--output-dir",
+            str(out_dir),
+            "--web-release",
+            "--source-snapshot-dates",
+            str(dates_path),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "source snapshot dates" in result.output.lower()
+    assert not out_dir.exists()
+
+
 @pytest.mark.parametrize("command", ["analyze", "export", "validate", "run-all"])
 def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> None:
     """All parliament-specific CLI commands reject unknown benchmark metadata."""
@@ -650,9 +774,16 @@ def test_cli_run_all_mocked(
     with (
         patch("apemap.cli.run_acara_ingestion") as mock_acara,
         patch("apemap.cli.run_aph_ingestion") as mock_aph,
+        patch("apemap.cli.run_aec_ingestion") as mock_aec,
+        patch("apemap.cli.run_abs_ingestion") as mock_abs,
+        patch("apemap.cli.ingest_all_funding") as mock_funding,
+        patch("requests.get", side_effect=AssertionError("Unexpected network access")),
     ):
         mock_acara.return_value = {}
         mock_aph.return_value = {}
+        mock_aec.return_value = {}
+        mock_abs.return_value = {}
+        mock_funding.return_value = {"acara_benchmarks": 0}
 
         result = runner.invoke(
             app,
@@ -673,6 +804,9 @@ def test_cli_run_all_mocked(
         assert "APEMAP Pipeline Completed Successfully!" in result.output
         mock_acara.assert_called_once()
         mock_aph.assert_called_once()
+        mock_aec.assert_called_once()
+        mock_abs.assert_called_once()
+        mock_funding.assert_called_once()
         assert (out_dir / "parliament_47_combined.geojson").exists()
         assert (out_dir / "members.parquet").exists()
 
@@ -699,6 +833,9 @@ def test_cli_run_all_mocked(
         assert result.exit_code == 0
         assert mock_acara.call_count == 2
         assert mock_aph.call_count == 2
+        assert mock_aec.call_count == 2
+        assert mock_abs.call_count == 2
+        assert mock_funding.call_count == 2
         second_counts = {
             table: table_row_count(conn, table) for table in CANONICAL_TABLES
         }

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Annotated
@@ -31,7 +32,7 @@ from apemap.db import (
     init_schema,
     migrate_historical_finances,
 )
-from apemap.export import export_all_artifacts
+from apemap.export import export_all_artifacts, validate_source_snapshot_dates
 from apemap.ingest.abs import run_abs_ingestion
 from apemap.ingest.acara import ingest_school_finances, run_acara_ingestion
 from apemap.ingest.aec import run_aec_ingestion
@@ -1110,12 +1111,53 @@ def export_cmd(
             help="Calendar reporting year for school finances (defaults to 2021).",
         ),
     ] = 2021,
+    web_release: Annotated[
+        bool,
+        typer.Option(
+            "--web-release/--no-web-release",
+            help="Also export results-summary.json, schools.geojson, downloads, and manifest.json.",
+        ),
+    ] = False,
+    data_release_version: Annotated[
+        str,
+        typer.Option(
+            "--data-release-version",
+            help="Version recorded in the web release manifest.",
+        ),
+    ] = "0.2.0",
+    source_commit: Annotated[
+        str | None,
+        typer.Option(
+            "--source-commit", help="Source commit SHA override for packaged builds."
+        ),
+    ] = None,
+    source_snapshot_dates: Annotated[
+        Path | None,
+        typer.Option(
+            "--source-snapshot-dates",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="JSON object of upstream source names and YYYY-MM-DD snapshot dates (or null).",
+        ),
+    ] = None,
 ) -> None:
     """Export canonical Parquet files, GeoJSON layers, and JSON analytical metrics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
     validate_supported_parliaments(parl_list)
+    snapshot_dates = None
+    if source_snapshot_dates is not None:
+        try:
+            snapshot_dates = validate_source_snapshot_dates(
+                json.loads(source_snapshot_dates.read_text(encoding="utf-8"))
+            )
+        except (OSError, ValueError) as e:
+            raise typer.BadParameter(
+                f"Invalid source snapshot dates: {e}",
+                param_hint="--source-snapshot-dates",
+            ) from e
 
     console.print(
         f"[bold blue]Exporting Artifacts from:[/bold blue] [cyan]{effective_db_path}[/cyan]"
@@ -1127,6 +1169,10 @@ def export_cmd(
             effective_out_dir,
             parl_list,
             finance_reporting_year=finance_year,
+            include_web_release=web_release,
+            data_release_version=data_release_version,
+            source_commit=source_commit,
+            source_snapshot_dates=snapshot_dates,
         )
     finally:
         conn.close()
@@ -1140,6 +1186,8 @@ def export_cmd(
     for p_num, pth in results["geojson_layers"].items():
         console.print(f"  - Parliament {p_num}: [dim]{pth}[/dim]")
     console.print(f"Analysis Report: [yellow]{results['analysis_report']}[/yellow]")
+    if web_release:
+        console.print(f"Web Release Manifest: [yellow]{results['manifest']}[/yellow]")
 
 
 @app.command(name="run-all")

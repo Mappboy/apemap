@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import hashlib
+import csv
 import json
 from pathlib import Path
+import subprocess
 
 import duckdb
 import pytest
@@ -18,6 +20,12 @@ from apemap.export import (
     export_web_release_manifest,
     export_web_schools_geojson,
 )
+from apemap.constants import PROJECT_ROOT
+
+
+def _csv_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as stream:
+        return list(csv.DictReader(stream))
 
 
 @pytest.fixture
@@ -263,6 +271,216 @@ def test_export_research_downloads(
     ).fetchone()
     assert parquet_rows is not None
     assert parquet_rows[0] == 3  # 3 snapshots inserted in fixture
+
+
+def test_web_exports_reconcile_cohort_and_attendance_grain(
+    web_contract_db: tuple[Path, duckdb.DuckDBPyConnection], tmp_path: Path
+) -> None:
+    """Later services and extra profile years cannot multiply published attendances."""
+    _, conn = web_contract_db
+    conn.execute(
+        """
+        INSERT INTO school_snapshots (institution_id, snapshot_year, icsea)
+        VALUES ('inst-gov', 2022, 1000);
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party,
+            party_abbrev, state_or_territory, is_opening_day_member
+        ) VALUES ('later-service', 'm-5', 47, 'senate', 'Independent', 'IND', 'NSW', FALSE);
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level, attended_status,
+            source_url, retrieved_at, confidence
+        ) VALUES ('later-education', 'm-5', 'inst-gov', 'secondary', 'graduated',
+                  'https://example.com', '2025-01-01', 'verified');
+        UPDATE parliament_service SET is_opening_day_member = FALSE WHERE member_id = 'm-5';
+        """
+    )
+    bundle = export_web_release_bundle(conn, tmp_path / "release", [47])
+    summary = json.loads(Path(bundle["results_summary"]).read_text())["parliaments"][
+        "47"
+    ]
+    geojson = json.loads(Path(bundle["schools_geojson"]).read_text())
+    rows = _csv_rows(Path(bundle["research_downloads"]["parliament-education.csv"]))
+    assert len(rows) == 6
+    assert len({(r["education_id"], r["service_id"]) for r in rows}) == len(rows)
+    assert {r["member_id"] for r in rows} == {"m-1", "m-2", "m-3", "m-4", "m-6"}
+    assert all(r["is_opening_day_member"].lower() == "true" for r in rows)
+    assert {r["snapshot_year"] for r in rows if r["institution_id"] == "inst-gov"} == {
+        "2025"
+    }
+    assert summary["known_education_count"] == len({r["member_id"] for r in rows})
+    assert summary["number_of_represented_schools"] == len(
+        {r["institution_id"] for r in rows}
+    )
+    assert summary["mapped_schools_count"] == len(geojson["features"])
+    assert summary["unmapped_schools_count"] == 1
+    assert all(
+        m["member_id"] != "m-5"
+        for f in geojson["features"]
+        for m in f["properties"]["members"]
+    )
+
+
+def test_school_members_keep_service_context_across_parliaments(
+    web_contract_db: tuple[Path, duckdb.DuckDBPyConnection], tmp_path: Path
+) -> None:
+    """A member changes party/chamber while remaining one attendee of a school."""
+    _, conn = web_contract_db
+    conn.execute(
+        """
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party,
+            party_abbrev, state_or_territory, is_opening_day_member
+        ) VALUES ('srv-m-1-48', 'm-1', 48, 'senate', 'Independent', 'IND', 'NSW', TRUE);
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level, attended_status,
+            source_url, retrieved_at, confidence
+        ) VALUES ('edu-1-second', 'm-1', 'inst-gov', 'secondary', 'attended_unspecified',
+                  'https://example.com/second', '2025-01-01', 'verified');
+        """
+    )
+    path = export_web_schools_geojson(conn, tmp_path, [48, 47, 48])
+    features = json.loads(path.read_text())["features"]
+    school = next(
+        f["properties"]
+        for f in features
+        if f["properties"]["institution_id"] == "inst-gov"
+    )
+    assert school["member_count"] == 2
+    member = next(m for m in school["members"] if m["member_id"] == "m-1")
+    assert member["parliaments"] == [47, 48]
+    assert [
+        (s["parliament_number"], s["party"], s["party_abbrev"], s["chamber"])
+        for s in member["services"]
+    ] == [(47, "Labor", "ALP", "representatives"), (48, "Independent", "IND", "senate")]
+    assert [s["service_id"] for s in member["services"]] == ["srv-m-1", "srv-m-1-48"]
+    assert "party" not in member
+    assert "chamber" not in member
+    downloads = export_research_downloads(conn, tmp_path, [48, 47, 48])
+    rows = [
+        r
+        for r in _csv_rows(downloads["parliament-education.csv"])
+        if r["member_id"] == "m-1"
+    ]
+    assert len(rows) == 4  # Two education assertions across two services.
+    assert {(r["parliament_number"], r["party"], r["chamber"]) for r in rows} == {
+        ("47", "Labor", "representatives"),
+        ("48", "Independent", "senate"),
+    }
+
+
+@pytest.mark.parametrize("profile_years", [(2022, 2024), (2024, 2024), (None, None)])
+def test_summary_source_years_match_selected_profiles(
+    web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
+    tmp_path: Path,
+    profile_years: tuple[int | None, int | None],
+) -> None:
+    """Report latest represented profiles, excluding older and unrelated snapshots."""
+    _, conn = web_contract_db
+    conn.execute("DELETE FROM school_snapshots")
+    for iid, year in zip(("inst-gov", "inst-cath"), profile_years):
+        if year is not None:
+            conn.execute(
+                "INSERT INTO school_snapshots (institution_id, snapshot_year) VALUES (?, ?), (?, ?)",
+                [iid, year, iid, year - 1],
+            )
+    conn.execute(
+        "INSERT INTO institutions (institution_id, school_name, sector) VALUES ('unrelated', 'Unrelated', 'Government')"
+    )
+    conn.execute(
+        "INSERT INTO school_snapshots (institution_id, snapshot_year) VALUES ('unrelated', 2025)"
+    )
+    conn.execute("DELETE FROM education_sector_benchmarks")
+    summary_path = export_results_summary(conn, tmp_path, [47])
+    years = json.loads(summary_path.read_text())["parliaments"]["47"]["source_years"]
+    expected = sorted({y for y in profile_years if y is not None})
+    assert years["profile_years"] == expected
+    assert years["profile_year"] == (expected[0] if len(expected) == 1 else None)
+    assert years["abs_benchmark_year"] is None
+    geo_path = export_web_schools_geojson(conn, tmp_path, [47])
+    map_years = sorted(
+        {
+            f["properties"]["profile_year"]
+            for f in json.loads(geo_path.read_text())["features"]
+            if f["properties"]["profile_year"] is not None
+        }
+    )
+    assert map_years == expected
+
+
+@pytest.mark.parametrize("has_source_checkout", [True, False])
+def test_manifest_commit_is_independent_of_callers_checkout(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    has_source_checkout: bool,
+) -> None:
+    """Generating a release from another repository must identify APEMAP's commit."""
+    caller = tmp_path / "other-repo"
+    caller.mkdir()
+    subprocess.run(["git", "init", str(caller)], check=True, capture_output=True)
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(caller),
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "--allow-empty",
+            "-m",
+            "Unrelated",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    expected = subprocess.run(
+        ["git", "-C", str(PROJECT_ROOT), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if not has_source_checkout:
+        # A package installed below another repository must not inherit its HEAD.
+        package_root = caller / "installed-package"
+        package_root.mkdir()
+        monkeypatch.setattr("apemap.export.PROJECT_ROOT", package_root)
+        expected = "unknown"
+    monkeypatch.chdir(caller)
+    manifest = export_web_release_manifest(output_dir=tmp_path, parliaments=[47])
+    assert json.loads(manifest.read_text())["source_commit"] == expected
+
+
+def test_bundle_preserves_explicit_provenance_and_reproducibility(
+    web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Packaged builds can supply a commit and actual upstream snapshot dates."""
+    _, conn = web_contract_db
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "1780000000")
+    dates = {"aph": "2026-09-28", "acara": "2026-09-29"}
+    manifests = []
+    for name, parliaments in (("first", [48, 47, 48]), ("second", [47, 48])):
+        bundle = export_web_release_bundle(
+            conn,
+            tmp_path / name,
+            parliaments,
+            data_release_version="2026.09.30",
+            source_commit="a" * 40,
+            source_snapshot_dates=dates,
+        )
+        manifests.append(Path(bundle["manifest"]).read_bytes())
+    assert manifests[0] == manifests[1]
+    manifest = json.loads(manifests[0])
+    assert manifest["source_commit"] == "a" * 40
+    assert manifest["data_release_version"] == "2026.09.30"
+    assert manifest["source_snapshot_dates"] == {
+        "aph": "2026-09-28",
+        "acara": "2026-09-29",
+        "abs": None,
+        "aec": None,
+    }
 
 
 def test_export_web_release_manifest(

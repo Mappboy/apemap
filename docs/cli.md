@@ -356,6 +356,10 @@ uv run apemap export [OPTIONS]
 | `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
 | `--output-dir` | `PATH` | `data/processed` | Output directory for exported files. |
 | `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances in analytical reports. |
+| `--web-release` / `--no-web-release` | `BOOL` | `False` | Also generate the website bundle and manifest. |
+| `--data-release-version` | `TEXT` | `0.2.0` | Data version recorded in the web manifest. |
+| `--source-commit` | `TEXT` | APEMAP checkout HEAD or `unknown` | Explicit source SHA for packaged/archive builds. |
+| `--source-snapshot-dates` | `PATH` | `None` | JSON object mapping source names to recorded `YYYY-MM-DD` dates or null. |
 
 ### Pipeline Behavior
 - **Network Access**: None.
@@ -370,7 +374,17 @@ uv run apemap export [OPTIONS]
 ```bash
 uv run apemap export --parliament "46,47"
 uv run apemap export --finance-year 2024
+uv run apemap export --web-release --data-release-version 2026.09.30 \
+  --source-snapshot-dates source-dates.json \
+  --output-dir data/processed/releases/2026.09.30
 ```
+
+With `--web-release`, the output also includes `results-summary.json`,
+`schools.geojson`, `downloads/parliament-education.csv`,
+`downloads/school-profiles.parquet`, and `manifest.json`. See the
+[website release contract](web-release.md) for cohort, row grain, service context,
+source years and provenance. Source dates are null when not recorded; the
+generation timestamp does not substitute for a source date.
 
 ---
 
