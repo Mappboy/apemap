@@ -136,46 +136,26 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             )
     except Exception:
         pass
-    # Ensure school_snapshots schema migration for older databases
-    try:
+    # DuckDB appends migrated columns, so physical order differs from fresh DDL.
+    # Propagate migration errors and import releases by column name below.
+    snapshot_columns = (
+        ("girls_enrolments", "INTEGER"),
+        ("boys_enrolments", "INTEGER"),
+        ("fte_enrolments", "DOUBLE"),
+        ("icsea_percentile", "INTEGER"),
+        ("sea_bottom_quarter_pct", "DOUBLE"),
+        ("sea_lower_middle_quarter_pct", "DOUBLE"),
+        ("sea_upper_middle_quarter_pct", "DOUBLE"),
+        ("sea_top_quarter_pct", "DOUBLE"),
+        ("indigenous_enrolments_pct", "DOUBLE"),
+        ("lbote_pct", "DOUBLE"),
+        ("year_range", "VARCHAR"),
+        ("remoteness_category", "VARCHAR"),
+    )
+    for column, sql_type in snapshot_columns:
         conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS girls_enrolments INTEGER;"
+            f"ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS {column} {sql_type}"
         )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS boys_enrolments INTEGER;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS fte_enrolments DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS icsea_percentile INTEGER;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_bottom_quarter_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_lower_middle_quarter_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_upper_middle_quarter_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS sea_top_quarter_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS indigenous_enrolments_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS lbote_pct DOUBLE;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS year_range VARCHAR;"
-        )
-        conn.execute(
-            "ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS remoteness_category VARCHAR;"
-        )
-    except Exception:
-        pass
 
     conn.execute(views_sql_path.read_text(encoding="utf-8"))
 
@@ -185,7 +165,8 @@ def load_parquet_sources(
 ) -> dict[str, int]:
     """Populate canonical tables from corresponding Parquet files.
 
-    Expects files named <table_name>.parquet inside `parquet_dir`.
+    Expects files named <table_name>.parquet inside `parquet_dir`. Columns are
+    matched by name; missing nullable columns retain their schema defaults.
 
     Args:
         conn: Active DuckDB connection.
@@ -212,7 +193,7 @@ def load_parquet_sources(
         parquet_file = source_dir / f"{table}.parquet"
         if parquet_file.exists():
             conn.execute(
-                f"INSERT INTO {table} SELECT * FROM read_parquet(?)",
+                f"INSERT INTO {table} BY NAME SELECT * FROM read_parquet(?)",
                 [str(parquet_file)],
             )
             result = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()

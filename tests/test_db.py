@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
+from pandas.testing import assert_frame_equal
 import pytest
 
 from apemap.db import (
@@ -16,6 +17,7 @@ from apemap.db import (
     get_members_by_parliament,
     get_secondary_education_by_parliament,
     init_schema,
+    load_parquet_sources,
 )
 
 
@@ -33,6 +35,141 @@ def test_canonical_tables_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
         result = db_conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
         assert result is not None
         assert result[0] == 0
+
+
+def _create_legacy_snapshots(conn: duckdb.DuckDBPyConnection) -> None:
+    """Create the five-column snapshot table used before the profile upgrade."""
+    conn.execute(
+        """
+        CREATE TABLE school_snapshots (
+            institution_id VARCHAR NOT NULL,
+            snapshot_year INTEGER NOT NULL,
+            total_enrolments INTEGER,
+            icsea INTEGER,
+            financial_profile_2021 JSON,
+            PRIMARY KEY (institution_id, snapshot_year)
+        )
+        """
+    )
+
+
+def _legacy_snapshot_connection() -> duckdb.DuckDBPyConnection:
+    conn = get_connection()
+    _create_legacy_snapshots(conn)
+    init_schema(conn)
+    return conn
+
+
+def test_snapshot_upgrade_preserves_existing_values_and_is_idempotent() -> None:
+    """Upgrade a populated legacy table without changing values or source nulls."""
+    conn = get_connection()
+    try:
+        _create_legacy_snapshots(conn)
+        conn.execute(
+            """
+            INSERT INTO school_snapshots VALUES
+            ('school-1', 2022, 1200, 1180, '{"income": 12345}'),
+            ('school-2', 2022, NULL, NULL, NULL)
+            """
+        )
+        before = conn.execute(
+            "SELECT * FROM school_snapshots ORDER BY institution_id"
+        ).fetchall()
+        for _ in range(2):
+            init_schema(conn)
+            after = conn.execute(
+                """
+                SELECT institution_id, snapshot_year, total_enrolments, icsea,
+                       financial_profile_2021 FROM school_snapshots ORDER BY institution_id
+                """
+            ).fetchall()
+            assert after == before
+            assert conn.execute(
+                "SELECT COUNT(*) FROM school_snapshots WHERE girls_enrolments IS NOT NULL OR icsea_percentile IS NOT NULL"
+            ).fetchone() == (0,)
+    finally:
+        conn.close()
+
+
+@pytest.mark.parametrize("migrated_source", [True, False])
+def test_snapshot_parquet_import_matches_names_across_schema_layouts(
+    tmp_path: Path, migrated_source: bool
+) -> None:
+    """Both directions of a fresh/migrated round trip preserve every value."""
+    source = _legacy_snapshot_connection() if migrated_source else get_connection()
+    target = get_connection() if migrated_source else _legacy_snapshot_connection()
+    try:
+        init_schema(source)
+        init_schema(target)
+        source.execute(
+            "INSERT INTO institutions (institution_id, school_name, sector) "
+            "VALUES ('school-1', 'High School', 'Government')"
+        )
+        source.execute(
+            """
+            INSERT INTO school_snapshots (
+                institution_id, snapshot_year, total_enrolments, icsea,
+                financial_profile_2021, girls_enrolments, boys_enrolments,
+                fte_enrolments, icsea_percentile, sea_bottom_quarter_pct,
+                sea_lower_middle_quarter_pct, sea_upper_middle_quarter_pct,
+                sea_top_quarter_pct, indigenous_enrolments_pct, lbote_pct,
+                year_range, remoteness_category
+            ) VALUES (
+                'school-1', 2024, 1200, 1180, '{"income": 12345}',
+                550, 650, 1195.5, 95, 2, 8, 20, 70, NULL, 75,
+                '7-12', 'Major Cities'
+            )
+            """
+        )
+        parquet_dir = tmp_path / "parquet"
+        export_to_parquet(source, parquet_dir)
+        load_parquet_sources(target, parquet_dir)
+        expected = source.execute("SELECT * FROM school_snapshots").df()
+        actual = target.execute("SELECT * FROM school_snapshots").df()
+        assert_frame_equal(actual[expected.columns], expected)
+        assert target.execute(
+            "SELECT icsea, girls_enrolments FROM school_snapshots"
+        ).fetchone() == (1180, 550)
+    finally:
+        source.close()
+        target.close()
+
+
+def test_legacy_five_column_parquet_loads_with_null_new_fields(
+    tmp_path: Path,
+) -> None:
+    """An old release rebuild retains ICSEA, JSON and nulls without added columns."""
+    source = _legacy_snapshot_connection()
+    try:
+        source.execute(
+            "INSERT INTO institutions (institution_id, school_name, sector) "
+            "VALUES ('school-1', 'High School', 'Government')"
+        )
+        parquet_dir = tmp_path / "legacy"
+        export_to_parquet(source, parquet_dir)
+        source.execute(
+            """
+            COPY (
+                SELECT 'school-1' AS institution_id, 2022 AS snapshot_year,
+                       NULL::INTEGER AS total_enrolments, 1180 AS icsea,
+                       '{"income": 12345}'::JSON AS financial_profile_2021
+            ) TO ? (FORMAT PARQUET)
+            """,
+            [str(parquet_dir / "school_snapshots.parquet")],
+        )
+        rebuilt = build_database(tmp_path / "legacy.duckdb", parquet_dir)
+        try:
+            assert rebuilt.execute(
+                """
+                SELECT total_enrolments, icsea, financial_profile_2021,
+                       girls_enrolments, icsea_percentile, year_range
+                FROM school_snapshots
+                """
+            ).fetchone() == (None, 1180, '{"income": 12345}', None, None, None)
+        finally:
+            rebuilt.close()
+    finally:
+        source.close()
 
 
 def test_views_and_macros_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
