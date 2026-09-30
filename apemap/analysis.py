@@ -183,7 +183,7 @@ def compute_sector_summary(
     }
     edu_rows = conn.execute(
         """
-        SELECT e.member_id, i.sector
+        SELECT e.member_id, i.sector, i.institution_id
         FROM member_education e
         JOIN institutions i ON e.institution_id = i.institution_id
         JOIN (
@@ -201,10 +201,14 @@ def compute_sector_summary(
     known_sectors = ("Government", "Catholic", "Independent", "Other")
     mp_sectors: dict[str, set[str]] = {}
     attendance_instances = {sector: 0 for sector in known_sectors}
-    for member_id, sector in edu_rows:
+    unique_schools: dict[str, str] = {}  # institution_id -> sector
+
+    for member_id, sector, inst_id in edu_rows:
         sector_name = sector if sector in known_sectors[:3] else "Other"
         mp_sectors.setdefault(member_id, set()).add(sector_name)
         attendance_instances[sector_name] += 1
+        if inst_id:
+            unique_schools[inst_id] = sector_name
 
     unique_counts = {
         "Government": 0,
@@ -214,14 +218,37 @@ def compute_sector_summary(
         "Other": 0,
         "No School Recorded": 0,
     }
+
+    gov_non_gov_counts = {
+        "government_only": 0,
+        "non_government_only": 0,
+        "mixed": 0,
+        "other": 0,
+        "no_school_recorded": 0,
+    }
+
     for member_id in all_mps:
         sectors = mp_sectors.get(member_id, set())
         if not sectors:
             unique_counts["No School Recorded"] += 1
-        elif len(sectors) > 1:
-            unique_counts["Combined/Multiple"] += 1
+            gov_non_gov_counts["no_school_recorded"] += 1
         else:
-            unique_counts[next(iter(sectors))] += 1
+            has_gov = "Government" in sectors
+            has_non_gov = bool(sectors & {"Catholic", "Independent"})
+
+            if has_gov and has_non_gov:
+                gov_non_gov_counts["mixed"] += 1
+            elif has_gov and not has_non_gov:
+                gov_non_gov_counts["government_only"] += 1
+            elif has_non_gov and not has_gov:
+                gov_non_gov_counts["non_government_only"] += 1
+            else:
+                gov_non_gov_counts["other"] += 1
+
+            if len(sectors) > 1:
+                unique_counts["Combined/Multiple"] += 1
+            else:
+                unique_counts[next(iter(sectors))] += 1
 
     known_count = len(all_mps) - unique_counts["No School Recorded"]
     unique_percentages = {
@@ -234,25 +261,124 @@ def compute_sector_summary(
             "Other",
         )
     }
+
+    gov_non_gov_percentages = {
+        cat: round(gov_non_gov_counts[cat] / known_count * 100, 2)
+        if known_count
+        else 0.0
+        for cat in ("government_only", "non_government_only", "mixed", "other")
+    }
+
+    # Denominator 2: Attendance instances
     attendance_count = sum(attendance_instances.values())
     attendance_percentages = {
         sector: count / attendance_count * 100 if attendance_count else 0.0
         for sector, count in attendance_instances.items()
     }
+    attendance_gov_non_gov = {
+        "government": attendance_instances["Government"],
+        "non_government": attendance_instances["Catholic"]
+        + attendance_instances["Independent"],
+        "other": attendance_instances["Other"],
+    }
+    attendance_gov_non_gov_percentages = {
+        "government": round(
+            attendance_gov_non_gov["government"] / attendance_count * 100, 2
+        )
+        if attendance_count
+        else 0.0,
+        "non_government": round(
+            attendance_gov_non_gov["non_government"] / attendance_count * 100, 2
+        )
+        if attendance_count
+        else 0.0,
+        "other": round(attendance_gov_non_gov["other"] / attendance_count * 100, 2)
+        if attendance_count
+        else 0.0,
+    }
+
+    # Denominator 3: Unique schools
+    total_unique_schools = len(unique_schools)
+    unique_schools_by_sector = {
+        "Government": sum(1 for s in unique_schools.values() if s == "Government"),
+        "Catholic": sum(1 for s in unique_schools.values() if s == "Catholic"),
+        "Independent": sum(1 for s in unique_schools.values() if s == "Independent"),
+        "Other": sum(1 for s in unique_schools.values() if s == "Other"),
+    }
+    unique_schools_by_sector_percentages = {
+        sector: round(count / total_unique_schools * 100, 2)
+        if total_unique_schools
+        else 0.0
+        for sector, count in unique_schools_by_sector.items()
+    }
+    unique_schools_gov_non_gov = {
+        "government": unique_schools_by_sector["Government"],
+        "non_government": unique_schools_by_sector["Catholic"]
+        + unique_schools_by_sector["Independent"],
+        "other": unique_schools_by_sector["Other"],
+    }
+    unique_schools_gov_non_gov_percentages = {
+        "government": round(
+            unique_schools_gov_non_gov["government"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+        "non_government": round(
+            unique_schools_gov_non_gov["non_government"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+        "other": round(
+            unique_schools_gov_non_gov["other"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+    }
+
+    detailed_sector = {
+        "government": unique_counts["Government"],
+        "catholic": unique_counts["Catholic"],
+        "independent": unique_counts["Independent"],
+        "combined_multiple": unique_counts["Combined/Multiple"],
+        "other": unique_counts["Other"],
+        "no_school_recorded": unique_counts["No School Recorded"],
+    }
+
     benchmark_comparison = compute_sector_benchmarks(conn, parliament)
 
     return {
         "parliament_number": parliament,
+        "cohort": "opening_day",
         "total_parliamentarians": len(all_mps),
         "parliamentarians_with_known_schools": known_count,
         "parliamentarians_without_known_schools": unique_counts["No School Recorded"],
+        "known_school_denominator": known_count,
         "known_school_percentage_denominator": known_count,
+        "government_non_government": {
+            "government_only": gov_non_gov_counts["government_only"],
+            "non_government_only": gov_non_gov_counts["non_government_only"],
+            "mixed": gov_non_gov_counts["mixed"],
+            "other": gov_non_gov_counts["other"],
+            "no_school_recorded": gov_non_gov_counts["no_school_recorded"],
+        },
+        "government_non_government_percentages": gov_non_gov_percentages,
+        "detailed_sector": detailed_sector,
         "unique_parliamentarians_by_sector": unique_counts,
         "percentage_of_known_parliamentarians": unique_percentages,
         "total_attendance_instances": attendance_count,
         "attendance_instance_percentage_denominator": attendance_count,
         "attendance_instances_by_sector": attendance_instances,
         "percentage_of_attendance_instances": attendance_percentages,
+        "attendance_instances_government_non_government": attendance_gov_non_gov,
+        "percentage_of_attendance_instances_government_non_government": attendance_gov_non_gov_percentages,
+        "unique_schools": {
+            "total_unique_schools": total_unique_schools,
+            "denominator": total_unique_schools,
+            "by_sector": unique_schools_by_sector,
+            "percentages_by_sector": unique_schools_by_sector_percentages,
+            "government_non_government": unique_schools_gov_non_gov,
+            "percentages_government_non_government": unique_schools_gov_non_gov_percentages,
+        },
         "benchmark_comparison": benchmark_comparison,
     }
 

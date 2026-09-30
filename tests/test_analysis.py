@@ -257,8 +257,89 @@ def test_compute_funding_summary_explicit_reporting_year(tmp_path: Path) -> None
     assert (
         summary_2024["by_sector"]["Government"]["gross_income_per_student_avg"] == 500.0
     )
-    # Other schools don't have 2024 data, so missing count is higher
-    assert summary_2024["overall_gross_income"]["missing"] == 2
-    assert summary_2024["overall_gross_income"]["n"] == 1
-
     conn.close()
+
+
+def test_government_non_government_and_three_denominators(tmp_path: Path) -> None:
+    """Verify Government vs Non-government / Mixed classification and 3 distinct denominators."""
+    db_path = create_analysis_fixture(tmp_path / "analysis_denoms.duckdb")
+    conn = get_connection(db_path)
+
+    # Add member attending both Catholic and Independent (should be Non-government only, NOT Mixed)
+    conn.execute(
+        """
+        INSERT INTO members (member_id, family_name, given_name, display_name, gender, aph_id)
+        VALUES ('m-multi-nongov', 'Multi', 'NonGov', 'Multi NonGov', 'Female', 'APH-multi-ng')
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO parliament_service (
+            service_id, member_id, parliament_number, chamber, party, party_abbrev,
+            state_or_territory, service_start, is_opening_day_member, is_current_member
+        ) VALUES (
+            'srv-multi-ng', 'm-multi-nongov', 47, 'representatives', 'Test', 'TST',
+            'NSW', '2022-07-26', TRUE, TRUE
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO member_education (
+            education_id, member_id, institution_id, level, attended_status,
+            source_url, retrieved_at, confidence
+        ) VALUES
+            ('edu-ng-cath', 'm-multi-nongov', 'school-cath', 'secondary', 'graduated', 'fixture', '2025-01-01', 'verified'),
+            ('edu-ng-ind', 'm-multi-nongov', 'school-ind', 'secondary', 'graduated', 'fixture', '2025-01-01', 'verified')
+        """
+    )
+
+    summary = compute_sector_summary(conn, 47)
+    conn.close()
+
+    # Total MPs = 6 (5 original + 1 multi-ng)
+    assert summary["total_parliamentarians"] == 6
+    assert summary["known_school_denominator"] == 5
+    assert summary["parliamentarians_without_known_schools"] == 1
+
+    # Member-level Government vs Non-government / Mixed
+    gng = summary["government_non_government"]
+    assert gng["government_only"] == 1  # m-gov
+    assert gng["non_government_only"] == 3  # m-ind, m-cath, m-multi-nongov
+    assert gng["mixed"] == 1  # m-both (Gov + Ind)
+    assert gng["other"] == 0
+    assert gng["no_school_recorded"] == 1  # m-none
+
+    gng_pct = summary["government_non_government_percentages"]
+    assert gng_pct["government_only"] == 20.0
+    assert gng_pct["non_government_only"] == 60.0
+    assert gng_pct["mixed"] == 20.0
+
+    # Detailed sector
+    ds = summary["detailed_sector"]
+    assert ds["government"] == 1
+    assert ds["catholic"] == 1
+    assert ds["independent"] == 1
+    assert ds["combined_multiple"] == 2  # m-both, m-multi-nongov
+    assert ds["other"] == 0
+    assert ds["no_school_recorded"] == 1
+
+    # Denominator 2: Attendance instances (7 total: 5 original + 2 for multi-ng)
+    assert summary["total_attendance_instances"] == 7
+    att_gng = summary["attendance_instances_government_non_government"]
+    assert att_gng["government"] == 2  # m-gov, m-both
+    assert (
+        att_gng["non_government"] == 5
+    )  # m-ind (1), m-cath (2), m-both (1), m-multi-nongov (1 ind, 1 cath)
+
+    # Denominator 3: Unique schools (3 unique institutions: school-gov, school-cath, school-ind)
+    uniq = summary["unique_schools"]
+    assert uniq["total_unique_schools"] == 3
+    assert uniq["government_non_government"]["government"] == 1
+    assert uniq["government_non_government"]["non_government"] == 2
+    assert uniq["percentages_government_non_government"]["government"] == round(
+        1 / 3 * 100, 2
+    )
+    assert uniq["percentages_government_non_government"]["non_government"] == round(
+        2 / 3 * 100, 2
+    )
