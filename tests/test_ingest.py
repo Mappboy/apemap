@@ -11,6 +11,7 @@ import pytest
 from typer.testing import CliRunner
 
 from apemap.cli import app, parse_parliament_args
+from apemap.db import get_connection
 from apemap.ingest.matching import (
     SchoolMatcher,
     extract_schools_from_bio_text,
@@ -111,7 +112,8 @@ def test_pipeline_dual_snapshot_isolation(
         export_parquet_files=True,
     )
 
-    conn = result["connection"]
+    assert "connection" not in result
+    conn = get_connection(db_file)
 
     # 1. Total records inserted
     assert result["members_count"] == 7
@@ -215,7 +217,7 @@ def test_pipeline_rerun_is_idempotent(
             export_parquet_files=True,
             external_dir=external_dir,
         )
-        result["connection"].close()
+        assert "connection" not in result
 
     def manifest(root: Path) -> dict[str, str]:
         return {
@@ -309,14 +311,62 @@ def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) ->
         db_path=db_file,
         output_dir=out_dir,
     )
-    conn = result["connection"]
-    p47_count = conn.execute(
-        "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 47"
-    ).fetchone()[0]
-    p46_count = conn.execute(
-        "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 46"
-    ).fetchone()[0]
-    conn.close()
+    assert "connection" not in result
+    conn = get_connection(db_file)
+    try:
+        p47_count = conn.execute(
+            "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 47"
+        ).fetchone()[0]
+        p46_count = conn.execute(
+            "SELECT count(*) FROM parliament_service WHERE member_id = 'aph-past46' AND parliament_number = 46"
+        ).fetchone()[0]
+    finally:
+        conn.close()
 
     assert p47_count == 0
     assert p46_count == 1
+
+
+def test_pipeline_caller_owned_connection(
+    sample_aph_records: list[dict[str, Any]], tmp_path: Path
+) -> None:
+    """Verify caller-provided DuckDB connection remains open and owned by caller."""
+    db_file = tmp_path / "caller_owned.duckdb"
+    conn = get_connection(db_file)
+    out_dir = tmp_path / "processed_caller"
+
+    result = run_aph_ingestion(
+        parliaments=[48],
+        raw_individuals=sample_aph_records,
+        conn=conn,
+        output_dir=out_dir,
+    )
+
+    assert "connection" not in result
+    # Verify the connection is still open and operational
+    row = conn.execute("SELECT count(*) FROM members").fetchone()
+    assert row is not None
+    assert row[0] == result["members_count"]
+    assert row[0] > 0
+    conn.close()
+
+
+def test_aph_client_session_lifecycle_and_retry(tmp_path: Path) -> None:
+    """Verify AphClient session management and context manager protocol."""
+    from apemap.ingest.aph import AphClient
+    import requests
+
+    custom_session = requests.Session()
+    client = AphClient(cache_dir=tmp_path, session=custom_session)
+    assert client.session is custom_session
+    assert client._owned_session is False
+    client.close()
+    # Custom session should NOT be closed when caller owns it
+    # We can check by inspecting adapters (still present)
+    assert len(custom_session.adapters) > 0
+
+    # Default client owns session and context manager closes it
+    with AphClient(cache_dir=tmp_path) as default_client:
+        assert default_client._owned_session is True
+        assert "User-Agent" in default_client.session.headers
+

@@ -6,9 +6,10 @@ and parameterized queries for parliament and education analytics.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from pathlib import Path
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 import duckdb
 import pandas as pd
@@ -82,6 +83,30 @@ def get_connection(
         return duckdb.connect(str(resolved_path), read_only=True)
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     return duckdb.connect(str(resolved_path))
+
+
+@contextmanager
+def temporary_dataframe_view(
+    conn: DuckDBPyConnection, view_name: str, df: pd.DataFrame
+) -> Generator[str, None, None]:
+    """Register a pandas DataFrame as a temporary DuckDB view and guarantee its unregistration.
+
+    Args:
+        conn: Active DuckDB connection.
+        view_name: Temporary view name to register.
+        df: Pandas DataFrame to stage.
+
+    Yields:
+        Registered view name.
+    """
+    conn.register(view_name, df)
+    try:
+        yield view_name
+    finally:
+        try:
+            conn.unregister(view_name)
+        except Exception:
+            pass
 
 
 def init_schema(conn: DuckDBPyConnection) -> None:

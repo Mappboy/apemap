@@ -7,16 +7,24 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from duckdb import DuckDBPyConnection
 
 from apemap.constants import (
     EXTERNAL_DIR,
     PROCESSED_DIR,
     RAW_APH_DIR,
 )
-from apemap.db import export_to_parquet, get_connection, init_schema
+from apemap.db import (
+    export_to_parquet,
+    get_connection,
+    init_schema,
+    temporary_dataframe_view,
+)
 from apemap.ingest.aph import AphClient, parse_individual
 from apemap.ingest.matching import (
     SchoolMatcher,
@@ -27,22 +35,40 @@ from apemap.ingest.matching import (
 logger = logging.getLogger(__name__)
 
 
+class AphIngestResult(TypedDict):
+    """Structured result contract for APH ingestion pipeline."""
+
+    parliaments: list[int]
+    members_count: int
+    service_count: int
+    institutions_count: int
+    education_count: int
+    snapshots_count: int
+    unmatched_count: int
+    unmatched_csv: Path
+    coverage_metrics_json: Path
+    coverage_metrics: dict[int, dict[str, Any]]
+    parquet_paths: dict[str, Path]
+
+
 def run_aph_ingestion(
     parliaments: list[int] | None = None,
     refresh: bool = False,
     db_path: Path | str | None = None,
+    conn: DuckDBPyConnection | None = None,
     raw_individuals: list[dict[str, Any]] | None = None,
     export_parquet_files: bool = False,
     output_dir: Path | str | None = None,
     cache_dir: Path | str | None = None,
     external_dir: Path | str | None = None,
-) -> dict[str, Any]:
+) -> AphIngestResult:
     """Execute APH ingestion for specified parliaments and populate DuckDB.
 
     Args:
         parliaments: List of parliament numbers to ingest (default: [46, 47, 48]).
         refresh: Force re-fetching live from APH API if True.
-        db_path: DuckDB file path or None for in-memory.
+        db_path: DuckDB file path or None for in-memory (ignored if conn is provided).
+        conn: Optional caller-managed DuckDB connection. If provided, caller retains ownership.
         raw_individuals: Pre-loaded list of raw individual dicts (e.g. for testing).
         export_parquet_files: Whether to export canonical tables to Parquet.
         output_dir: Directory to store generated reports and Parquet exports.
@@ -61,13 +87,13 @@ def run_aph_ingestion(
 
     # Initialize components
     client = AphClient(cache_dir=cache_dir or RAW_APH_DIR)
+    try:
+        if raw_individuals is None:
+            raw_individuals = client.fetch_individuals(refresh=refresh)
+    finally:
+        client.close()
+
     matcher = SchoolMatcher(external_dir=external_dir or EXTERNAL_DIR)
-
-    if raw_individuals is None:
-        raw_individuals = client.fetch_individuals(refresh=refresh)
-
-    conn = get_connection(db_path)
-    init_schema(conn)
 
     # Coverage counters per parliament
     coverage_metrics: dict[int, dict[str, Any]] = {}
@@ -245,161 +271,164 @@ def run_aph_ingestion(
                     )
 
     # Database insertion
-    if members_map:
-        members_df = pd.DataFrame(list(members_map.values()))
-        conn.register("tmp_members", members_df)
-        conn.execute(
-            """
-            INSERT INTO members (
-                member_id, family_name, given_name, display_name,
-                gender, date_of_birth, aph_id, wikidata_id
-            )
-            SELECT
-                member_id, family_name, given_name, display_name,
-                gender, date_of_birth, aph_id, wikidata_id
-            FROM tmp_members
-            ON CONFLICT (member_id) DO NOTHING
-            """
+    should_close_conn = conn is None
+    active_conn = conn or get_connection(db_path)
+    conn = active_conn
+    try:
+        init_schema(conn)
+
+        if members_map:
+            members_df = pd.DataFrame(list(members_map.values()))
+            with temporary_dataframe_view(conn, "tmp_members", members_df):
+                conn.execute(
+                    """
+                    INSERT INTO members (
+                        member_id, family_name, given_name, display_name,
+                        gender, date_of_birth, aph_id, wikidata_id
+                    )
+                    SELECT
+                        member_id, family_name, given_name, display_name,
+                        gender, date_of_birth, aph_id, wikidata_id
+                    FROM tmp_members
+                    ON CONFLICT (member_id) DO NOTHING
+                    """
+                )
+
+        if service_map:
+            services_df = pd.DataFrame(list(service_map.values()))
+            with temporary_dataframe_view(conn, "tmp_services", services_df):
+                conn.execute(
+                    """
+                    INSERT INTO parliament_service (
+                        service_id, member_id, parliament_number, chamber,
+                        party, party_abbrev, electorate, state_or_territory,
+                        service_start, service_end, is_opening_day_member, is_current_member
+                    )
+                    SELECT
+                        service_id, member_id, parliament_number, chamber,
+                        party, party_abbrev, electorate, state_or_territory,
+                        service_start, service_end, is_opening_day_member, is_current_member
+                    FROM tmp_services
+                    ON CONFLICT (service_id) DO UPDATE SET
+                        member_id = EXCLUDED.member_id,
+                        parliament_number = EXCLUDED.parliament_number,
+                        chamber = EXCLUDED.chamber,
+                        party = EXCLUDED.party,
+                        party_abbrev = EXCLUDED.party_abbrev,
+                        electorate = EXCLUDED.electorate,
+                        state_or_territory = EXCLUDED.state_or_territory,
+                        service_start = EXCLUDED.service_start,
+                        service_end = EXCLUDED.service_end,
+                        is_opening_day_member = EXCLUDED.is_opening_day_member,
+                        is_current_member = EXCLUDED.is_current_member
+                    """
+                )
+
+        if institutions_map:
+            inst_df = pd.DataFrame(list(institutions_map.values()))
+            with temporary_dataframe_view(conn, "tmp_institutions", inst_df):
+                conn.execute(
+                    """
+                    INSERT INTO institutions (
+                        institution_id, acara_id, school_name, school_type,
+                        sector, campus_type, state, suburb, postcode, longitude, latitude
+                    )
+                    SELECT
+                        institution_id, acara_id, school_name, school_type,
+                        sector, campus_type, state, suburb, postcode, longitude, latitude
+                    FROM tmp_institutions
+                    ON CONFLICT (institution_id) DO NOTHING
+                    """
+                )
+
+        if snapshots_map:
+            snaps_df = pd.DataFrame(list(snapshots_map.values()))
+            with temporary_dataframe_view(conn, "tmp_snapshots", snaps_df):
+                conn.execute(
+                    """
+                    INSERT INTO school_snapshots (
+                        institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
+                    )
+                    SELECT
+                        institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
+                    FROM tmp_snapshots
+                    ON CONFLICT (institution_id, snapshot_year) DO UPDATE SET
+                        total_enrolments = EXCLUDED.total_enrolments,
+                        icsea = EXCLUDED.icsea,
+                        financial_profile_2021 = EXCLUDED.financial_profile_2021
+                    """
+                )
+
+        if education_records:
+            edu_df = pd.DataFrame(education_records)
+            with temporary_dataframe_view(conn, "tmp_edu", edu_df):
+                # Preserve the original source retrieval time so reruns remain idempotent.
+                conn.execute(
+                    """
+                    INSERT INTO member_education (
+                        education_id, member_id, institution_id, level,
+                        years_attended, graduation_year, attended_status,
+                        source_url, retrieved_at, confidence, reviewer_notes
+                    )
+                    SELECT
+                        education_id, member_id, institution_id, level,
+                        years_attended, graduation_year, attended_status,
+                        source_url, retrieved_at, confidence, reviewer_notes
+                    FROM tmp_edu
+                    ON CONFLICT (education_id) DO UPDATE SET
+                        member_id = EXCLUDED.member_id,
+                        institution_id = EXCLUDED.institution_id,
+                        level = EXCLUDED.level,
+                        years_attended = EXCLUDED.years_attended,
+                        graduation_year = EXCLUDED.graduation_year,
+                        attended_status = EXCLUDED.attended_status,
+                        source_url = EXCLUDED.source_url,
+                        confidence = EXCLUDED.confidence,
+                        reviewer_notes = EXCLUDED.reviewer_notes
+                    """
+                )
+
+        # Write review CSV
+        unmatched_csv_path = out_dir / "unmatched_schools.csv"
+        fieldnames = [
+            "parliament_number",
+            "member_id",
+            "member_display_name",
+            "raw_school_text",
+            "source_url",
+            "is_international",
+            "suggested_action",
+            "notes",
+        ]
+        with unmatched_csv_path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in unmatched_reviews:
+                writer.writerow(row)
+
+        # Write coverage metrics JSON
+        metrics_json_path = out_dir / "coverage_metrics.json"
+        metrics_json_path.write_text(
+            json.dumps(coverage_metrics, indent=2), encoding="utf-8"
         )
-        conn.unregister("tmp_members")
 
-    if service_map:
-        services_df = pd.DataFrame(list(service_map.values()))
-        conn.register("tmp_services", services_df)
-        conn.execute(
-            """
-            INSERT INTO parliament_service (
-                service_id, member_id, parliament_number, chamber,
-                party, party_abbrev, electorate, state_or_territory,
-                service_start, service_end, is_opening_day_member, is_current_member
-            )
-            SELECT
-                service_id, member_id, parliament_number, chamber,
-                party, party_abbrev, electorate, state_or_territory,
-                service_start, service_end, is_opening_day_member, is_current_member
-            FROM tmp_services
-            ON CONFLICT (service_id) DO UPDATE SET
-                member_id = EXCLUDED.member_id,
-                parliament_number = EXCLUDED.parliament_number,
-                chamber = EXCLUDED.chamber,
-                party = EXCLUDED.party,
-                party_abbrev = EXCLUDED.party_abbrev,
-                electorate = EXCLUDED.electorate,
-                state_or_territory = EXCLUDED.state_or_territory,
-                service_start = EXCLUDED.service_start,
-                service_end = EXCLUDED.service_end,
-                is_opening_day_member = EXCLUDED.is_opening_day_member,
-                is_current_member = EXCLUDED.is_current_member
-            """
-        )
-        conn.unregister("tmp_services")
+        parquet_paths: dict[str, Path] = {}
+        if export_parquet_files:
+            parquet_paths = export_to_parquet(conn, out_dir)
 
-    if institutions_map:
-        inst_df = pd.DataFrame(list(institutions_map.values()))
-        conn.register("tmp_institutions", inst_df)
-        conn.execute(
-            """
-            INSERT INTO institutions (
-                institution_id, acara_id, school_name, school_type,
-                sector, campus_type, state, suburb, postcode, longitude, latitude
-            )
-            SELECT
-                institution_id, acara_id, school_name, school_type,
-                sector, campus_type, state, suburb, postcode, longitude, latitude
-            FROM tmp_institutions
-            ON CONFLICT (institution_id) DO NOTHING
-            """
-        )
-        conn.unregister("tmp_institutions")
-
-    if snapshots_map:
-        snaps_df = pd.DataFrame(list(snapshots_map.values()))
-        conn.register("tmp_snapshots", snaps_df)
-        conn.execute(
-            """
-            INSERT INTO school_snapshots (
-                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
-            )
-            SELECT
-                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
-            FROM tmp_snapshots
-            ON CONFLICT (institution_id, snapshot_year) DO UPDATE SET
-                total_enrolments = EXCLUDED.total_enrolments,
-                icsea = EXCLUDED.icsea,
-                financial_profile_2021 = EXCLUDED.financial_profile_2021
-            """
-        )
-        conn.unregister("tmp_snapshots")
-
-    if education_records:
-        edu_df = pd.DataFrame(education_records)
-        conn.register("tmp_edu", edu_df)
-        # Preserve the original source retrieval time so reruns remain idempotent.
-        conn.execute(
-            """
-            INSERT INTO member_education (
-                education_id, member_id, institution_id, level,
-                years_attended, graduation_year, attended_status,
-                source_url, retrieved_at, confidence, reviewer_notes
-            )
-            SELECT
-                education_id, member_id, institution_id, level,
-                years_attended, graduation_year, attended_status,
-                source_url, retrieved_at, confidence, reviewer_notes
-            FROM tmp_edu
-            ON CONFLICT (education_id) DO UPDATE SET
-                member_id = EXCLUDED.member_id,
-                institution_id = EXCLUDED.institution_id,
-                level = EXCLUDED.level,
-                years_attended = EXCLUDED.years_attended,
-                graduation_year = EXCLUDED.graduation_year,
-                attended_status = EXCLUDED.attended_status,
-                source_url = EXCLUDED.source_url,
-                confidence = EXCLUDED.confidence,
-                reviewer_notes = EXCLUDED.reviewer_notes
-            """
-        )
-        conn.unregister("tmp_edu")
-
-    # Write review CSV
-    unmatched_csv_path = out_dir / "unmatched_schools.csv"
-    fieldnames = [
-        "parliament_number",
-        "member_id",
-        "member_display_name",
-        "raw_school_text",
-        "source_url",
-        "is_international",
-        "suggested_action",
-        "notes",
-    ]
-    with unmatched_csv_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in unmatched_reviews:
-            writer.writerow(row)
-
-    # Write coverage metrics JSON
-    metrics_json_path = out_dir / "coverage_metrics.json"
-    metrics_json_path.write_text(
-        json.dumps(coverage_metrics, indent=2), encoding="utf-8"
-    )
-
-    parquet_paths: dict[str, Path] = {}
-    if export_parquet_files:
-        parquet_paths = export_to_parquet(conn, out_dir)
-
-    return {
-        "parliaments": parliaments,
-        "members_count": len(members_map),
-        "service_count": len(service_map),
-        "institutions_count": len(institutions_map),
-        "education_count": len(education_records),
-        "snapshots_count": len(snapshots_map),
-        "unmatched_count": len(unmatched_reviews),
-        "unmatched_csv": unmatched_csv_path,
-        "coverage_metrics_json": metrics_json_path,
-        "coverage_metrics": coverage_metrics,
-        "parquet_paths": parquet_paths,
-        "connection": conn,
-    }
+        return {
+            "parliaments": parliaments,
+            "members_count": len(members_map),
+            "service_count": len(service_map),
+            "institutions_count": len(institutions_map),
+            "education_count": len(education_records),
+            "snapshots_count": len(snapshots_map),
+            "unmatched_count": len(unmatched_reviews),
+            "unmatched_csv": unmatched_csv_path,
+            "coverage_metrics_json": metrics_json_path,
+            "coverage_metrics": coverage_metrics,
+            "parquet_paths": parquet_paths,
+        }
+    finally:
+        if should_close_conn:
+            active_conn.close()

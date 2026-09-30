@@ -11,7 +11,7 @@ import pytest
 from typer.testing import CliRunner
 
 from apemap.cli import app
-from apemap.db import get_connection, init_schema
+from apemap.db import get_connection, init_schema, temporary_dataframe_view
 from apemap.ingest.acara import (
     convert_xlsx_to_csv,
     load_institutions_dataframe,
@@ -379,3 +379,55 @@ def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -
         assert result.exit_code == 0
         assert "ACARA Ingestion & Finance Isolation Summary" in result.output
         mock_run.assert_called_once()
+
+
+def test_run_acara_ingestion_caller_owned_connection(
+    mock_external_dir: Path, tmp_path: Path
+) -> None:
+    """Verify caller-provided DuckDB connection remains open and owned by caller."""
+    db_file = tmp_path / "acara_caller.duckdb"
+    conn = get_connection(db_file)
+    out_dir = tmp_path / "processed_acara_caller"
+
+    summary = run_acara_ingestion(
+        download_latest=False,
+        use_longitudinal=True,
+        conn=conn,
+        export_parquet_files=False,
+        output_dir=out_dir,
+        external_dir=mock_external_dir,
+    )
+
+    assert summary["institutions_loaded"] >= 4
+    # Connection should still be open and queryable
+    row = conn.execute("SELECT count(*) FROM institutions").fetchone()
+    assert row is not None
+    assert row[0] >= 4
+    conn.close()
+
+
+def test_temporary_dataframe_view_cleanup(tmp_path: Path) -> None:
+    """Verify temporary_dataframe_view registers and safely unregisters view on normal and error exits."""
+    conn = get_connection(":memory:")
+    df = pd.DataFrame([{"a": 1, "b": "test"}])
+
+    # Normal exit
+    with temporary_dataframe_view(conn, "view_test", df):
+        res = conn.execute("SELECT * FROM view_test").df()
+        assert len(res) == 1
+
+    # View should be unregistered now
+    with pytest.raises(Exception):
+        conn.execute("SELECT * FROM view_test")
+
+    # Error exit
+    with pytest.raises(RuntimeError):
+        with temporary_dataframe_view(conn, "view_err", df):
+            raise RuntimeError("forced failure inside context")
+
+    # View should still be unregistered
+    with pytest.raises(Exception):
+        conn.execute("SELECT * FROM view_err")
+
+    conn.close()
+

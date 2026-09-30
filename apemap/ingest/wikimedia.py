@@ -8,12 +8,13 @@ import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, unquote
 
 import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+
+if TYPE_CHECKING:
+    from duckdb import DuckDBPyConnection
 
 from apemap.constants import (
     DEFAULT_WIKIMEDIA_TIMEOUT,
@@ -29,6 +30,7 @@ from apemap.constants import (
     WIKIPEDIA_API_ENDPOINT,
 )
 from apemap.db import get_connection
+from apemap.ingest.http import create_retry_session
 from apemap.ingest.matching import is_international_text, normalize_school_key
 from apemap.ingest.review import (
     MEMBER_REVIEW_GENERATED_COLUMNS,
@@ -102,26 +104,23 @@ class WikimediaClient:
 
         if session is not None:
             self.session = session
+            self._owned_session = False
         else:
-            self.session = requests.Session()
-            self.session.headers.update(
-                {
-                    "User-Agent": self.user_agent,
-                    "Accept": "application/json",
-                }
+            self.session = create_retry_session(
+                user_agent=self.user_agent, accept="application/json"
             )
-            retries = Retry(
-                total=3,
-                read=3,
-                connect=3,
-                backoff_factor=1.5,
-                status_forcelist=[429, 500, 502, 503, 504],
-                raise_on_status=False,
-                respect_retry_after_header=True,
-            )
-            adapter = HTTPAdapter(max_retries=retries)
-            self.session.mount("https://", adapter)
-            self.session.mount("http://", adapter)
+            self._owned_session = True
+
+    def close(self) -> None:
+        """Close client resources."""
+        if self._owned_session:
+            self.session.close()
+
+    def __enter__(self) -> WikimediaClient:
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.close()
 
     def _polite_delay(self) -> None:
         """Enforce polite rate limiting between consecutive network requests."""
@@ -645,6 +644,7 @@ def run_wikimedia_enrichment(
     enrich_members: bool = True,
     enrich_schools: bool = True,
     db_path: Path | str | None = None,
+    conn: DuckDBPyConnection | None = None,
     output_dir: Path | str | None = None,
     cache_dir: Path | str | None = None,
     timeout: int = DEFAULT_WIKIMEDIA_TIMEOUT,
@@ -661,7 +661,9 @@ def run_wikimedia_enrichment(
     wm_client = client or WikimediaClient(
         cache_dir=cache_dir, timeout=timeout, rate_delay=rate_delay
     )
-    conn = get_connection(db_path)
+    should_close_conn = conn is None
+    active_conn = conn or get_connection(db_path)
+    conn = active_conn
 
     member_reviews: list[dict[str, Any]] = []
     school_reviews: list[dict[str, Any]] = []
@@ -1063,7 +1065,9 @@ def run_wikimedia_enrichment(
                     )
 
     finally:
-        conn.close()
+        wm_client.close()
+        if should_close_conn:
+            active_conn.close()
 
     # Write review artifacts preserving manual review decisions across runs
     member_review_path = out_dir / "wikimedia_member_review.csv"

@@ -14,13 +14,15 @@ import requests
 from apemap.constants import (
     APH_DEFAULT_ORDERBY,
     APH_HANDBOOK_API_ENDPOINT,
+    DEFAULT_USER_AGENT,
     PARLIAMENT_METADATA,
     RAW_APH_DIR,
 )
+from apemap.ingest.http import create_retry_session
 
 logger = logging.getLogger(__name__)
 
-USER_AGENT = "APEMAP/0.2.0 (Research data pipeline; https://github.com/Mappboy/apemap)"
+USER_AGENT = DEFAULT_USER_AGENT
 
 
 @dataclass
@@ -67,11 +69,27 @@ class AphClient:
         self,
         cache_dir: Path | str | None = None,
         endpoint_url: str = APH_HANDBOOK_API_ENDPOINT,
+        session: requests.Session | None = None,
+        timeout: int = 60,
     ) -> None:
         self.cache_dir = Path(cache_dir or RAW_APH_DIR)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.endpoint_url = endpoint_url
         self.cache_file = self.cache_dir / "individuals.json"
+        self.timeout = timeout
+        self._owned_session = session is None
+        self.session = session or create_retry_session(accept="application/json")
+
+    def close(self) -> None:
+        """Close client resources."""
+        if self._owned_session:
+            self.session.close()
+
+    def __enter__(self) -> AphClient:
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.close()
 
     def fetch_individuals(self, refresh: bool = False) -> list[dict[str, Any]]:
         """Retrieve list of individuals from local disk cache or live API."""
@@ -82,35 +100,34 @@ class AphClient:
                     return data
                 if isinstance(data, dict) and "value" in data:
                     return data["value"]
-            except Exception as e:
+            except (json.JSONDecodeError, OSError) as e:
                 logger.warning(
-                    f"Failed to read cache at {self.cache_file}: {e}. Fetching live."
+                    "Failed to read cache at %s: %s. Fetching live.",
+                    self.cache_file,
+                    e,
                 )
 
         # Query live API
-        headers = {
-            "User-Agent": USER_AGENT,
-            "Accept": "application/json",
-        }
         params = {
             "$orderby": APH_DEFAULT_ORDERBY,
         }
 
-        response = requests.get(
+        response = self.session.get(
             self.endpoint_url,
-            headers=headers,
             params=params,
-            timeout=60,
+            timeout=self.timeout,
         )
         response.raise_for_status()
         res_json = response.json()
 
         individuals = res_json.get("value", [])
         # Cache to disk atomically
-        self.cache_file.write_text(
+        temp_cache = self.cache_file.with_suffix(".tmp")
+        temp_cache.write_text(
             json.dumps(individuals, indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
+        temp_cache.replace(self.cache_file)
         return individuals
 
 

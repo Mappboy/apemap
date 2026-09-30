@@ -17,6 +17,8 @@ PROCESSED_DIR = DATA_DIR / "processed"
 EXTERNAL_DIR = DATA_DIR / "external"
 REFERENCE_DIR = DATA_DIR / "reference"
 
+DEFAULT_USER_AGENT = "APEMAP/0.2.0 (Research data pipeline; https://github.com/Mappboy/apemap)"
+
 ACARA_PROFILE_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202025.xlsx"
 ACARA_PROFILE_LONGITUDINAL_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
 ACARA_LOCATION_2025_URL = "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
