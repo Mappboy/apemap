@@ -21,14 +21,7 @@ from apemap.db import (
 )
 
 
-@pytest.fixture
-def db_conn() -> duckdb.DuckDBPyConnection:
-    """Fixture providing an in-memory DuckDB connection with canonical schema."""
-    conn = get_connection()
-    init_schema(conn)
-    return conn
-
-
+@pytest.mark.integration
 def test_canonical_tables_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Verify all five canonical tables are created and queryable."""
     for table in CANONICAL_TABLES:
@@ -60,6 +53,7 @@ def _legacy_snapshot_connection() -> duckdb.DuckDBPyConnection:
     return conn
 
 
+@pytest.mark.integration
 def test_snapshot_upgrade_preserves_existing_values_and_is_idempotent() -> None:
     """Upgrade a populated legacy table without changing values or source nulls."""
     conn = get_connection()
@@ -91,6 +85,7 @@ def test_snapshot_upgrade_preserves_existing_values_and_is_idempotent() -> None:
         conn.close()
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("migrated_source", [True, False])
 def test_snapshot_parquet_import_matches_names_across_schema_layouts(
     tmp_path: Path, migrated_source: bool
@@ -135,6 +130,7 @@ def test_snapshot_parquet_import_matches_names_across_schema_layouts(
         target.close()
 
 
+@pytest.mark.integration
 def test_legacy_five_column_parquet_loads_with_null_new_fields(
     tmp_path: Path,
 ) -> None:
@@ -172,6 +168,7 @@ def test_legacy_five_column_parquet_loads_with_null_new_fields(
         source.close()
 
 
+@pytest.mark.integration
 def test_views_and_macros_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Verify canonical views and backwards-compatibility views exist."""
     views = [
@@ -193,6 +190,7 @@ def test_views_and_macros_exist(db_conn: duckdb.DuckDBPyConnection) -> None:
         assert result[0] == 0
 
 
+@pytest.mark.integration
 def test_check_constraints_enforced(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Verify CHECK constraints on chamber, level, attended_status, and confidence."""
     # 1. Chamber check
@@ -273,6 +271,7 @@ def test_check_constraints_enforced(db_conn: duckdb.DuckDBPyConnection) -> None:
         )
 
 
+@pytest.mark.integration
 def test_audit_provenance_fields_and_data_flow(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -373,6 +372,7 @@ def test_audit_provenance_fields_and_data_flow(
     assert res_46.iloc[0]["school_name"] == "St Mary’s Cathedral College"
 
 
+@pytest.mark.integration
 def test_parquet_export_and_build(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:

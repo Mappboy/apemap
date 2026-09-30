@@ -13,8 +13,6 @@ import re
 from typing import TYPE_CHECKING, Any
 import zipfile
 
-import requests
-
 from apemap.constants import (
     AEC_2025_RETRIEVED_AT,
     AEC_2025_SHAPEFILE_URL,

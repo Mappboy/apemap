@@ -60,6 +60,12 @@ Inspect available commands with the Typer CLI:
 uv run apemap --help
 ```
 
+For a fast development test loop, use
+`uv run pytest -m "not integration and not notebook and not slow"`.
+`uv run pytest` runs the complete suite; see the
+[Development Guide](docs/development.md#7-writing-tests--working-with-fixtures)
+for integration and notebook commands and fixture isolation rules.
+
 ### Running the Pipeline
 
 Execute individual pipeline stages:

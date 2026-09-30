@@ -164,6 +164,7 @@ def mock_external_dir(tmp_path: Path) -> Path:
     return ext_dir
 
 
+@pytest.mark.unit
 def test_convert_xlsx_to_csv(tmp_path: Path) -> None:
     """Verify XLSX to CSV conversion extracts correct data rows and headers."""
     wb = openpyxl.Workbook()
@@ -188,6 +189,7 @@ def test_convert_xlsx_to_csv(tmp_path: Path) -> None:
     assert df.iloc[0]["School Name"] == "Test High"
 
 
+@pytest.mark.unit
 def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
     """Verify institutions dataframe correctly maps sectors, parses IDs, and enriches coordinates."""
     df = load_institutions_dataframe(external_dir=mock_external_dir)
@@ -223,6 +225,7 @@ def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
     assert only_loc["state"] == "WA"
 
 
+@pytest.mark.unit
 def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
     """Verify snapshots dataframe parses year, enrolments, ICSEA, and socio-educational profile."""
     df = load_snapshots_dataframe(external_dir=mock_external_dir)
@@ -267,6 +270,7 @@ def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
     assert row1["financial_profile_2021"] is None
 
 
+@pytest.mark.unit
 def test_load_snapshots_null_and_missing_handling(tmp_path: Path) -> None:
     """Verify missing value conventions ('NP', 'NA', empty string) resolve to None."""
     ext_dir = tmp_path / "external"
@@ -308,6 +312,7 @@ def test_load_snapshots_null_and_missing_handling(tmp_path: Path) -> None:
     assert row["remoteness_category"] is None
 
 
+@pytest.mark.integration
 def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) -> None:
     """Verify complete ingestion pipeline synchronizes institutions and snapshots into DuckDB."""
     db_file = tmp_path / "test.duckdb"
@@ -342,6 +347,7 @@ def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) ->
     assert rows[0] == ("Test Government High School", "Government")
 
 
+@pytest.mark.unit
 def test_cli_ingest_acara_help() -> None:
     """Verify apemap ingest acara command is exposed with appropriate help documentation."""
     result = runner.invoke(app, ["ingest", "acara", "--help"])
@@ -351,6 +357,7 @@ def test_cli_ingest_acara_help() -> None:
     assert "--longitudinal" in result.output
 
 
+@pytest.mark.unit
 def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -> None:
     """Verify apemap ingest acara --no-download executes via Typer CLI."""
     db_file = tmp_path / "cli_test.duckdb"
@@ -381,6 +388,7 @@ def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -
         mock_run.assert_called_once()
 
 
+@pytest.mark.integration
 def test_run_acara_ingestion_caller_owned_connection(
     mock_external_dir: Path, tmp_path: Path
 ) -> None:
@@ -406,6 +414,7 @@ def test_run_acara_ingestion_caller_owned_connection(
     conn.close()
 
 
+@pytest.mark.unit
 def test_temporary_dataframe_view_cleanup(tmp_path: Path) -> None:
     """Verify temporary_dataframe_view registers and safely unregisters view on normal and error exits."""
     conn = get_connection(":memory:")
@@ -430,4 +439,3 @@ def test_temporary_dataframe_view_cleanup(tmp_path: Path) -> None:
         conn.execute("SELECT * FROM view_err")
 
     conn.close()
-

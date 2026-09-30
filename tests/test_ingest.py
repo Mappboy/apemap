@@ -31,6 +31,7 @@ def sample_aph_records() -> list[dict[str, Any]]:
     return json.loads(SAMPLE_APH_PATH.read_text(encoding="utf-8"))
 
 
+@pytest.mark.unit
 def test_split_school_string() -> None:
     """Verify splitting of delimited school names across different formats."""
     # Single school
@@ -59,6 +60,7 @@ def test_split_school_string() -> None:
     assert comma_loc == ["Wesley College, Melbourne"]
 
 
+@pytest.mark.unit
 def test_extract_schools_from_bio_text() -> None:
     """Verify fallback regex extraction from biographical text while excluding degrees."""
     bio_texts = [
@@ -74,6 +76,7 @@ def test_extract_schools_from_bio_text() -> None:
     assert not any("Bachelor" in s for s in extracted)
 
 
+@pytest.mark.unit
 def test_is_international_text() -> None:
     """Verify detection of international / overseas institutions."""
     assert is_international_text("Eton College, UK") is True
@@ -83,6 +86,7 @@ def test_is_international_text() -> None:
     assert is_international_text("Canberra High School") is False
 
 
+@pytest.mark.unit
 def test_school_matcher_unmatched_and_international(tmp_path: Path) -> None:
     """Verify matcher generates provisional institutions and tags international entries."""
     matcher = SchoolMatcher(external_dir=tmp_path)  # empty dir
@@ -97,6 +101,7 @@ def test_school_matcher_unmatched_and_international(tmp_path: Path) -> None:
     assert res_unmatched.sector == "Other"
 
 
+@pytest.mark.integration
 def test_pipeline_dual_snapshot_isolation(
     sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
@@ -199,6 +204,7 @@ def test_pipeline_dual_snapshot_isolation(
     conn.close()
 
 
+@pytest.mark.integration
 def test_pipeline_rerun_is_idempotent(
     sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
@@ -229,6 +235,7 @@ def test_pipeline_rerun_is_idempotent(
     assert manifest(first_dir) == manifest(second_dir)
 
 
+@pytest.mark.unit
 def test_parse_parliament_args() -> None:
     """Verify parliament command line argument parser."""
     assert parse_parliament_args("46,47,48") == [46, 47, 48]
@@ -238,6 +245,7 @@ def test_parse_parliament_args() -> None:
         parse_parliament_args("invalid,number")
 
 
+@pytest.mark.integration
 def test_cli_ingest_aph(
     sample_aph_records: list[dict[str, Any]],
     tmp_path: Path,
@@ -276,6 +284,7 @@ def test_cli_ingest_aph(
     assert (out_dir / "coverage_metrics.json").exists()
 
 
+@pytest.mark.integration
 def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) -> None:
     """Verify that an individual whose RepresentedParliaments contains 47 but whose
     service ended before Parliament 47 does NOT produce a Parliament 47 service record."""
@@ -327,6 +336,7 @@ def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) ->
     assert p46_count == 1
 
 
+@pytest.mark.integration
 def test_pipeline_caller_owned_connection(
     sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
@@ -351,6 +361,7 @@ def test_pipeline_caller_owned_connection(
     conn.close()
 
 
+@pytest.mark.unit
 def test_aph_client_session_lifecycle_and_retry(tmp_path: Path) -> None:
     """Verify AphClient session management and context manager protocol."""
     from apemap.ingest.aph import AphClient
@@ -369,4 +380,3 @@ def test_aph_client_session_lifecycle_and_retry(tmp_path: Path) -> None:
     with AphClient(cache_dir=tmp_path) as default_client:
         assert default_client._owned_session is True
         assert "User-Agent" in default_client.session.headers
-

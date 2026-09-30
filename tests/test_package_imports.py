@@ -9,6 +9,7 @@ from unittest.mock import patch
 import pytest
 
 
+@pytest.mark.unit
 def test_clean_import_without_network_or_side_effects() -> None:
     """Verify that importing apemap and apemap.cli performs no outbound network connections."""
     with patch.object(socket.socket, "connect") as mock_connect:
@@ -20,6 +21,7 @@ def test_clean_import_without_network_or_side_effects() -> None:
         mock_connect.assert_not_called()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "archived_module",
     [
@@ -36,6 +38,7 @@ def test_archived_legacy_modules_cannot_be_imported(archived_module: str) -> Non
         importlib.import_module(archived_module)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "canonical_module",
     [

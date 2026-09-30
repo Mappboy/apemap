@@ -15,6 +15,7 @@ from apemap.ingest.abs import ingest_abs_benchmarks
 from apemap.ingest.aec import ingest_aec_boundaries
 
 
+@pytest.mark.integration
 def test_geometry_types_and_validity(tmp_path: Path) -> None:
     """All 150 division geometries are valid POLYGON or MULTIPOLYGON instances."""
     shp_path = RAW_AEC_2025_DIR / "AUS_ELB_region.shp"
@@ -47,6 +48,7 @@ def test_geometry_types_and_validity(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_every_48th_parliament_house_member_matches_one_boundary(
     tmp_path: Path,
 ) -> None:
@@ -123,6 +125,7 @@ def test_every_48th_parliament_house_member_matches_one_boundary(
     conn.close()
 
 
+@pytest.mark.integration
 def test_geoparquet_roundtrip_preserves_geometry(tmp_path: Path) -> None:
     """Exporting to Parquet produces valid GeoParquet and preserves geometry upon reload."""
     shp_path = RAW_AEC_2025_DIR / "AUS_ELB_region.shp"
@@ -170,6 +173,7 @@ def test_geoparquet_roundtrip_preserves_geometry(tmp_path: Path) -> None:
     conn2.close()
 
 
+@pytest.mark.unit
 def test_no_population_share_label_leakage(tmp_path: Path) -> None:
     """Audit analysis reports and exported schemas to ensure no misleading population_share field is present."""
     db_path = tmp_path / "test_audit.duckdb"

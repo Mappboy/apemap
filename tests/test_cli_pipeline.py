@@ -20,6 +20,8 @@ from apemap.analysis import (
     get_age_bracket,
 )
 from apemap.cli import app
+from tests.db_fixtures import DatabaseFactory, build_template
+
 from apemap.db import (
     CANONICAL_TABLES,
     ensure_spatial,
@@ -47,14 +49,9 @@ def table_row_count(conn: duckdb.DuckDBPyConnection, table: str) -> int:
     return int(row[0])
 
 
-@pytest.fixture
-def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
-    """Provide a temporary DuckDB database populated with deterministic test data."""
-    db_file = tmp_path / "test_aped.duckdb"
-    conn = get_connection(db_file)
+def seed_cli_db(conn: duckdb.DuckDBPyConnection) -> None:
+    """Seed the domain fixture once inside the template transaction."""
     ensure_spatial(conn)
-    init_schema(conn)
-
     # Insert 200+ members to pass parliament size sanity check
     # Member 1: Born 1970-01-01 -> Age on 2022-07-26 is 52. Attended Gov school.
     # Member 2: Born 1980-08-01 -> Age on 2022-07-26 is 41. Attended Catholic school.
@@ -216,9 +213,25 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         """
     )
 
-    return db_file, conn
+
+@pytest.fixture(scope="session")
+def cli_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build a closed, immutable seeded template once per test session."""
+    return build_template(
+        tmp_path_factory.mktemp("cli_db_template") / "seed.duckdb", seed_cli_db
+    )
 
 
+@pytest.fixture
+def populated_db(
+    cli_db_template: Path,
+    database_factory: DatabaseFactory,
+) -> tuple[Path, duckdb.DuckDBPyConnection]:
+    """Give every test a separate database and finalized connection."""
+    return database_factory(cli_db_template)
+
+
+@pytest.mark.unit
 def test_cli_help_displays_subcommands() -> None:
     """Ensure top-level CLI help lists all required issue subcommands."""
     result = runner.invoke(app, ["--help"])
@@ -227,6 +240,7 @@ def test_cli_help_displays_subcommands() -> None:
         assert cmd in result.output
 
 
+@pytest.mark.unit
 def test_compute_age_at_date_determinism() -> None:
     """Verify age calculations are exact and evaluated against fixed benchmark dates."""
     # Person born 1980-07-27, tested against 2022-07-26 (day before 42nd birthday) -> 41
@@ -247,6 +261,7 @@ def test_compute_age_at_date_determinism() -> None:
     assert get_age_bracket(None) == "Unknown"
 
 
+@pytest.mark.integration
 def test_sector_summary_distinguishes_mps_and_instances(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -274,6 +289,7 @@ def test_sector_summary_distinguishes_mps_and_instances(
     assert summary["total_attendance_instances"] == 4
 
 
+@pytest.mark.integration
 def test_funding_summary_reports_sample_size_n(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -294,6 +310,7 @@ def test_funding_summary_reports_sample_size_n(
     assert funding["overall_net_recurrent_income_sample_size"] == 2
 
 
+@pytest.mark.integration
 def test_funding_summary_does_not_overweight_shared_schools(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -333,6 +350,7 @@ def test_funding_summary_does_not_overweight_shared_schools(
     assert sec_gov["net_recurrent_income_per_student_avg"] == 17000
 
 
+@pytest.mark.integration
 def test_opening_day_demographics_use_one_opening_service_per_person(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -379,6 +397,7 @@ def test_opening_day_demographics_use_one_opening_service_per_person(
     assert demographics["parties"] == {"ALP": 227}
 
 
+@pytest.mark.unit
 def test_unsupported_parliament_is_rejected_by_analysis() -> None:
     """Do not manufacture a benchmark date for an unsupported parliament."""
     conn = get_connection()
@@ -388,6 +407,7 @@ def test_unsupported_parliament_is_rejected_by_analysis() -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_validate_database_success(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -399,6 +419,7 @@ def test_validate_database_success(
     assert report.checks_passed == report.checks_run
 
 
+@pytest.mark.integration
 def test_profile_query_failures_fail_validation_and_do_not_skip_year_check(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -422,6 +443,7 @@ def test_profile_query_failures_fail_validation_and_do_not_skip_year_check(
     assert report.checks_run > report.checks_passed
 
 
+@pytest.mark.integration
 def test_profile_validation_accepts_nulls_and_reports_invalid_values(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -445,6 +467,7 @@ def test_profile_validation_accepts_nulls_and_reports_invalid_values(
     assert any("SEA quarters summing" in failure for failure in report.failures)
 
 
+@pytest.mark.integration
 def test_validate_database_detects_empty_table(tmp_path: Path) -> None:
     """Verify validation fails when canonical tables are empty."""
     db_file = tmp_path / "empty.duckdb"
@@ -457,6 +480,7 @@ def test_validate_database_detects_empty_table(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_validate_database_detects_foreign_key_orphan(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -507,6 +531,7 @@ def test_validate_database_detects_foreign_key_orphan(
     assert any("member_education -> members" in f for f in report.failures)
 
 
+@pytest.mark.integration
 def test_validate_database_detects_invalid_opening_chamber_benchmark(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -527,6 +552,7 @@ def test_validate_database_detects_invalid_opening_chamber_benchmark(
     )
 
 
+@pytest.mark.integration
 def test_validate_database_detects_service_overlap_failure(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -544,6 +570,7 @@ def test_validate_database_detects_service_overlap_failure(
     assert any("service records that do not overlap" in f for f in report.failures)
 
 
+@pytest.mark.integration
 def test_cli_transform(tmp_path: Path) -> None:
     """Test apemap transform CLI command initializes schema."""
     db_file = tmp_path / "transform.duckdb"
@@ -562,6 +589,7 @@ def test_cli_transform(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_cli_validate_command(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -573,6 +601,7 @@ def test_cli_validate_command(
     assert "VALIDATION CHECKS PASSED" in result.output
 
 
+@pytest.mark.integration
 def test_cli_analyze_command(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -603,6 +632,7 @@ def test_cli_analyze_command(
     assert p47["sectors"]["unique_parliamentarians_by_sector"]["Combined/Multiple"] == 1
 
 
+@pytest.mark.integration
 def test_cli_export_command_and_reproducibility(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -674,6 +704,7 @@ def test_cli_export_command_and_reproducibility(
     ).read_bytes()
 
 
+@pytest.mark.integration
 def test_cli_export_web_release_with_provenance(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -724,6 +755,7 @@ def test_cli_export_web_release_with_provenance(
     assert "Web Release Manifest:" in result.output
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     "metadata", ["not json", "[]", '{"acara": 2025}', '{"acara": "yesterday"}']
 )
@@ -752,6 +784,7 @@ def test_cli_export_rejects_invalid_source_snapshot_dates_before_writing(
     assert not out_dir.exists()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("command", ["analyze", "export", "validate", "run-all"])
 def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> None:
     """All parliament-specific CLI commands reject unknown benchmark metadata."""
@@ -763,6 +796,7 @@ def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> Non
     assert "Unsupported parliament number" in result.output
 
 
+@pytest.mark.integration
 def test_cli_run_all_mocked(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,

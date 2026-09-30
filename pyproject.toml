@@ -12,6 +12,7 @@ dependencies = [
     "duckdb>=1.5,<2",
     "openpyxl>=3.1.5",
     "pandas>=2.0.0",
+    "pytz>=2025.2",
     "rapidfuzz>=3.14.5",
     "requests>=2.28.0",
     "rich>=13.0.0",
@@ -46,8 +47,14 @@ packages = ["apemap"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q"
+addopts = "-ra -q --strict-markers"
 testpaths = ["tests"]
+markers = [
+    "unit: isolated logic with small deterministic local fixtures",
+    "integration: multiple components, CLI orchestration, database or export pipelines",
+    "notebook: notebook execution requiring a Jupyter kernel",
+    "slow: runtime materially above ordinary tests (including notebook kernels)",
+]
 
 [tool.ruff]
 line-length = 88
@@ -62,4 +69,7 @@ ignore = ["E501"]
 known_first_party = ["apemap"]
 
 [tool.deptry.per_rule_ignores]
+# DuckDB imports pytz internally when fetching TIMESTAMPTZ values; pandas 3 no
+# longer supplies it transitively. The ABS timestamp regression covers this.
+DEP002 = ["pytz"]
 DEP003 = ["urllib3", "apemap"]

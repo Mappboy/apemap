@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import re
 
 from apemap.cli import app, ingest_app
@@ -27,12 +29,14 @@ REQUIRED_DOCS = [
 ]
 
 
+@pytest.mark.unit
 def test_required_documentation_files_exist():
     """All canonical and archived documentation files must exist on disk."""
     for doc in REQUIRED_DOCS:
         assert doc.exists(), f"Missing required documentation file: {doc}"
 
 
+@pytest.mark.unit
 def test_root_readme_conciseness():
     """Root README must remain concise (between 80 and 220 lines)."""
     readme = PROJECT_ROOT / "README.md"
@@ -42,6 +46,7 @@ def test_root_readme_conciseness():
     )
 
 
+@pytest.mark.unit
 def test_markdown_relative_links_resolve():
     """All local relative markdown links in README and docs must resolve to existing files."""
     import urllib.parse
@@ -87,6 +92,7 @@ def test_markdown_relative_links_resolve():
         )
 
 
+@pytest.mark.unit
 def test_cli_documentation_matches_cli_commands():
     """Commands documented in docs/cli.md must match commands implemented in apemap.cli."""
     cli_doc = (DOCS_DIR / "cli.md").read_text(encoding="utf-8")

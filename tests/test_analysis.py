@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import json
 from datetime import date
 from pathlib import Path
@@ -95,6 +97,7 @@ def create_analysis_fixture(db_path: Path) -> Path:
     return db_path
 
 
+@pytest.mark.unit
 def test_age_is_independent_of_execution_date() -> None:
     """Birthday and leap-year boundaries use only the supplied reference date."""
     assert compute_age_at_date("1980-07-27", "2022-07-26") == 41
@@ -103,6 +106,7 @@ def test_age_is_independent_of_execution_date() -> None:
     assert compute_age_at_date("2000-02-29", "2021-03-01") == 21
 
 
+@pytest.mark.unit
 def test_finance_nulls_are_missing_not_zero(tmp_path: Path) -> None:
     """The finance contract exposes mean, valid N, and missing N explicitly."""
     db_path = create_analysis_fixture(tmp_path / "analysis.duckdb")
@@ -116,6 +120,7 @@ def test_finance_nulls_are_missing_not_zero(tmp_path: Path) -> None:
     assert summary["overall_gross_income_missing_count"] == 1
 
 
+@pytest.mark.unit
 def test_sector_people_and_attendance_have_distinct_denominators(
     tmp_path: Path,
 ) -> None:
@@ -137,6 +142,7 @@ def test_sector_people_and_attendance_have_distinct_denominators(
     assert summary["attendance_instance_percentage_denominator"] == 5
 
 
+@pytest.mark.unit
 def test_sector_and_funding_summary_exclude_non_opening_day_members(
     tmp_path: Path,
 ) -> None:
@@ -196,6 +202,7 @@ def test_sector_and_funding_summary_exclude_non_opening_day_members(
     conn.close()
 
 
+@pytest.mark.integration
 def test_analysis_exports_are_schema_versioned_and_deterministic(
     tmp_path: Path,
 ) -> None:
@@ -228,6 +235,7 @@ def test_analysis_exports_are_schema_versioned_and_deterministic(
     assert "Terms of Use" in metadata["finance_licence"]
 
 
+@pytest.mark.unit
 def test_compute_funding_summary_explicit_reporting_year(tmp_path: Path) -> None:
     """compute_funding_summary accurately filters by explicit reporting_year and includes attribution."""
     db_path = create_analysis_fixture(tmp_path / "analysis_multi_year.duckdb")
@@ -260,6 +268,7 @@ def test_compute_funding_summary_explicit_reporting_year(tmp_path: Path) -> None
     conn.close()
 
 
+@pytest.mark.unit
 def test_government_non_government_and_three_denominators(tmp_path: Path) -> None:
     """Verify Government vs Non-government / Mixed classification and 3 distinct denominators."""
     db_path = create_analysis_fixture(tmp_path / "analysis_denoms.duckdb")

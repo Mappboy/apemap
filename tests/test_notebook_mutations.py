@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import ast
 import json
 import re
@@ -125,6 +127,7 @@ def _notebook_mutations(path: Path) -> list[str]:
     return violations
 
 
+@pytest.mark.unit
 def test_notebooks_have_no_executable_database_mutations() -> None:
     """Catch database writes without flagging markdown, comments, or SQL docs."""
     failures: dict[str, list[str]] = {}

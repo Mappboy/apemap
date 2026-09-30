@@ -154,7 +154,8 @@ def convert_xlsx_to_csv(
             raise ValueError(f"Sheet {target_sheet} is empty in {in_path}")
 
         header_clean = [
-            str(c).strip() if c is not None else f"col_{i}" for i, c in enumerate(header)
+            str(c).strip() if c is not None else f"col_{i}"
+            for i, c in enumerate(header)
         ]
         num_cols = len(header_clean)
 
@@ -167,7 +168,9 @@ def convert_xlsx_to_csv(
                     row_slice = list(r[:num_cols])
                     if len(row_slice) < num_cols:
                         row_slice.extend([""] * (num_cols - len(row_slice)))
-                    writer.writerow([cell if cell is not None else "" for cell in row_slice])
+                    writer.writerow(
+                        [cell if cell is not None else "" for cell in row_slice]
+                    )
                     row_count += 1
 
         logger.info("Wrote %d rows to %s", row_count, out_path)
@@ -773,7 +776,9 @@ def run_acara_ingestion(
         snap_count = res_snap[0] if res_snap is not None else 0
         res_fin = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res_fin[0] if res_fin is not None else 0
-        res_fin_2021 = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
+        res_fin_2021 = conn.execute(
+            "SELECT count(*) FROM school_finances_2021"
+        ).fetchone()
         fin_2021_count = res_fin_2021[0] if res_fin_2021 is not None else 0
 
         # 5. Export Parquet if requested

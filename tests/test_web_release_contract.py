@@ -11,7 +11,9 @@ import subprocess
 import duckdb
 import pytest
 
-from apemap.db import ensure_spatial, get_connection, init_schema
+from tests.db_fixtures import DatabaseFactory, build_template
+
+from apemap.db import ensure_spatial
 from apemap.export import (
     export_all_artifacts,
     export_research_downloads,
@@ -28,14 +30,9 @@ def _csv_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(stream))
 
 
-@pytest.fixture
-def web_contract_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
-    """Create a temporary DuckDB database populated for web contract testing."""
-    db_file = tmp_path / "web_contract.duckdb"
-    conn = get_connection(db_file)
+def seed_web_db(conn: duckdb.DuckDBPyConnection) -> None:
+    """Seed the domain fixture once inside the template transaction."""
     ensure_spatial(conn)
-    init_schema(conn)
-
     # 1. Institutions
     conn.execute(
         """
@@ -148,9 +145,25 @@ def web_contract_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         """
     )
 
-    return db_file, conn
+
+@pytest.fixture(scope="session")
+def web_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build a closed, immutable seeded template once per test session."""
+    return build_template(
+        tmp_path_factory.mktemp("web_db_template") / "seed.duckdb", seed_web_db
+    )
 
 
+@pytest.fixture
+def web_contract_db(
+    web_db_template: Path,
+    database_factory: DatabaseFactory,
+) -> tuple[Path, duckdb.DuckDBPyConnection]:
+    """Give every test a separate database and finalized connection."""
+    return database_factory(web_db_template)
+
+
+@pytest.mark.integration
 def test_export_results_summary(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -195,6 +208,7 @@ def test_export_results_summary(
     assert p47["unmapped_schools_count"] == 1
 
 
+@pytest.mark.integration
 def test_export_web_schools_geojson(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -243,6 +257,7 @@ def test_export_web_schools_geojson(
     assert props["parliaments"] == [47]
 
 
+@pytest.mark.integration
 def test_export_research_downloads(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -273,6 +288,7 @@ def test_export_research_downloads(
     assert parquet_rows[0] == 3  # 3 snapshots inserted in fixture
 
 
+@pytest.mark.integration
 def test_web_exports_reconcile_cohort_and_attendance_grain(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection], tmp_path: Path
 ) -> None:
@@ -320,6 +336,7 @@ def test_web_exports_reconcile_cohort_and_attendance_grain(
     )
 
 
+@pytest.mark.integration
 def test_school_members_keep_service_context_across_parliaments(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection], tmp_path: Path
 ) -> None:
@@ -368,6 +385,7 @@ def test_school_members_keep_service_context_across_parliaments(
     }
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("profile_years", [(2022, 2024), (2024, 2024), (None, None)])
 def test_summary_source_years_match_selected_profiles(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
@@ -407,6 +425,7 @@ def test_summary_source_years_match_selected_profiles(
     assert map_years == expected
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("has_source_checkout", [True, False])
 def test_manifest_commit_is_independent_of_callers_checkout(
     tmp_path: Path,
@@ -451,6 +470,7 @@ def test_manifest_commit_is_independent_of_callers_checkout(
     assert json.loads(manifest.read_text())["source_commit"] == expected
 
 
+@pytest.mark.integration
 def test_bundle_preserves_explicit_provenance_and_reproducibility(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -483,6 +503,7 @@ def test_bundle_preserves_explicit_provenance_and_reproducibility(
     }
 
 
+@pytest.mark.integration
 def test_export_web_release_manifest(
     tmp_path: Path,
 ) -> None:
@@ -520,6 +541,7 @@ def test_export_web_release_manifest(
     assert sample1_entry["sha256"] == hashlib.sha256(dummy1.read_bytes()).hexdigest()
 
 
+@pytest.mark.integration
 def test_export_web_release_bundle(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -547,6 +569,7 @@ def test_export_web_release_bundle(
     assert "schools.geojson" in manifest_data["files"]
 
 
+@pytest.mark.integration
 def test_export_all_artifacts_includes_web_contract(
     web_contract_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
