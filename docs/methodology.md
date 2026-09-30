@@ -240,7 +240,33 @@ The benchmark indexing methodology is empirically backtested against observed hi
 
 ---
 
-## 10. Automated Integrity & Coverage Gates
+## 10. Government vs. Non-Government Classification & Three Explicit Denominators
+
+Public debate often reduces school attendance to a binary comparison between public and private education. However, parliamentarians frequently attended more than one secondary school across sectors. To ensure total transparency and statistical reproducibility, APEMAP defines both individual member classification rules and three distinct analytical denominators.
+
+### Member-Level Sector Classification
+Each parliamentarian is classified into one mutually exclusive category based on the sectors of all secondary schools they attended:
+- **`government_only`**: The parliamentarian attended only Government (public) secondary institutions.
+- **`non_government_only`**: The parliamentarian attended only Non-government secondary institutions (Catholic and/or Independent). For example, a student who attended both a Catholic systemic school and an Independent grammar school remains classified as `non_government_only`.
+- **`mixed`**: The parliamentarian attended at least one Government secondary school **and** at least one Non-government (Catholic or Independent) secondary school.
+- **`other`**: The parliamentarian attended only unclassified or non-standard educational institutions.
+- **`no_school_recorded`**: The parliamentarian has no recorded secondary school attendance in the Parliamentary Handbook or official biographies.
+
+### Three Explicit Denominators
+Because a single parliamentarian can attend multiple schools, and multiple parliamentarians can attend the same school, percentages must be explicitly anchored to clear denominators:
+1. **Known Parliamentarians Denominator (`known_school_denominator`)**:
+   $$\text{Denominator}_1 = \text{Total Parliamentarians} - \text{No School Recorded}$$
+   This serves as the primary denominator for headline proportions (e.g. "% of known MPs who attended non-government schools"). Parliamentarians with no recorded education are excluded from this denominator to avoid artificially depressing attendance rates.
+2. **Attendance Instances Denominator (`total_attendance_instances`)**:
+   $$\text{Denominator}_2 = \sum \text{Member-to-School Attendance Records}$$
+   Counts every instance of a member attending a school. A parliamentarian who attended two schools contributes two instances to this denominator. Useful for examining institutional representation without forcing single-choice member pigeonholing.
+3. **Represented Unique Schools Denominator (`total_unique_schools`)**:
+   $$\text{Denominator}_3 = \text{Count of Distinct Physical Institutions Attended}$$
+   Measures institutional diversity and concentration by evaluating the unique set of schools attended by the parliamentary cohort.
+
+---
+
+## 11. Automated Integrity & Coverage Gates
 
 Database consistency is validated by `apemap validate`, which enforces 11 mandatory checks:
 1. Primary key uniqueness across all canonical tables.
@@ -257,7 +283,7 @@ Database consistency is validated by `apemap validate`, which enforces 11 mandat
 
 ---
 
-## 10. Analytical Limitations & Caveats
+## 12. Analytical Limitations & Caveats
 
 Users of APEMAP data should consider the following limitations:
 
@@ -266,3 +292,4 @@ Users of APEMAP data should consider the following limitations:
 3. **Multi-Campus Institutions**: Certain schools operate multiple campuses across cities or states. Where specific campus details are omitted in biographies, records are linked to the primary administrative campus.
 4. **International Schools**: Parliamentarians educated overseas are matched to synthetic unconfirmed institution records and excluded from domestic sector distributions.
 5. **Descriptive, Non-Causal Nature**: Relationships between parliamentarian schooling and political outcomes are descriptive observations. They should not be interpreted as evidence of causal mechanisms.
+

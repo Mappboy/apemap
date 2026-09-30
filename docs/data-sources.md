@@ -51,8 +51,11 @@ These sources are actively fetched or read during pipeline execution:
 - **Portal**: [ACARA Data Access Program](https://www.acara.edu.au/contact-us/acara-data-access)
 - **Datasets**:
   - `School Location 2025` / `2022`: Authoritative names, School SML IDs (`acara_id`), sectors (`Government`, `Catholic`, `Independent`), addresses, and geographic coordinates (latitude, longitude).
-  - `School Profile 2008-2025`: Longitudinal annual enrolments, ICSEA index values, and school classifications.
+  - `School Profile 2008-2025`: Longitudinal annual school profiles including:
+    - **Priority A Socio-Educational Metrics**: `total_enrolments`, `icsea`, `icsea_percentile`, Socio-Educational Advantage (SEA) quartile percentages (`sea_bottom_quarter_pct`, `sea_lower_middle_quarter_pct`, `sea_upper_middle_quarter_pct`, `sea_top_quarter_pct`), Indigenous enrolment percentage (`indigenous_enrolments_pct`), and Language Background Other Than English percentage (`lbote_pct`).
+    - **Priority B Structural Metrics**: `year_range` (e.g. `"7-12"`, `"Prep-12"`), `remoteness_category` (standardised from ACARA `Geolocation` classification), `girls_enrolments`, `boys_enrolments`, and full-time equivalent enrolments (`fte_enrolments`).
   - `acara_school_results.json`: Cached school register export.
+- **Missing Value Handling**: Upstream non-published or uncollected cells (encoded as `"NP"`, `"NA"`, `"N/A"`, or blank strings) are parsed strictly to `NULL` / `None` to prevent numeric coercion errors or misleading zero values.
 - **Attribution**: *© Australian Curriculum, Assessment and Reporting Authority (ACARA).*
 - **Limitations**: SML IDs reflect schools active during reporting years. Closed or merged schools may not appear in single-year files, necessitating longitudinal registers and alias mappings.
 
