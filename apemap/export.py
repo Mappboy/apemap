@@ -6,7 +6,8 @@ and analytical summaries to data/processed/.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from collections.abc import Mapping
+from datetime import date, datetime, timezone
 import hashlib
 import json
 import logging
@@ -22,7 +23,7 @@ from apemap.analysis import (
     compute_sector_summary,
     export_analysis_report,
 )
-from apemap.constants import PROCESSED_DIR
+from apemap.constants import PROCESSED_DIR, PROJECT_ROOT
 from apemap.db import export_to_parquet
 
 logger = logging.getLogger(__name__)
@@ -256,17 +257,57 @@ def _file_sha256(path: Path) -> str:
 
 
 def _get_git_commit() -> str:
-    """Retrieve current Git commit SHA."""
+    """Identify this source checkout, never the caller's repository."""
     try:
         res = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
+            ["git", "rev-parse", "--show-toplevel", "HEAD"],
+            cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
             check=True,
+            timeout=10,
         )
-        return res.stdout.strip()
-    except Exception:
+        root, commit = res.stdout.strip().splitlines()
+        return commit if Path(root).resolve() == PROJECT_ROOT.resolve() else "unknown"
+    except (OSError, ValueError, subprocess.SubprocessError):
         return "unknown"
+
+
+def _web_parliaments(parliaments: list[int] | None) -> list[int]:
+    """Normalize release ordering and reject empty or non-integer selections."""
+    values = [46, 47, 48] if parliaments is None else parliaments
+    if not values or any(type(p) is not int for p in values):
+        raise ValueError(
+            "A web release requires at least one integer parliament number"
+        )
+    return sorted(set(values))
+
+
+def validate_source_snapshot_dates(
+    dates: Mapping[str, str | None] | None,
+) -> dict[str, str | None]:
+    """Retain supplied upstream dates, marking unrecorded source dates as null."""
+    message = (
+        "Source snapshot dates must be a JSON object mapping source names "
+        "to YYYY-MM-DD strings or null"
+    )
+    if dates is not None and not isinstance(dates, Mapping):
+        raise ValueError(message)
+    normalized: dict[str, str | None] = dict.fromkeys(("aph", "acara", "abs", "aec"))
+    for source, value in (dates or {}).items():
+        if not isinstance(source, str) or not source:
+            raise ValueError(message)
+        if value is not None:
+            if not isinstance(value, str):
+                raise ValueError(message)
+            try:
+                valid_date = date.fromisoformat(value).isoformat() == value
+            except ValueError:
+                valid_date = False
+            if not valid_date:
+                raise ValueError(message)
+        normalized[source] = value
+    return normalized
 
 
 def export_results_summary(
@@ -286,7 +327,7 @@ def export_results_summary(
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = _web_parliaments(parliaments)
 
     summary_by_parl = {}
     for p in target_parls:
@@ -298,14 +339,19 @@ def export_results_summary(
             i.institution_id,
             i.sector,
             i.longitude,
-            i.latitude
+            i.latitude,
+            profiles.profile_year
         FROM member_education me
         JOIN institutions i ON me.institution_id = i.institution_id
         JOIN parliament_service ps ON me.member_id = ps.member_id
+        LEFT JOIN (
+            SELECT institution_id, MAX(snapshot_year) AS profile_year
+            FROM school_snapshots GROUP BY institution_id
+        ) profiles ON i.institution_id = profiles.institution_id
         WHERE me.level = 'secondary'
           AND ps.parliament_number = ?
           AND ps.is_opening_day_member = TRUE
-        GROUP BY i.institution_id, i.sector, i.longitude, i.latitude
+        GROUP BY i.institution_id, i.sector, i.longitude, i.latitude, profiles.profile_year
         """
         school_rows = conn.execute(schools_query, [p]).fetchall()
         total_schools = len(school_rows)
@@ -313,6 +359,10 @@ def export_results_summary(
             1 for r in school_rows if r[2] is not None and r[3] is not None
         )
         unmapped_count = total_schools - mapped_count
+        profile_years = sorted({r[4] for r in school_rows if r[4] is not None})
+        benchmark_years = {
+            row["benchmark_year"] for row in sec["benchmark_comparison"].values()
+        }
 
         summary_by_parl[str(p)] = {
             "parliament_number": p,
@@ -336,8 +386,11 @@ def export_results_summary(
             "mapped_schools_count": mapped_count,
             "unmapped_schools_count": unmapped_count,
             "source_years": {
-                "abs_benchmark_year": 2025,
-                "profile_year": 2025,
+                "abs_benchmark_year": next(iter(benchmark_years))
+                if len(benchmark_years) == 1
+                else None,
+                "profile_year": profile_years[0] if len(profile_years) == 1 else None,
+                "profile_years": profile_years,
             },
         }
 
@@ -374,10 +427,9 @@ def export_web_schools_geojson(
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = parliaments or [46, 47, 48]
-    parl_str = ",".join(str(p) for p in target_parls)
+    target_parls = _web_parliaments(parliaments)
 
-    schools_query = f"""
+    schools_query = """
     SELECT DISTINCT
         i.institution_id,
         i.acara_id,
@@ -399,13 +451,13 @@ def export_web_schools_geojson(
     JOIN institutions i ON me.institution_id = i.institution_id
     JOIN parliament_service ps ON me.member_id = ps.member_id
     WHERE me.level = 'secondary'
-      AND ps.parliament_number IN ({parl_str})
+      AND ps.parliament_number IN (SELECT UNNEST(?))
       AND ps.is_opening_day_member = TRUE
       AND i.longitude IS NOT NULL
       AND i.latitude IS NOT NULL
     ORDER BY i.school_name, i.institution_id
     """
-    school_rows = conn.execute(schools_query).fetchall()
+    school_rows = conn.execute(schools_query, [target_parls]).fetchall()
 
     # Load latest snapshot metrics per institution
     snapshots_by_inst: dict[str, dict[str, Any]] = {}
@@ -429,7 +481,10 @@ def export_web_schools_geojson(
             year_range,
             remoteness_category
         FROM school_snapshots
-        ORDER BY institution_id, snapshot_year DESC
+        QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY institution_id ORDER BY snapshot_year DESC
+        ) = 1
+        ORDER BY institution_id
         """
     ).fetchall()
     for s in snap_rows:
@@ -454,43 +509,50 @@ def export_web_schools_geojson(
             }
 
     # Load parliamentarian attendances for these schools
-    att_query = f"""
-    SELECT
+    att_query = """
+    SELECT DISTINCT
         me.institution_id,
         m.member_id,
         m.display_name,
         ps.party,
         ps.party_abbrev,
         ps.chamber,
-        ps.parliament_number
+        ps.parliament_number,
+        ps.service_id
     FROM member_education me
     JOIN members m ON me.member_id = m.member_id
     JOIN parliament_service ps ON m.member_id = ps.member_id
     WHERE me.level = 'secondary'
-      AND ps.parliament_number IN ({parl_str})
+      AND ps.parliament_number IN (SELECT UNNEST(?))
       AND ps.is_opening_day_member = TRUE
-    ORDER BY me.institution_id, m.display_name, ps.parliament_number
+    ORDER BY me.institution_id, m.display_name, m.member_id, ps.parliament_number, ps.service_id
     """
     members_by_inst: dict[str, dict[str, dict[str, Any]]] = {}
     parliaments_by_inst: dict[str, set[int]] = {}
 
-    for row in conn.execute(att_query).fetchall():
-        iid, mid, name, party, abbrev, chamber, pnum = row
+    for row in conn.execute(att_query, [target_parls]).fetchall():
+        iid, mid, name, party, abbrev, chamber, pnum, service_id = row
         parliaments_by_inst.setdefault(iid, set()).add(pnum)
         inst_mems = members_by_inst.setdefault(iid, {})
         if mid not in inst_mems:
             inst_mems[mid] = {
                 "member_id": mid,
                 "name": name,
+                "parliaments": [],
+                "services": [],
+            }
+        member = inst_mems[mid]
+        if pnum not in member["parliaments"]:
+            member["parliaments"].append(pnum)
+        member["services"].append(
+            {
+                "service_id": service_id,
+                "parliament_number": pnum,
                 "party": party,
                 "party_abbrev": abbrev,
                 "chamber": chamber,
-                "parliaments": [pnum],
             }
-        else:
-            if pnum not in inst_mems[mid]["parliaments"]:
-                inst_mems[mid]["parliaments"].append(pnum)
-                inst_mems[mid]["parliaments"].sort()
+        )
 
     features: list[dict[str, Any]] = []
     for s in school_rows:
@@ -584,7 +646,10 @@ def export_research_downloads(
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
 ) -> dict[str, Path]:
-    """Export tabular CSV and Parquet datasets for research downloads.
+    """Export opening-day attendance CSV and annual school profiles.
+
+    CSV grain is (education_id, service_id), enriched with the latest available
+    profile per school. All annual profile rows remain in the separate Parquet.
 
     Args:
         conn: DuckDB database connection.
@@ -597,25 +662,29 @@ def export_research_downloads(
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     downloads_dir = out_dir / "downloads"
     downloads_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = parliaments or [46, 47, 48]
-    parl_str = ",".join(str(p) for p in target_parls)
+    target_parls = _web_parliaments(parliaments)
 
     # 1. parliament-education.csv
     csv_path = downloads_dir / "parliament-education.csv"
     edu_df = conn.execute(
-        f"""
+        """
         SELECT *
         FROM v_member_secondary_education
-        WHERE parliament_number IN ({parl_str})
-        ORDER BY parliament_number, display_name, school_name, education_id
-        """
+        WHERE parliament_number IN (SELECT UNNEST(?))
+          AND is_opening_day_member = TRUE
+        QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY education_id, service_id ORDER BY snapshot_year DESC NULLS LAST
+        ) = 1
+        ORDER BY parliament_number, display_name, school_name, education_id, service_id
+        """,
+        [target_parls],
     ).df()
     edu_df.to_csv(csv_path, index=False, encoding="utf-8")
 
     # 2. school-profiles.parquet
     parquet_path = downloads_dir / "school-profiles.parquet"
     conn.execute(
-        f"""
+        """
         COPY (
             SELECT
                 s.*,
@@ -631,8 +700,9 @@ def export_research_downloads(
             FROM school_snapshots s
             JOIN institutions i ON s.institution_id = i.institution_id
             ORDER BY s.institution_id, s.snapshot_year
-        ) TO '{parquet_path.as_posix()}' (FORMAT PARQUET)
-        """
+        ) TO ? (FORMAT PARQUET)
+        """,
+        [str(parquet_path)],
     )
 
     logger.info("Exported research downloads to %s", downloads_dir)
@@ -648,6 +718,9 @@ def export_web_release_manifest(
     parliaments: list[int] | None = None,
     data_release_version: str = "0.2.0",
     generated_at: str | None = None,
+    *,
+    source_commit: str | None = None,
+    source_snapshot_dates: Mapping[str, str | None] | None = None,
 ) -> Path:
     """Generate cryptographic manifest.json for published web release datasets.
 
@@ -657,12 +730,16 @@ def export_web_release_manifest(
         parliaments: Included parliament numbers.
         data_release_version: Release semantic version.
         generated_at: ISO 8601 timestamp string (uses SOURCE_DATE_EPOCH or now if None).
+        source_commit: Explicit source SHA for builds without the source checkout.
+        source_snapshot_dates: Recorded upstream dates; absent dates remain null.
 
     Returns:
         Path to generated manifest.json.
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = _web_parliaments(parliaments)
+    snapshot_dates = validate_source_snapshot_dates(source_snapshot_dates)
+    out_dir.mkdir(parents=True, exist_ok=True)
     target_files = files or {}
 
     file_entries: dict[str, dict[str, Any]] = {}
@@ -674,7 +751,7 @@ def export_web_release_manifest(
                 "sha256": _file_sha256(fpath),
             }
 
-    commit_sha = _get_git_commit()
+    commit_sha = source_commit if source_commit is not None else _get_git_commit()
     if generated_at is not None:
         gen_timestamp = generated_at
     elif "SOURCE_DATE_EPOCH" in os.environ:
@@ -689,6 +766,7 @@ def export_web_release_manifest(
         "data_release_version": data_release_version,
         "source_commit": commit_sha,
         "generated_at": gen_timestamp,
+        "source_snapshot_dates": snapshot_dates,
         "cohort_definition": "opening_day",
         "parliaments": target_parls,
         "files": file_entries,
@@ -716,6 +794,9 @@ def export_web_release_bundle(
     parliaments: list[int] | None = None,
     data_release_version: str = "0.2.0",
     generated_at: str | None = None,
+    *,
+    source_commit: str | None = None,
+    source_snapshot_dates: Mapping[str, str | None] | None = None,
 ) -> dict[str, Any]:
     """Export complete website release bundle (results summary, schools GeoJSON, downloads, and manifest).
 
@@ -725,12 +806,15 @@ def export_web_release_bundle(
         parliaments: Target parliament numbers.
         data_release_version: Release version.
         generated_at: Optional fixed ISO timestamp for deterministic manifest generation.
+        source_commit: Explicit source SHA, otherwise resolved from this checkout.
+        source_snapshot_dates: Recorded upstream dates; absent dates remain null.
 
     Returns:
         Mapping of generated web release artifacts.
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = _web_parliaments(parliaments)
+    snapshot_dates = validate_source_snapshot_dates(source_snapshot_dates)
 
     results_summary_path = export_results_summary(conn, out_dir, target_parls)
     schools_geojson_path = export_web_schools_geojson(conn, out_dir, target_parls)
@@ -748,6 +832,8 @@ def export_web_release_bundle(
         parliaments=target_parls,
         data_release_version=data_release_version,
         generated_at=generated_at,
+        source_commit=source_commit,
+        source_snapshot_dates=snapshot_dates,
     )
 
     return {
@@ -764,6 +850,10 @@ def export_all_artifacts(
     parliaments: list[int] | None = None,
     finance_reporting_year: int = 2021,
     include_web_release: bool = False,
+    *,
+    data_release_version: str = "0.2.0",
+    source_commit: str | None = None,
+    source_snapshot_dates: Mapping[str, str | None] | None = None,
 ) -> dict[str, Any]:
     """Export all canonical artifacts: Parquet, GeoJSON, and analytical metrics.
 
@@ -773,6 +863,9 @@ def export_all_artifacts(
         parliaments: List of parliaments to process.
         finance_reporting_year: Calendar reporting year for school finances (defaults to 2021).
         include_web_release: If True, also generates the website release bundle.
+        data_release_version: Version of the optional web bundle.
+        source_commit: Explicit source SHA for the optional web manifest.
+        source_snapshot_dates: Recorded upstream dates for the optional web manifest.
 
     Returns:
         Summary dictionary with paths to all generated artifacts.
@@ -797,7 +890,14 @@ def export_all_artifacts(
     }
 
     if include_web_release:
-        web_bundle = export_web_release_bundle(conn, out_dir, target_parls)
+        web_bundle = export_web_release_bundle(
+            conn,
+            out_dir,
+            target_parls,
+            data_release_version=data_release_version,
+            source_commit=source_commit,
+            source_snapshot_dates=source_snapshot_dates,
+        )
         artifacts.update(web_bundle)
 
     return artifacts

@@ -14,6 +14,7 @@ This index provides an overview of available technical guides, methodologies, an
 | [**Data Model**](data-model.md) | Canonical DuckDB relational schema, entity relationships, views, parameterized macros, and repository storage layout. | Database administrators, analysts |
 | [**Data Sources & Provenance**](data-sources.md) | Upstream data inventory, retrieval mechanisms, licensing, copyright attribution, and historical references. | Researchers, compliance, librarians |
 | [**Analysis & Outputs**](analysis.md) | Deterministic demographic, sector, and financial metrics, export artifacts (Parquet, GeoJSON, JSON), and notebook workflows. | Policy researchers, visualizers, journalists |
+| [**Website Release Contract**](web-release.md) | Web export command, opening-day cohort, CSV grain, member service context, source years and release provenance. | Frontend developers, release maintainers |
 | [**Reproducibility Guide**](reproducibility.md) | Deterministic guarantees, virtual environment locking, network-isolated stages, and validation gates. | Auditors, peer reviewers, CI/CD |
 | [**Development Guide**](development.md) | Contributing guide, local environment setup, running tests, code formatting, linting, type-checking, and schema evolution. | Contributors, developers |
 
