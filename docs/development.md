@@ -95,7 +95,7 @@ uv add <package-name>
 uv add --dev <package-name>
 
 # Add an optional analysis dependency
-uv add --optional analysis <package-name>
+uv add --group analysis <package-name>
 
 # Remove a dependency
 uv remove <package-name>
@@ -154,6 +154,8 @@ small local fixtures, or `integration` for multiple components and orchestration
 carry `slow`. Reserve `slow` for tests whose remaining cost cannot reasonably be
 reduced. Markers are registered in `pyproject.toml` and checked strictly. No
 category is excluded by default, and parallel execution is not enabled.
+The [issue #39 measurements](testing-performance.md) record the original and
+updated full-suite and priority-module timings.
 
 Tests stay in domain-oriented files under `tests/`. Keep new fixtures small and
 offline; do not ingest the entire research dataset to test orchestration. The

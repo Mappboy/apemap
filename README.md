@@ -46,7 +46,7 @@ ACARA Registers ────────┘    (data/aped.duckdb)               
 
 ### Installation
 
-APEMAP requires Python `>= 3.10` and [uv](https://docs.astral.sh/uv/):
+APEMAP requires Python `>= 3.11` and [uv](https://docs.astral.sh/uv/):
 
 ```bash
 git clone https://github.com/Mappboy/apemap.git
