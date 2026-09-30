@@ -14,10 +14,10 @@ git clone https://github.com/Mappboy/apemap.git
 cd apemap
 
 # Install all development and runtime dependencies
-uv sync
+uv sync --all-groups
 
-# Install analysis dependencies for notebooks
-uv sync --extra analysis
+# Install prek Git hook shims
+uv run prek install
 ```
 
 ---
@@ -37,7 +37,13 @@ uv run ruff check .
 uv run ruff format --check .
 
 # 4. Run static type checking with ty
-uv run ty check
+uv run ty check apemap/
+
+# 5. Audit dependency hygiene with deptry
+uv run deptry apemap
+
+# 6. Run all Git hooks with prek
+uv run prek run --all-files
 ```
 
 To automatically format code with Ruff:

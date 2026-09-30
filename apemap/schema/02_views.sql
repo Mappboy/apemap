@@ -247,5 +247,3 @@ SELECT
     retrieved_at
 FROM school_finance_benchmarks
 ORDER BY reporting_year DESC, state_or_territory, sector, geolocation, metric;
-
-

@@ -169,5 +169,3 @@ CREATE TABLE IF NOT EXISTS school_public_funding (
     retrieved_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (institution_id, reporting_year, metric, source_dataset)
 );
-
-

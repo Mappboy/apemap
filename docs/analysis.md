@@ -93,7 +93,7 @@ uv run pytest tests/test_notebook_execution.py
 
 ## 4. Historical Exploratory Results & Static Charts
 
-Earlier versions of APEMAP generated static charts in `images/` (e.g. `school_sector_breakdown.png`, `gender_vs_party.png`, `high_school_46.png`). 
-These static charts and early exploratory notebooks have been archived under `archive/notebooks/2026-09-22/`. 
+Earlier versions of APEMAP generated static charts in `images/` (e.g. `school_sector_breakdown.png`, `gender_vs_party.png`, `high_school_46.png`).
+These static charts and early exploratory notebooks have been archived under `archive/notebooks/2026-09-22/`.
 For current, reproducible findings, rely on the numbered notebooks or `data/processed/analysis_report.json`.
 Interactive visualizations are published at [cpoole.dev](https://cpoole.dev).

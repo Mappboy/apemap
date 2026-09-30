@@ -421,5 +421,5 @@ data/
 > [!NOTE]
 > **Historical Artifact Notice**:
 > Files such as `aped.gpkg`, `aped.db`, and `*.qgz` are legacy artifacts from earlier exploratory stages of the project.
-> In early versions of APEMAP, a PostGIS database was converted to GeoPackage using `ogr2ogr -f GPKG aped.gpkg PG:"service=ape" ...`. 
+> In early versions of APEMAP, a PostGIS database was converted to GeoPackage using `ogr2ogr -f GPKG aped.gpkg PG:"service=ape" ...`.
 > The modern pipeline replaces this with native DuckDB storage (`data/aped.duckdb`) and deterministic exports (`data/processed/*.parquet` and `data/processed/*.geojson`).

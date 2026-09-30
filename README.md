@@ -106,8 +106,8 @@ Comprehensive guides, specifications, and methodologies are available in the [`d
 ## Data Quality & Research Caveats
 
 > [!WARNING]
-> This dataset was collated for research and civic analytics. Secondary schooling data is based on self-reported parliamentary biographies and automated matching against ACARA registers. For high-stakes or formal research applications, independent quality assurance of specific records is strongly recommended. 
-> 
+> This dataset was collated for research and civic analytics. Secondary schooling data is based on self-reported parliamentary biographies and automated matching against ACARA registers. For high-stakes or formal research applications, independent quality assurance of specific records is strongly recommended.
+>
 > Furthermore, historical 2021 school financial data reflects MySchool metrics for 2021 and does not represent school funding levels contemporaneous with when parliamentarians attended school decades ago. See [Research Methodology](docs/methodology.md) for detailed limitations.
 
 ---

@@ -192,8 +192,8 @@ Supplementary public datasets (such as NSW RAM or Tasmanian School Resource Pack
 
 > [!WARNING]
 > **Temporal Disconnect Warning**:
-> The financial figures reflect funding and parental contributions for the stated reporting year (e.g. 2021). They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s). 
-> 
+> The financial figures reflect funding and parental contributions for the stated reporting year (e.g. 2021). They do **not** represent funding levels contemporaneous with when parliamentarians attended school (which typically occurred between the 1960s and 2000s).
+>
 > In all analyses, modern finances are treated strictly as an indicator of modern institutional resource profiles, not historical student expenditure.
 
 ---
@@ -292,4 +292,3 @@ Users of APEMAP data should consider the following limitations:
 3. **Multi-Campus Institutions**: Certain schools operate multiple campuses across cities or states. Where specific campus details are omitted in biographies, records are linked to the primary administrative campus.
 4. **International Schools**: Parliamentarians educated overseas are matched to synthetic unconfirmed institution records and excluded from domestic sector distributions.
 5. **Descriptive, Non-Causal Nature**: Relationships between parliamentarian schooling and political outcomes are descriptive observations. They should not be interpreted as evidence of causal mechanisms.
-
