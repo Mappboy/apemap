@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import json
 import logging
+import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
 
@@ -694,6 +695,10 @@ def run_acara_ingestion(
 
     # 1. Download official ACARA datasets if requested
     if download_latest:
+        if os.environ.get("APEMAP_OFFLINE") == "1":
+            raise RuntimeError(
+                "Cannot download ACARA datasets when offline mode is enabled."
+            )
         try:
             # Download School Location 2025
             loc_xlsx = ext_dir / "School Location 2025.xlsx"

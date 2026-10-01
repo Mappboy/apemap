@@ -8,6 +8,7 @@ and ST_Read(), links divisions to canonical states, and exports canonical GeoPar
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 import re
 from typing import TYPE_CHECKING, Any
@@ -213,23 +214,28 @@ def download_and_extract_aec_boundaries(
         return shp_path
 
     zip_path = raw_dir / "AUS-March-2025-esri.zip"
-    logger.info(
-        "Downloading AEC 2025 boundary zip from %s to %s",
-        AEC_2025_SHAPEFILE_URL,
-        zip_path,
-    )
+    if not zip_path.exists() or force:
+        if os.environ.get("APEMAP_OFFLINE") == "1":
+            raise RuntimeError(
+                f"AEC boundary zip archive not found at {zip_path} and offline mode prevents downloading from {AEC_2025_SHAPEFILE_URL}."
+            )
+        logger.info(
+            "Downloading AEC 2025 boundary zip from %s to %s",
+            AEC_2025_SHAPEFILE_URL,
+            zip_path,
+        )
 
-    session = create_retry_session()
-    try:
-        response = session.get(AEC_2025_SHAPEFILE_URL, stream=True, timeout=timeout)
-        response.raise_for_status()
+        session = create_retry_session()
+        try:
+            response = session.get(AEC_2025_SHAPEFILE_URL, stream=True, timeout=timeout)
+            response.raise_for_status()
 
-        with zip_path.open("wb") as f:
-            for chunk in response.iter_content(chunk_size=65536):
-                if chunk:
-                    f.write(chunk)
-    finally:
-        session.close()
+            with zip_path.open("wb") as f:
+                for chunk in response.iter_content(chunk_size=65536):
+                    if chunk:
+                        f.write(chunk)
+        finally:
+            session.close()
 
     logger.info("Extracting %s into %s", zip_path, raw_dir)
     with zipfile.ZipFile(zip_path, "r") as zf:

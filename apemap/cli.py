@@ -39,6 +39,11 @@ from apemap.ingest.aec import run_aec_ingestion
 from apemap.ingest.funding import ingest_all_funding
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
+from apemap.inputs import (
+    DEFAULT_MANIFEST_PATH,
+    preflight_offline_inputs,
+    verify_inputs_manifest,
+)
 from apemap.validate import validate_database
 
 
@@ -54,6 +59,48 @@ ingest_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(ingest_app, name="ingest")
+
+inputs_app = typer.Typer(
+    name="inputs",
+    help="Source input archive and manifest verification commands.",
+    no_args_is_help=True,
+)
+app.add_typer(inputs_app, name="inputs")
+
+
+@inputs_app.command(name="verify")
+def verify_inputs_cmd(
+    manifest_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--manifest",
+            "-m",
+            help="Path to inputs-manifest.json (defaults to data/inputs-manifest.json).",
+        ),
+    ] = None,
+) -> None:
+    """Verify input files against the source inputs manifest."""
+    target_manifest = manifest_path or DEFAULT_MANIFEST_PATH
+    if not target_manifest.exists():
+        console.print(
+            f"[bold red]Inputs manifest not found:[/bold red] {target_manifest}"
+        )
+        raise typer.Exit(code=1)
+
+    console.print(f"[bold]Verifying inputs manifest:[/bold] {target_manifest}")
+    valid, errors = verify_inputs_manifest(target_manifest)
+    if not valid:
+        console.print(
+            f"[bold red]Manifest verification failed with {len(errors)} error(s):[/bold red]"
+        )
+        for err in errors:
+            console.print(f"  [red]- {err}[/red]")
+        raise typer.Exit(code=1)
+
+    console.print(
+        "[bold green]Inputs manifest verification passed successfully![/bold green]"
+    )
+
 
 console = Console()
 
@@ -1257,12 +1304,42 @@ def run_all_cmd(
             help="Calendar reporting year for school finances (defaults to 2021).",
         ),
     ] = 2021,
+    offline: Annotated[
+        bool,
+        typer.Option(
+            "--offline/--no-offline",
+            help="Run pipeline in strict offline mode using verified local inputs with zero network requests.",
+        ),
+    ] = False,
+    inputs_manifest: Annotated[
+        Path | None,
+        typer.Option(
+            "--inputs-manifest",
+            help="Path to inputs-manifest.json for offline input verification.",
+        ),
+    ] = None,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
     validate_supported_parliaments(parl_list)
+
+    if offline:
+        if download:
+            raise typer.BadParameter("Cannot combine --offline with --download.")
+        if refresh:
+            raise typer.BadParameter("Cannot combine --offline with --refresh.")
+        import os
+
+        os.environ["APEMAP_OFFLINE"] = "1"
+        console.print("[dim]Preflighting offline inputs against manifest...[/dim]")
+        try:
+            preflight_offline_inputs(manifest_path=inputs_manifest)
+            console.print("[green]Offline input preflight passed.[/green]")
+        except RuntimeError as err:
+            console.print(f"[bold red]Offline Preflight Failed:[/bold red] {err}")
+            raise typer.Exit(code=1)
 
     console.print(
         Panel("[bold blue]Starting Full APEMAP End-to-End Pipeline[/bold blue]")

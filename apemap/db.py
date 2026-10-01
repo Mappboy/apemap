@@ -52,11 +52,22 @@ CANONICAL_ORDER_BY = {
 }
 
 
-def ensure_spatial(conn: DuckDBPyConnection) -> None:
+def ensure_spatial(
+    conn: DuckDBPyConnection, *, allow_install: bool | None = None
+) -> None:
     """Ensure DuckDB spatial extension is loaded and configured."""
+    if allow_install is None:
+        import os
+
+        allow_install = os.environ.get("APEMAP_OFFLINE") != "1"
     try:
         conn.execute("LOAD spatial;")
-    except Exception:
+    except Exception as e:
+        if not allow_install:
+            raise RuntimeError(
+                "DuckDB spatial extension is not installed and offline mode prevents network installation. "
+                "Ensure the spatial extension is pre-installed in the DuckDB extension directory."
+            ) from e
         conn.execute("INSTALL spatial; LOAD spatial;")
     conn.execute("SET geometry_always_xy = true;")
 

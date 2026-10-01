@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
@@ -106,6 +107,10 @@ class AphClient:
                     self.cache_file,
                     e,
                 )
+        if os.environ.get("APEMAP_OFFLINE") == "1":
+            raise RuntimeError(
+                f"APH cache file not found at {self.cache_file} and offline mode prevents querying live API: {self.endpoint_url}"
+            )
 
         # Query live API
         params = {
