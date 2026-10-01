@@ -155,7 +155,7 @@ def build_historical_release(
             retrieved_at=source_time,
         )
         # Historical profile-only institutions must exist before finance/funding resolution.
-        ingest_all_funding(conn)
+        ingest_all_funding(conn, retrieved_at=source_time)
         export_parliament_coverage(conn, review_dir, finance_year=2024)
         result = build_release(
             conn=conn,

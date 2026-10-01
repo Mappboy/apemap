@@ -367,3 +367,25 @@ def test_manual_biography_does_not_verify_unresolved_institution(
                 "manual",
             )
         ]
+
+
+def test_pinned_funding_timestamp_and_historical_rows(tmp_path: Path) -> None:
+    from datetime import datetime, timezone
+    from apemap.ingest.funding import ingest_nsw_ram
+
+    path = tmp_path / "ram.csv"
+    path.write_text(
+        "school_code,school_name,reporting_year,ram_allocation_total,acara_id\n"
+        "1,Example School,2024,1000,123\n"
+    )
+    stamp = datetime(2026, 10, 2, tzinfo=timezone.utc)
+    with get_connection() as conn:
+        init_schema(conn)
+        conn.execute(
+            "INSERT INTO institutions(institution_id,acara_id,school_name,sector) VALUES ('acara-123','123','Example School','Government')"
+        )
+        for _ in range(2):
+            ingest_nsw_ram(conn, path, retrieved_at=stamp)
+        assert conn.execute(
+            "SELECT count(*), min(retrieved_at), max(retrieved_at) FROM school_public_funding"
+        ).fetchone() == (1, stamp, stamp)
