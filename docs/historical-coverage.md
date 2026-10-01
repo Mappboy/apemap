@@ -130,3 +130,9 @@ Coverage separates distinct people, assertions and institutions.
 assertions; unresolved assertions appear separately. Finance coverage counts
 schools, not attendance relationships. This evidence pass does not claim every
 member's education has been researched.
+
+The sector summaries retain their existing denominator of people with any
+recorded school name, including unconfirmed institution matches in `Other`.
+Their `known_school_denominator` can exceed the coverage report's count of people
+with verified/provisional resolution. A biography's recorded attendance and a
+resolved institutional identity are separate evidence questions.

@@ -21,9 +21,14 @@ documented Senate vacancies. Counts refer to distinct people; assertions and
 institutions have their own denominators. Recent profile/finance values describe
 their reporting years and reviewed successors, not expenditure at attendance.
 
+The existing sector summaries' `known_school_denominator` counts any recorded
+school name, including unresolved institution matches. Coverage's
+`members_with_secondary_school` requires verified/provisional resolution, so
+these totals can differ. Compare the definitions before comparing percentages.
+
 The complete 49-file release includes 171,822 annual school profiles and public
 CSV/Parquet tables. It is packaged as `apemap-historical-v0.3.0.tar.gz` in the
-[issue 30 draft dataset preview](https://github.com/Mappboy/apemap/releases/tag/preview-issue-30-v0.3.0).
+[issue 30 draft dataset preview](https://github.com/Mappboy/apemap/releases/tag/untagged-8d0230ee92e2a4bb8f17).
 The preview remains a draft for review; publication follows the main-branch
 release policy. Its asset checksum and source commit are in `report-manifest.json`.
 Draft assets require repository access until publication.

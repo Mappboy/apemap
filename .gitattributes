@@ -2,8 +2,8 @@
 data/reference/*.csv text eol=lf
 data/reference/*.json text eol=lf
 # These snapshots preserve the exact previous working files, including newlines.
-archive/reference/2026-10-02/* -text
-archive/inputs/2026-10-02/* -text
-archive/notebooks/2026-10-02/* -text
+archive/reference/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/inputs/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/notebooks/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve the exact verified release bytes and their report checksums.
-data/processed/historical/0.3.0/** -text
+data/processed/historical/0.3.0/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
