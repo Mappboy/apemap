@@ -1,0 +1,16 @@
+{
+  "checks_passed": 65,
+  "checks_run": 65,
+  "failures": [],
+  "passed": true,
+  "schema_version": "1.0.0",
+  "validated_parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ]
+}

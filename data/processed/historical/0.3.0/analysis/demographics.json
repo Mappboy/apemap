@@ -1,0 +1,326 @@
+{
+  "metadata": {
+    "finance_licence": "ACARA My School Terms of Use (July 2020)",
+    "finance_reporting_year": 2024,
+    "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+    "parliament_numbers": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "42": "2008-02-12",
+      "43": "2010-09-28",
+      "44": "2013-11-12",
+      "45": "2016-08-30",
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "42": {
+      "age_brackets": {
+        "30-39": 29,
+        "40-49": 72,
+        "50-59": 83,
+        "60-69": 35,
+        "70+": 3,
+        "Under 30": 1,
+        "Unknown": 3
+      },
+      "age_percentage_denominator": 226,
+      "average_age_at_opening": 50.1,
+      "chambers": {
+        "representatives": 150,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 67,
+        "Male": 159
+      },
+      "known_age_sample_size": 223,
+      "max_age": 72,
+      "median_age_at_opening": 51,
+      "min_age": 29,
+      "missing_age_count": 3,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 226,
+      "parliament_number": 42,
+      "parties": {
+        "AD": 4,
+        "ALP": 111,
+        "FFP": 1,
+        "GRN": 4,
+        "IND": 2,
+        "LP": 89,
+        "NP": 15
+      },
+      "reference_opening_date": "2008-02-12",
+      "total_parliamentarians": 226
+    },
+    "43": {
+      "age_brackets": {
+        "30-39": 26,
+        "40-49": 71,
+        "50-59": 89,
+        "60-69": 32,
+        "70+": 3,
+        "Under 30": 2,
+        "Unknown": 3
+      },
+      "age_percentage_denominator": 226,
+      "average_age_at_opening": 50.2,
+      "chambers": {
+        "representatives": 150,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 64,
+        "Male": 162
+      },
+      "known_age_sample_size": 223,
+      "max_age": 71,
+      "median_age_at_opening": 51,
+      "min_age": 20,
+      "missing_age_count": 3,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 226,
+      "parliament_number": 43,
+      "parties": {
+        "ALP": 104,
+        "FFP": 1,
+        "GRN": 6,
+        "IND": 5,
+        "LP": 93,
+        "NP": 17
+      },
+      "reference_opening_date": "2010-09-28",
+      "total_parliamentarians": 226
+    },
+    "44": {
+      "age_brackets": {
+        "30-39": 25,
+        "40-49": 79,
+        "50-59": 86,
+        "60-69": 25,
+        "70+": 6,
+        "Under 30": 1,
+        "Unknown": 2
+      },
+      "age_percentage_denominator": 224,
+      "average_age_at_opening": 50.1,
+      "chambers": {
+        "representatives": 150,
+        "senate": 74
+      },
+      "genders": {
+        "Female": 69,
+        "Male": 155
+      },
+      "known_age_sample_size": 222,
+      "max_age": 72,
+      "median_age_at_opening": 50.0,
+      "min_age": 23,
+      "missing_age_count": 2,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 224,
+      "parliament_number": 44,
+      "parties": {
+        "ALP": 85,
+        "Democratic Labor Party": 1,
+        "GRN": 10,
+        "IND": 2,
+        "KAP": 1,
+        "LP": 103,
+        "NP": 20,
+        "PUP ": 1,
+        "XEN": 1
+      },
+      "reference_opening_date": "2013-11-12",
+      "total_parliamentarians": 224
+    },
+    "45": {
+      "age_brackets": {
+        "30-39": 30,
+        "40-49": 80,
+        "50-59": 68,
+        "60-69": 37,
+        "70+": 3,
+        "Under 30": 1,
+        "Unknown": 7
+      },
+      "age_percentage_denominator": 226,
+      "average_age_at_opening": 50.1,
+      "chambers": {
+        "representatives": 150,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 73,
+        "Male": 153
+      },
+      "known_age_sample_size": 219,
+      "max_age": 72,
+      "median_age_at_opening": 49,
+      "min_age": 28,
+      "missing_age_count": 7,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 226,
+      "parliament_number": 45,
+      "parties": {
+        "ALP": 95,
+        "DHJP": 1,
+        "FFP": 1,
+        "GRN": 10,
+        "IND": 2,
+        "JLN": 1,
+        "KAP": 1,
+        "LDP": 1,
+        "LP": 84,
+        "NP": 22,
+        "Nick Xenophon Team": 2,
+        "PHON": 4,
+        "XEN": 2
+      },
+      "reference_opening_date": "2016-08-30",
+      "total_parliamentarians": 226
+    },
+    "46": {
+      "age_brackets": {
+        "30-39": 26,
+        "40-49": 81,
+        "50-59": 76,
+        "60-69": 34,
+        "70+": 2,
+        "Under 30": 2,
+        "Unknown": 6
+      },
+      "age_percentage_denominator": 227,
+      "average_age_at_opening": 50.2,
+      "chambers": {
+        "representatives": 151,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 83,
+        "Male": 144
+      },
+      "known_age_sample_size": 221,
+      "max_age": 74,
+      "median_age_at_opening": 50,
+      "min_age": 24,
+      "missing_age_count": 6,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 227,
+      "parliament_number": 46,
+      "parties": {
+        "ALP": 94,
+        "CA": 2,
+        "Centre Alliance": 1,
+        "GRN": 10,
+        "IND": 4,
+        "JLN": 1,
+        "KAP": 1,
+        "LP": 91,
+        "NP": 21,
+        "PHON": 2
+      },
+      "reference_opening_date": "2019-07-02",
+      "total_parliamentarians": 227
+    },
+    "47": {
+      "age_brackets": {
+        "30-39": 25,
+        "40-49": 54,
+        "50-59": 92,
+        "60-69": 35,
+        "70+": 6,
+        "Under 30": 3,
+        "Unknown": 12
+      },
+      "age_percentage_denominator": 227,
+      "average_age_at_opening": 51.4,
+      "chambers": {
+        "representatives": 151,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 101,
+        "Male": 126
+      },
+      "known_age_sample_size": 215,
+      "max_age": 77,
+      "median_age_at_opening": 52,
+      "min_age": 27,
+      "missing_age_count": 12,
+      "opening_day_current_parliamentarians": 0,
+      "opening_day_parliamentarians": 227,
+      "parliament_number": 47,
+      "parties": {
+        "ALP": 103,
+        "CA": 1,
+        "GRN": 16,
+        "IND": 11,
+        "JLN": 1,
+        "Jacqui Lambie Network": 1,
+        "KAP": 1,
+        "LP": 68,
+        "NP": 22,
+        "PHON": 2,
+        "UAP [2018]": 1
+      },
+      "reference_opening_date": "2022-07-26",
+      "total_parliamentarians": 227
+    },
+    "48": {
+      "age_brackets": {
+        "30-39": 22,
+        "40-49": 48,
+        "50-59": 81,
+        "60-69": 34,
+        "70+": 8,
+        "Under 30": 1,
+        "Unknown": 32
+      },
+      "age_percentage_denominator": 226,
+      "average_age_at_opening": 51.9,
+      "chambers": {
+        "representatives": 150,
+        "senate": 76
+      },
+      "genders": {
+        "Female": 112,
+        "Male": 114
+      },
+      "known_age_sample_size": 194,
+      "max_age": 80,
+      "median_age_at_opening": 53.0,
+      "min_age": 21,
+      "missing_age_count": 32,
+      "opening_day_current_parliamentarians": 215,
+      "opening_day_parliamentarians": 226,
+      "parliament_number": 48,
+      "parties": {
+        "ALP": 123,
+        "AV": 1,
+        "CA": 1,
+        "GRN": 11,
+        "IND": 13,
+        "JLN": 1,
+        "KAP": 1,
+        "LP": 51,
+        "NP": 19,
+        "PHON": 4,
+        "UAP [2018]": 1
+      },
+      "reference_opening_date": "2025-07-22",
+      "total_parliamentarians": 226
+    }
+  }
+}

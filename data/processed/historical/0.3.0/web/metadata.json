@@ -1,0 +1,100 @@
+{
+  "attribution": "APEMAP \u2014 Australian Parliamentarians Education Map",
+  "cohort": "opening_day",
+  "generated_at": "2026-10-01T22:23:59.813516+00:00",
+  "licensing": "Creative Commons Attribution 4.0 International / ACARA / APH",
+  "parliament_metadata": {
+    "42": {
+      "description": "42nd Parliament of Australia (2008-2010)",
+      "end_date": "2010-07-19",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2007-11-24",
+      "opening_date": "2008-02-12",
+      "parliament_number": 42,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "43": {
+      "description": "43rd Parliament of Australia (2010-2013)",
+      "end_date": "2013-08-05",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2010-08-21",
+      "opening_date": "2010-09-28",
+      "parliament_number": 43,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "44": {
+      "description": "44th Parliament of Australia (2013-2016)",
+      "end_date": "2016-05-09",
+      "expected_representatives": 150,
+      "expected_senators": 74,
+      "general_election_date": "2013-09-07",
+      "opening_date": "2013-11-12",
+      "parliament_number": 44,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "45": {
+      "description": "45th Parliament of Australia (2016-2019)",
+      "end_date": "2019-04-11",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2016-07-02",
+      "opening_date": "2016-08-30",
+      "parliament_number": 45,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "46": {
+      "description": "46th Parliament of Australia (2019-2022)",
+      "end_date": "2022-04-11",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2019-05-18",
+      "opening_date": "2019-07-02",
+      "parliament_number": 46,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "47": {
+      "description": "47th Parliament of Australia (2022-2025)",
+      "end_date": "2025-03-28",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2022-05-21",
+      "opening_date": "2022-07-26",
+      "parliament_number": 47,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "48": {
+      "description": "48th Parliament of Australia (2025-present)",
+      "end_date": null,
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2025-05-03",
+      "opening_date": "2025-07-22",
+      "parliament_number": 48,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    }
+  },
+  "parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "release_version": "0.3.0",
+  "source_commit": "19dcd581081d87cbe32eaa4ed3c0a9906cb5d5c6",
+  "supported_parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution.",
+  "web_schema_version": "1.0.0"
+}

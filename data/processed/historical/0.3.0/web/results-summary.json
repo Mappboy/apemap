@@ -1,0 +1,665 @@
+{
+  "cohort": "opening_day",
+  "parliament_metadata": {
+    "42": {
+      "description": "42nd Parliament of Australia (2008-2010)",
+      "end_date": "2010-07-19",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2007-11-24",
+      "opening_date": "2008-02-12",
+      "parliament_number": 42,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "43": {
+      "description": "43rd Parliament of Australia (2010-2013)",
+      "end_date": "2013-08-05",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2010-08-21",
+      "opening_date": "2010-09-28",
+      "parliament_number": 43,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "44": {
+      "description": "44th Parliament of Australia (2013-2016)",
+      "end_date": "2016-05-09",
+      "expected_representatives": 150,
+      "expected_senators": 74,
+      "general_election_date": "2013-09-07",
+      "opening_date": "2013-11-12",
+      "parliament_number": 44,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "45": {
+      "description": "45th Parliament of Australia (2016-2019)",
+      "end_date": "2019-04-11",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2016-07-02",
+      "opening_date": "2016-08-30",
+      "parliament_number": 45,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "46": {
+      "description": "46th Parliament of Australia (2019-2022)",
+      "end_date": "2022-04-11",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2019-05-18",
+      "opening_date": "2019-07-02",
+      "parliament_number": 46,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "47": {
+      "description": "47th Parliament of Australia (2022-2025)",
+      "end_date": "2025-03-28",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2022-05-21",
+      "opening_date": "2022-07-26",
+      "parliament_number": 47,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "48": {
+      "description": "48th Parliament of Australia (2025-present)",
+      "end_date": null,
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2025-05-03",
+      "opening_date": "2025-07-22",
+      "parliament_number": 48,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    }
+  },
+  "parliaments": {
+    "42": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -15.7,
+          "parliamentary_share": 0.043,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -18.1,
+          "parliamentary_share": 0.447,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -8.7,
+          "parliamentary_share": 0.085,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 2,
+        "combined_multiple": 5,
+        "government": 21,
+        "independent": 4,
+        "no_school_recorded": 179,
+        "other": 15
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 4.25531914893617,
+        "Combined/Multiple": 10.638297872340425,
+        "Government": 44.680851063829785,
+        "Independent": 8.51063829787234,
+        "Other": 31.914893617021278
+      },
+      "government_non_government": {
+        "government_only": 25,
+        "mixed": 1,
+        "no_school_recorded": 179,
+        "non_government_only": 6,
+        "other": 15
+      },
+      "government_non_government_percentages": {
+        "government_only": 53.19,
+        "mixed": 2.13,
+        "non_government_only": 12.77,
+        "other": 31.91
+      },
+      "known_education_count": 47,
+      "known_school_denominator": 47,
+      "mapped_schools_count": 35,
+      "missing_education_count": 179,
+      "number_of_represented_schools": 56,
+      "parliament_number": 42,
+      "represented_schools_by_sector": {
+        "Catholic": 3,
+        "Government": 29,
+        "Independent": 4,
+        "Other": 20
+      },
+      "represented_schools_government_non_government": {
+        "government": 29,
+        "non_government": 7,
+        "other": 20
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2011,
+          2025
+        ]
+      },
+      "total_parliamentarians": 226,
+      "unmapped_schools_count": 21
+    },
+    "43": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -11.5,
+          "parliamentary_share": 0.085,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -24.8,
+          "parliamentary_share": 0.38,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -7.3,
+          "parliamentary_share": 0.099,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 6,
+        "combined_multiple": 9,
+        "government": 27,
+        "independent": 7,
+        "no_school_recorded": 155,
+        "other": 22
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 8.450704225352112,
+        "Combined/Multiple": 12.676056338028168,
+        "Government": 38.028169014084504,
+        "Independent": 9.859154929577464,
+        "Other": 30.985915492957744
+      },
+      "government_non_government": {
+        "government_only": 33,
+        "mixed": 1,
+        "no_school_recorded": 155,
+        "non_government_only": 15,
+        "other": 22
+      },
+      "government_non_government_percentages": {
+        "government_only": 46.48,
+        "mixed": 1.41,
+        "non_government_only": 21.13,
+        "other": 30.99
+      },
+      "known_education_count": 71,
+      "known_school_denominator": 71,
+      "mapped_schools_count": 54,
+      "missing_education_count": 155,
+      "number_of_represented_schools": 87,
+      "parliament_number": 43,
+      "represented_schools_by_sector": {
+        "Catholic": 9,
+        "Government": 38,
+        "Independent": 8,
+        "Other": 32
+      },
+      "represented_schools_government_non_government": {
+        "government": 38,
+        "non_government": 17,
+        "other": 32
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2011,
+          2025
+        ]
+      },
+      "total_parliamentarians": 226,
+      "unmapped_schools_count": 33
+    },
+    "44": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -9.1,
+          "parliamentary_share": 0.109,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -32.1,
+          "parliamentary_share": 0.307,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -8.3,
+          "parliamentary_share": 0.089,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 11,
+        "combined_multiple": 12,
+        "government": 31,
+        "independent": 9,
+        "no_school_recorded": 123,
+        "other": 38
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 10.891089108910892,
+        "Combined/Multiple": 11.881188118811881,
+        "Government": 30.693069306930692,
+        "Independent": 8.91089108910891,
+        "Other": 37.62376237623762
+      },
+      "government_non_government": {
+        "government_only": 38,
+        "mixed": 2,
+        "no_school_recorded": 123,
+        "non_government_only": 23,
+        "other": 38
+      },
+      "government_non_government_percentages": {
+        "government_only": 37.62,
+        "mixed": 1.98,
+        "non_government_only": 22.77,
+        "other": 37.62
+      },
+      "known_education_count": 101,
+      "known_school_denominator": 101,
+      "mapped_schools_count": 66,
+      "missing_education_count": 123,
+      "number_of_represented_schools": 121,
+      "parliament_number": 44,
+      "represented_schools_by_sector": {
+        "Catholic": 15,
+        "Government": 43,
+        "Independent": 10,
+        "Other": 53
+      },
+      "represented_schools_government_non_government": {
+        "government": 43,
+        "non_government": 25,
+        "other": 53
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2011,
+          2018,
+          2025
+        ]
+      },
+      "total_parliamentarians": 224,
+      "unmapped_schools_count": 55
+    },
+    "45": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -9.5,
+          "parliamentary_share": 0.105,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -32.0,
+          "parliamentary_share": 0.308,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -7.4,
+          "parliamentary_share": 0.098,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 15,
+        "combined_multiple": 20,
+        "government": 44,
+        "independent": 14,
+        "no_school_recorded": 83,
+        "other": 50
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 10.48951048951049,
+        "Combined/Multiple": 13.986013986013987,
+        "Government": 30.76923076923077,
+        "Independent": 9.79020979020979,
+        "Other": 34.96503496503497
+      },
+      "government_non_government": {
+        "government_only": 54,
+        "mixed": 4,
+        "no_school_recorded": 83,
+        "non_government_only": 35,
+        "other": 50
+      },
+      "government_non_government_percentages": {
+        "government_only": 37.76,
+        "mixed": 2.8,
+        "non_government_only": 24.48,
+        "other": 34.97
+      },
+      "known_education_count": 143,
+      "known_school_denominator": 143,
+      "mapped_schools_count": 100,
+      "missing_education_count": 83,
+      "number_of_represented_schools": 174,
+      "parliament_number": 45,
+      "represented_schools_by_sector": {
+        "Catholic": 22,
+        "Government": 63,
+        "Independent": 18,
+        "Other": 71
+      },
+      "represented_schools_government_non_government": {
+        "government": 63,
+        "non_government": 40,
+        "other": 71
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2010,
+          2011,
+          2018,
+          2025
+        ]
+      },
+      "total_parliamentarians": 226,
+      "unmapped_schools_count": 74
+    },
+    "46": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -9.9,
+          "parliamentary_share": 0.101,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -33.5,
+          "parliamentary_share": 0.293,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -5.0,
+          "parliamentary_share": 0.122,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 19,
+        "combined_multiple": 26,
+        "government": 55,
+        "independent": 23,
+        "no_school_recorded": 39,
+        "other": 65
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 10.106382978723403,
+        "Combined/Multiple": 13.829787234042554,
+        "Government": 29.25531914893617,
+        "Independent": 12.23404255319149,
+        "Other": 34.57446808510639
+      },
+      "government_non_government": {
+        "government_only": 69,
+        "mixed": 4,
+        "no_school_recorded": 39,
+        "non_government_only": 50,
+        "other": 65
+      },
+      "government_non_government_percentages": {
+        "government_only": 36.7,
+        "mixed": 2.13,
+        "non_government_only": 26.6,
+        "other": 34.57
+      },
+      "known_education_count": 188,
+      "known_school_denominator": 188,
+      "mapped_schools_count": 124,
+      "missing_education_count": 39,
+      "number_of_represented_schools": 220,
+      "parliament_number": 46,
+      "represented_schools_by_sector": {
+        "Catholic": 23,
+        "Government": 77,
+        "Independent": 28,
+        "Other": 92
+      },
+      "represented_schools_government_non_government": {
+        "government": 77,
+        "non_government": 51,
+        "other": 92
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2010,
+          2011,
+          2018,
+          2021,
+          2025
+        ]
+      },
+      "total_parliamentarians": 227,
+      "unmapped_schools_count": 96
+    },
+    "47": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -10.2,
+          "parliamentary_share": 0.098,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -35.0,
+          "parliamentary_share": 0.278,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -3.3,
+          "parliamentary_share": 0.139,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 19,
+        "combined_multiple": 21,
+        "government": 54,
+        "independent": 27,
+        "no_school_recorded": 33,
+        "other": 73
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 9.793814432989691,
+        "Combined/Multiple": 10.824742268041238,
+        "Government": 27.835051546391753,
+        "Independent": 13.917525773195877,
+        "Other": 37.628865979381445
+      },
+      "government_non_government": {
+        "government_only": 67,
+        "mixed": 4,
+        "no_school_recorded": 33,
+        "non_government_only": 50,
+        "other": 73
+      },
+      "government_non_government_percentages": {
+        "government_only": 34.54,
+        "mixed": 2.06,
+        "non_government_only": 25.77,
+        "other": 37.63
+      },
+      "known_education_count": 194,
+      "known_school_denominator": 194,
+      "mapped_schools_count": 120,
+      "missing_education_count": 33,
+      "number_of_represented_schools": 225,
+      "parliament_number": 47,
+      "represented_schools_by_sector": {
+        "Catholic": 20,
+        "Government": 74,
+        "Independent": 30,
+        "Other": 101
+      },
+      "represented_schools_government_non_government": {
+        "government": 74,
+        "non_government": 50,
+        "other": 101
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2010,
+          2011,
+          2019,
+          2025
+        ]
+      },
+      "total_parliamentarians": 227,
+      "unmapped_schools_count": 105
+    },
+    "48": {
+      "abs_sector_benchmark": {
+        "Catholic": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -12.2,
+          "parliamentary_share": 0.078,
+          "student_enrolment_share": 0.2
+        },
+        "Government": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -33.7,
+          "parliamentary_share": 0.291,
+          "student_enrolment_share": 0.628
+        },
+        "Independent": {
+          "benchmark_source": "Schools, 2025",
+          "benchmark_year": 2025,
+          "difference_percentage_points": -3.2,
+          "parliamentary_share": 0.14,
+          "student_enrolment_share": 0.172
+        }
+      },
+      "cohort": "opening_day",
+      "detailed_sector": {
+        "catholic": 14,
+        "combined_multiple": 25,
+        "government": 52,
+        "independent": 25,
+        "no_school_recorded": 47,
+        "other": 63
+      },
+      "detailed_sector_percentages": {
+        "Catholic": 7.82122905027933,
+        "Combined/Multiple": 13.966480446927374,
+        "Government": 29.05027932960894,
+        "Independent": 13.966480446927374,
+        "Other": 35.19553072625698
+      },
+      "government_non_government": {
+        "government_only": 68,
+        "mixed": 5,
+        "no_school_recorded": 47,
+        "non_government_only": 43,
+        "other": 63
+      },
+      "government_non_government_percentages": {
+        "government_only": 37.99,
+        "mixed": 2.79,
+        "non_government_only": 24.02,
+        "other": 35.2
+      },
+      "known_education_count": 179,
+      "known_school_denominator": 179,
+      "mapped_schools_count": 113,
+      "missing_education_count": 47,
+      "number_of_represented_schools": 212,
+      "parliament_number": 48,
+      "represented_schools_by_sector": {
+        "Catholic": 17,
+        "Government": 73,
+        "Independent": 27,
+        "Other": 95
+      },
+      "represented_schools_government_non_government": {
+        "government": 73,
+        "non_government": 44,
+        "other": 95
+      },
+      "source_years": {
+        "abs_benchmark_year": 2025,
+        "profile_year": null,
+        "profile_years": [
+          2010,
+          2011,
+          2019,
+          2025
+        ]
+      },
+      "total_parliamentarians": 226,
+      "unmapped_schools_count": 99
+    }
+  },
+  "supported_parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution.",
+  "web_schema_version": "1.0.0"
+}

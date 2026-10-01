@@ -1,0 +1,882 @@
+{
+  "metadata": {
+    "finance_licence": "ACARA My School Terms of Use (July 2020)",
+    "finance_reporting_year": 2024,
+    "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+    "parliament_numbers": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "42": "2008-02-12",
+      "43": "2010-09-28",
+      "44": "2013-11-12",
+      "45": "2016-08-30",
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "42": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 3,
+            "n": 0
+          },
+          "gross_income_missing_count": 3,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 3,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 3,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 3
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 29,
+            "n": 0
+          },
+          "gross_income_missing_count": 29,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 29,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 29,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 29
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 4,
+            "n": 0
+          },
+          "gross_income_missing_count": 4,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 4,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 4,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 4
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 20,
+            "n": 0
+          },
+          "gross_income_missing_count": 20,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 20,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 20,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 20
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 56,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 56,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 56,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 56,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 42,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 56,
+      "total_schools_with_finance_data": 0
+    },
+    "43": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 9,
+            "n": 0
+          },
+          "gross_income_missing_count": 9,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 9,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 9,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 9
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 38,
+            "n": 0
+          },
+          "gross_income_missing_count": 38,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 38,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 38,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 38
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 8,
+            "n": 0
+          },
+          "gross_income_missing_count": 8,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 8,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 8,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 8
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 32,
+            "n": 0
+          },
+          "gross_income_missing_count": 32,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 32,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 32,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 32
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 87,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 87,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 87,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 87,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 43,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 87,
+      "total_schools_with_finance_data": 0
+    },
+    "44": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 15,
+            "n": 0
+          },
+          "gross_income_missing_count": 15,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 15,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 15,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 15
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 43,
+            "n": 0
+          },
+          "gross_income_missing_count": 43,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 43,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 43,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 43
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 10,
+            "n": 0
+          },
+          "gross_income_missing_count": 10,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 10,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 10,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 10
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 53,
+            "n": 0
+          },
+          "gross_income_missing_count": 53,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 53,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 53,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 53
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 121,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 121,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 121,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 121,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 44,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 121,
+      "total_schools_with_finance_data": 0
+    },
+    "45": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 22,
+            "n": 0
+          },
+          "gross_income_missing_count": 22,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 22,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 22,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 22
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 63,
+            "n": 0
+          },
+          "gross_income_missing_count": 63,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 63,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 63,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 63
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 18,
+            "n": 0
+          },
+          "gross_income_missing_count": 18,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 18,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 18,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 18
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 71,
+            "n": 0
+          },
+          "gross_income_missing_count": 71,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 71,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 71,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 71
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 174,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 174,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 174,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 174,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 45,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 174,
+      "total_schools_with_finance_data": 0
+    },
+    "46": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 23,
+            "n": 0
+          },
+          "gross_income_missing_count": 23,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 23,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 23,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 23
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 77,
+            "n": 0
+          },
+          "gross_income_missing_count": 77,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 77,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 77,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 77
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 28,
+            "n": 0
+          },
+          "gross_income_missing_count": 28,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 28,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 28,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 28
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 92,
+            "n": 0
+          },
+          "gross_income_missing_count": 92,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 92,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 92,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 92
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 220,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 220,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 220,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 220,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 46,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 220,
+      "total_schools_with_finance_data": 0
+    },
+    "47": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 20,
+            "n": 0
+          },
+          "gross_income_missing_count": 20,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 20,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 20,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 20
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 74,
+            "n": 0
+          },
+          "gross_income_missing_count": 74,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 74,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 74,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 74
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 30,
+            "n": 0
+          },
+          "gross_income_missing_count": 30,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 30,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 30,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 30
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 101,
+            "n": 0
+          },
+          "gross_income_missing_count": 101,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 101,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 101,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 101
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 225,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 225,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 225,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 225,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 47,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 225,
+      "total_schools_with_finance_data": 0
+    },
+    "48": {
+      "by_sector": {
+        "Catholic": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 17,
+            "n": 0
+          },
+          "gross_income_missing_count": 17,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 17,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 17,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 17
+        },
+        "Government": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 73,
+            "n": 0
+          },
+          "gross_income_missing_count": 73,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 73,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 73,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 73
+        },
+        "Independent": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 27,
+            "n": 0
+          },
+          "gross_income_missing_count": 27,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 27,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 27,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 27
+        },
+        "Other": {
+          "gross_income": {
+            "mean": null,
+            "median": null,
+            "missing": 95,
+            "n": 0
+          },
+          "gross_income_missing_count": 95,
+          "gross_income_per_student_avg": null,
+          "gross_income_per_student_median": null,
+          "gross_income_sample_size": 0,
+          "net_recurrent_income": {
+            "mean": null,
+            "median": null,
+            "missing": 95,
+            "n": 0
+          },
+          "net_recurrent_income_missing_count": 95,
+          "net_recurrent_income_per_student_avg": null,
+          "net_recurrent_income_per_student_median": null,
+          "net_recurrent_income_sample_size": 0,
+          "schools_in_scope": 95
+        }
+      },
+      "licence": "ACARA My School Terms of Use (July 2020)",
+      "overall_gross_income": {
+        "mean": null,
+        "median": null,
+        "missing": 212,
+        "n": 0
+      },
+      "overall_gross_income_avg": null,
+      "overall_gross_income_median": null,
+      "overall_gross_income_missing_count": 212,
+      "overall_gross_income_sample_size": 0,
+      "overall_net_recurrent_avg": null,
+      "overall_net_recurrent_income": {
+        "mean": null,
+        "median": null,
+        "missing": 212,
+        "n": 0
+      },
+      "overall_net_recurrent_income_median": null,
+      "overall_net_recurrent_income_missing_count": 212,
+      "overall_net_recurrent_income_sample_size": 0,
+      "parliament_number": 48,
+      "reporting_year": 2024,
+      "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+      "total_schools_in_scope": 212,
+      "total_schools_with_finance_data": 0
+    }
+  }
+}

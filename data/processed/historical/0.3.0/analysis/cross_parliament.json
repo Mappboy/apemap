@@ -1,0 +1,220 @@
+{
+  "by_parliament": {
+    "42": {
+      "average_age": 50.1,
+      "genders": {
+        "Female": 67,
+        "Male": 159
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 53.19,
+        "mixed": 2.13,
+        "non_government_only": 12.77,
+        "other": 31.91
+      },
+      "known_school_denominator": 47,
+      "median_age": 51,
+      "parliament_number": 42,
+      "parliamentarians_without_known_schools": 179,
+      "reference_opening_date": "2008-02-12",
+      "sector_percentages": {
+        "Catholic": 4.25531914893617,
+        "Combined/Multiple": 10.638297872340425,
+        "Government": 44.680851063829785,
+        "Independent": 8.51063829787234,
+        "Other": 31.914893617021278
+      },
+      "total_parliamentarians": 226,
+      "unique_schools_count": 56
+    },
+    "43": {
+      "average_age": 50.2,
+      "genders": {
+        "Female": 64,
+        "Male": 162
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 46.48,
+        "mixed": 1.41,
+        "non_government_only": 21.13,
+        "other": 30.99
+      },
+      "known_school_denominator": 71,
+      "median_age": 51,
+      "parliament_number": 43,
+      "parliamentarians_without_known_schools": 155,
+      "reference_opening_date": "2010-09-28",
+      "sector_percentages": {
+        "Catholic": 8.450704225352112,
+        "Combined/Multiple": 12.676056338028168,
+        "Government": 38.028169014084504,
+        "Independent": 9.859154929577464,
+        "Other": 30.985915492957744
+      },
+      "total_parliamentarians": 226,
+      "unique_schools_count": 87
+    },
+    "44": {
+      "average_age": 50.1,
+      "genders": {
+        "Female": 69,
+        "Male": 155
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 37.62,
+        "mixed": 1.98,
+        "non_government_only": 22.77,
+        "other": 37.62
+      },
+      "known_school_denominator": 101,
+      "median_age": 50.0,
+      "parliament_number": 44,
+      "parliamentarians_without_known_schools": 123,
+      "reference_opening_date": "2013-11-12",
+      "sector_percentages": {
+        "Catholic": 10.891089108910892,
+        "Combined/Multiple": 11.881188118811881,
+        "Government": 30.693069306930692,
+        "Independent": 8.91089108910891,
+        "Other": 37.62376237623762
+      },
+      "total_parliamentarians": 224,
+      "unique_schools_count": 121
+    },
+    "45": {
+      "average_age": 50.1,
+      "genders": {
+        "Female": 73,
+        "Male": 153
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 37.76,
+        "mixed": 2.8,
+        "non_government_only": 24.48,
+        "other": 34.97
+      },
+      "known_school_denominator": 143,
+      "median_age": 49,
+      "parliament_number": 45,
+      "parliamentarians_without_known_schools": 83,
+      "reference_opening_date": "2016-08-30",
+      "sector_percentages": {
+        "Catholic": 10.48951048951049,
+        "Combined/Multiple": 13.986013986013987,
+        "Government": 30.76923076923077,
+        "Independent": 9.79020979020979,
+        "Other": 34.96503496503497
+      },
+      "total_parliamentarians": 226,
+      "unique_schools_count": 174
+    },
+    "46": {
+      "average_age": 50.2,
+      "genders": {
+        "Female": 83,
+        "Male": 144
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 36.7,
+        "mixed": 2.13,
+        "non_government_only": 26.6,
+        "other": 34.57
+      },
+      "known_school_denominator": 188,
+      "median_age": 50,
+      "parliament_number": 46,
+      "parliamentarians_without_known_schools": 39,
+      "reference_opening_date": "2019-07-02",
+      "sector_percentages": {
+        "Catholic": 10.106382978723403,
+        "Combined/Multiple": 13.829787234042554,
+        "Government": 29.25531914893617,
+        "Independent": 12.23404255319149,
+        "Other": 34.57446808510639
+      },
+      "total_parliamentarians": 227,
+      "unique_schools_count": 220
+    },
+    "47": {
+      "average_age": 51.4,
+      "genders": {
+        "Female": 101,
+        "Male": 126
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 34.54,
+        "mixed": 2.06,
+        "non_government_only": 25.77,
+        "other": 37.63
+      },
+      "known_school_denominator": 194,
+      "median_age": 52,
+      "parliament_number": 47,
+      "parliamentarians_without_known_schools": 33,
+      "reference_opening_date": "2022-07-26",
+      "sector_percentages": {
+        "Catholic": 9.793814432989691,
+        "Combined/Multiple": 10.824742268041238,
+        "Government": 27.835051546391753,
+        "Independent": 13.917525773195877,
+        "Other": 37.628865979381445
+      },
+      "total_parliamentarians": 227,
+      "unique_schools_count": 225
+    },
+    "48": {
+      "average_age": 51.9,
+      "genders": {
+        "Female": 112,
+        "Male": 114
+      },
+      "gov_non_gov_percentages": {
+        "government_only": 37.99,
+        "mixed": 2.79,
+        "non_government_only": 24.02,
+        "other": 35.2
+      },
+      "known_school_denominator": 179,
+      "median_age": 53.0,
+      "parliament_number": 48,
+      "parliamentarians_without_known_schools": 47,
+      "reference_opening_date": "2025-07-22",
+      "sector_percentages": {
+        "Catholic": 7.82122905027933,
+        "Combined/Multiple": 13.966480446927374,
+        "Government": 29.05027932960894,
+        "Independent": 13.966480446927374,
+        "Other": 35.19553072625698
+      },
+      "total_parliamentarians": 226,
+      "unique_schools_count": 212
+    }
+  },
+  "parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "schema_version": "1.0",
+  "trends": {
+    "baseline_parliament": 42,
+    "gov_non_gov_percentage_point_shifts": {
+      "government_only": -15.2,
+      "mixed": 0.66,
+      "non_government_only": 11.25,
+      "other": 3.29
+    },
+    "latest_parliament": 48,
+    "sector_percentage_point_shifts": {
+      "Catholic": 3.57,
+      "Combined/Multiple": 3.33,
+      "Government": -15.63,
+      "Independent": 5.46,
+      "Other": 3.28
+    }
+  }
+}

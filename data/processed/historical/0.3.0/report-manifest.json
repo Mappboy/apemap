@@ -1,0 +1,159 @@
+{
+  "fresh_replay_identical": true,
+  "full_release_asset": "apemap-historical-v0.3.0.tar.gz",
+  "full_release_files": 49,
+  "full_release_sha256": "48efea9e49556d766bf496d857d037b90dc96063b9e0d86a50a38f534fbd97fc",
+  "generated_at": "2026-10-01T22:23:59.813516+00:00",
+  "included_artifacts": {
+    "analysis/cross_parliament.json": {
+      "sha256": "a819ac4587b1a70b415589c47a807956ecf299aac9f2173e6a7d8f0d5a817f31",
+      "size_bytes": 6281
+    },
+    "analysis/demographics.json": {
+      "sha256": "f234c02dee6f896d98c49719bcca7aec6fc8d9737558405fbaf3a6a8b371b236",
+      "size_bytes": 7894
+    },
+    "analysis/education_sectors.json": {
+      "sha256": "f3fef34f161299f7f5c80e05cbc98096ed286762b207384d23837c57cdfa3f70",
+      "size_bytes": 26507
+    },
+    "analysis/metadata.json": {
+      "sha256": "5a23e6ba7119b265541604c78caa28ab9dad37e606f34ea754a1efe9ae26dbea",
+      "size_bytes": 561
+    },
+    "analysis/parliament_comparison.json": {
+      "sha256": "2a7228ec405ea5ea47b8d4bb8db926bad72c5d92cefec8e93c2b6e9d43516d55",
+      "size_bytes": 3841
+    },
+    "analysis/parliament_coverage.csv": {
+      "sha256": "0632c1d49c1f403c0084729e1ff39e5891934f13b741e4aa924277c09d50be5d",
+      "size_bytes": 905
+    },
+    "analysis/parliament_coverage.json": {
+      "sha256": "0487e5002bb1b0a4daae315cc97f18ed74ac0f8efdd56986c980552c301096d1",
+      "size_bytes": 5123
+    },
+    "analysis/party_sectors.json": {
+      "sha256": "c9a0e3694be6591bcd4d2f538d3fa6111abc15f74079c02d2d9fdc8ed234a299",
+      "size_bytes": 78652
+    },
+    "analysis/school_finance.json": {
+      "sha256": "9e28c19a14dfad1933339b882a9b91b5d1a844c3cba5a983a28ed8c3046d4d45",
+      "size_bytes": 29691
+    },
+    "analysis/shared_schools.json": {
+      "sha256": "f9621cbf986780d005bbc1be4111aced695ebfa9289eddaad59191d82161bff2",
+      "size_bytes": 86907
+    },
+    "data/member_education.csv": {
+      "sha256": "0da0aebd63f45f5c1d713f99887d1254f7a994c81bdcfb5004081e93f14a9608",
+      "size_bytes": 125260
+    },
+    "data/members.csv": {
+      "sha256": "d50a4c1e4bf550f87a227ff2a39a469e848a8c994580e7ebc16d5c57f66e1756",
+      "size_bytes": 44602
+    },
+    "data/parliament_metadata.csv": {
+      "sha256": "2bf02d31dad009876f59a317a4b173d9e230297ebf0d49692510ef73705d96f3",
+      "size_bytes": 1795
+    },
+    "data/parliament_service.csv": {
+      "sha256": "0e9fb061317d24f9d00a48cd6c460e2faafd71a9e6e4e8a80ecc18ba59e1fd23",
+      "size_bytes": 435850
+    },
+    "input-manifest.json": {
+      "sha256": "df044a8b6e8ee3b4e18595bfd0de83c71a43d39f5d1aeef16bd964d4ab9a9ed6",
+      "size_bytes": 6264
+    },
+    "review/coverage_metrics.json": {
+      "sha256": "6c158e907b237acc073f2eb612352e8624531755d069538c0e7c219c89fd856c",
+      "size_bytes": 2826
+    },
+    "review/historical_education_review.csv": {
+      "sha256": "49d2b6e1926f66efb3d0ad0df5020fb2232d3217748397732b82041ca22a3523",
+      "size_bytes": 283166
+    },
+    "review/historical_service_review.csv": {
+      "sha256": "8eca3f966ab0381124d5443c4415e1b652777ea94ac7c2adf75319e5e8c66e1d",
+      "size_bytes": 988
+    },
+    "review/parliament_coverage.csv": {
+      "sha256": "0632c1d49c1f403c0084729e1ff39e5891934f13b741e4aa924277c09d50be5d",
+      "size_bytes": 905
+    },
+    "review/parliament_coverage.json": {
+      "sha256": "0487e5002bb1b0a4daae315cc97f18ed74ac0f8efdd56986c980552c301096d1",
+      "size_bytes": 5123
+    },
+    "review/unmatched_schools.csv": {
+      "sha256": "11eb9288de6dc0e2927ded877684626a921d11d392f71b0e42f803e60142e22c",
+      "size_bytes": 269356
+    },
+    "review/upstream_profile_review.csv": {
+      "sha256": "03ecb28d43bd55e7d979baa1507ce301384e71903fd397aa6b9daefbe9c8d323",
+      "size_bytes": 313
+    },
+    "web/assertions.json": {
+      "sha256": "16ced630a00d3bf635bb4dabc9b25ec0ce3705d48c6beef3868000c99d1573fb",
+      "size_bytes": 216
+    },
+    "web/members.json": {
+      "sha256": "2d327c707f412b69534eecc728b27ca34e9206ac8885b6757a955018c67e37e7",
+      "size_bytes": 1189022
+    },
+    "web/metadata.json": {
+      "sha256": "e0862add8c3bef3c7be05d5e9cfd17567fa255d888376b22668920bd8991eb1d",
+      "size_bytes": 4213
+    },
+    "web/parliament_42_combined.geojson": {
+      "sha256": "5cc3289284b3f9545d703951d3d9465c426557defa15c6f63fe1f89412673daa",
+      "size_bytes": 106200
+    },
+    "web/parliament_43_combined.geojson": {
+      "sha256": "686f5bd15ab66f26bdd18f03331ae36468f728d9c61a9f77d4bf7e85ae80dfdf",
+      "size_bytes": 162141
+    },
+    "web/parliament_44_combined.geojson": {
+      "sha256": "51b737db4fdae3e6a714a367e5dda335276abaecb6d1aadbfce34d59c7852972",
+      "size_bytes": 198590
+    },
+    "web/parliament_45_combined.geojson": {
+      "sha256": "44cd099ab7e426d43d986ebdf7ecea2f1cd11ee64adc809797c23e92390d80df",
+      "size_bytes": 300409
+    },
+    "web/parliament_46_combined.geojson": {
+      "sha256": "d431f077f16d31270e3b772caf431389e1da8ff958c9728200ae63a18bfc4cc8",
+      "size_bytes": 377226
+    },
+    "web/parliament_47_combined.geojson": {
+      "sha256": "dd27eb4dd66d8efd48fd6cf18fea906af928000bf346f83e562d8f0e22cd88cf",
+      "size_bytes": 366427
+    },
+    "web/parliament_48_combined.geojson": {
+      "sha256": "cb12332fcb038aa53fe49db9ff7fcdf9f598fa54d8462020d4dc043fd40fe6b2",
+      "size_bytes": 348641
+    },
+    "web/results-summary.json": {
+      "sha256": "eedfcd6bb04da3963ff64a266e0399a58b389998db1b97b93ec2a920bd9fda63",
+      "size_bytes": 21339
+    },
+    "web/schools.geojson": {
+      "sha256": "404ab1c86a9c2fae0dc432c49123ef6f662551a0336c6311452c103b77d782d6",
+      "size_bytes": 657716
+    }
+  },
+  "inventory_excludes": [
+    "README.md",
+    "report-manifest.json"
+  ],
+  "release_version": "0.3.0",
+  "source_commit": "19dcd581081d87cbe32eaa4ed3c0a9906cb5d5c6",
+  "verification": {
+    "checks_passed": 213,
+    "checks_run": 213,
+    "errors": [],
+    "release_version": "0.3.0",
+    "valid": true,
+    "verified_files_count": 49
+  }
+}

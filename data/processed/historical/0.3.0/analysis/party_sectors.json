@@ -1,0 +1,2422 @@
+{
+  "metadata": {
+    "finance_licence": "ACARA My School Terms of Use (July 2020)",
+    "finance_reporting_year": 2024,
+    "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+    "parliament_numbers": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "42": "2008-02-12",
+      "43": "2010-09-28",
+      "44": "2013-11-12",
+      "45": "2016-08-30",
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "42": {
+      "cohort": "opening_day",
+      "parliament_number": 42,
+      "parties": {
+        "AD": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 4,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 4,
+          "party": "AD",
+          "party_name": "Australian Democrats",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 4,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 4,
+            "Other": 0
+          }
+        },
+        "ALP": {
+          "government_non_government": {
+            "government_only": 16,
+            "mixed": 1,
+            "no_school_recorded": 84,
+            "non_government_only": 3,
+            "other": 7
+          },
+          "government_non_government_percentages": {
+            "government_only": 59.26,
+            "mixed": 3.7,
+            "non_government_only": 11.11,
+            "other": 25.93
+          },
+          "known_school_denominator": 27,
+          "parliamentarians_without_known_schools": 84,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 7.41,
+            "Combined/Multiple": 3.7,
+            "Government": 59.26,
+            "Independent": 3.7,
+            "Other": 25.93
+          },
+          "total_parliamentarians": 111,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 2,
+            "Combined/Multiple": 1,
+            "Government": 16,
+            "Independent": 1,
+            "No School Recorded": 84,
+            "Other": 7
+          }
+        },
+        "FFP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "FFP",
+          "party_name": "Family First",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 3,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 3,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 4,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 3,
+            "Other": 0
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 2,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 2,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 2,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 7,
+            "mixed": 0,
+            "no_school_recorded": 72,
+            "non_government_only": 3,
+            "other": 7
+          },
+          "government_non_government_percentages": {
+            "government_only": 41.18,
+            "mixed": 0.0,
+            "non_government_only": 17.65,
+            "other": 41.18
+          },
+          "known_school_denominator": 17,
+          "parliamentarians_without_known_schools": 72,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 23.53,
+            "Government": 17.65,
+            "Independent": 17.65,
+            "Other": 41.18
+          },
+          "total_parliamentarians": 89,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 4,
+            "Government": 3,
+            "Independent": 3,
+            "No School Recorded": 72,
+            "Other": 7
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 13,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 50.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 50.0
+          },
+          "known_school_denominator": 2,
+          "parliamentarians_without_known_schools": 13,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 50.0,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 15,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 13,
+            "Other": 1
+          }
+        }
+      },
+      "total_parliamentarians": 226
+    },
+    "43": {
+      "cohort": "opening_day",
+      "parliament_number": 43,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 20,
+            "mixed": 1,
+            "no_school_recorded": 70,
+            "non_government_only": 4,
+            "other": 9
+          },
+          "government_non_government_percentages": {
+            "government_only": 58.82,
+            "mixed": 2.94,
+            "non_government_only": 11.76,
+            "other": 26.47
+          },
+          "known_school_denominator": 34,
+          "parliamentarians_without_known_schools": 70,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 8.82,
+            "Combined/Multiple": 5.88,
+            "Government": 55.88,
+            "Independent": 2.94,
+            "Other": 26.47
+          },
+          "total_parliamentarians": 104,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 3,
+            "Combined/Multiple": 2,
+            "Government": 19,
+            "Independent": 1,
+            "No School Recorded": 70,
+            "Other": 9
+          }
+        },
+        "FFP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "FFP",
+          "party_name": "Family First",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 2,
+            "mixed": 0,
+            "no_school_recorded": 3,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 66.67,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 33.33
+          },
+          "known_school_denominator": 3,
+          "parliamentarians_without_known_schools": 3,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 66.67,
+            "Independent": 0.0,
+            "Other": 33.33
+          },
+          "total_parliamentarians": 6,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 2,
+            "Independent": 0,
+            "No School Recorded": 3,
+            "Other": 1
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 4,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 4,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 5,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 4,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 8,
+            "mixed": 0,
+            "no_school_recorded": 66,
+            "non_government_only": 10,
+            "other": 9
+          },
+          "government_non_government_percentages": {
+            "government_only": 29.63,
+            "mixed": 0.0,
+            "non_government_only": 37.04,
+            "other": 33.33
+          },
+          "known_school_denominator": 27,
+          "parliamentarians_without_known_schools": 66,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 11.11,
+            "Combined/Multiple": 18.52,
+            "Government": 14.81,
+            "Independent": 22.22,
+            "Other": 33.33
+          },
+          "total_parliamentarians": 93,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 3,
+            "Combined/Multiple": 5,
+            "Government": 4,
+            "Independent": 6,
+            "No School Recorded": 66,
+            "Other": 9
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 3,
+            "mixed": 0,
+            "no_school_recorded": 11,
+            "non_government_only": 0,
+            "other": 3
+          },
+          "government_non_government_percentages": {
+            "government_only": 50.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 50.0
+          },
+          "known_school_denominator": 6,
+          "parliamentarians_without_known_schools": 11,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 16.67,
+            "Government": 33.33,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 17,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 2,
+            "Independent": 0,
+            "No School Recorded": 11,
+            "Other": 3
+          }
+        }
+      },
+      "total_parliamentarians": 226
+    },
+    "44": {
+      "cohort": "opening_day",
+      "parliament_number": 44,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 22,
+            "mixed": 1,
+            "no_school_recorded": 43,
+            "non_government_only": 6,
+            "other": 13
+          },
+          "government_non_government_percentages": {
+            "government_only": 52.38,
+            "mixed": 2.38,
+            "non_government_only": 14.29,
+            "other": 30.95
+          },
+          "known_school_denominator": 42,
+          "parliamentarians_without_known_schools": 43,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 11.9,
+            "Combined/Multiple": 4.76,
+            "Government": 50.0,
+            "Independent": 2.38,
+            "Other": 30.95
+          },
+          "total_parliamentarians": 85,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 5,
+            "Combined/Multiple": 2,
+            "Government": 21,
+            "Independent": 1,
+            "No School Recorded": 43,
+            "Other": 13
+          }
+        },
+        "Democratic Labor Party": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "Democratic Labor Party",
+          "party_name": "Democratic Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 2,
+            "mixed": 0,
+            "no_school_recorded": 5,
+            "non_government_only": 1,
+            "other": 2
+          },
+          "government_non_government_percentages": {
+            "government_only": 40.0,
+            "mixed": 0.0,
+            "non_government_only": 20.0,
+            "other": 40.0
+          },
+          "known_school_denominator": 5,
+          "parliamentarians_without_known_schools": 5,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 20.0,
+            "Combined/Multiple": 0.0,
+            "Government": 40.0,
+            "Independent": 0.0,
+            "Other": 40.0
+          },
+          "total_parliamentarians": 10,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 0,
+            "Government": 2,
+            "Independent": 0,
+            "No School Recorded": 5,
+            "Other": 2
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 1,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "KAP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "KAP",
+          "party_name": "Katter's Australian Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 10,
+            "mixed": 1,
+            "no_school_recorded": 61,
+            "non_government_only": 13,
+            "other": 18
+          },
+          "government_non_government_percentages": {
+            "government_only": 23.81,
+            "mixed": 2.38,
+            "non_government_only": 30.95,
+            "other": 42.86
+          },
+          "known_school_denominator": 42,
+          "parliamentarians_without_known_schools": 61,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 9.52,
+            "Combined/Multiple": 19.05,
+            "Government": 11.9,
+            "Independent": 16.67,
+            "Other": 42.86
+          },
+          "total_parliamentarians": 103,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 4,
+            "Combined/Multiple": 8,
+            "Government": 5,
+            "Independent": 7,
+            "No School Recorded": 61,
+            "Other": 18
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 4,
+            "mixed": 0,
+            "no_school_recorded": 9,
+            "non_government_only": 2,
+            "other": 5
+          },
+          "government_non_government_percentages": {
+            "government_only": 36.36,
+            "mixed": 0.0,
+            "non_government_only": 18.18,
+            "other": 45.45
+          },
+          "known_school_denominator": 11,
+          "parliamentarians_without_known_schools": 9,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 9.09,
+            "Combined/Multiple": 9.09,
+            "Government": 27.27,
+            "Independent": 9.09,
+            "Other": 45.45
+          },
+          "total_parliamentarians": 20,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 1,
+            "Government": 3,
+            "Independent": 1,
+            "No School Recorded": 9,
+            "Other": 5
+          }
+        },
+        "PUP ": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "PUP ",
+          "party_name": "Palmer United Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "XEN": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "XEN",
+          "party_name": "Nick Xenophon Team",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        }
+      },
+      "total_parliamentarians": 224
+    },
+    "45": {
+      "cohort": "opening_day",
+      "parliament_number": 45,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 33,
+            "mixed": 1,
+            "no_school_recorded": 34,
+            "non_government_only": 9,
+            "other": 18
+          },
+          "government_non_government_percentages": {
+            "government_only": 54.1,
+            "mixed": 1.64,
+            "non_government_only": 14.75,
+            "other": 29.51
+          },
+          "known_school_denominator": 61,
+          "parliamentarians_without_known_schools": 34,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 11.48,
+            "Combined/Multiple": 8.2,
+            "Government": 47.54,
+            "Independent": 3.28,
+            "Other": 29.51
+          },
+          "total_parliamentarians": 95,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 7,
+            "Combined/Multiple": 5,
+            "Government": 29,
+            "Independent": 2,
+            "No School Recorded": 34,
+            "Other": 18
+          }
+        },
+        "DHJP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "DHJP",
+          "party_name": "Derryn Hinch's Justice Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "FFP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "FFP",
+          "party_name": "Family First",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 3,
+            "mixed": 0,
+            "no_school_recorded": 3,
+            "non_government_only": 1,
+            "other": 3
+          },
+          "government_non_government_percentages": {
+            "government_only": 42.86,
+            "mixed": 0.0,
+            "non_government_only": 14.29,
+            "other": 42.86
+          },
+          "known_school_denominator": 7,
+          "parliamentarians_without_known_schools": 3,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 14.29,
+            "Combined/Multiple": 14.29,
+            "Government": 28.57,
+            "Independent": 0.0,
+            "Other": 42.86
+          },
+          "total_parliamentarians": 10,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 1,
+            "Government": 2,
+            "Independent": 0,
+            "No School Recorded": 3,
+            "Other": 3
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 1,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "JLN": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "JLN",
+          "party_name": "Jacqui Lambie Network",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "KAP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "KAP",
+          "party_name": "Katter's Australian Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LDP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "LDP",
+          "party_name": "Liberal Democratic Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 13,
+            "mixed": 1,
+            "no_school_recorded": 29,
+            "non_government_only": 19,
+            "other": 22
+          },
+          "government_non_government_percentages": {
+            "government_only": 23.64,
+            "mixed": 1.82,
+            "non_government_only": 34.55,
+            "other": 40.0
+          },
+          "known_school_denominator": 55,
+          "parliamentarians_without_known_schools": 29,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 10.91,
+            "Combined/Multiple": 14.55,
+            "Government": 16.36,
+            "Independent": 18.18,
+            "Other": 40.0
+          },
+          "total_parliamentarians": 84,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 6,
+            "Combined/Multiple": 8,
+            "Government": 9,
+            "Independent": 10,
+            "No School Recorded": 29,
+            "Other": 22
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 4,
+            "mixed": 1,
+            "no_school_recorded": 7,
+            "non_government_only": 4,
+            "other": 6
+          },
+          "government_non_government_percentages": {
+            "government_only": 26.67,
+            "mixed": 6.67,
+            "non_government_only": 26.67,
+            "other": 40.0
+          },
+          "known_school_denominator": 15,
+          "parliamentarians_without_known_schools": 7,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 6.67,
+            "Combined/Multiple": 20.0,
+            "Government": 20.0,
+            "Independent": 13.33,
+            "Other": 40.0
+          },
+          "total_parliamentarians": 22,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 3,
+            "Government": 3,
+            "Independent": 2,
+            "No School Recorded": 7,
+            "Other": 6
+          }
+        },
+        "Nick Xenophon Team": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 1,
+          "party": "Nick Xenophon Team",
+          "party_name": "Nick Xenophon Team",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "PHON": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 1,
+            "no_school_recorded": 2,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 50.0,
+            "non_government_only": 0.0,
+            "other": 50.0
+          },
+          "known_school_denominator": 2,
+          "parliamentarians_without_known_schools": 2,
+          "party": "PHON",
+          "party_name": "Pauline Hanson's One Nation",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 50.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 4,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 2,
+            "Other": 1
+          }
+        },
+        "XEN": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 2,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 2,
+          "party": "XEN",
+          "party_name": "Nick Xenophon Team",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 2,
+            "Other": 0
+          }
+        }
+      },
+      "total_parliamentarians": 226
+    },
+    "46": {
+      "cohort": "opening_day",
+      "parliament_number": 46,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 39,
+            "mixed": 1,
+            "no_school_recorded": 16,
+            "non_government_only": 14,
+            "other": 24
+          },
+          "government_non_government_percentages": {
+            "government_only": 50.0,
+            "mixed": 1.28,
+            "non_government_only": 17.95,
+            "other": 30.77
+          },
+          "known_school_denominator": 78,
+          "parliamentarians_without_known_schools": 16,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 10.26,
+            "Combined/Multiple": 7.69,
+            "Government": 43.59,
+            "Independent": 7.69,
+            "Other": 30.77
+          },
+          "total_parliamentarians": 94,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 8,
+            "Combined/Multiple": 6,
+            "Government": 34,
+            "Independent": 6,
+            "No School Recorded": 16,
+            "Other": 24
+          }
+        },
+        "CA": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 1,
+          "party": "CA",
+          "party_name": "Centre Alliance",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "Centre Alliance": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "Centre Alliance",
+          "party_name": "Centre Alliance",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 3,
+            "mixed": 0,
+            "no_school_recorded": 2,
+            "non_government_only": 1,
+            "other": 4
+          },
+          "government_non_government_percentages": {
+            "government_only": 37.5,
+            "mixed": 0.0,
+            "non_government_only": 12.5,
+            "other": 50.0
+          },
+          "known_school_denominator": 8,
+          "parliamentarians_without_known_schools": 2,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 12.5,
+            "Combined/Multiple": 12.5,
+            "Government": 25.0,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 10,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 1,
+            "Government": 2,
+            "Independent": 0,
+            "No School Recorded": 2,
+            "Other": 4
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 3,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 3,
+          "parliamentarians_without_known_schools": 1,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 33.33,
+            "Government": 0.0,
+            "Independent": 66.67,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 4,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 2,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "JLN": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "JLN",
+          "party_name": "Jacqui Lambie Network",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "KAP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "KAP",
+          "party_name": "Katter's Australian Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 20,
+            "mixed": 1,
+            "no_school_recorded": 17,
+            "non_government_only": 26,
+            "other": 27
+          },
+          "government_non_government_percentages": {
+            "government_only": 27.03,
+            "mixed": 1.35,
+            "non_government_only": 35.14,
+            "other": 36.49
+          },
+          "known_school_denominator": 74,
+          "parliamentarians_without_known_schools": 17,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 12.16,
+            "Combined/Multiple": 14.86,
+            "Government": 18.92,
+            "Independent": 17.57,
+            "Other": 36.49
+          },
+          "total_parliamentarians": 91,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 9,
+            "Combined/Multiple": 11,
+            "Government": 14,
+            "Independent": 13,
+            "No School Recorded": 17,
+            "Other": 27
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 5,
+            "mixed": 1,
+            "no_school_recorded": 1,
+            "non_government_only": 5,
+            "other": 9
+          },
+          "government_non_government_percentages": {
+            "government_only": 25.0,
+            "mixed": 5.0,
+            "non_government_only": 25.0,
+            "other": 45.0
+          },
+          "known_school_denominator": 20,
+          "parliamentarians_without_known_schools": 1,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 5.0,
+            "Combined/Multiple": 25.0,
+            "Government": 15.0,
+            "Independent": 10.0,
+            "Other": 45.0
+          },
+          "total_parliamentarians": 21,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 5,
+            "Government": 3,
+            "Independent": 2,
+            "No School Recorded": 1,
+            "Other": 9
+          }
+        },
+        "PHON": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 1,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 50.0,
+            "non_government_only": 0.0,
+            "other": 50.0
+          },
+          "known_school_denominator": 2,
+          "parliamentarians_without_known_schools": 0,
+          "party": "PHON",
+          "party_name": "Pauline Hanson's One Nation",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 50.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 1
+          }
+        }
+      },
+      "total_parliamentarians": 227
+    },
+    "47": {
+      "cohort": "opening_day",
+      "parliament_number": 47,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 41,
+            "mixed": 1,
+            "no_school_recorded": 14,
+            "non_government_only": 16,
+            "other": 31
+          },
+          "government_non_government_percentages": {
+            "government_only": 46.07,
+            "mixed": 1.12,
+            "non_government_only": 17.98,
+            "other": 34.83
+          },
+          "known_school_denominator": 89,
+          "parliamentarians_without_known_schools": 14,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 8.99,
+            "Combined/Multiple": 7.87,
+            "Government": 39.33,
+            "Independent": 8.99,
+            "Other": 34.83
+          },
+          "total_parliamentarians": 103,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 8,
+            "Combined/Multiple": 7,
+            "Government": 35,
+            "Independent": 8,
+            "No School Recorded": 14,
+            "Other": 31
+          }
+        },
+        "CA": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "CA",
+          "party_name": "Centre Alliance",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 3,
+            "mixed": 0,
+            "no_school_recorded": 5,
+            "non_government_only": 2,
+            "other": 6
+          },
+          "government_non_government_percentages": {
+            "government_only": 27.27,
+            "mixed": 0.0,
+            "non_government_only": 18.18,
+            "other": 54.55
+          },
+          "known_school_denominator": 11,
+          "parliamentarians_without_known_schools": 5,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 18.18,
+            "Government": 18.18,
+            "Independent": 9.09,
+            "Other": 54.55
+          },
+          "total_parliamentarians": 16,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 2,
+            "Government": 2,
+            "Independent": 1,
+            "No School Recorded": 5,
+            "Other": 6
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 2,
+            "non_government_only": 5,
+            "other": 3
+          },
+          "government_non_government_percentages": {
+            "government_only": 11.11,
+            "mixed": 0.0,
+            "non_government_only": 55.56,
+            "other": 33.33
+          },
+          "known_school_denominator": 9,
+          "parliamentarians_without_known_schools": 2,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 11.11,
+            "Combined/Multiple": 11.11,
+            "Government": 11.11,
+            "Independent": 33.33,
+            "Other": 33.33
+          },
+          "total_parliamentarians": 11,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 1,
+            "Government": 1,
+            "Independent": 3,
+            "No School Recorded": 2,
+            "Other": 3
+          }
+        },
+        "JLN": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "JLN",
+          "party_name": "Jacqui Lambie Network",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "Jacqui Lambie Network": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "Jacqui Lambie Network",
+          "party_name": "Jacqui Lambie Network",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "KAP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "KAP",
+          "party_name": "Katter's Australian Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 15,
+            "mixed": 1,
+            "no_school_recorded": 7,
+            "non_government_only": 21,
+            "other": 24
+          },
+          "government_non_government_percentages": {
+            "government_only": 24.59,
+            "mixed": 1.64,
+            "non_government_only": 34.43,
+            "other": 39.34
+          },
+          "known_school_denominator": 61,
+          "parliamentarians_without_known_schools": 7,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 14.75,
+            "Combined/Multiple": 6.56,
+            "Government": 19.67,
+            "Independent": 19.67,
+            "Other": 39.34
+          },
+          "total_parliamentarians": 68,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 9,
+            "Combined/Multiple": 4,
+            "Government": 12,
+            "Independent": 12,
+            "No School Recorded": 7,
+            "Other": 24
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 5,
+            "mixed": 1,
+            "no_school_recorded": 3,
+            "non_government_only": 5,
+            "other": 8
+          },
+          "government_non_government_percentages": {
+            "government_only": 26.32,
+            "mixed": 5.26,
+            "non_government_only": 26.32,
+            "other": 42.11
+          },
+          "known_school_denominator": 19,
+          "parliamentarians_without_known_schools": 3,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 5.26,
+            "Combined/Multiple": 21.05,
+            "Government": 15.79,
+            "Independent": 15.79,
+            "Other": 42.11
+          },
+          "total_parliamentarians": 22,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 4,
+            "Government": 3,
+            "Independent": 3,
+            "No School Recorded": 3,
+            "Other": 8
+          }
+        },
+        "PHON": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 1,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 50.0,
+            "non_government_only": 0.0,
+            "other": 50.0
+          },
+          "known_school_denominator": 2,
+          "parliamentarians_without_known_schools": 0,
+          "party": "PHON",
+          "party_name": "Pauline Hanson's One Nation",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 50.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 50.0
+          },
+          "total_parliamentarians": 2,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 1
+          }
+        },
+        "UAP [2018]": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "UAP [2018]",
+          "party_name": "United Australia Party [2018]",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        }
+      },
+      "total_parliamentarians": 227
+    },
+    "48": {
+      "cohort": "opening_day",
+      "parliament_number": 48,
+      "parties": {
+        "ALP": {
+          "government_non_government": {
+            "government_only": 46,
+            "mixed": 2,
+            "no_school_recorded": 27,
+            "non_government_only": 17,
+            "other": 31
+          },
+          "government_non_government_percentages": {
+            "government_only": 47.92,
+            "mixed": 2.08,
+            "non_government_only": 17.71,
+            "other": 32.29
+          },
+          "known_school_denominator": 96,
+          "parliamentarians_without_known_schools": 27,
+          "party": "ALP",
+          "party_name": "Australian Labor Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 7.29,
+            "Combined/Multiple": 11.46,
+            "Government": 38.54,
+            "Independent": 10.42,
+            "Other": 32.29
+          },
+          "total_parliamentarians": 123,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 7,
+            "Combined/Multiple": 11,
+            "Government": 37,
+            "Independent": 10,
+            "No School Recorded": 27,
+            "Other": 31
+          }
+        },
+        "AV": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 100.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "AV",
+          "party_name": "Australia's Voice",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 100.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 1
+          }
+        },
+        "CA": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 1,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 100.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "CA",
+          "party_name": "Centre Alliance",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 100.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "GRN": {
+          "government_non_government": {
+            "government_only": 2,
+            "mixed": 0,
+            "no_school_recorded": 5,
+            "non_government_only": 2,
+            "other": 2
+          },
+          "government_non_government_percentages": {
+            "government_only": 33.33,
+            "mixed": 0.0,
+            "non_government_only": 33.33,
+            "other": 33.33
+          },
+          "known_school_denominator": 6,
+          "parliamentarians_without_known_schools": 5,
+          "party": "GRN",
+          "party_name": "Australian Greens",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 33.33,
+            "Government": 16.67,
+            "Independent": 16.67,
+            "Other": 33.33
+          },
+          "total_parliamentarians": 11,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 2,
+            "Government": 1,
+            "Independent": 1,
+            "No School Recorded": 5,
+            "Other": 2
+          }
+        },
+        "IND": {
+          "government_non_government": {
+            "government_only": 2,
+            "mixed": 0,
+            "no_school_recorded": 2,
+            "non_government_only": 6,
+            "other": 3
+          },
+          "government_non_government_percentages": {
+            "government_only": 18.18,
+            "mixed": 0.0,
+            "non_government_only": 54.55,
+            "other": 27.27
+          },
+          "known_school_denominator": 11,
+          "parliamentarians_without_known_schools": 2,
+          "party": "IND",
+          "party_name": "Independent",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 9.09,
+            "Combined/Multiple": 18.18,
+            "Government": 9.09,
+            "Independent": 36.36,
+            "Other": 27.27
+          },
+          "total_parliamentarians": 13,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 2,
+            "Government": 1,
+            "Independent": 4,
+            "No School Recorded": 2,
+            "Other": 3
+          }
+        },
+        "JLN": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 0,
+            "no_school_recorded": 0,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 100.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 1,
+          "parliamentarians_without_known_schools": 0,
+          "party": "JLN",
+          "party_name": "Jacqui Lambie Network",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 100.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 0,
+            "Other": 0
+          }
+        },
+        "KAP": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "KAP",
+          "party_name": "Katter's Australian Party",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        },
+        "LP": {
+          "government_non_government": {
+            "government_only": 12,
+            "mixed": 1,
+            "no_school_recorded": 7,
+            "non_government_only": 13,
+            "other": 18
+          },
+          "government_non_government_percentages": {
+            "government_only": 27.27,
+            "mixed": 2.27,
+            "non_government_only": 29.55,
+            "other": 40.91
+          },
+          "known_school_denominator": 44,
+          "parliamentarians_without_known_schools": 7,
+          "party": "LP",
+          "party_name": "Liberal Party of Australia",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 11.36,
+            "Combined/Multiple": 9.09,
+            "Government": 20.45,
+            "Independent": 18.18,
+            "Other": 40.91
+          },
+          "total_parliamentarians": 51,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 5,
+            "Combined/Multiple": 4,
+            "Government": 9,
+            "Independent": 8,
+            "No School Recorded": 7,
+            "Other": 18
+          }
+        },
+        "NP": {
+          "government_non_government": {
+            "government_only": 4,
+            "mixed": 1,
+            "no_school_recorded": 3,
+            "non_government_only": 4,
+            "other": 7
+          },
+          "government_non_government_percentages": {
+            "government_only": 25.0,
+            "mixed": 6.25,
+            "non_government_only": 25.0,
+            "other": 43.75
+          },
+          "known_school_denominator": 16,
+          "parliamentarians_without_known_schools": 3,
+          "party": "NP",
+          "party_name": "The Nationals",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 6.25,
+            "Combined/Multiple": 25.0,
+            "Government": 12.5,
+            "Independent": 12.5,
+            "Other": 43.75
+          },
+          "total_parliamentarians": 19,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 1,
+            "Combined/Multiple": 4,
+            "Government": 2,
+            "Independent": 2,
+            "No School Recorded": 3,
+            "Other": 7
+          }
+        },
+        "PHON": {
+          "government_non_government": {
+            "government_only": 1,
+            "mixed": 1,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 1
+          },
+          "government_non_government_percentages": {
+            "government_only": 33.33,
+            "mixed": 33.33,
+            "non_government_only": 0.0,
+            "other": 33.33
+          },
+          "known_school_denominator": 3,
+          "parliamentarians_without_known_schools": 1,
+          "party": "PHON",
+          "party_name": "Pauline Hanson's One Nation",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 33.33,
+            "Government": 33.33,
+            "Independent": 0.0,
+            "Other": 33.33
+          },
+          "total_parliamentarians": 4,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 1,
+            "Government": 1,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 1
+          }
+        },
+        "UAP [2018]": {
+          "government_non_government": {
+            "government_only": 0,
+            "mixed": 0,
+            "no_school_recorded": 1,
+            "non_government_only": 0,
+            "other": 0
+          },
+          "government_non_government_percentages": {
+            "government_only": 0.0,
+            "mixed": 0.0,
+            "non_government_only": 0.0,
+            "other": 0.0
+          },
+          "known_school_denominator": 0,
+          "parliamentarians_without_known_schools": 1,
+          "party": "UAP [2018]",
+          "party_name": "United Australia Party [2018]",
+          "percentage_of_known_parliamentarians": {
+            "Catholic": 0.0,
+            "Combined/Multiple": 0.0,
+            "Government": 0.0,
+            "Independent": 0.0,
+            "Other": 0.0
+          },
+          "total_parliamentarians": 1,
+          "unique_parliamentarians_by_sector": {
+            "Catholic": 0,
+            "Combined/Multiple": 0,
+            "Government": 0,
+            "Independent": 0,
+            "No School Recorded": 1,
+            "Other": 0
+          }
+        }
+      },
+      "total_parliamentarians": 226
+    }
+  }
+}

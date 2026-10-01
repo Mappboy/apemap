@@ -5,3 +5,5 @@ data/reference/*.json text eol=lf
 archive/reference/2026-10-02/* -text
 archive/inputs/2026-10-02/* -text
 archive/notebooks/2026-10-02/* -text
+# Preserve the exact verified release bytes and their report checksums.
+data/processed/historical/0.3.0/** -text
