@@ -127,7 +127,7 @@ jobs:
             git tag "$TAG"
             git push origin "$TAG" || true
           fi
-          
+
           gh release create "$TAG" dist/* \
             --title "APEMAP Dataset Release v${RELEASE_VERSION}" \
             --notes "Immutable, cryptographically verified APEMAP dataset release v${RELEASE_VERSION}. Contains web layers, analytical metrics, canonical data tables, manifest.json, and SHA256 checksums." \

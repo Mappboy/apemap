@@ -29,11 +29,17 @@ apemap
 │   ├── funding   # Ingest ACARA benchmarks & jurisdictional public funding
 │   ├── benchmarks# Ingest ABS education sector benchmarks
 │   └── wikimedia # Enrich members & review unmatched schools via Wikimedia
+├── inputs
+│   └── verify    # Audit cached source files against inputs manifest
 ├── transform     # Initialize DuckDB schema, canonical views, and table macros
 ├── validate      # Check DB relational integrity, constraints, & coverage gates
 ├── backtest-benchmarks # Empirical backtesting of finance benchmarks
 ├── analyze       # Compute demographic, sector, and school funding summaries
 ├── export        # Export Parquet tables, GeoJSON layers, & analysis JSON
+├── release
+│   ├── build     # Build immutable dataset release bundle
+│   ├── verify    # Read-back verify manifest, checksums, bounds, privacy
+│   └── diff      # Compare changes between two dataset releases
 └── run-all       # Coordinated end-to-end pipeline execution
 ```
 
@@ -415,11 +421,16 @@ uv run apemap run-all [OPTIONS]
 | `--strict` / `--no-strict` | `BOOL` | `True` | Exit immediately if validation check fails. |
 | `--enrich-wikimedia` / `--no-enrich-wikimedia` | `BOOL` | `False` | Enrich canonical members and unmatched schools with Wikimedia data. |
 | `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances in analytical reports. |
+| `--offline` / `--no-offline` | `BOOL` | `False` | Run pipeline in strict offline mode using verified local inputs with zero network requests. |
+| `--inputs-manifest` | `PATH` | `data/inputs-manifest.json` | Path to inputs manifest file for offline verification. |
 
 ### Example Usage
 ```bash
 # Deterministic offline run using local cache
 uv run apemap run-all
+
+# Strict offline run validating inputs against manifest
+uv run apemap run-all --offline --inputs-manifest data/inputs-manifest.json
 
 # Complete upstream refresh with live downloads and strict validation
 uv run apemap run-all --download --refresh --strict
@@ -427,3 +438,69 @@ uv run apemap run-all --download --refresh --strict
 # Run end-to-end with Wikimedia identity enrichment enabled
 uv run apemap run-all --enrich-wikimedia
 ```
+
+---
+
+## 9. `apemap inputs verify`
+
+Verifies local cached source input files against the canonical cryptographic manifest (`data/inputs-manifest.json`).
+
+### Invocation
+```bash
+uv run apemap inputs verify [OPTIONS]
+```
+
+### Options
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--manifest`, `-m` | `PATH` | `data/inputs-manifest.json` | Path to input files manifest JSON. |
+
+### Example Usage
+```bash
+# Verify integrity of all cached source files
+uv run apemap inputs verify
+```
+
+---
+
+## 10. `apemap release`
+
+Expanded dataset release commands for building, verifying, and diffing immutable, versioned dataset releases.
+
+### 10.1. `apemap release build`
+Builds complete, validated dataset release bundle containing web layers, analytical metrics, canonical data tables, `manifest.json`, and `SHA256SUMS`.
+
+```bash
+uv run apemap release build [OPTIONS]
+```
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
+| `-o`, `--output-dir` | `PATH` | `data/processed/releases/v<version>` | Destination directory for release bundle. |
+| `-v`, `--version` | `TEXT` | `1.0.0` | Semantic release version string. |
+| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Parliaments to include. |
+| `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances. |
+| `--strict` / `--no-strict` | `BOOL` | `True` | Halt with non-zero exit code if validation fails. |
+
+### 10.2. `apemap release verify`
+Verifies integrity, bidirectional inventory, coordinate bounds, and privacy compliance of a release bundle.
+
+```bash
+uv run apemap release verify <release-dir> [OPTIONS]
+```
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--strict-assertions` / `--no-strict-assertions` | `BOOL` | `False` | Enforce that database assertions report passed in `web/assertions.json`. |
+
+### 10.3. `apemap release diff`
+Generates a comparative diff report between two release dataset bundles.
+
+```bash
+uv run apemap release diff <old-release-dir> <new-release-dir> [OPTIONS]
+```
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--json` | `BOOL` | `False` | Output diff report as formatted JSON. |
