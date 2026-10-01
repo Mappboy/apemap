@@ -6,6 +6,8 @@ foreign key integrity, check constraints, and parliamentary coverage benchmarks.
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import logging
 from dataclasses import dataclass, field
 
@@ -46,12 +48,12 @@ def validate_database(
 
     Args:
         conn: DuckDB database connection.
-        parliaments: Parliaments to evaluate (default: [46, 47, 48]).
+        parliaments: Parliaments to evaluate (default: supported_parliaments()).
 
     Returns:
         ValidationReport with test counts and diagnostics.
     """
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = parliaments or supported_parliaments()
     unsupported = [p for p in target_parls if p not in PARLIAMENT_METADATA]
     if unsupported:
         supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
@@ -205,8 +207,8 @@ def validate_database(
                 SELECT
                     count(*),
                     count(DISTINCT member_id),
-                    sum(CASE WHEN is_opening_day_member THEN 1 ELSE 0 END),
-                    sum(CASE WHEN is_current_member THEN 1 ELSE 0 END)
+                    count(DISTINCT CASE WHEN is_opening_day_member THEN member_id END),
+                    count(DISTINCT CASE WHEN is_current_member THEN member_id END)
                 FROM parliament_service
                 WHERE parliament_number = ?
                 """,
@@ -281,33 +283,38 @@ def validate_database(
                 f"Error checking service overlap for Parliament {p}: {e}"
             )
 
-    # 5. Opening-Day Chamber Benchmarks (Parliament 47: 151 Reps + 76 Senators)
-    if 47 in target_parls:
+    # 5. Occupied opening-day membership, including documented casual vacancies.
+    for p in target_parls:
         report.checks_run += 1
         try:
             ch_rows = conn.execute(
                 """
-                SELECT chamber, count(*)
+                SELECT chamber, count(DISTINCT member_id)
                 FROM parliament_service
-                WHERE parliament_number = 47
+                WHERE parliament_number = ?
                   AND is_opening_day_member = TRUE
                 GROUP BY chamber
-                """
+                """,
+                [p],
             ).fetchall()
             ch_counts = dict(ch_rows)
             reps_count = ch_counts.get("representatives", 0)
             senate_count = ch_counts.get("senate", 0)
-            if reps_count != 151 or senate_count != 76:
+            meta = PARLIAMENT_METADATA[p]
+            if (
+                reps_count != meta["expected_representatives"]
+                or senate_count != meta["expected_senators"]
+            ):
                 report.add_failure(
-                    f"Parliament 47 opening-day chamber benchmark failed: "
-                    f"expected 151 representatives and 76 senators, found "
+                    f"Parliament {p} opening-day chamber benchmark failed: "
+                    f"expected {meta['expected_representatives']} representatives and {meta['expected_senators']} senators, found "
                     f"{reps_count} representatives and {senate_count} senators"
                 )
             else:
                 report.checks_passed += 1
         except Exception as e:
             report.add_failure(
-                f"Error checking Parliament 47 opening-day chamber benchmarks: {e}"
+                f"Error checking Parliament {p} opening-day chamber benchmarks: {e}"
             )
 
     # 6. Core View Existence and Queryability

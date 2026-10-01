@@ -1,5 +1,10 @@
 # Quickstart Guide
 
+Package defaults cover all supported terms (42–48). For the separately populated
+historical release and pinned replay recipe, use the
+[historical coverage guide](historical-coverage.md). The explicit 46–48 examples
+below remain useful for a contemporary subset of an existing database.
+
 This guide walks you through setting up APEMAP, exploring the command-line interface (CLI), working with existing canonical datasets, and running the complete reproducible pipeline.
 
 ---

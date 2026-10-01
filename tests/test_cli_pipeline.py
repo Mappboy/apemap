@@ -507,7 +507,11 @@ def test_validate_database_detects_foreign_key_orphan(
             source_url VARCHAR NOT NULL,
             retrieved_at TIMESTAMPTZ NOT NULL,
             confidence VARCHAR NOT NULL,
-            reviewer_notes VARCHAR
+            reviewer_notes VARCHAR,
+            school_name_as_recorded VARCHAR,
+            institution_resolution VARCHAR,
+            resolution_source_url VARCHAR,
+            evidence_origin VARCHAR
         )
         """
     )
@@ -695,6 +699,8 @@ def test_cli_export_command_and_reproducibility(
         str(Path("analysis") / "school_finance.json"),
         str(Path("analysis") / "parliament_comparison.json"),
         "parliament_47_combined.geojson",
+        "parliament_coverage.csv",
+        "parliament_coverage.json",
     }
     assert set(manifest_1) == expected_artifacts
     assert manifest_1 == manifest_2

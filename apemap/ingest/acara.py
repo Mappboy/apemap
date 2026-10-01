@@ -307,6 +307,43 @@ def load_institutions_dataframe(
                         "latitude": lat,
                     }
 
+    # Preserve profile-only schools rather than losing annual histories to missing
+    # current location rows. Absence is historical-only evidence, not proof of closure.
+    long_path = ext_dir / "school-profile-2008-2025.csv"
+    if long_path.exists():
+        history = pd.read_csv(long_path, dtype=str).fillna("")
+        if "Calendar Year" in history.columns:
+            history = history.sort_values("Calendar Year")
+        for _, row in history.drop_duplicates("ACARA SML ID", keep="last").iterrows():
+            aid = str(row["ACARA SML ID"]).strip()
+            if not aid or aid in records_by_id:
+                continue
+            sector = str(row.get("School Sector", "Other"))
+            records_by_id[aid] = {
+                "institution_id": f"acara-{aid}",
+                "acara_id": aid,
+                "school_name": str(row.get("School Name", "")) or f"ACARA school {aid}",
+                "school_type": str(row.get("School Type", "")) or None,
+                "sector": sector
+                if sector in ("Government", "Catholic", "Independent")
+                else "Other",
+                "campus_type": None,
+                "state": str(row.get("State", "")) or None,
+                "suburb": str(row.get("Suburb", "")) or None,
+                "postcode": str(row.get("Postcode", "")) or None,
+                "longitude": None,
+                "latitude": None,
+                "institution_status": "historical_only",
+            }
+    current_ids = None
+    if loc_2025_csv.exists():
+        current_frame = pd.read_csv(loc_2025_csv, dtype=str)
+        current_ids = set(current_frame["ACARA SML ID"].dropna().astype(str))
+    for record in records_by_id.values():
+        record["country"] = "Australia"
+        record.setdefault("institution_status", "unknown")
+        if current_ids is not None and record["acara_id"] not in current_ids:
+            record["institution_status"] = "historical_only"
     if not records_by_id:
         return pd.DataFrame(
             columns=[
@@ -362,6 +399,7 @@ def _clean_str(val: Any) -> str | None:
 
 def load_snapshots_dataframe(
     external_dir: Path | str | None = None,
+    review_path: Path | None = None,
 ) -> pd.DataFrame:
     """Compile canonical school_snapshots DataFrame from ACARA Profile files.
 
@@ -379,6 +417,7 @@ def load_snapshots_dataframe(
     ]
 
     snapshots: dict[tuple[str, int], dict[str, Any]] = {}
+    profile_reviews: list[dict[str, Any]] = []
 
     for pfile in candidates:
         if not pfile.exists():
@@ -435,6 +474,35 @@ def load_snapshots_dataframe(
                 sea_top_quarter_pct = _clean_float(
                     row.get("Top SEA Quarter (%)") or row.get("Top SEA Quarter")
                 )
+                quartet = [
+                    sea_bottom_quarter_pct,
+                    sea_lower_middle_quarter_pct,
+                    sea_upper_middle_quarter_pct,
+                    sea_top_quarter_pct,
+                ]
+                if (
+                    all(value is not None for value in quartet)
+                    and abs(sum(value for value in quartet if value is not None) - 100)
+                    > 3
+                ):
+                    profile_reviews.append(
+                        {
+                            "source_file": pfile.name,
+                            "acara_id": aid,
+                            "snapshot_year": year_val,
+                            "raw_sea_quarters": json.dumps(quartet),
+                            "action": "Invalid SEA total: all four canonical percentages withheld",
+                        }
+                    )
+                    logger.warning(
+                        "Withholding invalid SEA quartet for ACARA %s/%s: %s",
+                        aid,
+                        year_val,
+                        quartet,
+                    )
+                    sea_bottom_quarter_pct = sea_lower_middle_quarter_pct = (
+                        sea_upper_middle_quarter_pct
+                    ) = sea_top_quarter_pct = None
                 indigenous_enrolments_pct = _clean_float(
                     row.get("Indigenous Enrolments (%)")
                     or row.get("Indigenous Enrolments")
@@ -476,6 +544,21 @@ def load_snapshots_dataframe(
         except Exception as e:
             logger.warning("Error reading snapshot file %s: %s", pfile, e)
 
+    if review_path is not None and profile_reviews:
+        review_path.parent.mkdir(parents=True, exist_ok=True)
+        with review_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=[
+                    "source_file",
+                    "acara_id",
+                    "snapshot_year",
+                    "raw_sea_quarters",
+                    "action",
+                ],
+            )
+            writer.writeheader()
+            writer.writerows(profile_reviews)
     if not snapshots:
         return pd.DataFrame(
             columns=[
@@ -720,7 +803,9 @@ def run_acara_ingestion(
 
     # 2. Compile DataFrames
     inst_df = load_institutions_dataframe(external_dir=ext_dir)
-    snap_df = load_snapshots_dataframe(external_dir=ext_dir)
+    snap_df = load_snapshots_dataframe(
+        external_dir=ext_dir, review_path=out_dir / "upstream_profile_review.csv"
+    )
 
     # 3. Synchronize with DuckDB
     should_close_conn = conn is None
@@ -737,12 +822,17 @@ def run_acara_ingestion(
                     INSERT INTO institutions (
                         institution_id, acara_id, school_name, school_type,
                         sector, campus_type, state, suburb, postcode, longitude, latitude
+                        , country, institution_status
                     )
                     SELECT
                         institution_id, acara_id, school_name, school_type,
                         sector, campus_type, state, suburb, postcode, longitude, latitude
+                        , country, institution_status
                     FROM df_institutions_staging
-                    ON CONFLICT (institution_id) DO NOTHING
+                    ON CONFLICT (institution_id) DO UPDATE SET
+                        country = EXCLUDED.country,
+                        institution_status = CASE WHEN institutions.institution_status IN ('closed', 'merged')
+                            THEN institutions.institution_status ELSE EXCLUDED.institution_status END
                     """
                 )
 

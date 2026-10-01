@@ -2,6 +2,17 @@
 -- Backed by DuckDB and Parquet
 
 -- 1. Members: Unique individual parliamentarians across all terms
+CREATE TABLE IF NOT EXISTS parliament_metadata (
+    parliament_number INTEGER PRIMARY KEY,
+    general_election_date DATE NOT NULL,
+    opening_date DATE NOT NULL,
+    end_date DATE,
+    description VARCHAR NOT NULL,
+    expected_representatives INTEGER NOT NULL,
+    expected_senators INTEGER NOT NULL,
+    source_url VARCHAR NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS members (
     member_id VARCHAR PRIMARY KEY,
     family_name VARCHAR NOT NULL,
@@ -27,7 +38,11 @@ CREATE TABLE IF NOT EXISTS parliament_service (
     service_start DATE,
     service_end DATE,
     is_opening_day_member BOOLEAN DEFAULT FALSE,
-    is_current_member BOOLEAN DEFAULT FALSE
+    is_current_member BOOLEAN DEFAULT FALSE,
+    source_url VARCHAR,
+    retrieved_at TIMESTAMPTZ,
+    source_service_start DATE,
+    source_service_end DATE
 );
 
 -- 3. Institutions: Educational institutions (schools, universities, colleges)
@@ -42,7 +57,9 @@ CREATE TABLE IF NOT EXISTS institutions (
     suburb VARCHAR,
     postcode VARCHAR,
     longitude DOUBLE,
-    latitude DOUBLE
+    latitude DOUBLE,
+    country VARCHAR,
+    institution_status VARCHAR DEFAULT 'unknown'
 );
 
 -- 4. Member Education: Link table recording member attendance at institutions
@@ -59,7 +76,11 @@ CREATE TABLE IF NOT EXISTS member_education (
     source_url VARCHAR NOT NULL,
     retrieved_at TIMESTAMPTZ NOT NULL,
     confidence VARCHAR NOT NULL CHECK (confidence IN ('verified', 'provisional', 'unconfirmed')),
-    reviewer_notes VARCHAR
+    reviewer_notes VARCHAR,
+    school_name_as_recorded VARCHAR,
+    institution_resolution VARCHAR,
+    resolution_source_url VARCHAR,
+    evidence_origin VARCHAR
 );
 
 -- 5. School Snapshots: Annual school metrics (enrolments, ICSEA, socio-educational profile)

@@ -6,6 +6,10 @@ and analytical summaries to data/processed/.
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+from apemap.constants import PARLIAMENT_METADATA, TEMPORAL_WARNING, select_parliaments
+from apemap.coverage import export_parliament_coverage
+
 from collections.abc import Mapping
 from datetime import date, datetime, timezone
 import hashlib
@@ -19,6 +23,7 @@ from typing import Any
 import duckdb
 
 from apemap.analysis import (
+    backtest_finance_benchmarks,
     compute_school_finance_estimate,
     compute_sector_summary,
     export_analysis_report,
@@ -50,6 +55,9 @@ def export_spatial_geojson(
     conn: duckdb.DuckDBPyConnection,
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
+    *,
+    cohort: str = "opening_day",
+    finance_reporting_year: int = 2024,
 ) -> dict[int, Path]:
     """Export secondary school attendance spatial layers to GeoJSON.
 
@@ -59,20 +67,25 @@ def export_spatial_geojson(
     Args:
         conn: DuckDB database connection.
         output_dir: Destination directory.
-        parliaments: List of parliaments to export (default: [46, 47, 48]).
+        parliaments: List of parliaments to export (default: supported_parliaments()).
 
     Returns:
         Mapping of parliament number to GeoJSON file path.
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = select_parliaments(parliaments)
+    finance_cache: dict[str, dict[str, Any]] = {}
+    peer_metrics = backtest_finance_benchmarks(conn).get("peer_group_metrics", {})
+    if cohort not in ("opening_day", "all_service"):
+        raise ValueError("cohort must be opening_day or all_service")
 
     exported: dict[int, Path] = {}
 
     query = """
     SELECT
         education_id,
+        service_id,
         member_id,
         display_name,
         family_name,
@@ -101,16 +114,30 @@ def export_spatial_geojson(
         graduation_year,
         attended_status,
         confidence,
+        source_url,
+        retrieved_at,
+        service_source_url,
+        service_start,
+        service_end,
+        school_name_as_recorded,
+        institution_resolution,
+        resolution_source_url,
+        snapshot_year,
         historical_2021_net_recurrent_income_per_student
     FROM v_member_secondary_education
     WHERE parliament_number = ?
       AND longitude IS NOT NULL
       AND latitude IS NOT NULL
+      AND (? = 'all_service' OR is_opening_day_member)
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY education_id, service_id ORDER BY snapshot_year DESC NULLS LAST
+    ) = 1
     ORDER BY display_name, school_name, education_id, member_id, institution_id
     """
 
     for p in target_parls:
-        df = conn.execute(query, [p]).df()
+        df = conn.execute(query, [p, cohort]).df().astype(object)
+        df = df.where(df.notna(), None)
 
         features: list[dict[str, Any]] = []
         for _, row in df.iterrows():
@@ -118,6 +145,25 @@ def export_spatial_geojson(
             lat = float(row["latitude"])
             props: dict[str, Any] = {
                 "education_id": row["education_id"],
+                "service_id": row["service_id"],
+                "cohort": cohort,
+                "parliament_number": p,
+                "source_url": row["source_url"],
+                "retrieved_at": str(row["retrieved_at"])
+                if row["retrieved_at"]
+                else None,
+                "service_source_url": row["service_source_url"],
+                "service_start": str(row["service_start"])
+                if row["service_start"]
+                else None,
+                "service_end": str(row["service_end"]) if row["service_end"] else None,
+                "school_name_as_recorded": row["school_name_as_recorded"],
+                "institution_resolution": row["institution_resolution"],
+                "resolution_source_url": row["resolution_source_url"],
+                "profile_year": int(row["snapshot_year"])
+                if row["snapshot_year"]
+                else None,
+                "temporal_warning": TEMPORAL_WARNING,
                 "member_id": row["member_id"],
                 "member": row["display_name"],
                 "family_name": row["family_name"],
@@ -161,7 +207,14 @@ def export_spatial_geojson(
 
             # Retrieve finance estimate or observed value for 2024
             inst_id = str(row["institution_id"])
-            fin_est = compute_school_finance_estimate(conn, inst_id, target_year=2024)
+            if inst_id not in finance_cache:
+                finance_cache[inst_id] = compute_school_finance_estimate(
+                    conn,
+                    inst_id,
+                    target_year=finance_reporting_year,
+                    peer_group_metrics=peer_metrics,
+                )
+            fin_est = finance_cache[inst_id]
 
             # Retrieve jurisdictional public funding if available
             pub_fund_row = conn.execute(
@@ -275,7 +328,7 @@ def _get_git_commit() -> str:
 
 def _web_parliaments(parliaments: list[int] | None) -> list[int]:
     """Normalize release ordering and reject empty or non-integer selections."""
-    values = [46, 47, 48] if parliaments is None else parliaments
+    values = supported_parliaments() if parliaments is None else parliaments
     if not values or any(type(p) is not int for p in values):
         raise ValueError(
             "A web release requires at least one integer parliament number"
@@ -397,6 +450,9 @@ def export_results_summary(
     payload = {
         "web_schema_version": "1.0.0",
         "cohort": "opening_day",
+        "supported_parliaments": supported_parliaments(),
+        "parliament_metadata": {str(p): PARLIAMENT_METADATA[p] for p in target_parls},
+        "temporal_warning": TEMPORAL_WARNING,
         "parliaments": summary_by_parl,
     }
 
@@ -412,6 +468,8 @@ def export_web_schools_geojson(
     conn: duckdb.DuckDBPyConnection,
     output_dir: Path | str | None = None,
     parliaments: list[int] | None = None,
+    *,
+    finance_reporting_year: int = 2024,
 ) -> Path:
     """Export deduplicated school-level GeoJSON with attendance context for explorer.
 
@@ -458,6 +516,7 @@ def export_web_schools_geojson(
     ORDER BY i.school_name, i.institution_id
     """
     school_rows = conn.execute(schools_query, [target_parls]).fetchall()
+    peer_metrics = backtest_finance_benchmarks(conn).get("peer_group_metrics", {})
 
     # Load latest snapshot metrics per institution
     snapshots_by_inst: dict[str, dict[str, Any]] = {}
@@ -529,6 +588,35 @@ def export_web_schools_geojson(
     """
     members_by_inst: dict[str, dict[str, dict[str, Any]]] = {}
     parliaments_by_inst: dict[str, set[int]] = {}
+    assertions_by_inst: dict[str, list[dict[str, Any]]] = {}
+    evidence_columns = [
+        "institution_id",
+        "education_id",
+        "member_id",
+        "school_name_as_recorded",
+        "source_url",
+        "retrieved_at",
+        "confidence",
+        "attended_status",
+        "institution_resolution",
+        "resolution_source_url",
+    ]
+    evidence_rows = conn.execute(
+        """SELECT DISTINCT me.institution_id, me.education_id, me.member_id,
+        me.school_name_as_recorded, me.source_url, me.retrieved_at, me.confidence,
+        me.attended_status, me.institution_resolution, me.resolution_source_url
+        FROM member_education me WHERE me.level='secondary' AND EXISTS (
+            SELECT 1 FROM parliament_service ps WHERE ps.member_id=me.member_id
+            AND ps.parliament_number IN (SELECT UNNEST(?)) AND ps.is_opening_day_member)
+        ORDER BY me.institution_id, me.education_id""",
+        [target_parls],
+    ).fetchall()
+    for evidence_row in evidence_rows:
+        evidence = dict(zip(evidence_columns, evidence_row, strict=True))
+        if evidence["retrieved_at"]:
+            evidence["retrieved_at"] = evidence["retrieved_at"].isoformat()
+        iid = evidence.pop("institution_id")
+        assertions_by_inst.setdefault(iid, []).append(evidence)
 
     for row in conn.execute(att_query, [target_parls]).fetchall():
         iid, mid, name, party, abbrev, chamber, pnum, service_id = row
@@ -573,7 +661,12 @@ def export_web_schools_geojson(
         mems = list(members_by_inst.get(iid, {}).values())
         parls = sorted(parliaments_by_inst.get(iid, set()))
 
-        fin_est = compute_school_finance_estimate(conn, iid, target_year=2024)
+        fin_est = compute_school_finance_estimate(
+            conn,
+            iid,
+            target_year=finance_reporting_year,
+            peer_group_metrics=peer_metrics,
+        )
 
         props: dict[str, Any] = {
             "institution_id": iid,
@@ -605,6 +698,7 @@ def export_web_schools_geojson(
             "lbote_pct": snap.get("lbote_pct"),
             "member_count": len(mems),
             "members": mems,
+            "education_assertions": assertions_by_inst.get(iid, []),
             "parliaments": parls,
             "finance_year": fin_est.get("reporting_year"),
             "finance_metric": fin_est.get("metric"),
@@ -612,6 +706,7 @@ def export_web_schools_geojson(
             "finance_status": fin_est.get("status"),
             "finance_method": fin_est.get("method"),
             "finance_source": fin_est.get("source"),
+            "temporal_warning": TEMPORAL_WARNING,
         }
 
         features.append(
@@ -769,6 +864,9 @@ def export_web_release_manifest(
         "source_snapshot_dates": snapshot_dates,
         "cohort_definition": "opening_day",
         "parliaments": target_parls,
+        "supported_parliaments": supported_parliaments(),
+        "parliament_metadata": {str(p): PARLIAMENT_METADATA[p] for p in target_parls},
+        "temporal_warning": TEMPORAL_WARNING,
         "files": file_entries,
         "sources": {
             "aph": "Parliamentary Handbook of the Commonwealth of Australia",
@@ -854,6 +952,7 @@ def export_all_artifacts(
     data_release_version: str = "0.2.0",
     source_commit: str | None = None,
     source_snapshot_dates: Mapping[str, str | None] | None = None,
+    cohort: str = "opening_day",
 ) -> dict[str, Any]:
     """Export all canonical artifacts: Parquet, GeoJSON, and analytical metrics.
 
@@ -871,10 +970,19 @@ def export_all_artifacts(
         Summary dictionary with paths to all generated artifacts.
     """
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = parliaments or supported_parliaments()
 
     parquet_paths = export_canonical_parquet(conn, out_dir)
-    geojson_paths = export_spatial_geojson(conn, out_dir, target_parls)
+    geojson_paths = export_spatial_geojson(
+        conn,
+        out_dir,
+        target_parls,
+        cohort=cohort,
+        finance_reporting_year=finance_reporting_year,
+    )
+    coverage_paths = export_parliament_coverage(
+        conn, out_dir, target_parls, finance_reporting_year
+    )
     analysis_path = export_analysis_report(
         conn,
         out_dir,
@@ -887,6 +995,7 @@ def export_all_artifacts(
         "parquet_files": {k: str(v) for k, v in parquet_paths.items()},
         "geojson_layers": {str(k): str(v) for k, v in geojson_paths.items()},
         "analysis_report": str(analysis_path),
+        **{key: str(path) for key, path in coverage_paths.items()},
     }
 
     if include_web_release:

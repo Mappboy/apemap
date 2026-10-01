@@ -1,0 +1,7 @@
+# Reviewed reference text is hash-pinned and must have identical bytes on all hosts.
+data/reference/*.csv text eol=lf
+data/reference/*.json text eol=lf
+# These snapshots preserve the exact previous working files, including newlines.
+archive/reference/2026-10-02/* -text
+archive/inputs/2026-10-02/* -text
+archive/notebooks/2026-10-02/* -text

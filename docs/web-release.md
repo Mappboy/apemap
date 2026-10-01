@@ -1,5 +1,12 @@
 # Website release contract
 
+Supported terms now come from canonical metadata (42–48). The
+[historical guide](historical-coverage.md) describes the populated release and
+cpoole.dev follow-up. Summary and metadata declare supported terms, selected terms,
+opening dates and descriptions. Public releases contain one school-feature
+`parliament_<number>_combined.geojson` per term, with source/confidence in
+`education_assertions`, service context, finance years and a temporal warning.
+
 Generate the browser and research files from the canonical database:
 
 ```bash

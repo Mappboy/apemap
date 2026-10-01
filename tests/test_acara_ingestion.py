@@ -207,6 +207,8 @@ def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
         "postcode",
         "longitude",
         "latitude",
+        "country",
+        "institution_status",
     }
 
     # Verify sector mappings

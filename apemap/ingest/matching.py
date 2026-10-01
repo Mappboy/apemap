@@ -98,6 +98,7 @@ class MatchedInstitution:
     total_enrolments: int | None = None
     icsea: int | None = None
     reviewer_notes: str | None = None
+    institution_status: str = "unknown"
 
 
 @dataclass
@@ -230,8 +231,10 @@ class SchoolMatcher:
         external_dir: Path | str | None = None,
         reference_dir: Path | str | None = None,
         aliases_file: Path | str | None = None,
+        require_alias_sources: bool = False,
     ) -> None:
         self.external_dir = Path(external_dir or EXTERNAL_DIR)
+        self.require_alias_sources = require_alias_sources
         self.reference_dir = Path(reference_dir or REFERENCE_DIR)
         self.aliases_file = Path(
             aliases_file or (self.reference_dir / "school_aliases.json")
@@ -245,6 +248,59 @@ class SchoolMatcher:
 
         self._load_aliases()
         self._load_reference_data()
+        self.current_ids = set(self.acara_id_map)
+        current_location = self.external_dir / "school-location-2025.csv"
+        if current_location.exists():
+            current_frame = pd.read_csv(current_location, dtype=str)
+            id_column = (
+                "ACARA SML ID" if "ACARA SML ID" in current_frame.columns else "ACARAId"
+            )
+            self.current_ids = set(current_frame[id_column].dropna().astype(str))
+        self.ambiguous_keys: set[str] = set()
+        self._load_historical_names()
+
+    def _load_historical_names(self) -> None:
+        """Index all annual names without collapsing schools sharing a name."""
+        path = self.external_dir / "school-profile-2008-2025.csv"
+        if not path.exists():
+            return
+        frame = pd.read_csv(path, dtype=str).fillna("")
+        id_col = "ACARA SML ID" if "ACARA SML ID" in frame.columns else "ACARAId"
+        name_col = "School Name" if "School Name" in frame.columns else "SchoolName"
+        if id_col not in frame.columns or name_col not in frame.columns:
+            return
+        if "Calendar Year" in frame.columns:
+            frame = frame.sort_values("Calendar Year", ascending=False)
+        for _, row in frame.drop_duplicates([id_col, name_col]).iterrows():
+            aid, name = str(row[id_col]).strip(), str(row[name_col]).strip()
+            if not aid or not name:
+                continue
+            sector = str(row.get("School Sector", "Other"))
+            if sector not in ("Government", "Catholic", "Independent"):
+                sector = "Other"
+            ref = self.acara_id_map.get(aid) or {
+                "acara_id": aid,
+                "school_name": name,
+                "school_type": str(row.get("School Type", "")) or None,
+                "sector": sector,
+                "campus_type": None,
+                "state": str(row.get("State", "")) or None,
+                "suburb": str(row.get("Suburb", "")) or None,
+                "postcode": str(row.get("Postcode", "")) or None,
+                "longitude": None,
+                "latitude": None,
+                "total_enrolments": None,
+                "icsea": None,
+            }
+            self.acara_id_map.setdefault(aid, ref)
+            key = normalize_school_key(name)
+            previous = self.norm_map.get(key)
+            if previous and previous["acara_id"] != aid:
+                self.ambiguous_keys.add(key)
+            else:
+                self.norm_map[key] = ref
+                self.exact_map[name.lower()] = ref
+        self.candidate_keys = sorted(set(self.norm_map) - self.ambiguous_keys)
 
     def _load_aliases(self) -> None:
         if not self.aliases_file.exists():
@@ -281,6 +337,10 @@ class SchoolMatcher:
                         else ("ACARAId" if "ACARAId" in p_df.columns else None)
                     )
                     if id_col:
+                        if "Calendar Year" in p_df.columns:
+                            p_df = p_df.sort_values(
+                                "Calendar Year", ascending=False
+                            ).drop_duplicates(id_col)
                         for _, row in p_df.iterrows():
                             aid = str(row[id_col]).strip()
                             icsea_val = None
@@ -454,6 +514,12 @@ class SchoolMatcher:
         self.candidate_keys = list(self.norm_map.keys())
 
     def match(self, raw_school: str) -> MatchedInstitution:
+        result = self._match(raw_school)
+        if result.acara_id and result.acara_id not in self.current_ids:
+            result.institution_status = "historical_only"
+        return result
+
+    def _match(self, raw_school: str) -> MatchedInstitution:
         """Attempt to match a raw school name against ACARA reference schools."""
         cleaned = normalize_text(raw_school)
         is_intl = is_international_text(cleaned)
@@ -462,6 +528,32 @@ class SchoolMatcher:
 
         # 0. Explicit Override / Historical Amalgamation Alias Check
         alias_info = self.aliases.get(low) or self.aliases.get(norm_key)
+        if (
+            alias_info
+            and self.require_alias_sources
+            and not alias_info.get("source_url")
+        ):
+            # Legacy aliases have known ID errors. Direct historical register matches
+            # remain usable; unsourced successor assignments require review.
+            if norm_key not in self.norm_map or norm_key in self.ambiguous_keys:
+                return MatchedInstitution(
+                    institution_id=f"inst-unmatched-{norm_key.replace(' ', '-')[:40]}",
+                    acara_id=None,
+                    school_name=cleaned,
+                    school_type="Secondary",
+                    sector="Other",
+                    campus_type=None,
+                    state=None,
+                    suburb=None,
+                    postcode=None,
+                    longitude=None,
+                    latitude=None,
+                    confidence="unconfirmed",
+                    is_international=is_intl,
+                    raw_input=raw_school,
+                    reviewer_notes="Legacy alias requires sourced identity/successor review",
+                )
+            alias_info = None
         if alias_info:
             target_aid = str(alias_info["canonical_acara_id"]).strip()
             notes = alias_info.get(
@@ -509,8 +601,27 @@ class SchoolMatcher:
                     reviewer_notes=notes,
                 )
 
+        # An ambiguous historical name must not fall through to an unrelated fuzzy hit.
+        if norm_key in self.ambiguous_keys:
+            return MatchedInstitution(
+                institution_id=f"inst-unmatched-{norm_key.replace(' ', '-')[:40]}",
+                acara_id=None,
+                school_name=cleaned,
+                school_type="Secondary",
+                sector="Other",
+                campus_type=None,
+                state=None,
+                suburb=None,
+                postcode=None,
+                longitude=None,
+                latitude=None,
+                confidence="unconfirmed",
+                is_international=is_intl,
+                raw_input=raw_school,
+                reviewer_notes="Historical name maps to several ACARA identifiers; manual review required",
+            )
         # 1. Exact match on raw cleaned string
-        if low in self.exact_map:
+        if low in self.exact_map and norm_key not in self.ambiguous_keys:
             ref = self.exact_map[low]
             return MatchedInstitution(
                 institution_id=f"acara-{ref['acara_id']}",
@@ -532,7 +643,7 @@ class SchoolMatcher:
             )
 
         # 2. Normalized key match
-        if norm_key in self.norm_map:
+        if norm_key in self.norm_map and norm_key not in self.ambiguous_keys:
             ref = self.norm_map[norm_key]
             return MatchedInstitution(
                 institution_id=f"acara-{ref['acara_id']}",
@@ -557,7 +668,7 @@ class SchoolMatcher:
         if "," in cleaned:
             base_part = cleaned.split(",")[0].strip()
             base_key = normalize_school_key(base_part)
-            if base_key in self.norm_map:
+            if base_key in self.norm_map and base_key not in self.ambiguous_keys:
                 ref = self.norm_map[base_key]
                 return MatchedInstitution(
                     institution_id=f"acara-{ref['acara_id']}",

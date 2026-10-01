@@ -34,50 +34,50 @@
       "required": true
     },
     "data/reference/acara_school_finance_benchmarks.csv": {
-      "sha256": "1f69e652e6eda2904297fca554c7a8055fa3e1adf17f057771d75a2ec0d89e36",
-      "size_bytes": 1239662,
+      "sha256": "6ab0d536b7471207bdbd37192adc70778ca97cc576e97d9374991ce560b99422",
+      "size_bytes": 1244847,
       "source": "ACARA National Report on Schooling Benchmarks",
       "recorded_date": "2024",
       "required": true
     },
     "data/reference/manual_school_funding.csv": {
-      "sha256": "ee17862bc12c8a8e782df21ffbe8f0bec8a54480be389a781092ec9c00b1fcd2",
-      "size_bytes": 906,
+      "sha256": "5e5811466c122df48e47ffd742403fb8a334e3e2f3cd7cc6f233c740681cffcf",
+      "size_bytes": 911,
       "source": "Manual State Disclosures (SA, WA, ACT)",
       "recorded_date": "2024",
       "required": true
     },
     "data/reference/nsw_ram_allocations.csv": {
-      "sha256": "cc81aacbe324ca2a2dad5ab2836fb48417db42fc396aac576b415ce431833fe8",
-      "size_bytes": 1252,
+      "sha256": "cba3288b937a6b1fdb25c35f9d07a695dce9db4cd5cca75fd570cc897ecf2206",
+      "size_bytes": 1267,
       "source": "NSW Resource Allocation Model Allocations",
       "recorded_date": "2024",
       "required": true
     },
     "data/reference/nt_school_funding.csv": {
-      "sha256": "02640e617b9021d664f43ce058e777ce3b78310a6da472fd72c82d13c5dd7315",
-      "size_bytes": 252,
+      "sha256": "df741429f4462c8f4dc3927b0c4b12e359820d34d82bca8c1db0a4b783a1e3d3",
+      "size_bytes": 256,
       "source": "Northern Territory School Resourcing Allocations",
       "recorded_date": "2024",
       "required": true
     },
     "data/reference/qld_non_state_grants.csv": {
-      "sha256": "80d722b624be5277d021392ec474a58ced1052391e63890f791e318cd2595f07",
-      "size_bytes": 313,
+      "sha256": "458d62cfa65f72b8f95841785bb95f827d9e8b3c091eb17bd671cf6024539a9c",
+      "size_bytes": 317,
       "source": "Queensland Non-State School Grants",
       "recorded_date": "2024",
       "required": true
     },
     "data/reference/school_aliases.json": {
-      "sha256": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f",
-      "size_bytes": 27091,
+      "sha256": "8986b7b110b3c5cabd67355dbb1832840650683c8761d1a768d20b53790b9c64",
+      "size_bytes": 26788,
       "source": "Canonical School Name Aliases Mapping",
-      "recorded_date": "2026-10-02",
+      "recorded_date": "2024",
       "required": true
     },
     "data/reference/tasmania_srp_allocations.csv": {
-      "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
-      "size_bytes": 369,
+      "sha256": "850eb7bbe36d31748d75d1e95186baa864b1fd84bc5d36e832d5e84d9243b669",
+      "size_bytes": 374,
       "source": "Tasmania DECYP Fairer Funding Model",
       "recorded_date": "2024",
       "required": true

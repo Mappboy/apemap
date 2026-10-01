@@ -64,7 +64,7 @@ uv run apemap release build [OPTIONS]
 - `--db-path`: Path to DuckDB database (default: `data/aped.duckdb`).
 - `-o`, `--output-dir`: Output directory for release (default: `data/processed/releases/v<version>`).
 - `-v`, `--version`: Semantic release version string (e.g. `1.0.0`).
-- `-p`, `--parliament`: Parliaments to include (default: `46,47,48`).
+- `-p`, `--parliament`: Parliaments to include (default: all supported terms, currently `42,43,44,45,46,47,48`).
 - `--finance-year`: Calendar year for school finance analysis (default: `2021`).
 - `--strict` / `--no-strict`: Enforce validation gates before building (default: `--strict`).
 

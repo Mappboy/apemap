@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import json
 import re
 from pathlib import Path
@@ -147,7 +149,7 @@ def release_build_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     finance_year: Annotated[
         int,
         typer.Option(
@@ -318,7 +320,7 @@ def ingest_aph(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     refresh: Annotated[
         bool,
         typer.Option(
@@ -603,7 +605,7 @@ def ingest_wikimedia(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     refresh: Annotated[
         bool,
         typer.Option(
@@ -1095,7 +1097,7 @@ def validate_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     strict: Annotated[
         bool,
         typer.Option(
@@ -1188,7 +1190,7 @@ def analyze_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     output_dir: Annotated[
         Path | None,
         typer.Option(
@@ -1302,6 +1304,10 @@ def analyze_cmd(
 
 @app.command(name="export")
 def export_cmd(
+    cohort: Annotated[
+        str,
+        typer.Option("--cohort", help="Spatial cohort: opening_day or all_service."),
+    ] = "opening_day",
     db_path: Annotated[
         Path | None,
         typer.Option(
@@ -1316,7 +1322,7 @@ def export_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     output_dir: Annotated[
         Path | None,
         typer.Option(
@@ -1394,6 +1400,7 @@ def export_cmd(
             data_release_version=data_release_version,
             source_commit=source_commit,
             source_snapshot_dates=snapshot_dates,
+            cohort=cohort,
         )
     finally:
         conn.close()
@@ -1434,7 +1441,7 @@ def run_all_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     download: Annotated[
         bool,
         typer.Option(

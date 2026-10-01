@@ -1,5 +1,13 @@
 # Canonical Data Model & Repository Layout
 
+Historical terms are centrally configured in `PARLIAMENT_METADATA` and mirrored
+into `parliament_metadata`. Dated `parliament_service` segments now retain
+`source_url`, `retrieved_at` and original source start/end dates. Institutions
+retain `country` and `institution_status`; education retains
+`school_name_as_recorded`, `institution_resolution`, `resolution_source_url` and
+`evidence_origin`. Nullable upgrades preserve older records and Parquet sources.
+See [historical coverage](historical-coverage.md) for service and successor rules.
+
 This document describes APEMAP's canonical relational data model implemented in DuckDB, its analytical views and table macros, and the repository data directory layout.
 
 ---

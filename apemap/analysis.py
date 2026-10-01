@@ -8,6 +8,8 @@ reproduced without mutating the canonical database.
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import json
 import logging
 from datetime import date, datetime
@@ -836,12 +838,12 @@ def compute_cross_parliament_summary(
 
     Args:
         conn: Active DuckDB connection.
-        parliaments: List of parliament numbers (defaults to [46, 47, 48]).
+        parliaments: List of parliament numbers (defaults to supported_parliaments()).
 
     Returns:
         Dictionary containing comparative metrics and shifts across parliaments.
     """
-    target_parliaments = sorted(parliaments or [46, 47, 48])
+    target_parliaments = sorted(parliaments or supported_parliaments())
     by_parliament: dict[str, dict[str, Any]] = {}
 
     for p in target_parliaments:
@@ -1064,7 +1066,7 @@ def export_analysis_report(
     """Export compatibility and static-chart analysis JSON files."""
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parliaments = list(parliaments or [46, 47, 48])
+    target_parliaments = list(parliaments or supported_parliaments())
     metadata = _analysis_metadata(
         target_parliaments, finance_reporting_year=finance_reporting_year
     )
@@ -1439,7 +1441,7 @@ def compute_school_finance_estimate(
     # 2. Retrieve school metadata
     inst_row = conn.execute(
         """
-        SELECT school_name, state, sector, acara_id
+        SELECT school_name, state, sector, acara_id, institution_status
         FROM institutions
         WHERE institution_id = ?
         """,
@@ -1459,7 +1461,24 @@ def compute_school_finance_estimate(
             "source": None,
         }
 
-    school_name, state, sector, aid = inst_row
+    school_name, state, sector, aid, lifecycle = inst_row
+    if (
+        not aid
+        or lifecycle in ("closed", "merged", "historical_only")
+        or sector not in ("Government", "Catholic", "Independent")
+    ):
+        return {
+            "institution_id": institution_id,
+            "reporting_year": target_year,
+            "metric": metric,
+            "value": None,
+            "status": "unavailable",
+            "method": "no_defensible_current_counterpart",
+            "peer_group": None,
+            "relative_multiplier": None,
+            "benchmark_value": None,
+            "source": None,
+        }
     geo = get_school_geolocation(aid)
 
     # 3. Retrieve target peer benchmark
