@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  APEMAP_OFFLINE: "1"
+
+jobs:
+  quality:
+    name: Code Quality & Dependency Audits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-groups --frozen
+
+      - name: Check lockfile sync
+        run: uv lock --check
+
+      - name: Run Ruff Lint
+        run: uv run ruff check .
+
+      - name: Run Ruff Format Check
+        run: uv run ruff format --check .
+
+      - name: Run Type Check (ty)
+        run: uv run ty check apemap/
+
+      - name: Check Dependencies (deptry)
+        run: uv run deptry apemap
+
+      - name: Run Pre-commit Hooks (prek)
+        run: uv run prek run --all-files
+
+  tests:
+    name: Test Suite (Offline)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-groups --frozen
+
+      - name: Verify cached input files manifest
+        run: uv run apemap inputs verify
+
+      - name: Run Pytest suite
+        run: uv run pytest
+
+  pipeline:
+    name: Offline Pipeline Execution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-groups --frozen
+
+      - name: Run full pipeline in strict offline mode
+        run: |
+          uv run apemap run-all \
+            --offline \
+            --inputs-manifest data/inputs-manifest.json \
+            --db-path /tmp/ci_aped.duckdb \
+            --output-dir /tmp/ci_pipeline_out \
+            --strict
+
+  release-contract:
+    name: Release Contract Build & Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-groups --frozen
+
+      - name: Execute pipeline and build release
+        run: |
+          uv run apemap run-all \
+            --offline \
+            --inputs-manifest data/inputs-manifest.json \
+            --db-path /tmp/ci_release.duckdb \
+            --output-dir /tmp/ci_processed \
+            --strict
+          uv run apemap release build \
+            --db-path /tmp/ci_release.duckdb \
+            --output-dir /tmp/ci_release_bundle \
+            --version 0.0.0-ci \
+            --strict
+
+      - name: Verify release bundle integrity and privacy
+        run: |
+          uv run apemap release verify /tmp/ci_release_bundle --strict-assertions

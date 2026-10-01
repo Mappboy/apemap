@@ -1,0 +1,134 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'data-v*'
+      - 'data-*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version for dataset release (e.g. 1.0.0)'
+        required: true
+        type: string
+        default: '1.0.0'
+      parliaments:
+        description: 'Comma-separated parliaments to include'
+        required: false
+        type: string
+        default: '46,47,48'
+
+permissions:
+  contents: write
+
+env:
+  APEMAP_OFFLINE: "1"
+
+jobs:
+  release:
+    name: Build, Verify and Publish Immutable Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify release trigger is on main branch
+        id: branch-check
+        run: |
+          # Release publication is strictly restricted to commits on the main/master branch
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ "${{ github.ref_name }}" != "main" ] && [ "${{ github.ref_name }}" != "master" ]; then
+              echo "Error: Manual release dispatch must be executed against main branch. Current branch: ${{ github.ref_name }}"
+              exit 1
+            fi
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            git fetch origin main:refs/remotes/origin/main 2>/dev/null || git fetch origin master:refs/remotes/origin/master 2>/dev/null
+            MAIN_REF=$(git rev-parse --verify origin/main 2>/dev/null || git rev-parse --verify origin/master 2>/dev/null)
+            if [ -n "$MAIN_REF" ]; then
+              if ! git merge-base --is-ancestor ${{ github.sha }} "$MAIN_REF"; then
+                echo "Error: Tag was pushed on a commit (${{ github.sha }}) not contained in main branch."
+                exit 1
+              fi
+            else
+              echo "Warning: Neither origin/main nor origin/master remote branch found; verifying against local HEAD."
+            fi
+          fi
+
+      - name: Determine release version and tag name
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VER="${{ github.event.inputs.version }}"
+          else
+            RAW_TAG="${{ github.ref_name }}"
+            VER=$(echo "$RAW_TAG" | sed -E 's/^data-v?//')
+          fi
+          echo "RELEASE_VERSION=$VER" >> $GITHUB_ENV
+          echo "TAG_NAME=data-v$VER" >> $GITHUB_ENV
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-groups --frozen
+
+      - name: Verify inputs manifest
+        run: uv run apemap inputs verify
+
+      - name: Run pipeline and build release bundle
+        run: |
+          PARLS="${{ github.event.inputs.parliaments || '46,47,48' }}"
+          mkdir -p /tmp/build_db /tmp/build_out /tmp/release_bundle
+          uv run apemap run-all \
+            --offline \
+            --inputs-manifest data/inputs-manifest.json \
+            --db-path /tmp/build_db/aped.duckdb \
+            --output-dir /tmp/build_out \
+            --parliament "$PARLS" \
+            --strict
+          uv run apemap release build \
+            --db-path /tmp/build_db/aped.duckdb \
+            --output-dir /tmp/release_bundle \
+            --version "$RELEASE_VERSION" \
+            --parliament "$PARLS" \
+            --strict
+
+      - name: Verify release bundle integrity and privacy
+        run: |
+          uv run apemap release verify /tmp/release_bundle --strict-assertions
+
+      - name: Package release artifacts
+        run: |
+          mkdir -p dist
+          TAR_NAME="apemap-release-v${RELEASE_VERSION}.tar.gz"
+          tar -czvf "dist/${TAR_NAME}" -C /tmp/release_bundle .
+          cp /tmp/release_bundle/manifest.json dist/
+          cp /tmp/release_bundle/SHA256SUMS dist/
+          cd dist
+          sha256sum "$TAR_NAME" >> SHA256SUMS.dist
+          cd ..
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="$TAG_NAME"
+          # Check if tag already exists in remote
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG exists"
+          else
+            git tag "$TAG"
+            git push origin "$TAG" || true
+          fi
+          
+          gh release create "$TAG" dist/* \
+            --title "APEMAP Dataset Release v${RELEASE_VERSION}" \
+            --notes "Immutable, cryptographically verified APEMAP dataset release v${RELEASE_VERSION}. Contains web layers, analytical metrics, canonical data tables, manifest.json, and SHA256 checksums." \
+            --draft=false
