@@ -44,6 +44,11 @@ from apemap.inputs import (
     preflight_offline_inputs,
     verify_inputs_manifest,
 )
+from apemap.release import (
+    build_release,
+    diff_releases,
+    verify_release,
+)
 from apemap.validate import validate_database
 
 
@@ -100,6 +105,175 @@ def verify_inputs_cmd(
     console.print(
         "[bold green]Inputs manifest verification passed successfully![/bold green]"
     )
+
+
+release_app = typer.Typer(
+    name="release",
+    help="Immutable dataset release commands: build, verify, and diff.",
+    no_args_is_help=True,
+)
+app.add_typer(release_app, name="release")
+
+
+@release_app.command(name="build")
+def release_build_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            "-o",
+            help="Destination directory for the release.",
+        ),
+    ] = None,
+    version: Annotated[
+        str,
+        typer.Option(
+            "--version",
+            "-v",
+            help="Semantic release version string (e.g. 1.0.0).",
+        ),
+    ] = "1.0.0",
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = "46,47,48",
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            help="Calendar reporting year for school finances.",
+        ),
+    ] = 2021,
+    strict: Annotated[
+        bool,
+        typer.Option(
+            "--strict/--no-strict",
+            help="Halt with non-zero exit code if database validation fails.",
+        ),
+    ] = True,
+) -> None:
+    """Build complete, validated, immutable release dataset bundle."""
+    effective_db = db_path or (DATA_DIR / "aped.duckdb")
+    parls = parse_parliament_args(parliament)
+    validate_supported_parliaments(parls)
+
+    console.print(Panel(f"[bold blue]Building APEMAP Release v{version}[/bold blue]"))
+    try:
+        results = build_release(
+            db_path=effective_db,
+            output_dir=output_dir,
+            version=version,
+            parliaments=parls,
+            finance_reporting_year=finance_year,
+            strict=strict,
+        )
+    except Exception as e:
+        console.print(f"[bold red]Release build failed:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+    console.print(f"[bold green]Release v{version} built successfully![/bold green]")
+    console.print(f"Directory: [cyan]{results['output_directory']}[/cyan]")
+    console.print(f"Files: {results['files_count']} ({results['total_bytes']:,} bytes)")
+    console.print(f"Manifest: [yellow]{results['manifest']}[/yellow]")
+    console.print(f"Checksums: [yellow]{results['sha256sums']}[/yellow]")
+
+
+@release_app.command(name="verify")
+def release_verify_cmd(
+    release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to release directory containing manifest.json and SHA256SUMS.",
+        ),
+    ],
+    strict_assertions: Annotated[
+        bool,
+        typer.Option(
+            "--strict-assertions/--no-strict-assertions",
+            help="Enforce that database assertions report passed in web/assertions.json.",
+        ),
+    ] = False,
+) -> None:
+    """Verify integrity, inventory, coordinate bounds, and privacy compliance of a release."""
+    console.print(f"[bold]Verifying release directory:[/bold] {release_dir}")
+    report = verify_release(release_dir, strict_assertions=strict_assertions)
+    if not report["valid"]:
+        console.print(
+            f"[bold red]Release verification failed with {len(report['errors'])} error(s):[/bold red]"
+        )
+        for err in report["errors"]:
+            console.print(f"  [red]- {err}[/red]")
+        raise typer.Exit(code=1)
+
+    console.print(
+        f"[bold green]Release v{report['release_version']} verified successfully! "
+        f"({report['checks_passed']}/{report['checks_run']} checks passed, "
+        f"{report['verified_files_count']} files verified)[/bold green]"
+    )
+
+
+@release_app.command(name="diff")
+def release_diff_cmd(
+    old_release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to old/baseline release directory.",
+        ),
+    ],
+    new_release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to new/target release directory.",
+        ),
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option(
+            "--json",
+            help="Output diff report as formatted JSON.",
+        ),
+    ] = False,
+) -> None:
+    """Generate comparative diff between two release dataset bundles."""
+    try:
+        report = diff_releases(old_release_dir, new_release_dir)
+    except Exception as e:
+        console.print(f"[bold red]Failed diffing releases:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+    if as_json:
+        console.print(json.dumps(report, indent=2, sort_keys=True))
+        return
+
+    console.print(
+        Panel(
+            f"[bold blue]Release Diff: v{report['old_version']} -> v{report['new_version']}[/bold blue]"
+        )
+    )
+    console.print(
+        f"Size Change: {report['size_delta_bytes']:+,} bytes ({report['old_total_bytes']:,} -> {report['new_total_bytes']:,})"
+    )
+    console.print(
+        f"Added Files ({len(report['added_files'])}): {report['added_files']}"
+    )
+    console.print(
+        f"Removed Files ({len(report['removed_files'])}): {report['removed_files']}"
+    )
+    console.print(
+        f"Modified Files ({len(report['modified_files'])}): {[f['path'] for f in report['modified_files']]}"
+    )
+    console.print(f"Unchanged Files: {len(report['unchanged_files'])}")
 
 
 console = Console()
