@@ -74,6 +74,8 @@ def test_release_reference_is_offline_deterministic_and_keeps_unmapped(
     first = build_prototype(release, tmp_path / "one").read_bytes()
     second = build_prototype(release, tmp_path / "two").read_bytes()
     assert first == second
+    assert first.endswith(b"</html>\n")
+    assert b"\r\n" not in first
     html = first.decode()
     assert 'src="http' not in html
     assert "application/json" in html

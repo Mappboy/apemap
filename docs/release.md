@@ -129,7 +129,8 @@ uv run python -m apemap.release.package data/processed/releases/0.3.1-candidate 
 ```
 
 The archive is deterministic across filesystem timestamps and checkout locations.
-Existing archive names cannot be overwritten. `SHA256SUMS.dist` checks the archive;
+Existing archives, manifests and checksum files cannot be overwritten; use a
+separate output directory for each candidate. `SHA256SUMS.dist` checks the archive;
 the bundled `SHA256SUMS` checks individual payloads.
 
 Dataset releases are published automatically via GitHub Actions ([`.github/workflows/release.yml`](../.github/workflows/release.yml)).

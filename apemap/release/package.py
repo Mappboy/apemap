@@ -17,7 +17,7 @@ from apemap.release.verify import verify_release
 def package_release(release_dir: Path, output_dir: Path) -> dict[str, Any]:
     """Write sorted, normalized tar/gzip bytes and separate archive checksums.
 
-    Existing archives are immutable. Source generation/provenance stays in the
+    Existing archives and inventories are immutable. Source provenance stays in the
     bundled manifest; filesystem times and user names never affect archive bytes.
     """
     root, out = release_dir.resolve(), output_dir.resolve()
@@ -39,8 +39,12 @@ def package_release(release_dir: Path, output_dir: Path) -> dict[str, Any]:
         raise ValueError("Release version cannot form a safe archive filename")
     out.mkdir(parents=True, exist_ok=True)
     archive = out / f"apemap-release-v{version}.tar.gz"
-    if archive.exists():
-        raise FileExistsError(f"Archive already exists: {archive}")
+    for target in (
+        archive,
+        *(out / name for name in ("manifest.json", "SHA256SUMS", "SHA256SUMS.dist")),
+    ):
+        if target.exists() or target.is_symlink():
+            raise FileExistsError(f"Package output already exists: {target}")
     files = sorted(["manifest.json", "SHA256SUMS", *manifest["files"]])
     # Validate every path before producing any archive content.
     for name in files:
@@ -48,8 +52,10 @@ def package_release(release_dir: Path, output_dir: Path) -> dict[str, Any]:
         if not source.resolve().is_relative_to(root) or source.is_symlink():
             raise ValueError(f"Unsafe archive source: {name}")
     temporary = archive.with_suffix(".tmp")
+    owns_temporary = False
     try:
         with temporary.open("xb") as raw:
+            owns_temporary = True
             with gzip.GzipFile(
                 filename="", fileobj=raw, mode="wb", mtime=0
             ) as compressed:
@@ -66,13 +72,14 @@ def package_release(release_dir: Path, output_dir: Path) -> dict[str, Any]:
                             bundle.addfile(info, content)
         temporary.replace(archive)
     finally:
-        temporary.unlink(missing_ok=True)
+        if owns_temporary:
+            temporary.unlink(missing_ok=True)
     digest = _file_sha256(archive)
     for name in ("manifest.json", "SHA256SUMS"):
-        shutil.copyfile(root / name, out / name)
-    (out / "SHA256SUMS.dist").write_text(
-        f"{digest}  {archive.name}\n", encoding="utf-8", newline="\n"
-    )
+        with (root / name).open("rb") as source, (out / name).open("xb") as target:
+            shutil.copyfileobj(source, target)
+    with (out / "SHA256SUMS.dist").open("x", encoding="utf-8", newline="\n") as target:
+        target.write(f"{digest}  {archive.name}\n")
     return {
         "data_release_version": version,
         "source_commit": manifest["source_commit"],
