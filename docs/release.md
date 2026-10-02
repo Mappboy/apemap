@@ -118,6 +118,21 @@ uv run apemap release diff data/processed/releases/v1.0.0 data/processed/release
 
 ## 4. Release Publishing Workflow
 
+### Unpublished frontend candidates
+
+The [v0.3.1 candidate handoff](releases/0.3.1-candidate/README.md) describes the
+historical replay and consumption order. Package a strictly verified local bundle
+without publishing or tagging:
+
+```text
+uv run python -m apemap.release.package data/processed/releases/0.3.1-candidate --output-dir data/processed/candidates/0.3.1
+```
+
+The archive is deterministic across filesystem timestamps and checkout locations.
+Existing archives, manifests and checksum files cannot be overwritten; use a
+separate output directory for each candidate. `SHA256SUMS.dist` checks the archive;
+the bundled `SHA256SUMS` checks individual payloads.
+
 Dataset releases are published automatically via GitHub Actions ([`.github/workflows/release.yml`](../.github/workflows/release.yml)).
 
 ### Guardrails:

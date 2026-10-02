@@ -169,6 +169,8 @@ cython_debug/
 data/raw/
 # Full generated release bundles are distributed as versioned release assets.
 data/processed/releases/
+data/processed/candidates/
+data/processed/explorer-audit*.json
 data/restricted/
 data/external/acara_finances_*.csv
 data/external/acara_finances_*.parquet

@@ -12,3 +12,7 @@ archive/input-provisioning/2026-10-02/* -text whitespace=blank-at-eol,blank-at-e
 archive/notebooks/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve the exact verified release bytes and their report checksums.
 data/processed/historical/0.3.0/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Candidate inventories retain the exact bytes delivered in release archives.
+docs/releases/**/manifest.json -text
+docs/releases/**/candidate-record.json text eol=lf
+docs/releases/**/SHA256SUMS -text
