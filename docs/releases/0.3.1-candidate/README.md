@@ -20,7 +20,8 @@ uv run python -m apemap.release.package data/processed/releases/0.3.1-candidate 
 
 Both builds must use the same source commit and fixed input-manifest timestamp.
 Packaging sorts paths and normalizes tar ownership, permissions, timestamps and
-gzip headers. It refuses to overwrite an existing archive. `SHA256SUMS` verifies
+gzip headers. It refuses to overwrite existing archives, manifests or checksum
+files; use a separate output directory for each candidate. `SHA256SUMS` verifies
 the bundle payload; `SHA256SUMS.dist` verifies the downloadable archive. No new
 manifest format, publication workflow or canonical schema is introduced.
 

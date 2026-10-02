@@ -69,3 +69,42 @@ def test_package_rejects_failed_verification_and_nested_output(tmp_path: Path) -
     (root / "web/assertions.json").write_text('{"passed":false}')
     with pytest.raises(ValueError, match="verification failed"):
         package_release(root, tmp_path / "out")
+
+
+@pytest.mark.parametrize("name", ["manifest.json", "SHA256SUMS", "SHA256SUMS.dist"])
+def test_package_preserves_existing_sidecars(tmp_path: Path, name: str) -> None:
+    root, out = tmp_path / "source", tmp_path / "out"
+    minimal_verified_release(root)
+    out.mkdir()
+    existing = out / name
+    existing.write_bytes(b"earlier candidate\n")
+    with pytest.raises(FileExistsError):
+        package_release(root, out)
+    assert existing.read_bytes() == b"earlier candidate\n"
+    assert list(out.iterdir()) == [existing]
+
+
+def test_package_preserves_another_builds_temporary_archive(tmp_path: Path) -> None:
+    root, out = tmp_path / "source", tmp_path / "out"
+    minimal_verified_release(root)
+    out.mkdir()
+    temporary = out / "apemap-release-v0.3.1.tar.tmp"
+    temporary.write_bytes(b"another build's work")
+    with pytest.raises(FileExistsError):
+        package_release(root, out)
+    assert temporary.read_bytes() == b"another build's work"
+    assert list(out.iterdir()) == [temporary]
+
+
+def test_package_does_not_replace_another_versions_inventory(tmp_path: Path) -> None:
+    root, out = tmp_path / "source", tmp_path / "out"
+    minimal_verified_release(root)
+    package_release(root, out)
+    before = {path.name: path.read_bytes() for path in out.iterdir()}
+    manifest_path = root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["data_release_version"] = "0.3.2"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(FileExistsError):
+        package_release(root, out)
+    assert {path.name: path.read_bytes() for path in out.iterdir()} == before
