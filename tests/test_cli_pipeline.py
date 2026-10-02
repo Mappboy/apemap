@@ -694,6 +694,7 @@ def test_cli_export_command_and_reproducibility(
         str(Path("analysis") / "demographics.json"),
         str(Path("analysis") / "education_sectors.json"),
         str(Path("analysis") / "party_sectors.json"),
+        str(Path("analysis") / "chamber_sectors.json"),
         str(Path("analysis") / "shared_schools.json"),
         str(Path("analysis") / "cross_parliament.json"),
         str(Path("analysis") / "school_finance.json"),
