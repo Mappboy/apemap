@@ -63,6 +63,11 @@ Download [wireframes.html](wireframes.html) using GitHub's **Download raw file**
 
 ## Next design checkpoint
 
+The [working Editorial reference](prototype/README.md) now demonstrates the
+selected direction with a pinned verified dataset, static charts/tables and an
+offline list/filter explorer. The original alternatives below remain historical
+layout studies. Production implementation remains in cpoole-dev.
+
 Select a layout before building a higher-fidelity prototype. Review whether a reader can identify cohort and denominator, compare parliaments, find a school's members, and explain why map coverage differs from analytical coverage.
 
 The next prototype should use a pinned validated dataset or explicitly labelled synthetic fixtures and demonstrate actual filtering, URL state, selection persistence, long names, multiple attendance records, small groups, no results and map failure. Verify those tasks on mobile and without JavaScript. These initial wireframes do not complete all of issue #33's acceptance criteria.

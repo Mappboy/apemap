@@ -704,6 +704,101 @@ def compute_party_sector_summary(
     }
 
 
+def summarize_classified_members(
+    members: list[dict[str, Any]], parliament: int, group_field: str = "chamber"
+) -> dict[str, Any]:
+    """Group published person classifications without reclassifying attendance.
+
+    This pure helper also supports a design reference built from an older verified
+    release's members.json. Missing schooling remains in total N, not known N.
+    """
+    groups: dict[str, dict[str, Any]] = {}
+    for member in members:
+        key = member.get(group_field) or "Unknown"
+        group = groups.setdefault(
+            key,
+            {
+                "total_parliamentarians": 0,
+                "known_school_denominator": 0,
+                "parliamentarians_without_known_schools": 0,
+                "unique_parliamentarians_by_sector": dict.fromkeys(
+                    (
+                        "Government",
+                        "Catholic",
+                        "Independent",
+                        "Combined/Multiple",
+                        "Other",
+                        "No School Recorded",
+                    ),
+                    0,
+                ),
+                "government_non_government": dict.fromkeys(
+                    (
+                        "government_only",
+                        "non_government_only",
+                        "mixed",
+                        "other",
+                        "no_school_recorded",
+                    ),
+                    0,
+                ),
+            },
+        )
+        detailed = member["education_classification"]
+        headline = member["government_non_government"]
+        group["total_parliamentarians"] += 1
+        group["unique_parliamentarians_by_sector"][detailed] += 1
+        group["government_non_government"][headline] += 1
+        if detailed == "No School Recorded":
+            group["parliamentarians_without_known_schools"] += 1
+        else:
+            group["known_school_denominator"] += 1
+    for group in groups.values():
+        known = group["known_school_denominator"]
+        group["percentage_of_known_parliamentarians"] = {
+            key: round(count / known * 100, 2) if known else 0.0
+            for key, count in group["unique_parliamentarians_by_sector"].items()
+            if key != "No School Recorded"
+        }
+        group["government_non_government_percentages"] = {
+            key: round(count / known * 100, 2) if known else 0.0
+            for key, count in group["government_non_government"].items()
+            if key != "no_school_recorded"
+        }
+    return {
+        "parliament_number": parliament,
+        "cohort": "opening_day",
+        "total_parliamentarians": len(members),
+        "chambers": dict(sorted(groups.items())),
+    }
+
+
+def compute_chamber_sector_summary(
+    conn: duckdb.DuckDBPyConnection, parliament: int
+) -> dict[str, Any]:
+    """Compute chamber sectors using the canonical opening-day person rule."""
+    members = get_opening_day_members(conn, parliament)
+    sectors: dict[str, set[str]] = {}
+    for member_id, sector in conn.execute(
+        """SELECT e.member_id, i.sector FROM member_education e
+        JOIN institutions i ON e.institution_id = i.institution_id
+        WHERE e.level = 'secondary' AND EXISTS (
+            SELECT 1 FROM parliament_service ps WHERE ps.member_id = e.member_id
+            AND ps.parliament_number = ? AND ps.is_opening_day_member = TRUE)""",
+        [parliament],
+    ).fetchall():
+        sectors.setdefault(member_id, set()).add(
+            sector if sector in ("Government", "Catholic", "Independent") else "Other"
+        )
+    for member in members:
+        detailed, headline = classify_person_education(
+            sectors.get(member["member_id"], set())
+        )
+        member["education_classification"] = detailed
+        member["government_non_government"] = headline
+    return summarize_classified_members(members, parliament)
+
+
 def compute_shared_school_summary(
     conn: duckdb.DuckDBPyConnection,
     parliament: int,
@@ -1079,6 +1174,7 @@ def export_analysis_report(
             "demographics": compute_parliament_demographics(conn, parliament),
             "sectors": compute_sector_summary(conn, parliament),
             "party_sectors": compute_party_sector_summary(conn, parliament),
+            "chamber_sectors": compute_chamber_sector_summary(conn, parliament),
             "shared_schools": compute_shared_school_summary(conn, parliament),
             "school_finance": funding_data,
         }
@@ -1133,6 +1229,15 @@ def export_analysis_report(
             "metadata": metadata,
             "parliaments": {
                 key: value["shared_schools"] for key, value in report.items()
+            },
+        },
+    )
+    _write_json(
+        analysis_dir / "chamber_sectors.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["chamber_sectors"] for key, value in report.items()
             },
         },
     )
