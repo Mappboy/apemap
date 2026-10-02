@@ -46,3 +46,14 @@ are not attendance-era dates. This candidate does not acquire Finance 2024.
 The original v0.3.0 bundle and draft preview remain unchanged. Publication is a
 separate main-branch operation; this candidate is supplied only as a draft preview.
 The adjacent candidate record and manifest pin the delivered bytes and source.
+
+## Delivered candidate
+
+Both independent builds pass **217/217 checks across 50 files**. All payloads,
+inventories and packaged archive bytes match. The archive is **32,545,583 bytes**;
+SHA-256 is `2a9e52f3c476db4066da2df0e10cf8d972a08b068c8f222d1506b9e723d7cc3c`.
+The data source commit is `7e566d732f60283c86326aa761d3531327bc43e2`.
+
+See [candidate-record.json](candidate-record.json), [manifest.json](manifest.json)
+and [SHA256SUMS](SHA256SUMS). The manifest pins every file. The input acquisition
+timestamp is fixed; APH’s original upstream retrieval date remains unknown.

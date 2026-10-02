@@ -1,0 +1,13 @@
+{
+  "archive": "apemap-release-v0.3.1.tar.gz",
+  "archive_sha256": "2a9e52f3c476db4066da2df0e10cf8d972a08b068c8f222d1506b9e723d7cc3c",
+  "archive_size_bytes": 32545583,
+  "data_release_version": "0.3.1",
+  "publication": "draft_only",
+  "source_commit": "7e566d732f60283c86326aa761d3531327bc43e2",
+  "generated_at": "2026-10-01T22:23:59.813516+00:00",
+  "verified_files": 50,
+  "verification_checks_passed": 217,
+  "independent_payload_replay_identical": true,
+  "independent_archive_replay_identical": true
+}

@@ -1,0 +1,363 @@
+{
+  "attribution": "APEMAP \u2014 Australian Parliamentarians Education Map",
+  "cohort_definition": "opening_day",
+  "data_release_version": "0.3.1",
+  "files": {
+    "analysis/chamber_sectors.json": {
+      "path": "analysis/chamber_sectors.json",
+      "sha256": "3852656973770f1331fd49ebb2053cc64bbc52460cd98b2530b2516dd174b81b",
+      "size_bytes": 17024
+    },
+    "analysis/cross_parliament.json": {
+      "path": "analysis/cross_parliament.json",
+      "sha256": "a819ac4587b1a70b415589c47a807956ecf299aac9f2173e6a7d8f0d5a817f31",
+      "size_bytes": 6281
+    },
+    "analysis/demographics.json": {
+      "path": "analysis/demographics.json",
+      "sha256": "f234c02dee6f896d98c49719bcca7aec6fc8d9737558405fbaf3a6a8b371b236",
+      "size_bytes": 7894
+    },
+    "analysis/education_sectors.json": {
+      "path": "analysis/education_sectors.json",
+      "sha256": "f3fef34f161299f7f5c80e05cbc98096ed286762b207384d23837c57cdfa3f70",
+      "size_bytes": 26507
+    },
+    "analysis/metadata.json": {
+      "path": "analysis/metadata.json",
+      "sha256": "5a23e6ba7119b265541604c78caa28ab9dad37e606f34ea754a1efe9ae26dbea",
+      "size_bytes": 561
+    },
+    "analysis/parliament_comparison.json": {
+      "path": "analysis/parliament_comparison.json",
+      "sha256": "2a7228ec405ea5ea47b8d4bb8db926bad72c5d92cefec8e93c2b6e9d43516d55",
+      "size_bytes": 3841
+    },
+    "analysis/parliament_coverage.csv": {
+      "path": "analysis/parliament_coverage.csv",
+      "sha256": "0632c1d49c1f403c0084729e1ff39e5891934f13b741e4aa924277c09d50be5d",
+      "size_bytes": 905
+    },
+    "analysis/parliament_coverage.json": {
+      "path": "analysis/parliament_coverage.json",
+      "sha256": "0487e5002bb1b0a4daae315cc97f18ed74ac0f8efdd56986c980552c301096d1",
+      "size_bytes": 5123
+    },
+    "analysis/party_sectors.json": {
+      "path": "analysis/party_sectors.json",
+      "sha256": "c9a0e3694be6591bcd4d2f538d3fa6111abc15f74079c02d2d9fdc8ed234a299",
+      "size_bytes": 78652
+    },
+    "analysis/school_finance.json": {
+      "path": "analysis/school_finance.json",
+      "sha256": "9e28c19a14dfad1933339b882a9b91b5d1a844c3cba5a983a28ed8c3046d4d45",
+      "size_bytes": 29691
+    },
+    "analysis/shared_schools.json": {
+      "path": "analysis/shared_schools.json",
+      "sha256": "f9621cbf986780d005bbc1be4111aced695ebfa9289eddaad59191d82161bff2",
+      "size_bytes": 86907
+    },
+    "analysis_metrics.json": {
+      "path": "analysis_metrics.json",
+      "sha256": "0999c40d447c59b513e98577a8de8d9762b8b57df0e3215366fd3be6d53611a0",
+      "size_bytes": 259130
+    },
+    "data/education_sector_benchmarks.csv": {
+      "path": "data/education_sector_benchmarks.csv",
+      "sha256": "f3d710735141445466bdb2e9ef7595cadb085d198db2189ac7b4644962266c56",
+      "size_bytes": 557
+    },
+    "data/education_sector_benchmarks.parquet": {
+      "path": "data/education_sector_benchmarks.parquet",
+      "sha256": "6c7b0551581758ac1238a0b9ab0e03bfc47dd88505913a1d670145804cece5d0",
+      "size_bytes": 1652
+    },
+    "data/electoral_boundaries.parquet": {
+      "path": "data/electoral_boundaries.parquet",
+      "sha256": "28d58fdd519c65e1700f863a2fa8865b5c918633520be2a42cf8f5d298239a7b",
+      "size_bytes": 31617104
+    },
+    "data/institutions.csv": {
+      "path": "data/institutions.csv",
+      "sha256": "6379ca0a7799a307ac874add792dc36219d8234ae881b0958f6088ea26253e35",
+      "size_bytes": 1476210
+    },
+    "data/institutions.parquet": {
+      "path": "data/institutions.parquet",
+      "sha256": "7d47b56a6a58f80b8a06130dda2be3e1cc98e327b270e80c18768340291d8544",
+      "size_bytes": 515022
+    },
+    "data/member_education.csv": {
+      "path": "data/member_education.csv",
+      "sha256": "0da0aebd63f45f5c1d713f99887d1254f7a994c81bdcfb5004081e93f14a9608",
+      "size_bytes": 125260
+    },
+    "data/member_education.parquet": {
+      "path": "data/member_education.parquet",
+      "sha256": "212057e072b0ccb22bb9947858a4e1c508d914842807eec78bbf7012f40d3ef8",
+      "size_bytes": 32115
+    },
+    "data/members.csv": {
+      "path": "data/members.csv",
+      "sha256": "d50a4c1e4bf550f87a227ff2a39a469e848a8c994580e7ebc16d5c57f66e1756",
+      "size_bytes": 44602
+    },
+    "data/members.parquet": {
+      "path": "data/members.parquet",
+      "sha256": "070f535b428887bb3c2f996274c20849566b64c7d7f3128ef3b57c3b85676b20",
+      "size_bytes": 28868
+    },
+    "data/parliament_metadata.csv": {
+      "path": "data/parliament_metadata.csv",
+      "sha256": "2bf02d31dad009876f59a317a4b173d9e230297ebf0d49692510ef73705d96f3",
+      "size_bytes": 1795
+    },
+    "data/parliament_metadata.parquet": {
+      "path": "data/parliament_metadata.parquet",
+      "sha256": "89184a6006bac91ec6caf85fba31165101d0332665df5a1173431aebf662e561",
+      "size_bytes": 2348
+    },
+    "data/parliament_service.csv": {
+      "path": "data/parliament_service.csv",
+      "sha256": "0e9fb061317d24f9d00a48cd6c460e2faafd71a9e6e4e8a80ecc18ba59e1fd23",
+      "size_bytes": 435850
+    },
+    "data/parliament_service.parquet": {
+      "path": "data/parliament_service.parquet",
+      "sha256": "f86166b7f18d66e5511af0a7f62c4379b029448c4f40a92637dccc36775b1b43",
+      "size_bytes": 67435
+    },
+    "data/school_finance_benchmarks.csv": {
+      "path": "data/school_finance_benchmarks.csv",
+      "sha256": "991d0781ef168f5f0177db52e7378f623b5b522e7710f823162cbefe997ad48c",
+      "size_bytes": 1244847
+    },
+    "data/school_finance_benchmarks.parquet": {
+      "path": "data/school_finance_benchmarks.parquet",
+      "sha256": "7f111b67a6d565e8c3150801a8d07700eff8bc52afb7040741d2ed80f20210f8",
+      "size_bytes": 28906
+    },
+    "data/school_public_funding.csv": {
+      "path": "data/school_public_funding.csv",
+      "sha256": "cc698ba8411eb8f9bab3999edf0df53aa28e1fabfbfa1623816f4238b08fcbbb",
+      "size_bytes": 23198
+    },
+    "data/school_public_funding.parquet": {
+      "path": "data/school_public_funding.parquet",
+      "sha256": "fab9416cf0f98ef8b9361a1054651fd2189021b3d57c8f959abd2bf2c4d2cba6",
+      "size_bytes": 5051
+    },
+    "data/school_snapshots.csv": {
+      "path": "data/school_snapshots.csv",
+      "sha256": "3d588906f6e5368e0b25e720c39f60ba3f6662f24c51b74a7c2dde9fd1e1ccfc",
+      "size_bytes": 15195141
+    },
+    "data/school_snapshots.parquet": {
+      "path": "data/school_snapshots.parquet",
+      "sha256": "66875b1382d6bc7d72a0a90e95a7af14313a9d8bb75f22c51f54587da8980df3",
+      "size_bytes": 2637931
+    },
+    "review/coverage_metrics.json": {
+      "path": "review/coverage_metrics.json",
+      "sha256": "6c158e907b237acc073f2eb612352e8624531755d069538c0e7c219c89fd856c",
+      "size_bytes": 2826
+    },
+    "review/historical_education_review.csv": {
+      "path": "review/historical_education_review.csv",
+      "sha256": "49d2b6e1926f66efb3d0ad0df5020fb2232d3217748397732b82041ca22a3523",
+      "size_bytes": 283166
+    },
+    "review/historical_service_review.csv": {
+      "path": "review/historical_service_review.csv",
+      "sha256": "8eca3f966ab0381124d5443c4415e1b652777ea94ac7c2adf75319e5e8c66e1d",
+      "size_bytes": 988
+    },
+    "review/parliament_coverage.csv": {
+      "path": "review/parliament_coverage.csv",
+      "sha256": "0632c1d49c1f403c0084729e1ff39e5891934f13b741e4aa924277c09d50be5d",
+      "size_bytes": 905
+    },
+    "review/parliament_coverage.json": {
+      "path": "review/parliament_coverage.json",
+      "sha256": "0487e5002bb1b0a4daae315cc97f18ed74ac0f8efdd56986c980552c301096d1",
+      "size_bytes": 5123
+    },
+    "review/unmatched_schools.csv": {
+      "path": "review/unmatched_schools.csv",
+      "sha256": "11eb9288de6dc0e2927ded877684626a921d11d392f71b0e42f803e60142e22c",
+      "size_bytes": 269356
+    },
+    "review/upstream_profile_review.csv": {
+      "path": "review/upstream_profile_review.csv",
+      "sha256": "03ecb28d43bd55e7d979baa1507ce301384e71903fd397aa6b9daefbe9c8d323",
+      "size_bytes": 313
+    },
+    "web/assertions.json": {
+      "path": "web/assertions.json",
+      "sha256": "16ced630a00d3bf635bb4dabc9b25ec0ce3705d48c6beef3868000c99d1573fb",
+      "size_bytes": 216
+    },
+    "web/members.json": {
+      "path": "web/members.json",
+      "sha256": "2d327c707f412b69534eecc728b27ca34e9206ac8885b6757a955018c67e37e7",
+      "size_bytes": 1189022
+    },
+    "web/metadata.json": {
+      "path": "web/metadata.json",
+      "sha256": "9991792aeb1034380ab9a284b3c585898136112a1f6c3bad81fc29b0e4b03662",
+      "size_bytes": 4213
+    },
+    "web/parliament_42_combined.geojson": {
+      "path": "web/parliament_42_combined.geojson",
+      "sha256": "5cc3289284b3f9545d703951d3d9465c426557defa15c6f63fe1f89412673daa",
+      "size_bytes": 106200
+    },
+    "web/parliament_43_combined.geojson": {
+      "path": "web/parliament_43_combined.geojson",
+      "sha256": "686f5bd15ab66f26bdd18f03331ae36468f728d9c61a9f77d4bf7e85ae80dfdf",
+      "size_bytes": 162141
+    },
+    "web/parliament_44_combined.geojson": {
+      "path": "web/parliament_44_combined.geojson",
+      "sha256": "51b737db4fdae3e6a714a367e5dda335276abaecb6d1aadbfce34d59c7852972",
+      "size_bytes": 198590
+    },
+    "web/parliament_45_combined.geojson": {
+      "path": "web/parliament_45_combined.geojson",
+      "sha256": "44cd099ab7e426d43d986ebdf7ecea2f1cd11ee64adc809797c23e92390d80df",
+      "size_bytes": 300409
+    },
+    "web/parliament_46_combined.geojson": {
+      "path": "web/parliament_46_combined.geojson",
+      "sha256": "d431f077f16d31270e3b772caf431389e1da8ff958c9728200ae63a18bfc4cc8",
+      "size_bytes": 377226
+    },
+    "web/parliament_47_combined.geojson": {
+      "path": "web/parliament_47_combined.geojson",
+      "sha256": "dd27eb4dd66d8efd48fd6cf18fea906af928000bf346f83e562d8f0e22cd88cf",
+      "size_bytes": 366427
+    },
+    "web/parliament_48_combined.geojson": {
+      "path": "web/parliament_48_combined.geojson",
+      "sha256": "cb12332fcb038aa53fe49db9ff7fcdf9f598fa54d8462020d4dc043fd40fe6b2",
+      "size_bytes": 348641
+    },
+    "web/results-summary.json": {
+      "path": "web/results-summary.json",
+      "sha256": "eedfcd6bb04da3963ff64a266e0399a58b389998db1b97b93ec2a920bd9fda63",
+      "size_bytes": 21339
+    },
+    "web/schools.geojson": {
+      "path": "web/schools.geojson",
+      "sha256": "404ab1c86a9c2fae0dc432c49123ef6f662551a0336c6311452c103b77d782d6",
+      "size_bytes": 657716
+    }
+  },
+  "generated_at": "2026-10-01T22:23:59.813516+00:00",
+  "licensing": "Creative Commons Attribution 4.0 International / ACARA / APH",
+  "parliament_metadata": {
+    "42": {
+      "description": "42nd Parliament of Australia (2008-2010)",
+      "end_date": "2010-07-19",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2007-11-24",
+      "opening_date": "2008-02-12",
+      "parliament_number": 42,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "43": {
+      "description": "43rd Parliament of Australia (2010-2013)",
+      "end_date": "2013-08-05",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2010-08-21",
+      "opening_date": "2010-09-28",
+      "parliament_number": 43,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "44": {
+      "description": "44th Parliament of Australia (2013-2016)",
+      "end_date": "2016-05-09",
+      "expected_representatives": 150,
+      "expected_senators": 74,
+      "general_election_date": "2013-09-07",
+      "opening_date": "2013-11-12",
+      "parliament_number": 44,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "45": {
+      "description": "45th Parliament of Australia (2016-2019)",
+      "end_date": "2019-04-11",
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2016-07-02",
+      "opening_date": "2016-08-30",
+      "parliament_number": 45,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "46": {
+      "description": "46th Parliament of Australia (2019-2022)",
+      "end_date": "2022-04-11",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2019-05-18",
+      "opening_date": "2019-07-02",
+      "parliament_number": 46,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "47": {
+      "description": "47th Parliament of Australia (2022-2025)",
+      "end_date": "2025-03-28",
+      "expected_representatives": 151,
+      "expected_senators": 76,
+      "general_election_date": "2022-05-21",
+      "opening_date": "2022-07-26",
+      "parliament_number": 47,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    },
+    "48": {
+      "description": "48th Parliament of Australia (2025-present)",
+      "end_date": null,
+      "expected_representatives": 150,
+      "expected_senators": 76,
+      "general_election_date": "2025-05-03",
+      "opening_date": "2025-07-22",
+      "parliament_number": 48,
+      "source_url": "https://www.aph.gov.au/About_Parliament/House_of_Representatives/Powers_practice_and_procedure/00_-_Infosheets/Infosheet_25_-_Prorogation_and_dissolution"
+    }
+  },
+  "parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "release_schema_version": "1.0.0",
+  "source_commit": "7e566d732f60283c86326aa761d3531327bc43e2",
+  "source_snapshot_dates": {
+    "abs": "2026-03-05",
+    "acara": "2026-10-01",
+    "aec": "2025-03-04",
+    "aph": null
+  },
+  "sources": {
+    "abs": "Australian Bureau of Statistics (ABS) Schools, 2025",
+    "acara": "Australian Curriculum, Assessment and Reporting Authority (ACARA)",
+    "aec": "Australian Electoral Commission (AEC) 2025 Federal Electoral Boundaries",
+    "aph": "Parliamentary Handbook of the Commonwealth of Australia"
+  },
+  "supported_parliaments": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ]
+}
