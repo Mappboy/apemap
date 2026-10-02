@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import TypedDict
 
 import duckdb
 import pytest
@@ -40,6 +41,15 @@ from apemap.ingest.funding import (
     ingest_tasmania_srp,
     resolve_institution_id,
 )
+
+
+class FundingInputs(TypedDict):
+    benchmarks_path: Path
+    nsw_path: Path
+    tas_path: Path
+    nt_path: Path
+    qld_path: Path
+    manual_path: Path
 
 
 def seed_funding_db(conn: duckdb.DuckDBPyConnection) -> None:
@@ -88,7 +98,7 @@ def db_conn(
 
 
 @pytest.fixture
-def funding_inputs(tmp_path: Path) -> dict[str, Path]:
+def funding_inputs(tmp_path: Path) -> FundingInputs:
     """Cover every orchestration input with small, synthetic source-native CSVs."""
     samples = {
         "benchmarks_path": (
@@ -121,7 +131,14 @@ def funding_inputs(tmp_path: Path) -> dict[str, Path]:
         path = tmp_path / f"{name}.csv"
         path.write_text(content, encoding="utf-8")
         paths[name] = path
-    return paths
+    return FundingInputs(
+        benchmarks_path=paths["benchmarks_path"],
+        nsw_path=paths["nsw_path"],
+        tas_path=paths["tas_path"],
+        nt_path=paths["nt_path"],
+        qld_path=paths["qld_path"],
+        manual_path=paths["manual_path"],
+    )
 
 
 @pytest.mark.unit
@@ -740,7 +757,7 @@ def test_validate_funding_records_comprehensive(
 @pytest.mark.integration
 def test_clean_db_run_all_with_funding_tables(
     tmp_path: Path,
-    funding_inputs: dict[str, Path],
+    funding_inputs: FundingInputs,
 ) -> None:
     """Integration test proving clean run-all populates funding tables and passes strict validation."""
     db_path = tmp_path / "clean_run_all.duckdb"
@@ -871,7 +888,7 @@ def test_get_school_geolocation_fallback() -> None:
 @pytest.mark.integration
 def test_ingest_all_funding_orchestration(
     db_conn: duckdb.DuckDBPyConnection,
-    funding_inputs: dict[str, Path],
+    funding_inputs: FundingInputs,
 ) -> None:
     """Assert ingest_all_funding coordinates all ingestion steps."""
     counts = ingest_all_funding(db_conn, **funding_inputs)

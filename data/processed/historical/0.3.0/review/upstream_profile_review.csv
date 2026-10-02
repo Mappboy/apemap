@@ -1,0 +1,3 @@
+source_file,acara_id,snapshot_year,raw_sea_quarters,action
+school-profile-2008-2025.csv,44001,2010,"[20.0, 13.0, 23.0, 25.0]",Invalid SEA total: all four canonical percentages withheld
+school-profile-2008-2025.csv,46335,2010,"[14.0, 7.0, 12.0, 10.0]",Invalid SEA total: all four canonical percentages withheld

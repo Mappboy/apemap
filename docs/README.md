@@ -15,6 +15,7 @@ This index provides an overview of available technical guides, methodologies, an
 | [**Data Sources & Provenance**](data-sources.md) | Upstream data inventory, retrieval mechanisms, licensing, copyright attribution, and historical references. | Researchers, compliance, librarians |
 | [**Analysis & Outputs**](analysis.md) | Deterministic demographic, sector, and financial metrics, export artifacts (Parquet, GeoJSON, JSON), and notebook workflows. | Policy researchers, visualizers, journalists |
 | [**Website Release Contract**](web-release.md) | Web export command, opening-day cohort, CSV grain, member service context, source years and release provenance. | Frontend developers, release maintainers |
+| [**Historical Coverage**](historical-coverage.md) | Populated 42nd–48th release, service reconstruction, source gaps, historical institutions, replay and website follow-up. | Researchers, release maintainers |
 | [**Dataset Release System**](release.md) | Immutable dataset releases, layout, manifest, verification, privacy checks, and GitHub release publication. | Release engineers, researchers, data users |
 | [**Continuous Integration (CI)**](ci.md) | Offline CI pipeline architecture, quality gates, automated verification, and local execution. | Contributors, CI/CD engineers |
 | [**Reproducibility Guide**](reproducibility.md) | Deterministic guarantees, virtual environment locking, network-isolated stages, and validation gates. | Auditors, peer reviewers, CI/CD |

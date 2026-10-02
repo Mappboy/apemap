@@ -7,12 +7,15 @@ and parameterized queries for parliament and education analytics.
 from __future__ import annotations
 
 from contextlib import contextmanager
+import os
 from pathlib import Path
 import sqlite3
 from typing import TYPE_CHECKING, Generator
 
 import duckdb
 import pandas as pd
+
+from apemap.constants import PARLIAMENT_METADATA
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -55,10 +58,13 @@ CANONICAL_ORDER_BY = {
 def ensure_spatial(
     conn: DuckDBPyConnection, *, allow_install: bool | None = None
 ) -> None:
-    """Ensure DuckDB spatial extension is loaded and configured."""
+    """Load spatial, optionally using an isolated APEMAP_DUCKDB_EXTENSION_DIR."""
+    extension_dir = os.environ.get("APEMAP_DUCKDB_EXTENSION_DIR")
+    if extension_dir:
+        conn.execute(
+            "SET extension_directory = ?", [str(Path(extension_dir).resolve())]
+        )
     if allow_install is None:
-        import os
-
         allow_install = os.environ.get("APEMAP_OFFLINE") != "1"
     try:
         conn.execute("LOAD spatial;")
@@ -193,6 +199,46 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             f"ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS {column} {sql_type}"
         )
 
+    for table, columns in {
+        "parliament_service": [
+            ("source_url", "VARCHAR"),
+            ("retrieved_at", "TIMESTAMPTZ"),
+            ("source_service_start", "DATE"),
+            ("source_service_end", "DATE"),
+        ],
+        "institutions": [
+            ("country", "VARCHAR"),
+            ("institution_status", "VARCHAR DEFAULT 'unknown'"),
+        ],
+        "member_education": [
+            ("school_name_as_recorded", "VARCHAR"),
+            ("institution_resolution", "VARCHAR"),
+            ("resolution_source_url", "VARCHAR"),
+            ("evidence_origin", "VARCHAR"),
+        ],
+    }.items():
+        for column, sql_type in columns:
+            conn.execute(
+                f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {sql_type}"
+            )
+    for info in PARLIAMENT_METADATA.values():
+        conn.execute(
+            """INSERT OR REPLACE INTO parliament_metadata
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            [
+                info[key]
+                for key in (
+                    "parliament_number",
+                    "general_election_date",
+                    "opening_date",
+                    "end_date",
+                    "description",
+                    "expected_representatives",
+                    "expected_senators",
+                    "source_url",
+                )
+            ],
+        )
     conn.execute(views_sql_path.read_text(encoding="utf-8"))
 
 

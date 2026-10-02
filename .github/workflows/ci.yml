@@ -69,6 +69,14 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --frozen
 
+      - name: Restore pinned raw inputs
+        env:
+          APEMAP_OFFLINE: "0"
+        run: uv run apemap inputs restore
+
+      - name: Preinstall DuckDB spatial extension
+        run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
+
       - name: Verify cached input files manifest
         run: uv run apemap inputs verify
 
@@ -92,6 +100,14 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-groups --frozen
+
+      - name: Restore pinned raw inputs
+        env:
+          APEMAP_OFFLINE: "0"
+        run: uv run apemap inputs restore
+
+      - name: Preinstall DuckDB spatial extension
+        run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
 
       - name: Run full pipeline in strict offline mode
         run: |
@@ -119,6 +135,14 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-groups --frozen
+
+      - name: Restore pinned raw inputs
+        env:
+          APEMAP_OFFLINE: "0"
+        run: uv run apemap inputs restore
+
+      - name: Preinstall DuckDB spatial extension
+        run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
 
       - name: Execute pipeline and build release
         run: |

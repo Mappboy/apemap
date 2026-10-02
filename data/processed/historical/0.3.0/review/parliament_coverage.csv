@@ -1,0 +1,8 @@
+parliament,opening_date,cohort,opening_day_members,members_with_dob,members_with_secondary_school,members_without_secondary_school,secondary_education_assertions,represented_schools,domestic_schools_matched_acara,historical_schools,overseas_schools,unresolved_school_records,schools_with_observed_finance,schools_with_estimated_finance,schools_with_public_funding,finance_reporting_year
+42,2008-02-12,opening_day,226,223,32,194,60,56,36,3,0,21,0,35,4,2024
+43,2010-09-28,opening_day,226,223,49,177,93,87,55,4,0,35,0,54,5,2024
+44,2013-11-12,opening_day,224,222,63,161,130,121,68,5,1,58,0,66,7,2024
+45,2016-08-30,opening_day,226,219,93,133,188,174,103,5,1,79,0,100,8,2024
+46,2019-07-02,opening_day,227,221,123,104,243,220,128,6,1,103,0,124,11,2024
+47,2022-07-26,opening_day,227,215,121,106,249,225,124,6,1,112,0,120,12,2024
+48,2025-07-22,opening_day,226,194,116,110,234,212,117,5,1,101,0,113,10,2024

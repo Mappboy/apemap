@@ -82,6 +82,32 @@ def verify_release(
     manifest_files = manifest_data.get("files", {})
     version = manifest_data.get("data_release_version")
 
+    # Historical releases declare centrally configured terms and one public layer each.
+    if "supported_parliaments" in manifest_data:
+        checks_run += 1
+        from apemap.constants import PARLIAMENT_METADATA
+
+        selected = manifest_data.get("parliaments", [])
+        metadata = manifest_data.get("parliament_metadata", {})
+        for p in selected:
+            if metadata.get(str(p)) != PARLIAMENT_METADATA.get(p):
+                errors.append(
+                    f"Parliament {p} metadata differs from canonical chronology"
+                )
+            if not (root / "web" / f"parliament_{p}_combined.geojson").exists():
+                errors.append(f"Missing public layer for Parliament {p}")
+        metadata_path = root / "web" / "metadata.json"
+        try:
+            web_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            if web_metadata.get("parliament_metadata") != metadata:
+                errors.append("Web and release parliament metadata disagree")
+            if web_metadata.get("cohort") != "opening_day" or not web_metadata.get(
+                "temporal_warning"
+            ):
+                errors.append("Historical release lacks its cohort or temporal warning")
+        except (OSError, ValueError) as exc:
+            errors.append(f"Cannot read historical web metadata: {exc}")
+
     # 2. Parse SHA256SUMS
     checks_run += 1
     sums_map: dict[str, str] = {}
@@ -146,39 +172,38 @@ def verify_release(
             errors.append(f"Unmanifested file found on disk: '{u}'")
 
     # 5. GeoJSON Coordinate and Format Validation
-    geojson_path = root / "web" / "schools.geojson"
-    if geojson_path.exists():
+    for geojson_path in sorted((root / "web").glob("*.geojson")):
         checks_run += 1
         try:
             gj_data = json.loads(geojson_path.read_text(encoding="utf-8"))
             if gj_data.get("type") != "FeatureCollection":
                 errors.append(
-                    f"schools.geojson type is '{gj_data.get('type')}', expected 'FeatureCollection'"
+                    f"{geojson_path.name} type is '{gj_data.get('type')}', expected 'FeatureCollection'"
                 )
             features = gj_data.get("features", [])
             if not features:
-                errors.append("schools.geojson features list is empty")
+                errors.append(f"{geojson_path.name} features list is empty")
             for idx, feat in enumerate(features):
                 geom = feat.get("geometry")
                 if not geom or geom.get("type") != "Point":
                     errors.append(
-                        f"schools.geojson feature {idx} missing Point geometry"
+                        f"{geojson_path.name} feature {idx} missing Point geometry"
                     )
                     continue
                 coords = geom.get("coordinates")
                 if not coords or len(coords) < 2:
                     errors.append(
-                        f"schools.geojson feature {idx} has invalid coordinates: {coords}"
+                        f"{geojson_path.name} feature {idx} has invalid coordinates: {coords}"
                     )
                     continue
                 lon, lat = float(coords[0]), float(coords[1])
                 # Global coordinate validity
                 if not (-180.0 <= lon <= 180.0 and -90.0 <= lat <= 90.0):
                     errors.append(
-                        f"schools.geojson feature {idx} out of range coordinates: ({lon}, {lat})"
+                        f"{geojson_path.name} feature {idx} out of range coordinates: ({lon}, {lat})"
                     )
         except Exception as e:
-            errors.append(f"Failed parsing schools.geojson: {e}")
+            errors.append(f"Failed parsing {geojson_path.name}: {e}")
 
     # 6. Restricted Field Leakage Audit
     checks_run += 1

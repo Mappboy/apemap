@@ -1,5 +1,9 @@
 # Research & Processing Methodology
 
+The [historical coverage methodology](historical-coverage.md) extends this model
+to 42–48 with dated service reconstruction, occupied-seat benchmarks, sourced
+successor decisions, separate evidence gaps and financial year warnings.
+
 This document details the methodological foundations of APEMAP, including project scope, cohort definitions, education extraction, institutional matching algorithms, data validation gates, and analytical limitations.
 
 ---

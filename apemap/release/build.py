@@ -16,7 +16,13 @@ from apemap.analysis import (
     classify_person_education,
     export_analysis_report,
 )
-from apemap.constants import PROCESSED_DIR
+from apemap.constants import (
+    PROCESSED_DIR,
+    PARLIAMENT_METADATA,
+    TEMPORAL_WARNING,
+    supported_parliaments,
+)
+from apemap.coverage import export_parliament_coverage
 from apemap.db import (
     ensure_spatial,
     get_connection,
@@ -145,10 +151,29 @@ def build_release(
         )
 
         # 3b. web/schools.geojson
-        export_web_schools_geojson(active_conn, web_dir, target_parls)
+        export_web_schools_geojson(
+            active_conn,
+            web_dir,
+            target_parls,
+            finance_reporting_year=finance_reporting_year,
+        )
 
         # 3c. web/results-summary.json
         export_results_summary(active_conn, web_dir, target_parls)
+        export_parliament_coverage(
+            active_conn, out_dir / "analysis", target_parls, finance_reporting_year
+        )
+        # Public historical layers retain the existing school-feature web contract.
+        for p in target_parls:
+            term_dir = web_dir / f"parliament_{p}"
+            layer_path = export_web_schools_geojson(
+                active_conn,
+                term_dir,
+                [p],
+                finance_reporting_year=finance_reporting_year,
+            )
+            layer_path.replace(web_dir / f"parliament_{p}_combined.geojson")
+            term_dir.rmdir()
 
         # 3d. web/members.json
         members_path = web_dir / "members.json"
@@ -171,6 +196,11 @@ def build_release(
             "source_commit": commit_sha,
             "generated_at": gen_timestamp,
             "parliaments": target_parls,
+            "supported_parliaments": supported_parliaments(),
+            "parliament_metadata": {
+                str(p): PARLIAMENT_METADATA[p] for p in target_parls
+            },
+            "temporal_warning": TEMPORAL_WARNING,
             "cohort": "opening_day",
             "licensing": "Creative Commons Attribution 4.0 International / ACARA / APH",
             "attribution": "APEMAP — Australian Parliamentarians Education Map",
@@ -220,6 +250,10 @@ def build_release(
             "source_snapshot_dates": snapshot_dates,
             "cohort_definition": "opening_day",
             "parliaments": target_parls,
+            "supported_parliaments": supported_parliaments(),
+            "parliament_metadata": {
+                str(p): PARLIAMENT_METADATA[p] for p in target_parls
+            },
             "files": manifest_files,
             "sources": {
                 "aph": "Parliamentary Handbook of the Commonwealth of Australia",
@@ -411,6 +445,7 @@ def _export_public_data_tables(
 
     # 2. Other Public Canonical Tables
     tables_to_export = [
+        ("parliament_metadata", "parliament_number"),
         ("members", "member_id"),
         ("parliament_service", "service_id"),
         ("institutions", "institution_id"),

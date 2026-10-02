@@ -116,7 +116,10 @@ def resolve_institution_id(
 
 
 def ingest_acara_benchmarks(
-    conn: DuckDBPyConnection, csv_path: Path | str | None = None
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> int:
     """Ingest ACARA National Report on Schooling public finance benchmarks.
 
@@ -148,7 +151,7 @@ def ingest_acara_benchmarks(
         raise ValueError(f"ACARA benchmarks CSV missing required columns: {missing}")
 
     records: list[tuple[Any, ...]] = []
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
 
     for _, row in df.iterrows():
         year = int(row["reporting_year"])
@@ -167,7 +170,7 @@ def ingest_acara_benchmarks(
                 "https://www.acara.edu.au/reporting/national-report-on-schooling-in-australia/school-income",
             )
         ).strip()
-        retrieved_at = str(row.get("retrieved_at", now_iso)).strip()
+        source_retrieved_at = str(row.get("retrieved_at", now_iso)).strip()
 
         records.append(
             (
@@ -180,7 +183,7 @@ def ingest_acara_benchmarks(
                 unit,
                 source_dataset,
                 source_url,
-                retrieved_at,
+                source_retrieved_at,
             )
         )
 
@@ -212,7 +215,12 @@ def ingest_acara_benchmarks(
     return len(records)
 
 
-def ingest_nsw_ram(conn: DuckDBPyConnection, csv_path: Path | str | None = None) -> int:
+def ingest_nsw_ram(
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
+) -> int:
     """Ingest Data.NSW Resource Allocation Model (RAM) school-level allocations.
 
     Preserves source-native RAM metric names and reporting year. State funding
@@ -231,7 +239,7 @@ def ingest_nsw_ram(conn: DuckDBPyConnection, csv_path: Path | str | None = None)
         return 0
 
     df = pd.read_csv(path)
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     source_dataset = "Data.NSW Education Resource Allocation Model"
     source_url = (
         "https://data.nsw.gov.au/data/dataset/nsw-education-resource-allocation-model"
@@ -317,7 +325,10 @@ def ingest_nsw_ram(conn: DuckDBPyConnection, csv_path: Path | str | None = None)
 
 
 def ingest_tasmania_srp(
-    conn: DuckDBPyConnection, csv_path: Path | str | None = None
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> int:
     """Ingest Tasmania DECYP School Resource Package (Fairer Funding Model) allocations.
 
@@ -334,7 +345,7 @@ def ingest_tasmania_srp(
         return 0
 
     df = pd.read_csv(path)
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     source_dataset = "Tasmania DECYP School Resourcing Data"
     source_url = "https://www.decyp.tas.gov.au/about-us/policies-legislation-data/data-and-statistics/school-resourcing-data/"
     funding_model = "School Resource Package (Fairer Funding Model)"
@@ -417,7 +428,10 @@ def ingest_tasmania_srp(
 
 
 def ingest_nt_funding(
-    conn: DuckDBPyConnection, csv_path: Path | str | None = None
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> int:
     """Ingest Northern Territory School Needs Based Funding Formula data.
 
@@ -434,7 +448,7 @@ def ingest_nt_funding(
         return 0
 
     df = pd.read_csv(path)
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     source_dataset = "NT Department of Education School Funding"
     source_url = "https://education.nt.gov.au/statistics-research-and-strategies/increasing-school-autonomy/school-funding"
     funding_model = "School Needs Based Funding Formula"
@@ -518,7 +532,10 @@ def ingest_nt_funding(
 
 
 def ingest_qld_grants(
-    conn: DuckDBPyConnection, csv_path: Path | str | None = None
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> int:
     """Ingest Queensland State Recurrent Grant Scheme data for non-state schools.
 
@@ -535,7 +552,7 @@ def ingest_qld_grants(
         return 0
 
     df = pd.read_csv(path)
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     source_dataset = "Queensland Non-State Schools Recurrent Grants"
     source_url = "https://education.qld.gov.au/about-us/budgets-funding-grants/grants/non-state-school/state-recurrent-grant"
     funding_model = "State Recurrent Grant Scheme for Non-State Schools"
@@ -623,7 +640,10 @@ def ingest_qld_grants(
 
 
 def ingest_manual_school_funding(
-    conn: DuckDBPyConnection, csv_path: Path | str | None = None
+    conn: DuckDBPyConnection,
+    csv_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> int:
     """Ingest authoritative manual school funding records (e.g. from annual reports).
 
@@ -640,7 +660,7 @@ def ingest_manual_school_funding(
         return 0
 
     df = pd.read_csv(path)
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     records: list[tuple[Any, ...]] = []
     unmatched: list[str] = []
 
@@ -652,7 +672,7 @@ def ingest_manual_school_funding(
         unit = str(row.get("unit", "AUD_per_student")).strip()
         src_url = str(row.get("source_url", "")).strip()
         src_type = str(row.get("source_type", "annual_report")).strip()
-        retrieved_at = str(row.get("reviewed_at", now_iso)).strip()
+        source_retrieved_at = str(row.get("reviewed_at", now_iso)).strip()
 
         inst_id = resolve_institution_id(conn, aid)
         if not inst_id:
@@ -674,7 +694,7 @@ def ingest_manual_school_funding(
                 source_dataset,
                 src_url,
                 str(aid),
-                retrieved_at,
+                source_retrieved_at,
             )
         )
 
@@ -724,6 +744,8 @@ def ingest_all_funding(
     nt_path: Path | str | None = None,
     qld_path: Path | str | None = None,
     manual_path: Path | str | None = None,
+    *,
+    retrieved_at: datetime | None = None,
 ) -> dict[str, int]:
     """Execute all public funding and ACARA benchmark ingestion routines.
 
@@ -740,11 +762,15 @@ def ingest_all_funding(
         Dictionary summarizing ingested record counts by dataset.
     """
     counts = {
-        "acara_benchmarks": ingest_acara_benchmarks(conn, benchmarks_path),
-        "nsw_ram": ingest_nsw_ram(conn, nsw_path),
-        "tasmania_srp": ingest_tasmania_srp(conn, tas_path),
-        "nt_funding": ingest_nt_funding(conn, nt_path),
-        "qld_grants": ingest_qld_grants(conn, qld_path),
-        "manual_enrichment": ingest_manual_school_funding(conn, manual_path),
+        "acara_benchmarks": ingest_acara_benchmarks(
+            conn, benchmarks_path, retrieved_at=retrieved_at
+        ),
+        "nsw_ram": ingest_nsw_ram(conn, nsw_path, retrieved_at=retrieved_at),
+        "tasmania_srp": ingest_tasmania_srp(conn, tas_path, retrieved_at=retrieved_at),
+        "nt_funding": ingest_nt_funding(conn, nt_path, retrieved_at=retrieved_at),
+        "qld_grants": ingest_qld_grants(conn, qld_path, retrieved_at=retrieved_at),
+        "manual_enrichment": ingest_manual_school_funding(
+            conn, manual_path, retrieved_at=retrieved_at
+        ),
     }
     return counts

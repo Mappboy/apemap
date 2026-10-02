@@ -16,10 +16,10 @@ from apemap.constants import (
     APH_DEFAULT_ORDERBY,
     APH_HANDBOOK_API_ENDPOINT,
     DEFAULT_USER_AGENT,
-    PARLIAMENT_METADATA,
     RAW_APH_DIR,
 )
 from apemap.ingest.http import create_retry_session
+from apemap.ingest.service import reconstruct_services
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +52,10 @@ class ServiceStint:
     service_end: str | None
     is_opening_day_member: bool
     is_current_member: bool
+    source_url: str = ""
+    source_service_start: str | None = None
+    source_service_end: str | None = None
+    retrieved_at: str | None = None
 
 
 @dataclass
@@ -61,6 +65,7 @@ class ParsedIndividual:
     secondary_school_raw: str = ""
     bio_texts: list[str] = field(default_factory=list)
     source_url: str = ""
+    service_reviews: list[dict[str, Any]] = field(default_factory=list)
 
 
 class AphClient:
@@ -211,119 +216,8 @@ def parse_individual(
     secondary_school_raw = str(raw.get("SecondarySchool", "")).strip()
     source_url = f"{APH_HANDBOOK_API_ENDPOINT}?$filter=PHID eq '{phid}'"
 
-    # Determine parliaments served
-    represented_parls: list[int] = []
-    for p in raw.get("RepresentedParliaments", []):
-        try:
-            represented_parls.append(int(p))
-        except (ValueError, TypeError):
-            continue
-
-    services: list[ServiceStint] = []
-    parls_to_process = (
-        represented_parls
-        if target_parliaments is None
-        else [p for p in represented_parls if p in target_parliaments]
-    )
-
-    # General metadata on state, party, electorate
-    party = str(raw.get("Party", "")).strip() or "Independent"
-    party_abbrev = str(raw.get("PartyAbbrev", "")).strip() or "IND"
-    electorate = str(raw.get("Electorate", "")).strip() or None
-    state_or_territory = str(
-        raw.get("StateAbbrev") or raw.get("State") or "ACT"
-    ).strip()
-    if state_or_territory == "State" or not state_or_territory:
-        state_or_territory = "Unknown"
-
-    raw_mp_senator = raw.get("MPorSenator", [])
-    chamber_hint = (
-        "senate"
-        if "Senator" in raw_mp_senator and "Member" not in raw_mp_senator
-        else None
-    )
-    chamber = normalize_chamber(chamber_hint, electorate)
-
-    overall_start = parse_date(raw.get("ServiceHistory_Start"))
-    overall_end = parse_date(raw.get("ServiceHistory_End"))
-    in_curr = str(raw.get("InCurrentParliament", "")).lower() == "true"
-
-    for parl_num in parls_to_process:
-        parl_info = PARLIAMENT_METADATA.get(parl_num)
-        opening_d = parse_date(parl_info["opening_date"]) if parl_info else None
-        end_d = parse_date(parl_info["end_date"]) if parl_info else None
-
-        # Determine parliament-specific service dates:
-        # Check PartyParliamentaryService for overlapping stint dates
-        matching_pps: list[tuple[date, date | None]] = []
-        for item in raw.get("PartyParliamentaryService", []):
-            if not isinstance(item, dict):
-                continue
-            ds = parse_date(item.get("DateStart"))
-            de = parse_date(item.get("DateEnd"))
-            if ds is not None:
-                if end_d is not None and ds > end_d:
-                    continue
-                if de is not None and opening_d is not None and de < opening_d:
-                    continue
-                matching_pps.append((ds, de))
-
-        if matching_pps:
-            matching_pps.sort(key=lambda x: x[0])
-            stint_start = matching_pps[0][0]
-            stint_end = matching_pps[-1][1]
-        else:
-            stint_start = overall_start
-            stint_end = overall_end
-
-        # Overlap gate:
-        # Before appending a ServiceStint, require the actual service interval to overlap
-        # the parliament interval: effectively service_start <= parliament_end and
-        # (service_end is null or service_end >= opening_date).
-        # Do not use a missing service start as though it were the parliament opening date.
-        if stint_start is None:
-            continue
-        if end_d is not None and stint_start > end_d:
-            continue
-        if opening_d is not None and stint_end is not None and stint_end < opening_d:
-            continue
-
-        # Determine opening day membership:
-        # Active if start <= opening_date and (end is null or end >= opening_date)
-        is_opening = False
-        if (
-            opening_d is not None
-            and stint_start <= opening_d
-            and (stint_end is None or stint_end >= opening_d)
-        ):
-            is_opening = True
-
-        # Determine current member status
-        is_current = False
-        if parl_num == 48:
-            is_current = in_curr or stint_end is None
-        elif end_d:
-            # For past parliaments, active on dissolution/end
-            if stint_start <= end_d and (stint_end is None or stint_end >= end_d):
-                is_current = True
-
-        stint = ServiceStint(
-            service_id=f"srv-{phid.lower()}-{parl_num}",
-            member_id=member_id,
-            parliament_number=parl_num,
-            chamber=chamber,
-            party=party,
-            party_abbrev=party_abbrev,
-            electorate=electorate,
-            state_or_territory=state_or_territory,
-            service_start=stint_start.isoformat(),
-            service_end=stint_end.isoformat()
-            if stint_end
-            else (end_d.isoformat() if end_d else None),
-            is_opening_day_member=is_opening,
-            is_current_member=is_current,
-        )
-        services.append(stint)
+    service_rows, reviews = reconstruct_services(raw, target_parliaments)
+    services = [ServiceStint(**row) for row in service_rows]
 
     return ParsedIndividual(
         demographics=demographics,
@@ -331,4 +225,5 @@ def parse_individual(
         secondary_school_raw=secondary_school_raw,
         bio_texts=bio_texts,
         source_url=source_url,
+        service_reviews=reviews,
     )

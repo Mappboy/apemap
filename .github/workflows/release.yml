@@ -16,7 +16,7 @@ on:
         description: 'Comma-separated parliaments to include'
         required: false
         type: string
-        default: '46,47,48'
+        default: ''
 
 permissions:
   contents: write
@@ -79,12 +79,25 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --frozen
 
+      - name: Restore pinned raw inputs
+        env:
+          APEMAP_OFFLINE: "0"
+        run: uv run apemap inputs restore
+
+      - name: Preinstall DuckDB spatial extension
+        run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
+
       - name: Verify inputs manifest
         run: uv run apemap inputs verify
 
       - name: Run pipeline and build release bundle
+        env:
+          PARLIAMENT_SELECTION: ${{ github.event.inputs.parliaments }}
         run: |
-          PARLS="${{ github.event.inputs.parliaments || '46,47,48' }}"
+          PARLS="$PARLIAMENT_SELECTION"
+          if [ -z "$PARLS" ]; then
+            PARLS="$(uv run python -c 'from apemap.constants import supported_parliaments; print(",".join(map(str, supported_parliaments())))')"
+          fi
           mkdir -p /tmp/build_db /tmp/build_out /tmp/release_bundle
           uv run apemap run-all \
             --offline \

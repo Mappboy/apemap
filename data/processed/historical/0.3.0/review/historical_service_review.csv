@@ -1,0 +1,7 @@
+member_id,parliament_number,source_url,notes,review_status,resolved_value,manual_source_url,review_notes
+aph-225099,43,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '225099',No service interval overlaps this parliament,needs_research,,,
+aph-249499,43,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '249499',No service interval overlaps this parliament,needs_research,,,
+aph-25813,48,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '25813',Missing dated representation at 2026-08-20,needs_research,,,
+aph-25813,48,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '25813',Missing dated representation at 2026-09-22,needs_research,,,
+aph-324140,48,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '324140',Missing dated representation at 2026-09-22,needs_research,,,
+aph-cpr,45,https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'CPR',Missing dated representation at 2018-08-15,needs_research,,,

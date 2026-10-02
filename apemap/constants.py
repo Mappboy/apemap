@@ -70,28 +70,124 @@ ABS_BENCHMARK_2025: AbsBenchmarkData = {
 
 
 class ParliamentInfo(TypedDict):
+    parliament_number: int
+    general_election_date: str
     opening_date: str
     end_date: str | None
     description: str
+    expected_representatives: int
+    expected_senators: int
+    source_url: str
+
+
+PARLIAMENT_CHRONOLOGY_URL = (
+    "https://www.aph.gov.au/About_Parliament/House_of_Representatives/"
+    "Powers_practice_and_procedure/00_-_Infosheets/"
+    "Infosheet_25_-_Prorogation_and_dissolution"
+)
+TEMPORAL_WARNING = (
+    "School profile and finance values describe the institution in their reporting "
+    "year, not the resources available when the parliamentarian attended. "
+    "Reviewed successor mappings describe the successor institution."
+)
 
 
 PARLIAMENT_METADATA: dict[int, ParliamentInfo] = {
+    42: {
+        "parliament_number": 42,
+        "general_election_date": "2007-11-24",
+        "opening_date": "2008-02-12",
+        "end_date": "2010-07-19",
+        "description": "42nd Parliament of Australia (2008-2010)",
+        "expected_representatives": 150,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
+    },
+    43: {
+        "parliament_number": 43,
+        "general_election_date": "2010-08-21",
+        "opening_date": "2010-09-28",
+        "end_date": "2013-08-05",
+        "description": "43rd Parliament of Australia (2010-2013)",
+        "expected_representatives": 150,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
+    },
+    44: {
+        "parliament_number": 44,
+        "general_election_date": "2013-09-07",
+        "opening_date": "2013-11-12",
+        "end_date": "2016-05-09",
+        "description": "44th Parliament of Australia (2013-2016)",
+        "expected_representatives": 150,
+        "expected_senators": 74,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
+    },
+    45: {
+        "parliament_number": 45,
+        "general_election_date": "2016-07-02",
+        "opening_date": "2016-08-30",
+        "end_date": "2019-04-11",
+        "description": "45th Parliament of Australia (2016-2019)",
+        "expected_representatives": 150,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
+    },
     46: {
+        "parliament_number": 46,
+        "general_election_date": "2019-05-18",
         "opening_date": "2019-07-02",
         "end_date": "2022-04-11",
         "description": "46th Parliament of Australia (2019-2022)",
+        "expected_representatives": 151,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
     },
     47: {
+        "parliament_number": 47,
+        "general_election_date": "2022-05-21",
         "opening_date": "2022-07-26",
-        "end_date": "2025-04-11",
+        "end_date": "2025-03-28",
         "description": "47th Parliament of Australia (2022-2025)",
+        "expected_representatives": 151,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
     },
     48: {
+        "parliament_number": 48,
+        "general_election_date": "2025-05-03",
         "opening_date": "2025-07-22",
         "end_date": None,
         "description": "48th Parliament of Australia (2025-present)",
+        "expected_representatives": 150,
+        "expected_senators": 76,
+        "source_url": PARLIAMENT_CHRONOLOGY_URL,
     },
 }
+
+
+def supported_parliaments() -> list[int]:
+    """Return supported terms in chronological order from the canonical metadata."""
+    return sorted(PARLIAMENT_METADATA)
+
+
+def current_parliament() -> int:
+    """Return the single open parliament; reject inconsistent metadata."""
+    current = [p for p, info in PARLIAMENT_METADATA.items() if info["end_date"] is None]
+    if len(current) != 1:
+        raise ValueError("Parliament metadata must identify exactly one current term")
+    return current[0]
+
+
+def select_parliaments(parliaments: list[int] | None = None) -> list[int]:
+    """Resolve defaults and reject empty or unsupported selections."""
+    values = (
+        supported_parliaments() if parliaments is None else sorted(set(parliaments))
+    )
+    if not values or any(p not in PARLIAMENT_METADATA for p in values):
+        raise ValueError(f"Select supported parliaments: {supported_parliaments()}")
+    return values
+
 
 APH_HANDBOOK_API_ENDPOINT = "https://handbookapi.aph.gov.au/api/individuals"
 APH_DEFAULT_ORDERBY = "FamilyName,GivenName"

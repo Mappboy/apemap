@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import json
 import logging
 import re
@@ -653,7 +655,7 @@ def run_wikimedia_enrichment(
 ) -> dict[str, Any]:
     """Execute Wikimedia enrichment pipeline for canonical members and unmatched schools."""
     if parliaments is None:
-        parliaments = [46, 47, 48]
+        parliaments = supported_parliaments()
 
     out_dir = Path(output_dir or PROCESSED_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
