@@ -5,12 +5,18 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 from pathlib import Path
+import shutil
+import stat
 import tarfile
+from tempfile import TemporaryDirectory
 from typing import Any
+from urllib.parse import urlparse
 import zipfile
 
 from apemap.constants import DATA_DIR
+from apemap.ingest.http import create_retry_session
 
 logger = logging.getLogger(__name__)
 
@@ -39,14 +45,16 @@ def is_safe_relative_path(path_str: str) -> bool:
     if not path_str or not isinstance(path_str, str):
         return False
 
-    cleaned = path_str.strip().replace("\\", "/")
+    cleaned = path_str.removesuffix("/")
+    if "\\" in cleaned or "\x00" in cleaned or ":" in cleaned:
+        return False
     if cleaned.startswith("/"):
         return False
     if len(cleaned) >= 2 and cleaned[1] == ":":
         return False
 
-    parts = [p for p in cleaned.split("/") if p and p != "."]
-    if ".." in parts:
+    parts = cleaned.split("/")
+    if any(p in ("", ".", "..") or p != p.strip() for p in parts):
         return False
 
     return True
@@ -87,7 +95,7 @@ def verify_inputs_manifest(
             continue
 
         target_file = (root / rel_path).resolve()
-        if not str(target_file).startswith(str(root)):
+        if not target_file.is_relative_to(root):
             errors.append(f"Path escapes root directory: '{rel_path}'")
             continue
 
@@ -116,18 +124,27 @@ def verify_inputs_manifest(
     return len(errors) == 0, errors
 
 
+def _archive_target(root: Path, name: str) -> Path:
+    """Reject traversal and existing symlinks before writing archive contents."""
+    if not is_safe_relative_path(name):
+        raise ValueError(f"Unsafe file path in archive: '{name}'")
+    target = root / name
+    if not target.resolve().is_relative_to(root):
+        raise ValueError(f"Archive path traversal attempt: '{name}'")
+    if any(p.is_symlink() for p in (target, *target.parents) if p != root):
+        raise ValueError(f"Archive path contains a symlink: '{name}'")
+    return target
+
+
 def extract_inputs_archive(
     archive_path: Path | str,
     target_dir: Path | str,
 ) -> list[Path]:
-    """Safely extract an inputs archive (zip or tar.gz) preventing directory traversal.
+    """Extract regular files only; reject traversal, links and special members.
 
-    Args:
-        archive_path: Path to archive file.
-        target_dir: Directory to extract contents into.
-
-    Returns:
-        List of extracted file paths.
+    Validate all member paths/types before writing. Do not delegate extraction
+    to tar/zip APIs that can create links or apply untrusted filesystem metadata.
+    Returns the extracted regular files (directories are omitted).
     """
     src = Path(archive_path).resolve()
     dst = Path(target_dir).resolve()
@@ -138,40 +155,114 @@ def extract_inputs_archive(
 
     extracted: list[Path] = []
 
-    if src.suffix.lower() == ".zip" or src.name.lower().endswith(".zip"):
+    if src.suffix.lower() == ".zip":
         with zipfile.ZipFile(src, "r") as zf:
+            seen: set[Path] = set()
             for info in zf.infolist():
-                if not is_safe_relative_path(info.filename):
-                    raise ValueError(f"Unsafe file path in archive: '{info.filename}'")
-                target_path = (dst / info.filename).resolve()
-                if not str(target_path).startswith(str(dst)):
-                    raise ValueError(
-                        f"Archive path traversal attempt: '{info.filename}'"
-                    )
-                zf.extract(info, dst)
+                target_path = _archive_target(dst, info.filename)
+                mode = stat.S_IFMT(info.external_attr >> 16)
+                if mode not in (0, stat.S_IFREG, stat.S_IFDIR):
+                    raise ValueError(f"Non-regular archive member: '{info.filename}'")
+                if target_path in seen:
+                    raise ValueError(f"Duplicate archive member: '{info.filename}'")
+                seen.add(target_path)
+            for info in zf.infolist():
+                target_path = _archive_target(dst, info.filename)
+                if info.is_dir():
+                    target_path.mkdir(parents=True, exist_ok=True)
+                    continue
+                target_path.parent.mkdir(parents=True, exist_ok=True)
+                with zf.open(info) as source, target_path.open("wb") as output:
+                    shutil.copyfileobj(source, output)
                 extracted.append(target_path)
     elif src.name.lower().endswith((".tar.gz", ".tgz", ".tar.bz2", ".tar")):
         with tarfile.open(src, "r:*") as tf:
+            seen = set()
             for member in tf.getmembers():
-                if not is_safe_relative_path(member.name):
-                    raise ValueError(
-                        f"Unsafe file path in tar archive: '{member.name}'"
-                    )
-                target_path = (dst / member.name).resolve()
-                if not str(target_path).startswith(str(dst)):
-                    raise ValueError(f"Archive path traversal attempt: '{member.name}'")
-                if member.islnk() or member.issym():
-                    link_target = (target_path.parent / member.linkname).resolve()
-                    if not str(link_target).startswith(str(dst)):
-                        raise ValueError(
-                            f"Symlink escapes target directory: '{member.name}' -> '{member.linkname}'"
-                        )
-                tf.extract(member, dst)
+                target_path = _archive_target(dst, member.name)
+                if not (member.isfile() or member.isdir()):
+                    raise ValueError(f"Non-regular archive member: '{member.name}'")
+                if target_path in seen:
+                    raise ValueError(f"Duplicate archive member: '{member.name}'")
+                seen.add(target_path)
+            for member in tf.getmembers():
+                target_path = _archive_target(dst, member.name)
+                if member.isdir():
+                    target_path.mkdir(parents=True, exist_ok=True)
+                    continue
+                source = tf.extractfile(member)
+                if source is None:
+                    raise ValueError(f"Unreadable archive member: '{member.name}'")
+                target_path.parent.mkdir(parents=True, exist_ok=True)
+                with source, target_path.open("wb") as output:
+                    shutil.copyfileobj(source, output)
                 extracted.append(target_path)
     else:
         raise ValueError(f"Unsupported archive format: {src.name}")
 
     return extracted
+
+
+def restore_inputs(
+    manifest_path: Path | str = DEFAULT_MANIFEST_PATH,
+    *,
+    archive_path: Path | str | None = None,
+    base_dir: Path | str | None = None,
+) -> list[Path]:
+    """Restore only the manifest's required raw inputs from a SHA-pinned bundle.
+
+    Download requires online setup; a supplied local archive works offline.
+    Verify the bundle before extraction, then its exact file inventory and each
+    member's bytes in a staging directory before copying to the repository.
+    Tracked inputs are never restored from the archive; verify them separately.
+    """
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    digest = manifest.get("archive_sha256", "")
+    if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+        raise ValueError("Manifest must pin a valid archive SHA-256")
+    raw_files = {
+        name: info
+        for name, info in manifest.get("files", {}).items()
+        if name.startswith("data/raw/") and info.get("required", True)
+    }
+    if not raw_files:
+        raise ValueError("Manifest contains no required raw inputs")
+    root = Path(base_dir).resolve() if base_dir else DATA_DIR.parent.resolve()
+    targets = {name: _archive_target(root, name) for name in raw_files}
+    with TemporaryDirectory(prefix="apemap-inputs-") as temporary:
+        staging = Path(temporary).resolve()
+        if archive_path is None:
+            if os.environ.get("APEMAP_OFFLINE") == "1":
+                raise ValueError("Input download requires online setup or --archive")
+            url = manifest.get("archive_url", "")
+            if urlparse(url).scheme != "https":
+                raise ValueError("Input archive URL must use HTTPS")
+            archive = staging / Path(urlparse(url).path).name
+            with create_retry_session() as session:
+                with session.get(url, stream=True, timeout=(10, 120)) as response:
+                    response.raise_for_status()
+                    with archive.open("wb") as output:
+                        for chunk in response.iter_content(chunk_size=65536):
+                            output.write(chunk)
+        else:
+            archive = Path(archive_path).resolve()
+        if compute_sha256(archive) != digest:
+            raise ValueError("Input archive SHA-256 mismatch; refusing extraction")
+        extracted_root = staging / "extracted"
+        extracted = extract_inputs_archive(archive, extracted_root)
+        inventory = {p.relative_to(extracted_root).as_posix() for p in extracted}
+        if inventory != set(raw_files):
+            raise ValueError("Input archive inventory differs from required raw inputs")
+        for name, info in raw_files.items():
+            source = extracted_root / name
+            if source.stat().st_size != info.get("size_bytes") or compute_sha256(
+                source
+            ) != info.get("sha256"):
+                raise ValueError(f"Restored input bytes differ from manifest: '{name}'")
+        for name, target in targets.items():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(extracted_root / name, target)
+    return list(targets.values())
 
 
 def preflight_offline_inputs(

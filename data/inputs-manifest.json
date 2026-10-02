@@ -1,27 +1,27 @@
 {
   "schema_version": "1.0",
-  "archive_url": "https://github.com/Mappboy/apemap/releases/download/v1.0.0-inputs/apemap-inputs-v1.tar.gz",
-  "archive_sha256": "bdc0393d8448477bf187ac84473978330f776b5ea2ed6343f7eb891187263a09",
-  "created_at": "2026-09-30T22:30:00Z",
-  "description": "Pinned source-input archive manifest for reproducible offline builds and CI validation.",
+  "archive_url": "https://github.com/Mappboy/apemap/releases/download/inputs-20261002/apemap-inputs-20261002.tar.gz",
+  "archive_sha256": "aba83a54dfcabc2cd889c2756e3ffe50cce240adc5704f62a15955216378db56",
+  "created_at": "2026-10-02T00:00:00Z",
+  "description": "Pinned LF tracked inputs and six ignored APH/AEC raw files; archive contains only the required data/raw files.",
   "files": {
     "data/external/school-location-2022.csv": {
-      "sha256": "1ecb0ee3494379678603e1b28a0c083b4ab99894bb93d7f28d8dc65c67a46b70",
-      "size_bytes": 3404367,
+      "sha256": "65c364e4b7289e65d994cbf2238e2c06139ee796f5da6fa2cd3b91f2dab282cc",
+      "size_bytes": 3393682,
       "source": "ACARA School Location 2022",
       "recorded_date": "2022",
       "required": true
     },
     "data/external/school-profile-2022.csv": {
-      "sha256": "b4ce6b375efe735819680b27b22570f9c21d42c589e5ef9700c7f4230d68dc60",
-      "size_bytes": 3031931,
+      "sha256": "e856457ed07aa298014d20c6baad02bb16c6cc240f0da86bac520d1f24ac12be",
+      "size_bytes": 3022221,
       "source": "ACARA School Profile 2022",
       "recorded_date": "2022",
       "required": true
     },
     "data/external/acara_school_results.json": {
-      "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
-      "size_bytes": 11195583,
+      "sha256": "e970a3b3c15af415cc3d8974f28e503565e8aa8932a466d9dc6a28958d093781",
+      "size_bytes": 10792282,
       "source": "ACARA My School Results Profile",
       "recorded_date": "2022",
       "required": true
@@ -124,5 +124,6 @@
       "recorded_date": "2025",
       "required": true
     }
-  }
+  },
+  "archive_size_bytes": 46242386
 }

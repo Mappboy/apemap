@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "archive_url": "https://github.com/Mappboy/apemap/releases/download/v1.0.0-inputs/apemap-inputs-v1.tar.gz",
+  "archive_sha256": "bdc0393d8448477bf187ac84473978330f776b5ea2ed6343f7eb891187263a09",
+  "created_at": "2026-09-30T22:30:00Z",
+  "description": "Pinned source-input archive manifest for reproducible offline builds and CI validation.",
+  "files": {
+    "data/external/school-location-2022.csv": {
+      "sha256": "1ecb0ee3494379678603e1b28a0c083b4ab99894bb93d7f28d8dc65c67a46b70",
+      "size_bytes": 3404367,
+      "source": "ACARA School Location 2022",
+      "recorded_date": "2022",
+      "required": true
+    },
+    "data/external/school-profile-2022.csv": {
+      "sha256": "b4ce6b375efe735819680b27b22570f9c21d42c589e5ef9700c7f4230d68dc60",
+      "size_bytes": 3031931,
+      "source": "ACARA School Profile 2022",
+      "recorded_date": "2022",
+      "required": true
+    },
+    "data/external/acara_school_results.json": {
+      "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+      "size_bytes": 11195583,
+      "source": "ACARA My School Results Profile",
+      "recorded_date": "2022",
+      "required": true
+    },
+    "data/external/ASGS_Ed3_2021_RA_GPKG_GDA2020.zip": {
+      "sha256": "e3802bb9bf1f12a67a97b22152f55fc6e2cc86f2f1deed61d5b48d96ce9ba578",
+      "size_bytes": 30018587,
+      "source": "ABS Remoteness Areas 2021 GeoPackage",
+      "recorded_date": "2021",
+      "required": true
+    },
+    "data/reference/acara_school_finance_benchmarks.csv": {
+      "sha256": "1f69e652e6eda2904297fca554c7a8055fa3e1adf17f057771d75a2ec0d89e36",
+      "size_bytes": 1239662,
+      "source": "ACARA National Report on Schooling Benchmarks",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/reference/manual_school_funding.csv": {
+      "sha256": "ee17862bc12c8a8e782df21ffbe8f0bec8a54480be389a781092ec9c00b1fcd2",
+      "size_bytes": 906,
+      "source": "Manual State Disclosures (SA, WA, ACT)",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/reference/nsw_ram_allocations.csv": {
+      "sha256": "cc81aacbe324ca2a2dad5ab2836fb48417db42fc396aac576b415ce431833fe8",
+      "size_bytes": 1252,
+      "source": "NSW Resource Allocation Model Allocations",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/reference/nt_school_funding.csv": {
+      "sha256": "02640e617b9021d664f43ce058e777ce3b78310a6da472fd72c82d13c5dd7315",
+      "size_bytes": 252,
+      "source": "Northern Territory School Resourcing Allocations",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/reference/qld_non_state_grants.csv": {
+      "sha256": "80d722b624be5277d021392ec474a58ced1052391e63890f791e318cd2595f07",
+      "size_bytes": 313,
+      "source": "Queensland Non-State School Grants",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/reference/school_aliases.json": {
+      "sha256": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f",
+      "size_bytes": 27091,
+      "source": "Canonical School Name Aliases Mapping",
+      "recorded_date": "2026-10-02",
+      "required": true
+    },
+    "data/reference/tasmania_srp_allocations.csv": {
+      "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
+      "size_bytes": 369,
+      "source": "Tasmania DECYP Fairer Funding Model",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/raw/aph/individuals.json": {
+      "sha256": "aad9e3798b32d94f6dd849cac20a40b25967664e1f845ce2a070e16f87873093",
+      "size_bytes": 10741777,
+      "source": "APH Parliamentary Handbook API Snapshot",
+      "recorded_date": "2024",
+      "required": true
+    },
+    "data/raw/aec/2025/AUS-March-2025-esri.zip": {
+      "sha256": "bdc0393d8448477bf187ac84473978330f776b5ea2ed6343f7eb891187263a09",
+      "size_bytes": 22689664,
+      "source": "AEC 2025 Federal Electoral Boundaries Archive",
+      "recorded_date": "2025",
+      "required": true
+    },
+    "data/raw/aec/2025/AUS_ELB_region.shp": {
+      "sha256": "57bbf38dbf8e1caa7360af43fb2154f5827ac12aee5a4927c04a497a31b1987b",
+      "size_bytes": 68966304,
+      "source": "AEC 2025 Federal Electoral Boundaries Shapefile",
+      "recorded_date": "2025",
+      "required": true
+    },
+    "data/raw/aec/2025/AUS_ELB_region.shx": {
+      "sha256": "0b6187d15d6ea7f6fb937159d5cc43e43dacd2e45c6a2af1ba6bfe347d06bbd1",
+      "size_bytes": 1300,
+      "source": "AEC 2025 Federal Electoral Boundaries Shapefile Index",
+      "recorded_date": "2025",
+      "required": true
+    },
+    "data/raw/aec/2025/AUS_ELB_region.dbf": {
+      "sha256": "cc36b63b0937b5b97ddcf6b6000015edf6fa558a718fcef568aab9e8c49cb9b7",
+      "size_bytes": 24022,
+      "source": "AEC 2025 Federal Electoral Boundaries Attributes",
+      "recorded_date": "2025",
+      "required": true
+    },
+    "data/raw/aec/2025/AUS_ELB_region.prj": {
+      "sha256": "e6e1cc4c5a68009271bab9d22f2f99c861944e577a1e385d8f6b0636a5d8a3fa",
+      "size_bytes": 168,
+      "source": "AEC 2025 Federal Electoral Boundaries Projection",
+      "recorded_date": "2025",
+      "required": true
+    }
+  }
+}

@@ -44,6 +44,7 @@ from apemap.ingest.wikimedia import run_wikimedia_enrichment
 from apemap.inputs import (
     DEFAULT_MANIFEST_PATH,
     preflight_offline_inputs,
+    restore_inputs,
     verify_inputs_manifest,
 )
 from apemap.release import (
@@ -73,6 +74,27 @@ inputs_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(inputs_app, name="inputs")
+
+
+@inputs_app.command(name="restore")
+def restore_inputs_cmd(
+    manifest_path: Annotated[
+        Path, typer.Option("--manifest", "-m", help="Pinned input manifest.")
+    ] = DEFAULT_MANIFEST_PATH,
+    archive_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--archive", help="Local bundle; omit to download the pinned URL."
+        ),
+    ] = None,
+) -> None:
+    """Restore ignored raw inputs after verifying the pinned archive and members."""
+    try:
+        restored = restore_inputs(manifest_path, archive_path=archive_path)
+    except (OSError, ValueError) as err:
+        console.print(f"[bold red]Input restoration failed:[/bold red] {err}")
+        raise typer.Exit(code=1) from err
+    console.print(f"[green]Restored {len(restored)} verified raw input files.[/green]")
 
 
 @inputs_app.command(name="verify")

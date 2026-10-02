@@ -1,6 +1,6 @@
 # Continuous Integration (CI) Architecture
 
-This document describes the offline continuous integration (CI) architecture for APEMAP. The CI pipeline guarantees reproducible data processing, strict code quality, relational and analytical validation, and release contract conformance without network dependencies.
+This document describes the offline continuous integration (CI) architecture for APEMAP. Setup downloads pinned dependencies, input assets and the DuckDB spatial extension; data processing, tests and release verification then run offline.
 
 ---
 
@@ -14,6 +14,22 @@ This document describes the offline continuous integration (CI) architecture for
 ---
 
 ## 2. CI Jobs Overview
+
+Both CI data jobs and the release workflow provision inputs before preflight:
+
+```bash
+APEMAP_OFFLINE=0 uv run apemap inputs restore
+uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
+uv run apemap inputs verify
+```
+
+Restoration downloads the release URL pinned in `data/inputs-manifest.json`,
+checks the archive SHA-256 before extraction, rejects traversal, links and
+special members, and checks the exact six-file inventory and individual bytes
+before copying into ignored `data/raw/`. It never overwrites tracked inputs.
+Scoped `.gitattributes` rules force manifested CSV/JSON inputs to LF on Windows
+and Unix; hashes and sizes describe those checkout bytes. Spatial installation
+belongs to setup because offline preflight only loads an existing extension.
 
 The CI workflow is configured in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) and comprises four specialized jobs:
 
@@ -49,7 +65,7 @@ uv run apemap run-all \
   --strict
 ```
 - Validates that reference boundaries, benchmarks, ACARA profiles, and APH cohorts load without internet access.
-- Verifies that all 51 relational integrity and coverage assertions pass.
+- Verifies that all relational integrity and coverage assertions pass.
 
 ### Job 4: `release-contract` (Release Build & Verify)
 Simulates release bundle generation from the newly built database:
@@ -84,6 +100,8 @@ uv run deptry apemap
 uv run prek run --all-files
 
 # 3. Test suite
+APEMAP_OFFLINE=0 uv run apemap inputs restore
+uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
 uv run apemap inputs verify
 uv run pytest
 

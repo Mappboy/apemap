@@ -6,6 +6,7 @@ import io
 import json
 from pathlib import Path
 import tarfile
+from unittest.mock import MagicMock, patch
 import zipfile
 
 import pytest
@@ -15,6 +16,7 @@ from apemap.inputs import (
     extract_inputs_archive,
     is_safe_relative_path,
     preflight_offline_inputs,
+    restore_inputs,
     verify_inputs_manifest,
 )
 
@@ -44,6 +46,9 @@ def test_is_safe_relative_path() -> None:
     assert not is_safe_relative_path("C:\\Windows\\system32")
     assert not is_safe_relative_path("")
     assert not is_safe_relative_path(None)  # type: ignore[arg-type]
+    assert not is_safe_relative_path("data\\raw\\file")
+    assert not is_safe_relative_path("data/raw/file:stream")
+    assert not is_safe_relative_path("data/./raw/file")
 
 
 @pytest.mark.unit
@@ -176,3 +181,204 @@ def test_cli_run_all_offline_flags() -> None:
     res_rf = runner.invoke(app, ["run-all", "--offline", "--refresh"])
     assert res_rf.exit_code != 0
     assert "Cannot combine --offline with --refresh" in res_rf.output
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("kind", [tarfile.SYMTYPE, tarfile.LNKTYPE, tarfile.FIFOTYPE])
+def test_extract_rejects_links_and_special_members(tmp_path: Path, kind: bytes) -> None:
+    archive = tmp_path / "links.tar.gz"
+    with tarfile.open(archive, "w:gz") as tar:
+        good = tarfile.TarInfo("data/good.txt")
+        good.size = 4
+        tar.addfile(good, io.BytesIO(b"good"))
+        member = tarfile.TarInfo("data/link")
+        member.type = kind
+        member.linkname = "good.txt"
+        tar.addfile(member)
+    destination = tmp_path / "extracted"
+    with pytest.raises(ValueError, match="Non-regular"):
+        extract_inputs_archive(archive, destination)
+    assert not (destination / "data/good.txt").exists()
+
+
+@pytest.mark.unit
+def test_extract_rejects_zip_symlink(tmp_path: Path) -> None:
+    archive = tmp_path / "links.zip"
+    with zipfile.ZipFile(archive, "w") as zf:
+        info = zipfile.ZipInfo("data/link")
+        info.create_system = 3
+        info.external_attr = 0o120777 << 16
+        zf.writestr(info, "../../escape")
+    with pytest.raises(ValueError, match="Non-regular"):
+        extract_inputs_archive(archive, tmp_path / "extracted")
+
+
+@pytest.fixture
+def input_bundle(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """Tiny pinned bundle with one raw file and one tracked fixture."""
+    root = tmp_path / "repo"
+    tracked = root / "data/external/tracked.csv"
+    tracked.parent.mkdir(parents=True)
+    tracked.write_bytes(b"tracked\n")
+    raw_name = "data/raw/aph/individuals.json"
+    content = b'{"members": []}\n'
+    archive = tmp_path / "inputs.tar.gz"
+    with tarfile.open(archive, "w:gz") as tar:
+        member = tarfile.TarInfo(raw_name)
+        member.size = len(content)
+        tar.addfile(member, io.BytesIO(content))
+    import hashlib
+
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "archive_url": "https://example.test/inputs.tar.gz",
+                "archive_sha256": compute_sha256(archive),
+                "files": {
+                    raw_name: {
+                        "sha256": hashlib.sha256(content).hexdigest(),
+                        "size_bytes": len(content),
+                        "required": True,
+                    },
+                    "data/external/tracked.csv": {
+                        "sha256": compute_sha256(tracked),
+                        "size_bytes": tracked.stat().st_size,
+                        "required": True,
+                    },
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    return manifest, archive, root
+
+
+@pytest.mark.unit
+def test_restore_local_bundle_offline(
+    input_bundle: tuple[Path, Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, archive, root = input_bundle
+    monkeypatch.setenv("APEMAP_OFFLINE", "1")
+    restored = restore_inputs(manifest, archive_path=archive, base_dir=root)
+    assert len(restored) == 1
+    assert verify_inputs_manifest(manifest, base_dir=root) == (True, [])
+    assert (root / "data/external/tracked.csv").read_bytes() == b"tracked\n"
+
+
+@pytest.mark.unit
+def test_restore_checks_archive_before_extraction(
+    input_bundle: tuple[Path, Path, Path],
+) -> None:
+    manifest, archive, root = input_bundle
+    archive.write_bytes(b"tampered archive")
+    with patch("apemap.inputs.extract_inputs_archive") as extract:
+        with pytest.raises(ValueError, match="SHA-256 mismatch"):
+            restore_inputs(manifest, archive_path=archive, base_dir=root)
+        extract.assert_not_called()
+    assert not (root / "data/raw").exists()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("failure", ["missing", "unexpected", "member_hash"])
+def test_restore_validates_all_members_before_copy(
+    input_bundle: tuple[Path, Path, Path], failure: str
+) -> None:
+    manifest, archive, root = input_bundle
+    metadata = json.loads(manifest.read_text(encoding="utf-8"))
+    if failure == "member_hash":
+        metadata["files"]["data/raw/aph/individuals.json"]["sha256"] = "0" * 64
+    else:
+        mode = "w:gz"
+        with tarfile.open(archive, mode) as tar:
+            if failure == "unexpected":
+                member = tarfile.TarInfo("data/external/tracked.csv")
+                member.size = 7
+                tar.addfile(member, io.BytesIO(b"changed"))
+        metadata["archive_sha256"] = compute_sha256(archive)
+    manifest.write_text(json.dumps(metadata), encoding="utf-8")
+    with pytest.raises(ValueError, match="inventory|bytes differ"):
+        restore_inputs(manifest, archive_path=archive, base_dir=root)
+    assert not (root / "data/raw").exists()
+    assert (root / "data/external/tracked.csv").read_bytes() == b"tracked\n"
+
+
+@pytest.mark.unit
+def test_restore_download_and_http_failure(
+    input_bundle: tuple[Path, Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import requests
+
+    manifest, archive, root = input_bundle
+    monkeypatch.setenv("APEMAP_OFFLINE", "0")
+    response = MagicMock()
+    response.__enter__.return_value = response
+    response.iter_content.return_value = [archive.read_bytes()]
+    with patch("apemap.inputs.create_retry_session") as create_session:
+        session = create_session.return_value.__enter__.return_value
+        session.get.return_value = response
+        response.raise_for_status.side_effect = requests.HTTPError("404")
+        with pytest.raises(requests.HTTPError):
+            restore_inputs(manifest, base_dir=root)
+        assert not (root / "data/raw").exists()
+        response.raise_for_status.side_effect = None
+        assert len(restore_inputs(manifest, base_dir=root)) == 1
+        session.get.assert_called_with(
+            "https://example.test/inputs.tar.gz", stream=True, timeout=(10, 120)
+        )
+        response.raise_for_status.assert_called()
+    monkeypatch.setenv("APEMAP_OFFLINE", "1")
+    with pytest.raises(ValueError, match="online setup"):
+        restore_inputs(manifest, base_dir=root)
+
+
+@pytest.mark.unit
+def test_cli_inputs_restore(input_bundle: tuple[Path, Path, Path]) -> None:
+    from typer.testing import CliRunner
+    from apemap.cli import app
+
+    manifest, archive, _ = input_bundle
+    with patch("apemap.cli.restore_inputs", return_value=[Path("restored")]) as restore:
+        result = CliRunner().invoke(
+            app,
+            [
+                "inputs",
+                "restore",
+                "--manifest",
+                str(manifest),
+                "--archive",
+                str(archive),
+            ],
+        )
+        assert result.exit_code == 0
+        restore.assert_called_once_with(manifest, archive_path=archive)
+        restore.side_effect = ValueError("SHA-256 mismatch")
+        result = CliRunner().invoke(
+            app,
+            [
+                "inputs",
+                "restore",
+                "--manifest",
+                str(manifest),
+                "--archive",
+                str(archive),
+            ],
+        )
+        assert result.exit_code == 1
+        assert "SHA-256 mismatch" in result.output
+
+
+@pytest.mark.unit
+def test_spatial_offline_does_not_install_in_empty_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import duckdb
+    from apemap.db import ensure_spatial
+
+    monkeypatch.setenv(
+        "APEMAP_DUCKDB_EXTENSION_DIR", str(tmp_path / "empty-extensions")
+    )
+    with duckdb.connect() as conn:
+        with pytest.raises(RuntimeError, match="offline mode prevents"):
+            ensure_spatial(conn, allow_install=False)
+    assert not list(tmp_path.rglob("*.duckdb_extension"))

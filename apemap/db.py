@@ -7,6 +7,7 @@ and parameterized queries for parliament and education analytics.
 from __future__ import annotations
 
 from contextlib import contextmanager
+import os
 from pathlib import Path
 import sqlite3
 from typing import TYPE_CHECKING, Generator
@@ -57,10 +58,13 @@ CANONICAL_ORDER_BY = {
 def ensure_spatial(
     conn: DuckDBPyConnection, *, allow_install: bool | None = None
 ) -> None:
-    """Ensure DuckDB spatial extension is loaded and configured."""
+    """Load spatial, optionally using an isolated APEMAP_DUCKDB_EXTENSION_DIR."""
+    extension_dir = os.environ.get("APEMAP_DUCKDB_EXTENSION_DIR")
+    if extension_dir:
+        conn.execute(
+            "SET extension_directory = ?", [str(Path(extension_dir).resolve())]
+        )
     if allow_install is None:
-        import os
-
         allow_install = os.environ.get("APEMAP_OFFLINE") != "1"
     try:
         conn.execute("LOAD spatial;")
