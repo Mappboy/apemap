@@ -77,7 +77,7 @@ continues to reject malformed canonical quartets.
 
 ## Acquire, replay and verify
 
-Use the existing APH/AEC input cache described in
+Restore the pinned APH/AEC inputs and preinstall DuckDB spatial as described in
 [reproducibility](reproducibility.md), then acquire the additional ACARA files:
 
 ```bash
