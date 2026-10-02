@@ -1,5 +1,8 @@
 # Website release contract
 
+The [explorer integration handoff](explorer-handoff.md) describes the complete
+member/list join, service-aware filter examples and offline semantic audit.
+
 Supported terms now come from canonical metadata (42–48). The
 [historical guide](historical-coverage.md) describes the populated release and
 cpoole.dev follow-up. Summary and metadata declare supported terms, selected terms,

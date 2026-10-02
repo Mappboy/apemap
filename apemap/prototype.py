@@ -57,6 +57,16 @@ def read_json(root: Path, name: str) -> Any:
     return json.loads((root / name).read_text(encoding="utf-8"))
 
 
+def ordinal(number: int) -> str:
+    """Label a term without hard-coding its number or English suffix."""
+    suffix = (
+        "th"
+        if 10 <= number % 100 <= 20
+        else {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    )
+    return f"{number}{suffix}"
+
+
 def table(headers: list[str], rows: list[list[Any]], caption: str) -> str:
     """Produce a semantic table with escaped source values."""
     head = "".join(f"<th scope='col'>{escape(h)}</th>" for h in headers)
@@ -224,7 +234,7 @@ def render_editorial(root: Path, metadata: dict[str, Any]) -> str:
     for p, summary in summaries.items():
         opening = metadata["parliament_metadata"][p]["opening_date"]
         chunks.append(
-            f"<details class='term' {'open' if p == latest else ''}><summary>{p}th Parliament · opening {opening}</summary><p>Opening-day cohort: {summary['total_parliamentarians']} people; sector denominator: {summary['known_school_denominator']} with recorded schooling; {summary['missing_education_count']} without a recorded school.</p><h3>Which sectors did members attend?</h3>"
+            f"<details class='term' {'open' if p == latest else ''}><summary>{ordinal(int(p))} Parliament · opening {opening}</summary><p>Opening-day cohort: {summary['total_parliamentarians']} people; sector denominator: {summary['known_school_denominator']} with recorded schooling; {summary['missing_education_count']} without a recorded school.</p><h3>Which sectors did members attend?</h3>"
         )
         chunks.append(
             bars(
@@ -354,7 +364,7 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
         "<", "\\u003c"
     )
     options = "".join(
-        f"<option value='{p}' {'selected' if p == max(metadata['parliaments']) else ''}>{p}th Parliament</option>"
+        f"<option value='{p}' {'selected' if p == max(metadata['parliaments']) else ''}>{ordinal(p)} Parliament</option>"
         for p in metadata["parliaments"]
     )
     fallback = table(
@@ -392,10 +402,16 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
         + "</details>"
     )
     version = escape(metadata["release_version"])
+    terms = sorted(metadata["parliaments"])
+    term_label = (
+        f"{ordinal(terms[0])} Parliament"
+        if len(terms) == 1
+        else f"{ordinal(terms[0])}–{ordinal(terms[-1])} Parliaments"
+    )
     html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; object-src 'none'">
 <title>APEMAP editorial reference · {version}</title><style>{(ASSETS / "style.css").read_text(encoding="utf-8")}</style></head><body>
-<a class="skip" href="#main">Skip to results</a><main id="main"><header><p class="eyebrow">APEMAP · WORKING DESIGN REFERENCE</p><h1>Where did our parliamentarians go to school?</h1><p class="standfirst">Secondary schooling, representation and the limits of the available evidence.</p><p>Dataset v{version} · opening-day cohorts · 42nd–48th Parliaments</p><p>Source commit <code>{escape(metadata["source_commit"])}</code></p><nav><a href="#explorer">Explore schools and members</a> · <a href="#methodology">Read methodology</a></nav></header>
+<a class="skip" href="#main">Skip to results</a><main id="main"><header><p class="eyebrow">APEMAP · WORKING DESIGN REFERENCE</p><h1>Where did our parliamentarians go to school?</h1><p class="standfirst">Secondary schooling, representation and the limits of the available evidence.</p><p>Dataset v{version} · opening-day cohorts · {term_label}</p><p>Source commit <code>{escape(metadata["source_commit"])}</code></p><nav><a href="#explorer">Explore schools and members</a> · <a href="#methodology">Read methodology</a></nav></header>
 {render_editorial(root, metadata)}
 <section id="explorer"><h2>Explore schools and members</h2><p>Filters apply only here. Sector filters describe schools, not Mixed person classifications. Unmapped schools and members without recorded schooling remain accessible.</p>
 <form id="filters" hidden><div class="controls"><label>Parliament<select name="parliament">{options}</select></label><label>School sector<select name="sector"><option value="">All sectors</option><option>Government</option><option>Catholic</option><option>Independent</option><option>Other</option></select></label><label>Party<select name="party"></select></label><label>Chamber<select name="chamber"></select></label><label class="search">School or member search<input name="q" type="search" autocomplete="off"></label></div><button type="reset">Clear filters</button></form>

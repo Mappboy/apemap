@@ -87,7 +87,7 @@
   form.addEventListener('input',()=>{for(const key of ['parliament','sector','party','chamber','q'])state[key]=key==='parliament'?Number(form.elements.namedItem(key).value):form.elements.namedItem(key).value;render();});
   form.addEventListener('submit',event=>event.preventDefault());
   form.addEventListener('reset',event=>{event.preventDefault();state={parliament:Math.max(...payload.parliaments),sector:'',party:'',chamber:'',q:'',school:''};failed=false;render();});
-  window.addEventListener('hashchange',()=>{state=parseState(payload,location.hash);render(false);});
+  window.addEventListener('hashchange',()=>{const params=new URLSearchParams(location.hash.slice(1));if(!['parliament','sector','party','chamber','q','school'].some(key=>params.has(key)))return;state=parseState(payload,location.hash);render(false);});
   document.getElementById('locator').addEventListener('toggle',()=>{if(document.getElementById('locator').open)drawLocator(select(payload,state).schools);});
   document.getElementById('locator-failure').addEventListener('click',()=>{failed=!failed;document.getElementById('locator-failure').textContent=failed?'Restore locator':'Preview map unavailable';drawLocator(select(payload,state).schools);});
   form.hidden=false;document.getElementById('interactive').hidden=false;document.getElementById('static-schools').open=false;render();

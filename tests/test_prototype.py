@@ -78,6 +78,8 @@ def test_release_reference_is_offline_deterministic_and_keeps_unmapped(
     assert 'src="http' not in html
     assert "application/json" in html
     assert "finance_value" not in html
+    assert "42nd–48th Parliaments" not in html
+    assert "47th Parliament" in html
     metadata = json.loads((release / "web/metadata.json").read_text())
     payload = explorer_payload(release, metadata)
     assert len(payload["schools"]) == 3
