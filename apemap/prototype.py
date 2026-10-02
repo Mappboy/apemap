@@ -405,7 +405,7 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
 <script id="explorer-data" type="application/json">{script_data}</script><script>{(ASSETS / "explorer.js").read_text(encoding="utf-8")}</script></body></html>"""
     out.mkdir(parents=True, exist_ok=True)
     target = out / "prototype.html"
-    target.write_text(html, encoding="utf-8", newline="\n")
+    target.write_text(html + "\n", encoding="utf-8", newline="\n")
     return target
 
 
