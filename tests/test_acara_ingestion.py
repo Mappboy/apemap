@@ -8,6 +8,7 @@ from pathlib import Path
 import openpyxl
 import pandas as pd
 import pytest
+from rich.text import Text
 from typer.testing import CliRunner
 
 from apemap.cli import app
@@ -350,13 +351,17 @@ def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) ->
 
 
 @pytest.mark.unit
-def test_cli_ingest_acara_help() -> None:
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_ingest_acara_help(force_color: str | None) -> None:
     """Verify apemap ingest acara command is exposed with appropriate help documentation."""
-    result = runner.invoke(app, ["ingest", "acara", "--help"])
+    result = runner.invoke(
+        app, ["ingest", "acara", "--help"], env={"FORCE_COLOR": force_color}
+    )
+    output = Text.from_ansi(result.output).plain
     assert result.exit_code == 0
-    assert "acara [OPTIONS]" in result.output
-    assert "--download" in result.output
-    assert "--longitudinal" in result.output
+    assert "acara [OPTIONS]" in output
+    assert "--download" in output
+    assert "--longitudinal" in output
 
 
 @pytest.mark.unit

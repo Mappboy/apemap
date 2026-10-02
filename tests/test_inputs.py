@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 import zipfile
 
 import pytest
+from rich.text import Text
 
 from apemap.inputs import (
     compute_sha256,
@@ -166,21 +167,31 @@ def test_cli_inputs_verify() -> None:
 
 
 @pytest.mark.unit
-def test_cli_run_all_offline_flags() -> None:
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_run_all_offline_flags(force_color: str | None) -> None:
     """Test apemap run-all --offline rejects incompatible flags."""
     from typer.testing import CliRunner
     from apemap.cli import app
 
     runner = CliRunner()
     # Combining --offline with --download must fail
-    res_dl = runner.invoke(app, ["run-all", "--offline", "--download"])
+    res_dl = runner.invoke(
+        app, ["run-all", "--offline", "--download"], env={"FORCE_COLOR": force_color}
+    )
     assert res_dl.exit_code != 0
-    assert "Cannot combine --offline with --download" in res_dl.output
+    assert (
+        "Cannot combine --offline with --download"
+        in Text.from_ansi(res_dl.output).plain
+    )
 
     # Combining --offline with --refresh must fail
-    res_rf = runner.invoke(app, ["run-all", "--offline", "--refresh"])
+    res_rf = runner.invoke(
+        app, ["run-all", "--offline", "--refresh"], env={"FORCE_COLOR": force_color}
+    )
     assert res_rf.exit_code != 0
-    assert "Cannot combine --offline with --refresh" in res_rf.output
+    assert (
+        "Cannot combine --offline with --refresh" in Text.from_ansi(res_rf.output).plain
+    )
 
 
 @pytest.mark.unit

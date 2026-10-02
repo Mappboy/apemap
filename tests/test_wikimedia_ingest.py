@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 import duckdb
 import pytest
 import requests
+from rich.text import Text
 from typer.testing import CliRunner
 
 from apemap.cli import app
@@ -619,15 +620,19 @@ def test_run_wikimedia_enrichment_end_to_end(
 
 
 @pytest.mark.unit
-def test_cli_ingest_wikimedia_help() -> None:
-    res = runner.invoke(app, ["ingest", "wikimedia", "--help"])
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_ingest_wikimedia_help(force_color: str | None) -> None:
+    res = runner.invoke(
+        app, ["ingest", "wikimedia", "--help"], env={"FORCE_COLOR": force_color}
+    )
+    output = Text.from_ansi(res.output).plain
     assert res.exit_code == 0
-    assert "Enrich canonical members and review unmatched schools" in res.output
-    assert "--parliament" in res.output
-    assert "--refresh" in res.output
-    assert "--members" in res.output
-    assert "--schools" in res.output
-    assert "--timeout" in res.output
+    assert "Enrich canonical members and review unmatched schools" in output
+    assert "--parliament" in output
+    assert "--refresh" in output
+    assert "--members" in output
+    assert "--schools" in output
+    assert "--timeout" in output
 
 
 @pytest.mark.integration
@@ -678,10 +683,11 @@ def test_cli_ingest_wikimedia_execution(
 
 
 @pytest.mark.unit
-def test_cli_run_all_includes_enrich_wikimedia_flag() -> None:
-    res = runner.invoke(app, ["run-all", "--help"])
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_run_all_includes_enrich_wikimedia_flag(force_color: str | None) -> None:
+    res = runner.invoke(app, ["run-all", "--help"], env={"FORCE_COLOR": force_color})
     assert res.exit_code == 0
-    assert "--enrich-wikimedia" in res.output
+    assert "--enrich-wikimedia" in Text.from_ansi(res.output).plain
 
 
 # --------------------------------------------------------------------------
