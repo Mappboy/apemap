@@ -7,28 +7,26 @@ name = "apemap"
 version = "0.2.0"
 description = "Australian Parliamentarians Education Map data and analytics"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "duckdb>=1.5,<2",
-    "pandas>=2.0.0",
-    "pyarrow>=14.0.0",
-    "pydantic>=2.0.0",
-    "requests>=2.28.0",
-    "beautifulsoup4>=4.11.0",
-    "sparqlwrapper>=2.0.0",
-    "typer>=0.27.2",
     "openpyxl>=3.1.5",
+    "pandas>=2.0.0",
+    "pytz>=2025.2",
     "rapidfuzz>=3.14.5",
-    "wikipedia-api>=0.16.0",
-    "geopy>=2.5.0",
-    "pytz>=2026.3.post1",
+    "requests>=2.28.0",
+    "rich>=13.0.0",
+    "typer>=0.27.2",
 ]
 
 [project.scripts]
 apemap = "apemap.cli:app"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
+    "deptry>=0.23.0",
+    "prek>=0.2.0",
+    "pyarrow>=14.0.0",
     "pytest>=8.0.0",
     "ruff>=0.3.0",
     "ty>=0.0.80",
@@ -44,28 +42,34 @@ analysis = [
     "polars>=1.37.1",
 ]
 
-[dependency-groups]
-dev = [
-    "ipykernel>=7.3.0",
-    "jupyterlab>=4.6.4",
-    "pytest>=8.0.0",
-    "ruff>=0.3.0",
-    "ty>=0.0.80",
-]
-
 [tool.hatch.build.targets.wheel]
 packages = ["apemap"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q"
+addopts = "-ra -q --strict-markers"
 testpaths = ["tests"]
+markers = [
+    "unit: isolated logic with small deterministic local fixtures",
+    "integration: multiple components, CLI orchestration, database or export pipelines",
+    "notebook: notebook execution requiring a Jupyter kernel",
+    "slow: runtime materially above ordinary tests (including notebook kernels)",
+]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["archive"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W"]
 ignore = ["E501"]
+
+[tool.deptry]
+known_first_party = ["apemap"]
+
+[tool.deptry.per_rule_ignores]
+# DuckDB imports pytz internally when fetching TIMESTAMPTZ values; pandas 3 no
+# longer supplies it transitively. The ABS timestamp regression covers this.
+DEP002 = ["pytz"]
+DEP003 = ["urllib3", "apemap"]

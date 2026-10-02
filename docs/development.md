@@ -14,10 +14,10 @@ git clone https://github.com/Mappboy/apemap.git
 cd apemap
 
 # Install all development and runtime dependencies
-uv sync
+uv sync --all-groups
 
-# Install analysis dependencies for notebooks
-uv sync --extra analysis
+# Install prek Git hook shims
+uv run prek install
 ```
 
 ---
@@ -27,7 +27,7 @@ uv sync --extra analysis
 Before opening a pull request or committing changes, run the full verification suite:
 
 ```bash
-# 1. Run unit, integration, and notebook execution tests
+# 1. Run the complete unit, integration, and notebook execution suite
 uv run pytest
 
 # 2. Lint Python source code with Ruff
@@ -37,7 +37,13 @@ uv run ruff check .
 uv run ruff format --check .
 
 # 4. Run static type checking with ty
-uv run ty check
+uv run ty check apemap/
+
+# 5. Audit dependency hygiene with deptry
+uv run deptry apemap
+
+# 6. Run all Git hooks with prek
+uv run prek run --all-files
 ```
 
 To automatically format code with Ruff:
@@ -89,7 +95,7 @@ uv add <package-name>
 uv add --dev <package-name>
 
 # Add an optional analysis dependency
-uv add --optional analysis <package-name>
+uv add --group analysis <package-name>
 
 # Remove a dependency
 uv remove <package-name>
@@ -125,10 +131,59 @@ Guidelines for schema evolution:
 
 ## 7. Writing Tests & Working with Fixtures
 
-Tests live in `tests/` and use `pytest`:
-- **Deterministic Fixtures**: Small, offline sample fixtures are kept in `tests/fixtures/` (`aph_sample.json`, `acara_sample.json`, `acara_profile_sample.csv`).
-- **No Live Network Calls**: Unit and regression tests must **never** make live network requests to APH, ACARA, or other external services. Mock HTTP clients or use local file fixtures.
-- **Notebook Tests**: `tests/test_notebook_execution.py` tests all notebooks top-to-bottom against an in-memory DuckDB database to verify they run cleanly without network access or disk mutation.
+`uv run pytest` remains the authoritative complete suite. Use marker selection
+for a shorter development loop, then run the full suite before a PR:
+
+```bash
+# Fast development loop, including static notebook mutation checks
+uv run pytest -m "not integration and not notebook and not slow"
+
+# Component, CLI, database migration, spatial, and export integration checks
+uv run pytest -m "integration and not notebook"
+
+# All five notebook execution checks (requires uv sync --all-groups)
+uv run pytest -m notebook
+
+# Complete suite and timing profile
+uv run pytest --durations=25
+```
+
+Each test carries an explicit execution category: `unit` for isolated logic with
+small local fixtures, or `integration` for multiple components and orchestration.
+`notebook` additionally identifies tests that launch Jupyter kernels; these also
+carry `slow`. Reserve `slow` for tests whose remaining cost cannot reasonably be
+reduced. Markers are registered in `pyproject.toml` and checked strictly. No
+category is excluded by default, and parallel execution is not enabled.
+The [issue #39 measurements](testing-performance.md) record the original and
+updated full-suite and priority-module timings.
+
+Tests stay in domain-oriented files under `tests/`. Keep new fixtures small and
+offline; do not ingest the entire research dataset to test orchestration. The
+funding orchestration fixture supplies synthetic, source-native CSVs for all six
+input types, with exact row counts, validation, and rerun assertions.
+
+`tests/conftest.py` supplies an empty canonical `db_conn` and a
+`database_factory`. The CLI, funding, web-release, and Wikimedia tests build
+closed seeded templates once per session using `tests/db_fixtures.py`. Each test
+receives a private file copy and a connection closed by fixture teardown, even
+on failure. Domain seeds stay beside their tests. Never copy an open database
+or share a mutable connection between tests. Schema migration tests still build
+their original legacy layouts explicitly.
+
+The autouse HTTP guard fails immediately on an unmocked `requests.Session`
+request, including clients created by the retry-session helper. Mock clients or
+use deterministic files in `tests/fixtures/`; Jupyter's local kernel sockets are
+allowed. Spatial checks require an installed DuckDB spatial extension. Provision
+that extension before running tests in an environment without network access.
+
+Notebook execution tests read a small temporary on-disk DuckDB fixture and verify
+its bytes are unchanged. Static notebook mutation checks remain in the fast
+suite. Missing optional notebook dependencies retain pytest's visible skip
+report; install the analysis group to exercise the complete notebook coverage.
+
+DuckDB's Python timestamp conversion requires the explicit `pytz` runtime
+dependency. The ABS provenance regression fetches a `TIMESTAMPTZ` value to cover
+that requirement, which pandas 3 no longer supplies transitively.
 
 ---
 

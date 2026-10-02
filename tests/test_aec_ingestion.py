@@ -16,6 +16,7 @@ from apemap.ingest.aec import (
 )
 
 
+@pytest.mark.unit
 def test_slugify_deterministic() -> None:
     """slugify produces clean, URL/identifier-safe lowercase slugs."""
     assert slugify("Clark") == "clark"
@@ -26,6 +27,7 @@ def test_slugify_deterministic() -> None:
     assert slugify("Wide Bay") == "wide-bay"
 
 
+@pytest.mark.integration
 def test_aec_ingestion_divisions_and_geometries(tmp_path: Path) -> None:
     """Ingest 2025 AEC shapefile and verify exactly 150 divisions, deterministic IDs, and valid geometries."""
     shp_path = RAW_AEC_2025_DIR / "AUS_ELB_region.shp"
@@ -76,6 +78,7 @@ def test_aec_ingestion_divisions_and_geometries(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_aec_ingestion_idempotence(tmp_path: Path) -> None:
     """Ingesting AEC boundaries multiple times preserves 150 unique records without duplicating."""
     shp_path = RAW_AEC_2025_DIR / "AUS_ELB_region.shp"
@@ -95,6 +98,7 @@ def test_aec_ingestion_idempotence(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_run_aec_ingestion_offline_from_cache(tmp_path: Path) -> None:
     """run_aec_ingestion operates completely offline when cache is populated."""
     shp_path = RAW_AEC_2025_DIR / "AUS_ELB_region.shp"

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
+import json
 import re
 from pathlib import Path
 from typing import Annotated
@@ -31,13 +34,24 @@ from apemap.db import (
     init_schema,
     migrate_historical_finances,
 )
-from apemap.export import export_all_artifacts
+from apemap.export import export_all_artifacts, validate_source_snapshot_dates
 from apemap.ingest.abs import run_abs_ingestion
 from apemap.ingest.acara import ingest_school_finances, run_acara_ingestion
 from apemap.ingest.aec import run_aec_ingestion
 from apemap.ingest.funding import ingest_all_funding
 from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.ingest.wikimedia import run_wikimedia_enrichment
+from apemap.inputs import (
+    DEFAULT_MANIFEST_PATH,
+    preflight_offline_inputs,
+    restore_inputs,
+    verify_inputs_manifest,
+)
+from apemap.release import (
+    build_release,
+    diff_releases,
+    verify_release,
+)
 from apemap.validate import validate_database
 
 
@@ -53,6 +67,238 @@ ingest_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(ingest_app, name="ingest")
+
+inputs_app = typer.Typer(
+    name="inputs",
+    help="Source input archive and manifest verification commands.",
+    no_args_is_help=True,
+)
+app.add_typer(inputs_app, name="inputs")
+
+
+@inputs_app.command(name="restore")
+def restore_inputs_cmd(
+    manifest_path: Annotated[
+        Path, typer.Option("--manifest", "-m", help="Pinned input manifest.")
+    ] = DEFAULT_MANIFEST_PATH,
+    archive_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--archive", help="Local bundle; omit to download the pinned URL."
+        ),
+    ] = None,
+) -> None:
+    """Restore ignored raw inputs after verifying the pinned archive and members."""
+    try:
+        restored = restore_inputs(manifest_path, archive_path=archive_path)
+    except (OSError, ValueError) as err:
+        console.print(f"[bold red]Input restoration failed:[/bold red] {err}")
+        raise typer.Exit(code=1) from err
+    console.print(f"[green]Restored {len(restored)} verified raw input files.[/green]")
+
+
+@inputs_app.command(name="verify")
+def verify_inputs_cmd(
+    manifest_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--manifest",
+            "-m",
+            help="Path to inputs-manifest.json (defaults to data/inputs-manifest.json).",
+        ),
+    ] = None,
+) -> None:
+    """Verify input files against the source inputs manifest."""
+    target_manifest = manifest_path or DEFAULT_MANIFEST_PATH
+    if not target_manifest.exists():
+        console.print(
+            f"[bold red]Inputs manifest not found:[/bold red] {target_manifest}"
+        )
+        raise typer.Exit(code=1)
+
+    console.print(f"[bold]Verifying inputs manifest:[/bold] {target_manifest}")
+    valid, errors = verify_inputs_manifest(target_manifest)
+    if not valid:
+        console.print(
+            f"[bold red]Manifest verification failed with {len(errors)} error(s):[/bold red]"
+        )
+        for err in errors:
+            console.print(f"  [red]- {err}[/red]")
+        raise typer.Exit(code=1)
+
+    console.print(
+        "[bold green]Inputs manifest verification passed successfully![/bold green]"
+    )
+
+
+release_app = typer.Typer(
+    name="release",
+    help="Immutable dataset release commands: build, verify, and diff.",
+    no_args_is_help=True,
+)
+app.add_typer(release_app, name="release")
+
+
+@release_app.command(name="build")
+def release_build_cmd(
+    db_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--db-path",
+            help="Path to DuckDB database file (defaults to data/aped.duckdb).",
+        ),
+    ] = None,
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            "-o",
+            help="Destination directory for the release.",
+        ),
+    ] = None,
+    version: Annotated[
+        str,
+        typer.Option(
+            "--version",
+            "-v",
+            help="Semantic release version string (e.g. 1.0.0).",
+        ),
+    ] = "1.0.0",
+    parliament: Annotated[
+        str,
+        typer.Option(
+            "--parliament",
+            "-p",
+            help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
+        ),
+    ] = ",".join(map(str, supported_parliaments())),
+    finance_year: Annotated[
+        int,
+        typer.Option(
+            "--finance-year",
+            help="Calendar reporting year for school finances.",
+        ),
+    ] = 2021,
+    strict: Annotated[
+        bool,
+        typer.Option(
+            "--strict/--no-strict",
+            help="Halt with non-zero exit code if database validation fails.",
+        ),
+    ] = True,
+) -> None:
+    """Build complete, validated, immutable release dataset bundle."""
+    effective_db = db_path or (DATA_DIR / "aped.duckdb")
+    parls = parse_parliament_args(parliament)
+    validate_supported_parliaments(parls)
+
+    console.print(Panel(f"[bold blue]Building APEMAP Release v{version}[/bold blue]"))
+    try:
+        results = build_release(
+            db_path=effective_db,
+            output_dir=output_dir,
+            version=version,
+            parliaments=parls,
+            finance_reporting_year=finance_year,
+            strict=strict,
+        )
+    except Exception as e:
+        console.print(f"[bold red]Release build failed:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+    console.print(f"[bold green]Release v{version} built successfully![/bold green]")
+    console.print(f"Directory: [cyan]{results['output_directory']}[/cyan]")
+    console.print(f"Files: {results['files_count']} ({results['total_bytes']:,} bytes)")
+    console.print(f"Manifest: [yellow]{results['manifest']}[/yellow]")
+    console.print(f"Checksums: [yellow]{results['sha256sums']}[/yellow]")
+
+
+@release_app.command(name="verify")
+def release_verify_cmd(
+    release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to release directory containing manifest.json and SHA256SUMS.",
+        ),
+    ],
+    strict_assertions: Annotated[
+        bool,
+        typer.Option(
+            "--strict-assertions/--no-strict-assertions",
+            help="Enforce that database assertions report passed in web/assertions.json.",
+        ),
+    ] = False,
+) -> None:
+    """Verify integrity, inventory, coordinate bounds, and privacy compliance of a release."""
+    console.print(f"[bold]Verifying release directory:[/bold] {release_dir}")
+    report = verify_release(release_dir, strict_assertions=strict_assertions)
+    if not report["valid"]:
+        console.print(
+            f"[bold red]Release verification failed with {len(report['errors'])} error(s):[/bold red]"
+        )
+        for err in report["errors"]:
+            console.print(f"  [red]- {err}[/red]")
+        raise typer.Exit(code=1)
+
+    console.print(
+        f"[bold green]Release v{report['release_version']} verified successfully! "
+        f"({report['checks_passed']}/{report['checks_run']} checks passed, "
+        f"{report['verified_files_count']} files verified)[/bold green]"
+    )
+
+
+@release_app.command(name="diff")
+def release_diff_cmd(
+    old_release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to old/baseline release directory.",
+        ),
+    ],
+    new_release_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to new/target release directory.",
+        ),
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option(
+            "--json",
+            help="Output diff report as formatted JSON.",
+        ),
+    ] = False,
+) -> None:
+    """Generate comparative diff between two release dataset bundles."""
+    try:
+        report = diff_releases(old_release_dir, new_release_dir)
+    except Exception as e:
+        console.print(f"[bold red]Failed diffing releases:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+    if as_json:
+        console.print(json.dumps(report, indent=2, sort_keys=True))
+        return
+
+    console.print(
+        Panel(
+            f"[bold blue]Release Diff: v{report['old_version']} -> v{report['new_version']}[/bold blue]"
+        )
+    )
+    console.print(
+        f"Size Change: {report['size_delta_bytes']:+,} bytes ({report['old_total_bytes']:,} -> {report['new_total_bytes']:,})"
+    )
+    console.print(
+        f"Added Files ({len(report['added_files'])}): {report['added_files']}"
+    )
+    console.print(
+        f"Removed Files ({len(report['removed_files'])}): {report['removed_files']}"
+    )
+    console.print(
+        f"Modified Files ({len(report['modified_files'])}): {[f['path'] for f in report['modified_files']]}"
+    )
+    console.print(f"Unchanged Files: {len(report['unchanged_files'])}")
+
 
 console = Console()
 
@@ -96,7 +342,7 @@ def ingest_aph(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     refresh: Annotated[
         bool,
         typer.Option(
@@ -381,7 +627,7 @@ def ingest_wikimedia(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     refresh: Annotated[
         bool,
         typer.Option(
@@ -873,7 +1119,7 @@ def validate_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     strict: Annotated[
         bool,
         typer.Option(
@@ -966,7 +1212,7 @@ def analyze_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     output_dir: Annotated[
         Path | None,
         typer.Option(
@@ -1080,6 +1326,10 @@ def analyze_cmd(
 
 @app.command(name="export")
 def export_cmd(
+    cohort: Annotated[
+        str,
+        typer.Option("--cohort", help="Spatial cohort: opening_day or all_service."),
+    ] = "opening_day",
     db_path: Annotated[
         Path | None,
         typer.Option(
@@ -1094,7 +1344,7 @@ def export_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     output_dir: Annotated[
         Path | None,
         typer.Option(
@@ -1110,12 +1360,53 @@ def export_cmd(
             help="Calendar reporting year for school finances (defaults to 2021).",
         ),
     ] = 2021,
+    web_release: Annotated[
+        bool,
+        typer.Option(
+            "--web-release/--no-web-release",
+            help="Also export results-summary.json, schools.geojson, downloads, and manifest.json.",
+        ),
+    ] = False,
+    data_release_version: Annotated[
+        str,
+        typer.Option(
+            "--data-release-version",
+            help="Version recorded in the web release manifest.",
+        ),
+    ] = "0.2.0",
+    source_commit: Annotated[
+        str | None,
+        typer.Option(
+            "--source-commit", help="Source commit SHA override for packaged builds."
+        ),
+    ] = None,
+    source_snapshot_dates: Annotated[
+        Path | None,
+        typer.Option(
+            "--source-snapshot-dates",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="JSON object of upstream source names and YYYY-MM-DD snapshot dates (or null).",
+        ),
+    ] = None,
 ) -> None:
     """Export canonical Parquet files, GeoJSON layers, and JSON analytical metrics."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
     validate_supported_parliaments(parl_list)
+    snapshot_dates = None
+    if source_snapshot_dates is not None:
+        try:
+            snapshot_dates = validate_source_snapshot_dates(
+                json.loads(source_snapshot_dates.read_text(encoding="utf-8"))
+            )
+        except (OSError, ValueError) as e:
+            raise typer.BadParameter(
+                f"Invalid source snapshot dates: {e}",
+                param_hint="--source-snapshot-dates",
+            ) from e
 
     console.print(
         f"[bold blue]Exporting Artifacts from:[/bold blue] [cyan]{effective_db_path}[/cyan]"
@@ -1127,6 +1418,11 @@ def export_cmd(
             effective_out_dir,
             parl_list,
             finance_reporting_year=finance_year,
+            include_web_release=web_release,
+            data_release_version=data_release_version,
+            source_commit=source_commit,
+            source_snapshot_dates=snapshot_dates,
+            cohort=cohort,
         )
     finally:
         conn.close()
@@ -1140,6 +1436,8 @@ def export_cmd(
     for p_num, pth in results["geojson_layers"].items():
         console.print(f"  - Parliament {p_num}: [dim]{pth}[/dim]")
     console.print(f"Analysis Report: [yellow]{results['analysis_report']}[/yellow]")
+    if web_release:
+        console.print(f"Web Release Manifest: [yellow]{results['manifest']}[/yellow]")
 
 
 @app.command(name="run-all")
@@ -1165,7 +1463,7 @@ def run_all_cmd(
             "-p",
             help="Comma- or space-separated parliament numbers (e.g. '46,47,48').",
         ),
-    ] = "46,47,48",
+    ] = ",".join(map(str, supported_parliaments())),
     download: Annotated[
         bool,
         typer.Option(
@@ -1209,12 +1507,42 @@ def run_all_cmd(
             help="Calendar reporting year for school finances (defaults to 2021).",
         ),
     ] = 2021,
+    offline: Annotated[
+        bool,
+        typer.Option(
+            "--offline/--no-offline",
+            help="Run pipeline in strict offline mode using verified local inputs with zero network requests.",
+        ),
+    ] = False,
+    inputs_manifest: Annotated[
+        Path | None,
+        typer.Option(
+            "--inputs-manifest",
+            help="Path to inputs-manifest.json for offline input verification.",
+        ),
+    ] = None,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
     parl_list = parse_parliament_args(parliament)
     validate_supported_parliaments(parl_list)
+
+    if offline:
+        if download:
+            raise typer.BadParameter("Cannot combine --offline with --download.")
+        if refresh:
+            raise typer.BadParameter("Cannot combine --offline with --refresh.")
+        import os
+
+        os.environ["APEMAP_OFFLINE"] = "1"
+        console.print("[dim]Preflighting offline inputs against manifest...[/dim]")
+        try:
+            preflight_offline_inputs(manifest_path=inputs_manifest)
+            console.print("[green]Offline input preflight passed.[/green]")
+        except RuntimeError as err:
+            console.print(f"[bold red]Offline Preflight Failed:[/bold red] {err}")
+            raise typer.Exit(code=1)
 
     console.print(
         Panel("[bold blue]Starting Full APEMAP End-to-End Pipeline[/bold blue]")

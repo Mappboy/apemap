@@ -1,5 +1,10 @@
 # Quickstart Guide
 
+Package defaults cover all supported terms (42–48). For the separately populated
+historical release and pinned replay recipe, use the
+[historical coverage guide](historical-coverage.md). The explicit 46–48 examples
+below remain useful for a contemporary subset of an existing database.
+
 This guide walks you through setting up APEMAP, exploring the command-line interface (CLI), working with existing canonical datasets, and running the complete reproducible pipeline.
 
 ---
@@ -116,6 +121,16 @@ Generate Parquet tables, GeoJSON map layers, and metrics JSON:
 ```bash
 uv run apemap export --parliament "46,47,48"
 ```
+
+To also generate the versioned website bundle:
+
+```bash
+uv run apemap export --parliament "46,47,48" --web-release \
+  --data-release-version 2026.09.30 --output-dir data/processed/releases/2026.09.30
+```
+
+See the [website release contract](web-release.md) for source-date metadata,
+opening-day cohort rules, and the CSV and GeoJSON schemas.
 
 ---
 

@@ -8,14 +8,14 @@ Validates:
 - Model backtesting against historical observed finances
 - Relational integrity validation assertions
 - Enriched GeoJSON spatial exports
-All tests run locally using in-memory DuckDB fixtures without external network calls.
+All tests run locally using private DuckDB fixtures without external network calls.
 """
 
 from __future__ import annotations
 
-from collections.abc import Generator
 import json
 from pathlib import Path
+from typing import TypedDict
 
 import duckdb
 import pytest
@@ -27,6 +27,8 @@ from apemap.analysis import (
     get_school_geolocation,
     validate_funding_records,
 )
+from tests.db_fixtures import DatabaseFactory, build_template
+
 from apemap.db import init_schema
 from apemap.export import export_spatial_geojson
 from apemap.ingest.funding import (
@@ -41,12 +43,17 @@ from apemap.ingest.funding import (
 )
 
 
-@pytest.fixture
-def db_conn() -> Generator[duckdb.DuckDBPyConnection, None, None]:
-    """Fixture providing an in-memory DuckDB connection with initialized schema and test institutions."""
-    conn = duckdb.connect(":memory:")
-    init_schema(conn)
+class FundingInputs(TypedDict):
+    benchmarks_path: Path
+    nsw_path: Path
+    tas_path: Path
+    nt_path: Path
+    qld_path: Path
+    manual_path: Path
 
+
+def seed_funding_db(conn: duckdb.DuckDBPyConnection) -> None:
+    """Seed the small funding fixture without unrelated canonical data."""
     # Seed minimal canonical members, parliament, and institutions for testing
     conn.execute(
         """
@@ -73,10 +80,68 @@ def db_conn() -> Generator[duckdb.DuckDBPyConnection, None, None]:
         );
         """
     )
-    yield conn
-    conn.close()
 
 
+@pytest.fixture(scope="session")
+def funding_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    return build_template(
+        tmp_path_factory.mktemp("funding") / "seed.duckdb", seed_funding_db
+    )
+
+
+@pytest.fixture
+def db_conn(
+    funding_db_template: Path,
+    database_factory: DatabaseFactory,
+) -> duckdb.DuckDBPyConnection:
+    return database_factory(funding_db_template)[1]
+
+
+@pytest.fixture
+def funding_inputs(tmp_path: Path) -> FundingInputs:
+    """Cover every orchestration input with small, synthetic source-native CSVs."""
+    samples = {
+        "benchmarks_path": (
+            "reporting_year,state_or_territory,sector,geolocation,metric,value,unit,source_dataset,source_url,retrieved_at\n"
+            "2024,NSW,Government,All,total_net_recurrent_income_per_student,20000,AUD_per_student,Test benchmark,https://example.invalid,2026-09-28T00:00:00Z\n"
+        ),
+        "nsw_path": (
+            "school_name,reporting_year,ram_base_allocation,ram_equity_loading,ram_operational_funding,ram_allocation_total,acara_id\n"
+            "Sydney Test High,2024,1000000,200000,100000,1300000,1001\n"
+        ),
+        "tas_path": (
+            "school_name,reporting_year,srp_core_staffing,srp_operational_allocation,srp_allocation_total,acara_id\n"
+            "Hobart Test College,2024,1000000,200000,1200000,1002\n"
+        ),
+        "nt_path": (
+            "school_name,reporting_year,annual_school_resourcing_allocation,per_student_funding_rate,acara_id\n"
+            "Darwin Test High,2024,1000000,20000,1003\n"
+        ),
+        "qld_path": (
+            "school_name,reporting_year,state_recurrent_grant_rate_primary,state_recurrent_grant_rate_secondary,state_recurrent_grant_total,acara_id\n"
+            "Brisbane Test Grammar,2024,1000,2000,1000000,1004\n"
+        ),
+        "manual_path": (
+            "acara_id,reporting_year,metric,value,unit,source_url,source_type,reviewed_at,notes\n"
+            "1005,2024,total_net_recurrent_income_per_student,30000,AUD_per_student,https://example.invalid,annual_report,2026-09-28T00:00:00Z,Synthetic disclosure\n"
+        ),
+    }
+    paths = {}
+    for name, content in samples.items():
+        path = tmp_path / f"{name}.csv"
+        path.write_text(content, encoding="utf-8")
+        paths[name] = path
+    return FundingInputs(
+        benchmarks_path=paths["benchmarks_path"],
+        nsw_path=paths["nsw_path"],
+        tas_path=paths["tas_path"],
+        nt_path=paths["nt_path"],
+        qld_path=paths["qld_path"],
+        manual_path=paths["manual_path"],
+    )
+
+
+@pytest.mark.unit
 def test_schema_tables_and_views(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Assert canonical funding tables and views exist and have proper column schemas."""
     # Tables exist
@@ -94,6 +159,7 @@ def test_schema_tables_and_views(db_conn: duckdb.DuckDBPyConnection) -> None:
     assert res is not None and res[0] == 0
 
 
+@pytest.mark.unit
 def test_ingest_acara_benchmarks(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:
@@ -139,6 +205,7 @@ def test_ingest_acara_benchmarks(
     assert row2 is not None and row2[0] == 20500.0
 
 
+@pytest.mark.unit
 def test_resolve_institution_id(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Assert institution resolution matches by ACARA ID, or name and state."""
     # Match by ACARA ID
@@ -161,6 +228,7 @@ def test_resolve_institution_id(db_conn: duckdb.DuckDBPyConnection) -> None:
     assert resolve_institution_id(db_conn, school_name="Unknown School XYZ") is None
 
 
+@pytest.mark.unit
 def test_ingest_nsw_ram(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -> None:
     """Assert NSW RAM allocations are ingested with native metrics and matched to institutions."""
     csv_file = tmp_path / "nsw_ram.csv"
@@ -190,6 +258,7 @@ def test_ingest_nsw_ram(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -> N
     assert rows[0][4] == "Data.NSW Education Resource Allocation Model"
 
 
+@pytest.mark.unit
 def test_ingest_tasmania_srp(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:
@@ -216,6 +285,7 @@ def test_ingest_tasmania_srp(
     assert row[2] == "School Resource Package (Fairer Funding Model)"
 
 
+@pytest.mark.unit
 def test_ingest_nt_funding(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -> None:
     """Assert Northern Territory resourcing and per-student rates are ingested."""
     csv_file = tmp_path / "nt_funding.csv"
@@ -243,6 +313,7 @@ def test_ingest_nt_funding(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -
     assert rows[0][3] == "School Needs Based Funding Formula"
 
 
+@pytest.mark.unit
 def test_ingest_qld_grants(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -> None:
     """Assert Queensland non-state recurrent grants are ingested."""
     csv_file = tmp_path / "qld_grants.csv"
@@ -267,6 +338,7 @@ def test_ingest_qld_grants(db_conn: duckdb.DuckDBPyConnection, tmp_path: Path) -
     assert row[2] == "AUD_per_student"
 
 
+@pytest.mark.unit
 def test_ingest_manual_school_funding(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:
@@ -294,6 +366,7 @@ def test_ingest_manual_school_funding(
     assert "annual_report" in row[2]
 
 
+@pytest.mark.unit
 def test_hierarchical_peer_benchmark(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -330,6 +403,7 @@ def test_hierarchical_peer_benchmark(
     assert b4["fallback_level"] == 4
 
 
+@pytest.mark.unit
 def test_compute_school_finance_estimate_precedence(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -403,6 +477,7 @@ def test_compute_school_finance_estimate_precedence(
     assert est_none["value"] is None
 
 
+@pytest.mark.unit
 def test_peer_group_dispersion_reliability_controls_estimates(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -505,6 +580,7 @@ def test_peer_group_dispersion_reliability_controls_estimates(
     assert est_outlier["method"] == "peer_group_average_outlier_fallback"
 
 
+@pytest.mark.unit
 def test_resolve_institution_id_hardening(db_conn: duckdb.DuckDBPyConnection) -> None:
     """Test resolution hierarchy: ACARA ID precedence, state strictness, and ambiguity rejection."""
     # Seed institutions with duplicate school names across states
@@ -563,6 +639,7 @@ def test_resolve_institution_id_hardening(db_conn: duckdb.DuckDBPyConnection) ->
     assert resolve_institution_id(db_conn, school_name="Nonexistent School") is None
 
 
+@pytest.mark.unit
 def test_benchmark_hierarchy_and_unsupported_sectors(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -592,6 +669,7 @@ def test_benchmark_hierarchy_and_unsupported_sectors(
     assert est["value"] is None
 
 
+@pytest.mark.unit
 def test_validate_funding_records_comprehensive(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -676,7 +754,11 @@ def test_validate_funding_records_comprehensive(
     )
 
 
-def test_clean_db_run_all_with_funding_tables(tmp_path: Path) -> None:
+@pytest.mark.integration
+def test_clean_db_run_all_with_funding_tables(
+    tmp_path: Path,
+    funding_inputs: FundingInputs,
+) -> None:
     """Integration test proving clean run-all populates funding tables and passes strict validation."""
     db_path = tmp_path / "clean_run_all.duckdb"
 
@@ -691,14 +773,14 @@ def test_clean_db_run_all_with_funding_tables(tmp_path: Path) -> None:
         INSERT INTO institutions (
             institution_id, acara_id, school_name, school_type, sector, campus_type, state, suburb, postcode
         ) VALUES
-            ('acara-42689', '42689', 'Albury High School', 'Secondary', 'Government', 'School Single Entity', 'NSW', 'Albury', '2640');
+            ('acara-1001', '1001', 'Sydney Test High', 'Secondary', 'Government', 'School Single Entity', 'NSW', 'Sydney', '2000');
         """
     )
 
     # Ingest reference funding and benchmarks
-    counts = ingest_all_funding(conn)
-    assert counts["acara_benchmarks"] > 0
-    assert counts["nsw_ram"] > 0
+    counts = ingest_all_funding(conn, **funding_inputs)
+    assert counts["acara_benchmarks"] == 1
+    assert counts["nsw_ram"] == 4
 
     # Ensure tables are non-empty
     bench_row = conn.execute(
@@ -718,6 +800,7 @@ def test_clean_db_run_all_with_funding_tables(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.unit
 def test_backtest_finance_benchmarks(
     db_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -747,6 +830,7 @@ def test_backtest_finance_benchmarks(
     assert "Government" in report["sector_metrics"]
 
 
+@pytest.mark.integration
 def test_export_spatial_geojson_properties(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:
@@ -787,6 +871,7 @@ def test_export_spatial_geojson_properties(
     assert props["public_funding_model"] == "Resource Allocation Model (RAM)"
 
 
+@pytest.mark.unit
 def test_get_school_geolocation_fallback() -> None:
     """Assert geolocation returns 'All' for unmapped ACARA ID or None."""
     assert get_school_geolocation(None) == "All"
@@ -800,15 +885,27 @@ def test_get_school_geolocation_fallback() -> None:
     )
 
 
+@pytest.mark.integration
 def test_ingest_all_funding_orchestration(
     db_conn: duckdb.DuckDBPyConnection,
+    funding_inputs: FundingInputs,
 ) -> None:
     """Assert ingest_all_funding coordinates all ingestion steps."""
-    counts = ingest_all_funding(db_conn)
-    assert isinstance(counts, dict)
-    assert "acara_benchmarks" in counts
-    assert "nsw_ram" in counts
-    assert "tasmania_srp" in counts
-    assert "nt_funding" in counts
-    assert "qld_grants" in counts
-    assert "manual_enrichment" in counts
+    counts = ingest_all_funding(db_conn, **funding_inputs)
+    assert counts == {
+        "acara_benchmarks": 1,
+        "nsw_ram": 4,
+        "tasmania_srp": 3,
+        "nt_funding": 2,
+        "qld_grants": 3,
+        "manual_enrichment": 1,
+    }
+    assert db_conn.execute("SELECT count(*) FROM school_public_funding").fetchone() == (
+        13,
+    )
+    assert validate_funding_records(db_conn)["passed"] is True
+    # All six sources must remain idempotent on a second orchestration run.
+    assert ingest_all_funding(db_conn, **funding_inputs) == counts
+    assert db_conn.execute("SELECT count(*) FROM school_public_funding").fetchone() == (
+        13,
+    )

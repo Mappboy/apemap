@@ -1,5 +1,13 @@
 # Canonical Data Model & Repository Layout
 
+Historical terms are centrally configured in `PARLIAMENT_METADATA` and mirrored
+into `parliament_metadata`. Dated `parliament_service` segments now retain
+`source_url`, `retrieved_at` and original source start/end dates. Institutions
+retain `country` and `institution_status`; education retains
+`school_name_as_recorded`, `institution_resolution`, `resolution_source_url` and
+`evidence_origin`. Nullable upgrades preserve older records and Parquet sources.
+See [historical coverage](historical-coverage.md) for service and successor rules.
+
 This document describes APEMAP's canonical relational data model implemented in DuckDB, its analytical views and table macros, and the repository data directory layout.
 
 ---
@@ -96,7 +104,19 @@ erDiagram
         varchar institution_id PK,FK
         integer snapshot_year PK
         integer total_enrolments
+        integer girls_enrolments
+        integer boys_enrolments
+        double fte_enrolments
         integer icsea
+        integer icsea_percentile
+        double sea_bottom_quarter_pct
+        double sea_lower_middle_quarter_pct
+        double sea_upper_middle_quarter_pct
+        double sea_top_quarter_pct
+        double indigenous_enrolments_pct
+        double lbote_pct
+        varchar year_range
+        varchar remoteness_category
         json financial_profile_2021
     }
 
@@ -183,11 +203,19 @@ Links parliamentarians to institutions with mandatory audit provenance fields.
 - `reviewer_notes` (`VARCHAR`): Human or algorithmic rationale for the match.
 
 ### `school_snapshots`
-Annual institutional snapshots containing enrolment and socio-educational index values.
+Annual institutional snapshots containing enrolment and socio-educational index values from the ACARA School Profile dataset.
 - `institution_id` (`VARCHAR NOT NULL REFERENCES institutions(institution_id)`).
-- `snapshot_year` (`INTEGER NOT NULL`).
-- `total_enrolments` (`INTEGER`).
-- `icsea` (`INTEGER`): Index of Community Socio-Educational Advantage.
+- `snapshot_year` (`INTEGER NOT NULL`): Reporting calendar year (e.g. 2025).
+- `total_enrolments` (`INTEGER`): Headcount of enrolled students.
+- `girls_enrolments` (`INTEGER`), `boys_enrolments` (`INTEGER`): Headcount breakdown by gender.
+- `fte_enrolments` (`DOUBLE`): Full-time equivalent enrolments.
+- `icsea` (`INTEGER`): Index of Community Socio-Educational Advantage (benchmark value ~1000).
+- `icsea_percentile` (`INTEGER`): National ICSEA percentile rank (1-100).
+- `sea_bottom_quarter_pct`, `sea_lower_middle_quarter_pct`, `sea_upper_middle_quarter_pct`, `sea_top_quarter_pct` (`DOUBLE`): Socio-Educational Advantage quartile distribution (0.0-100.0%).
+- `indigenous_enrolments_pct` (`DOUBLE`): Proportion of Indigenous students (0.0-100.0%).
+- `lbote_pct` (`DOUBLE`): Language Background Other Than English proportion (0.0-100.0%).
+- `year_range` (`VARCHAR`): Range of school years offered (e.g. `"7-12"`, `"Prep-12"`, `"K-12"`).
+- `remoteness_category` (`VARCHAR`): Geographic classification (`Major Cities`, `Inner Regional`, `Outer Regional`, `Remote`, `Very Remote`).
 - `financial_profile_2021` (`JSON`): Extended financial details if present.
 
 ### `school_finances`
@@ -274,7 +302,7 @@ Defined in `apemap/schema/02_views.sql`:
 - **`v_parliament_members`**: Joins `parliament_service` with `members` to provide a complete view of parliamentarians and their electoral representation.
 - **`v_parliament_members_opening`**: Filters `v_parliament_members` where `is_opening_day_member = TRUE`.
 - **`v_parliament_members_current`**: Filters `v_parliament_members` where `is_current_member = TRUE`.
-- **`v_member_secondary_education`**: Complete analytical join linking members, their secondary institutions, coordinates, ICSEA, and 2021 financial metrics.
+- **`v_member_secondary_education`**: Complete analytical join linking members, their secondary institutions, coordinates, ICSEA, socio-educational quartile distributions, enrolments, remoteness category, and historical financial metrics.
 - **`v_house_electorates`**: Joins `parliament_service` with `electoral_boundaries` for House of Representatives members for the matching election/boundary year (e.g. 48th Parliament maps to 2025 boundaries).
 - **`v_school_public_funding`**: Joins `school_public_funding` with `institutions` to display school-level public funding allocations alongside school name, sector, state, and geographic coordinates.
 - **`v_school_finance_benchmarks`**: Exposes canonical ACARA National Report on Schooling benchmarks ordered chronologically by year, state, sector, and geolocation.
@@ -401,5 +429,5 @@ data/
 > [!NOTE]
 > **Historical Artifact Notice**:
 > Files such as `aped.gpkg`, `aped.db`, and `*.qgz` are legacy artifacts from earlier exploratory stages of the project.
-> In early versions of APEMAP, a PostGIS database was converted to GeoPackage using `ogr2ogr -f GPKG aped.gpkg PG:"service=ape" ...`. 
+> In early versions of APEMAP, a PostGIS database was converted to GeoPackage using `ogr2ogr -f GPKG aped.gpkg PG:"service=ape" ...`.
 > The modern pipeline replaces this with native DuckDB storage (`data/aped.duckdb`) and deterministic exports (`data/processed/*.parquet` and `data/processed/*.geojson`).

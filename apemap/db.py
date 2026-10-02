@@ -6,12 +6,16 @@ and parameterized queries for parliament and education analytics.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+import os
 from pathlib import Path
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 import duckdb
 import pandas as pd
+
+from apemap.constants import PARLIAMENT_METADATA
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -51,11 +55,25 @@ CANONICAL_ORDER_BY = {
 }
 
 
-def ensure_spatial(conn: DuckDBPyConnection) -> None:
-    """Ensure DuckDB spatial extension is loaded and configured."""
+def ensure_spatial(
+    conn: DuckDBPyConnection, *, allow_install: bool | None = None
+) -> None:
+    """Load spatial, optionally using an isolated APEMAP_DUCKDB_EXTENSION_DIR."""
+    extension_dir = os.environ.get("APEMAP_DUCKDB_EXTENSION_DIR")
+    if extension_dir:
+        conn.execute(
+            "SET extension_directory = ?", [str(Path(extension_dir).resolve())]
+        )
+    if allow_install is None:
+        allow_install = os.environ.get("APEMAP_OFFLINE") != "1"
     try:
         conn.execute("LOAD spatial;")
-    except Exception:
+    except Exception as e:
+        if not allow_install:
+            raise RuntimeError(
+                "DuckDB spatial extension is not installed and offline mode prevents network installation. "
+                "Ensure the spatial extension is pre-installed in the DuckDB extension directory."
+            ) from e
         conn.execute("INSTALL spatial; LOAD spatial;")
     conn.execute("SET geometry_always_xy = true;")
 
@@ -82,6 +100,30 @@ def get_connection(
         return duckdb.connect(str(resolved_path), read_only=True)
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     return duckdb.connect(str(resolved_path))
+
+
+@contextmanager
+def temporary_dataframe_view(
+    conn: DuckDBPyConnection, view_name: str, df: pd.DataFrame
+) -> Generator[str, None, None]:
+    """Register a pandas DataFrame as a temporary DuckDB view and guarantee its unregistration.
+
+    Args:
+        conn: Active DuckDB connection.
+        view_name: Temporary view name to register.
+        df: Pandas DataFrame to stage.
+
+    Yields:
+        Registered view name.
+    """
+    conn.register(view_name, df)
+    try:
+        yield view_name
+    finally:
+        try:
+            conn.unregister(view_name)
+        except Exception:
+            pass
 
 
 def init_schema(conn: DuckDBPyConnection) -> None:
@@ -136,7 +178,67 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             )
     except Exception:
         pass
+    # DuckDB appends migrated columns, so physical order differs from fresh DDL.
+    # Propagate migration errors and import releases by column name below.
+    snapshot_columns = (
+        ("girls_enrolments", "INTEGER"),
+        ("boys_enrolments", "INTEGER"),
+        ("fte_enrolments", "DOUBLE"),
+        ("icsea_percentile", "INTEGER"),
+        ("sea_bottom_quarter_pct", "DOUBLE"),
+        ("sea_lower_middle_quarter_pct", "DOUBLE"),
+        ("sea_upper_middle_quarter_pct", "DOUBLE"),
+        ("sea_top_quarter_pct", "DOUBLE"),
+        ("indigenous_enrolments_pct", "DOUBLE"),
+        ("lbote_pct", "DOUBLE"),
+        ("year_range", "VARCHAR"),
+        ("remoteness_category", "VARCHAR"),
+    )
+    for column, sql_type in snapshot_columns:
+        conn.execute(
+            f"ALTER TABLE school_snapshots ADD COLUMN IF NOT EXISTS {column} {sql_type}"
+        )
 
+    for table, columns in {
+        "parliament_service": [
+            ("source_url", "VARCHAR"),
+            ("retrieved_at", "TIMESTAMPTZ"),
+            ("source_service_start", "DATE"),
+            ("source_service_end", "DATE"),
+        ],
+        "institutions": [
+            ("country", "VARCHAR"),
+            ("institution_status", "VARCHAR DEFAULT 'unknown'"),
+        ],
+        "member_education": [
+            ("school_name_as_recorded", "VARCHAR"),
+            ("institution_resolution", "VARCHAR"),
+            ("resolution_source_url", "VARCHAR"),
+            ("evidence_origin", "VARCHAR"),
+        ],
+    }.items():
+        for column, sql_type in columns:
+            conn.execute(
+                f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {sql_type}"
+            )
+    for info in PARLIAMENT_METADATA.values():
+        conn.execute(
+            """INSERT OR REPLACE INTO parliament_metadata
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            [
+                info[key]
+                for key in (
+                    "parliament_number",
+                    "general_election_date",
+                    "opening_date",
+                    "end_date",
+                    "description",
+                    "expected_representatives",
+                    "expected_senators",
+                    "source_url",
+                )
+            ],
+        )
     conn.execute(views_sql_path.read_text(encoding="utf-8"))
 
 
@@ -145,7 +247,8 @@ def load_parquet_sources(
 ) -> dict[str, int]:
     """Populate canonical tables from corresponding Parquet files.
 
-    Expects files named <table_name>.parquet inside `parquet_dir`.
+    Expects files named <table_name>.parquet inside `parquet_dir`. Columns are
+    matched by name; missing nullable columns retain their schema defaults.
 
     Args:
         conn: Active DuckDB connection.
@@ -172,7 +275,7 @@ def load_parquet_sources(
         parquet_file = source_dir / f"{table}.parquet"
         if parquet_file.exists():
             conn.execute(
-                f"INSERT INTO {table} SELECT * FROM read_parquet(?)",
+                f"INSERT INTO {table} BY NAME SELECT * FROM read_parquet(?)",
                 [str(parquet_file)],
             )
             result = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()

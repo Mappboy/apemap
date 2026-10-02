@@ -1,0 +1,5466 @@
+{
+  "type": "FeatureCollection",
+  "name": "schools",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.827,
+          -34.0869
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41594",
+        "acara_id": "41594",
+        "school_name": "Airds High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Campbelltown",
+        "postcode": "2560",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.827,
+        "latitude": -34.0869,
+        "profile_year": 2025,
+        "total_enrolments": 542,
+        "girls_enrolments": 251,
+        "boys_enrolments": 291,
+        "fte_enrolments": 542.0,
+        "icsea": 875,
+        "icsea_percentile": 7,
+        "sea_bottom_quarter_pct": 69.0,
+        "sea_lower_middle_quarter_pct": 21.0,
+        "sea_upper_middle_quarter_pct": 9.0,
+        "sea_top_quarter_pct": 2.0,
+        "indigenous_enrolments_pct": 29.0,
+        "lbote_pct": 36.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-dzp",
+            "name": "BIRD, the Hon. Sharon Leah",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dzp-44-463792eb2cb9932b",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-dzp-5584364dcfa256f5",
+            "member_id": "aph-dzp",
+            "school_name_as_recorded": "Airds High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DZP'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 26990,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.843,
+          -31.9274
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48911",
+        "acara_id": "48911",
+        "school_name": "Aranmore Catholic College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Leederville",
+        "postcode": "6007",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.843,
+        "latitude": -31.9274,
+        "profile_year": 2025,
+        "total_enrolments": 739,
+        "girls_enrolments": 367,
+        "boys_enrolments": 372,
+        "fte_enrolments": 739.0,
+        "icsea": 991,
+        "icsea_percentile": 43,
+        "sea_bottom_quarter_pct": 36.0,
+        "sea_lower_middle_quarter_pct": 29.0,
+        "sea_upper_middle_quarter_pct": 22.0,
+        "sea_top_quarter_pct": 13.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 48.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-74046",
+            "name": "GOODENOUGH, Ian Reginald",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-74046-44-585d8e3eefc370bb",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-74046-e7296ef8e2a5ddf0",
+            "member_id": "aph-74046",
+            "school_name_as_recorded": "Aranmore Catholic College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '74046'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20404,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.016,
+          -32.1616
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48118",
+        "acara_id": "48118",
+        "school_name": "Armadale Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Armadale",
+        "postcode": "6112",
+        "remoteness_category": "Major Cities",
+        "longitude": 116.016,
+        "latitude": -32.1616,
+        "profile_year": 2025,
+        "total_enrolments": 762,
+        "girls_enrolments": 321,
+        "boys_enrolments": 441,
+        "fte_enrolments": 762.0,
+        "icsea": 920,
+        "icsea_percentile": 15,
+        "sea_bottom_quarter_pct": 63.0,
+        "sea_lower_middle_quarter_pct": 26.0,
+        "sea_upper_middle_quarter_pct": 9.0,
+        "sea_top_quarter_pct": 2.0,
+        "indigenous_enrolments_pct": 14.0,
+        "lbote_pct": 16.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-112096",
+            "name": "LINES, the Hon. Susan (Sue)",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-112096-44-01b9a77a33b6a974",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-112096-972251e1c6011136",
+            "member_id": "aph-112096",
+            "school_name_as_recorded": "Armadale Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '112096'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22154,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.813,
+          -31.8757
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48119",
+        "acara_id": "48119",
+        "school_name": "Balcatta Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Balcatta",
+        "postcode": "6021",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.813,
+        "latitude": -31.8757,
+        "profile_year": 2025,
+        "total_enrolments": 1088,
+        "girls_enrolments": 554,
+        "boys_enrolments": 534,
+        "fte_enrolments": 1088.0,
+        "icsea": 1045,
+        "icsea_percentile": 66,
+        "sea_bottom_quarter_pct": 21.0,
+        "sea_lower_middle_quarter_pct": 28.0,
+        "sea_upper_middle_quarter_pct": 30.0,
+        "sea_top_quarter_pct": 22.0,
+        "indigenous_enrolments_pct": 3.0,
+        "lbote_pct": 55.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e5z",
+            "name": "SIEWERT, Rachel Mary",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e5z-44-d6a988f6b894a5b0",
+                "parliament_number": 44,
+                "party": "Australian Greens",
+                "party_abbrev": "GRN",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e5z-6f04d2d92aa4f335",
+            "member_id": "aph-e5z",
+            "school_name_as_recorded": "Balcatta Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E5Z'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20022,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.043,
+          -37.842
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-46221",
+        "acara_id": "46221",
+        "school_name": "Bialik College",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Hawthorn",
+        "postcode": "3122",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.043,
+        "latitude": -37.842,
+        "profile_year": 2025,
+        "total_enrolments": 987,
+        "girls_enrolments": 488,
+        "boys_enrolments": 499,
+        "fte_enrolments": 987.0,
+        "icsea": 1164,
+        "icsea_percentile": 97,
+        "sea_bottom_quarter_pct": 1.0,
+        "sea_lower_middle_quarter_pct": 7.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 68.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 28.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-fkl",
+            "name": "FRYDENBERG, the Hon. Joshua (Josh) Anthony",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-fkl-44-41307dd3c6aa9549",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-fkl-5628ea67e5cfd4b2",
+            "member_id": "aph-fkl",
+            "school_name_as_recorded": "Bialik College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'FKL'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 26342,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.15,
+          -37.8104
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45357",
+        "acara_id": "45357",
+        "school_name": "Blackburn High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "VIC",
+        "suburb": "Blackburn",
+        "postcode": "3130",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.15,
+        "latitude": -37.8104,
+        "profile_year": 2025,
+        "total_enrolments": 1289,
+        "girls_enrolments": 561,
+        "boys_enrolments": 728,
+        "fte_enrolments": 1288.2,
+        "icsea": 1094,
+        "icsea_percentile": 83,
+        "sea_bottom_quarter_pct": 10.0,
+        "sea_lower_middle_quarter_pct": 19.0,
+        "sea_upper_middle_quarter_pct": 33.0,
+        "sea_top_quarter_pct": 38.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 40.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hym",
+            "name": "IRONS, the Hon. Stephen (Steve) James",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hym-44-09dbfd51f3fb4549",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hym-d1c8969ad93ff131",
+            "member_id": "aph-hym",
+            "school_name_as_recorded": "Blackburn High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HYM'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 19414,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.595,
+          -34.8949
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49693",
+        "acara_id": "49693",
+        "school_name": "Blackfriars Priory School",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "R-12",
+        "state": "SA",
+        "suburb": "Prospect",
+        "postcode": "5082",
+        "remoteness_category": "Major Cities",
+        "longitude": 138.595,
+        "latitude": -34.8949,
+        "profile_year": 2025,
+        "total_enrolments": 786,
+        "girls_enrolments": 0,
+        "boys_enrolments": 786,
+        "fte_enrolments": 786.0,
+        "icsea": 1037,
+        "icsea_percentile": 63,
+        "sea_bottom_quarter_pct": 24.0,
+        "sea_lower_middle_quarter_pct": 24.0,
+        "sea_upper_middle_quarter_pct": 28.0,
+        "sea_top_quarter_pct": 24.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 53.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-i0n",
+            "name": "FARRELL, the Hon. Donald (Don) Edward",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-i0n-44-54401abe4cc70a19",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-i0n-109a526106eacf0d",
+            "member_id": "aph-i0n",
+            "school_name_as_recorded": "Blackfriars Priory School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'I0N'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21608,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          149.147,
+          -35.2781
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49912",
+        "acara_id": "49912",
+        "school_name": "Campbell High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-10",
+        "state": "ACT",
+        "suburb": "Campbell",
+        "postcode": "2612",
+        "remoteness_category": "Major Cities",
+        "longitude": 149.147,
+        "latitude": -35.2781,
+        "profile_year": 2025,
+        "total_enrolments": 420,
+        "girls_enrolments": 186,
+        "boys_enrolments": 234,
+        "fte_enrolments": 419.6,
+        "icsea": 1120,
+        "icsea_percentile": 89,
+        "sea_bottom_quarter_pct": 8.0,
+        "sea_lower_middle_quarter_pct": 14.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 54.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 22.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00amn",
+            "name": "LEY, the Hon. Sussan Penelope",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00amn-44-c6c61ab865b5b03d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00amn-dc4ee49f4bb9b81f",
+            "member_id": "aph-00amn",
+            "school_name_as_recorded": "Campbell High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20335,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.952,
+          -33.8846
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41583",
+        "acara_id": "41583",
+        "school_name": "Canley Vale High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Canley Vale",
+        "postcode": "2166",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.952,
+        "latitude": -33.8846,
+        "profile_year": 2025,
+        "total_enrolments": 1651,
+        "girls_enrolments": 815,
+        "boys_enrolments": 836,
+        "fte_enrolments": 1651.0,
+        "icsea": 954,
+        "icsea_percentile": 26,
+        "sea_bottom_quarter_pct": 55.0,
+        "sea_lower_middle_quarter_pct": 27.0,
+        "sea_upper_middle_quarter_pct": 14.0,
+        "sea_top_quarter_pct": 5.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 96.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hwl",
+            "name": "CLARE, the Hon. Jason Dean",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwl-44-c55692f5441fd560",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwl-8b19468f659dd4e4",
+            "member_id": "aph-hwl",
+            "school_name_as_recorded": "Canley Vale High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWL'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17674,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          137.749,
+          -32.4843
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49780",
+        "acara_id": "49780",
+        "school_name": "Caritas College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "R-12",
+        "state": "SA",
+        "suburb": "Port Augusta West",
+        "postcode": "5700",
+        "remoteness_category": "Outer Regional",
+        "longitude": 137.749,
+        "latitude": -32.4843,
+        "profile_year": 2025,
+        "total_enrolments": 541,
+        "girls_enrolments": 291,
+        "boys_enrolments": 250,
+        "fte_enrolments": 540.1,
+        "icsea": 995,
+        "icsea_percentile": 45,
+        "sea_bottom_quarter_pct": 26.0,
+        "sea_lower_middle_quarter_pct": 35.0,
+        "sea_upper_middle_quarter_pct": 25.0,
+        "sea_top_quarter_pct": 14.0,
+        "indigenous_enrolments_pct": 16.0,
+        "lbote_pct": 11.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-218019",
+            "name": "HOGAN, the Hon. Kevin John",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-218019-44-68260c222dcb4d77",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-218019-e89f60bfeb4d4fa3",
+            "member_id": "aph-218019",
+            "school_name_as_recorded": "Caritas College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '218019'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 24759,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.389,
+          -42.8779
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-40129",
+        "acara_id": "40129",
+        "school_name": "Clarence High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "TAS",
+        "suburb": "Bellerive",
+        "postcode": "7018",
+        "remoteness_category": "Inner Regional",
+        "longitude": 147.389,
+        "latitude": -42.8779,
+        "profile_year": 2025,
+        "total_enrolments": 626,
+        "girls_enrolments": 316,
+        "boys_enrolments": 310,
+        "fte_enrolments": 623.2,
+        "icsea": 1021,
+        "icsea_percentile": 56,
+        "sea_bottom_quarter_pct": 25.0,
+        "sea_lower_middle_quarter_pct": 30.0,
+        "sea_upper_middle_quarter_pct": 26.0,
+        "sea_top_quarter_pct": 19.0,
+        "indigenous_enrolments_pct": 7.0,
+        "lbote_pct": 7.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00aol",
+            "name": "COLBECK, the Hon. Richard Mansell",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00aol-44-0e5fa684227e621e",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00aol-60c07285c22a4193",
+            "member_id": "aph-00aol",
+            "school_name_as_recorded": "Clarence High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22022,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          117.877,
+          -32.3268
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48170",
+        "acara_id": "48170",
+        "school_name": "Corrigin District High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "K-12",
+        "state": "WA",
+        "suburb": "Corrigin",
+        "postcode": "6375",
+        "remoteness_category": "Remote",
+        "longitude": 117.877,
+        "latitude": -32.3268,
+        "profile_year": 2025,
+        "total_enrolments": 125,
+        "girls_enrolments": 75,
+        "boys_enrolments": 50,
+        "fte_enrolments": 121.8,
+        "icsea": 955,
+        "icsea_percentile": 27,
+        "sea_bottom_quarter_pct": 37.0,
+        "sea_lower_middle_quarter_pct": 34.0,
+        "sea_upper_middle_quarter_pct": 23.0,
+        "sea_top_quarter_pct": 6.0,
+        "indigenous_enrolments_pct": 11.0,
+        "lbote_pct": 5.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-m3a",
+            "name": "WYATT, the Hon. Kenneth (Ken) George, AM",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-m3a-44-55fd7f0b019cdb1d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-m3a-b5d93d7c629cfe5c",
+            "member_id": "aph-m3a",
+            "school_name_as_recorded": "Corrigin District High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'M3A'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 26733,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.283,
+          -42.8365
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-40054",
+        "acara_id": "40054",
+        "school_name": "Cosgrove High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "TAS",
+        "suburb": "Glenorchy",
+        "postcode": "7010",
+        "remoteness_category": "Inner Regional",
+        "longitude": 147.283,
+        "latitude": -42.8365,
+        "profile_year": 2025,
+        "total_enrolments": 313,
+        "girls_enrolments": 136,
+        "boys_enrolments": 177,
+        "fte_enrolments": 313.0,
+        "icsea": 867,
+        "icsea_percentile": 6,
+        "sea_bottom_quarter_pct": 73.0,
+        "sea_lower_middle_quarter_pct": 22.0,
+        "sea_upper_middle_quarter_pct": 5.0,
+        "sea_top_quarter_pct": 1.0,
+        "indigenous_enrolments_pct": 24.0,
+        "lbote_pct": 7.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hwm",
+            "name": "COLLINS, the Hon. Julie Maree",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwm-44-2a6faa0c885b9ce4",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwm-d92fae912bf993e1",
+            "member_id": "aph-hwm",
+            "school_name_as_recorded": "Cosgrove High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWM'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 27485,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.037,
+          -33.7852
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41849",
+        "acara_id": "41849",
+        "school_name": "Cumberland High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Carlingford",
+        "postcode": "2118",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.037,
+        "latitude": -33.7852,
+        "profile_year": 2025,
+        "total_enrolments": 1173,
+        "girls_enrolments": 491,
+        "boys_enrolments": 682,
+        "fte_enrolments": 1171.9,
+        "icsea": 1060,
+        "icsea_percentile": 72,
+        "sea_bottom_quarter_pct": 16.0,
+        "sea_lower_middle_quarter_pct": 24.0,
+        "sea_upper_middle_quarter_pct": 32.0,
+        "sea_top_quarter_pct": 27.0,
+        "indigenous_enrolments_pct": 2.0,
+        "lbote_pct": 79.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hwo",
+            "name": "HAWKE, the Hon. Alexander (Alex) George",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwo-44-0e5524b50aa40dab",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwo-8e0d9f804dccb1cc",
+            "member_id": "aph-hwo",
+            "school_name_as_recorded": "Cumberland High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWO'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17938,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          130.83398,
+          -12.43893
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-40337",
+        "acara_id": "40337",
+        "school_name": "Darwin High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Secondary",
+        "campus_type": "School Single Entity",
+        "year_range": "U, 10-12",
+        "state": "NT",
+        "suburb": "The Gardens",
+        "postcode": "0820",
+        "remoteness_category": "Outer Regional",
+        "longitude": 130.83398,
+        "latitude": -12.43893,
+        "profile_year": 2025,
+        "total_enrolments": 1286,
+        "girls_enrolments": 659,
+        "boys_enrolments": 627,
+        "fte_enrolments": 1281.7,
+        "icsea": 1050,
+        "icsea_percentile": 68,
+        "sea_bottom_quarter_pct": 16.0,
+        "sea_lower_middle_quarter_pct": 24.0,
+        "sea_upper_middle_quarter_pct": 32.0,
+        "sea_top_quarter_pct": 28.0,
+        "indigenous_enrolments_pct": 6.0,
+        "lbote_pct": 51.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-204953",
+            "name": "GALLACHER, Alexander (Alex) McEachian",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-204953-44-54401abe4cc70a19",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-204953-6e7d769b43301a9e",
+            "member_id": "aph-204953",
+            "school_name_as_recorded": "Darwin High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '204953'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 30246,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.032,
+          -37.8577
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45771",
+        "acara_id": "45771",
+        "school_name": "De La Salle College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "6-12",
+        "state": "VIC",
+        "suburb": "Malvern",
+        "postcode": "3144",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.032,
+        "latitude": -37.8577,
+        "profile_year": 2025,
+        "total_enrolments": 890,
+        "girls_enrolments": 0,
+        "boys_enrolments": 890,
+        "fte_enrolments": 890.0,
+        "icsea": 1131,
+        "icsea_percentile": 91,
+        "sea_bottom_quarter_pct": 3.0,
+        "sea_lower_middle_quarter_pct": 14.0,
+        "sea_upper_middle_quarter_pct": 30.0,
+        "sea_top_quarter_pct": 53.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 9.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-ecv",
+            "name": "HAYES, Christopher (Chris) Patrick",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-ecv-44-6bf4cc81410705d7",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-ecv-fbfb9ce8ff88363b",
+            "member_id": "aph-ecv",
+            "school_name_as_recorded": "De La Salle College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'ECV'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22527,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          146.66,
+          -41.5297
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-40061",
+        "acara_id": "40061",
+        "school_name": "Deloraine High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "TAS",
+        "suburb": "Deloraine",
+        "postcode": "7304",
+        "remoteness_category": "Outer Regional",
+        "longitude": 146.66,
+        "latitude": -41.5297,
+        "profile_year": 2025,
+        "total_enrolments": 235,
+        "girls_enrolments": 115,
+        "boys_enrolments": 120,
+        "fte_enrolments": 231.4,
+        "icsea": 932,
+        "icsea_percentile": 19,
+        "sea_bottom_quarter_pct": 50.0,
+        "sea_lower_middle_quarter_pct": 30.0,
+        "sea_upper_middle_quarter_pct": 13.0,
+        "sea_top_quarter_pct": 7.0,
+        "indigenous_enrolments_pct": 19.0,
+        "lbote_pct": 2.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e5x",
+            "name": "POLLEY, Helen Beatrice",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e5x-44-b43c23c8e08caae4",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e5x-5ad5fba46f05d49d",
+            "member_id": "aph-e5x",
+            "school_name_as_recorded": "Deloraine High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E5X'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 24214,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          149.154,
+          -35.2485
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49915",
+        "acara_id": "49915",
+        "school_name": "Dickson College",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "ACT",
+        "suburb": "Dickson",
+        "postcode": "2602",
+        "remoteness_category": "Major Cities",
+        "longitude": 149.154,
+        "latitude": -35.2485,
+        "profile_year": 2025,
+        "total_enrolments": 899,
+        "girls_enrolments": 435,
+        "boys_enrolments": 464,
+        "fte_enrolments": 899.0,
+        "icsea": 1101,
+        "icsea_percentile": 84,
+        "sea_bottom_quarter_pct": 11.0,
+        "sea_lower_middle_quarter_pct": 15.0,
+        "sea_upper_middle_quarter_pct": 29.0,
+        "sea_top_quarter_pct": 46.0,
+        "indigenous_enrolments_pct": 2.0,
+        "lbote_pct": 39.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00amn",
+            "name": "LEY, the Hon. Sussan Penelope",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00amn-44-c6c61ab865b5b03d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00amn-87fd87758c62457f",
+            "member_id": "aph-00amn",
+            "school_name_as_recorded": "Dickson College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 23947,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          146.333,
+          -41.1676
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-50255",
+        "acara_id": "50255",
+        "school_name": "Don College",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "11-12",
+        "state": "TAS",
+        "suburb": "Devonport",
+        "postcode": "7310",
+        "remoteness_category": "Outer Regional",
+        "longitude": 146.333,
+        "latitude": -41.1676,
+        "profile_year": 2025,
+        "total_enrolments": 672,
+        "girls_enrolments": 366,
+        "boys_enrolments": 306,
+        "fte_enrolments": 644.3,
+        "icsea": 959,
+        "icsea_percentile": 28,
+        "sea_bottom_quarter_pct": 45.0,
+        "sea_lower_middle_quarter_pct": 31.0,
+        "sea_upper_middle_quarter_pct": 16.0,
+        "sea_top_quarter_pct": 8.0,
+        "indigenous_enrolments_pct": 14.0,
+        "lbote_pct": 3.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00aol",
+            "name": "COLBECK, the Hon. Richard Mansell",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00aol-44-0e5fa684227e621e",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00aol-37d04f4d79c0903d",
+            "member_id": "aph-00aol",
+            "school_name_as_recorded": "Don College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21347,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.22,
+          -31.8752
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48127",
+        "acara_id": "48127",
+        "school_name": "Eastern Hills Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Mount Helena",
+        "postcode": "6082",
+        "remoteness_category": "Major Cities",
+        "longitude": 116.22,
+        "latitude": -31.8752,
+        "profile_year": 2025,
+        "total_enrolments": 789,
+        "girls_enrolments": 366,
+        "boys_enrolments": 423,
+        "fte_enrolments": 789.0,
+        "icsea": 998,
+        "icsea_percentile": 46,
+        "sea_bottom_quarter_pct": 35.0,
+        "sea_lower_middle_quarter_pct": 33.0,
+        "sea_upper_middle_quarter_pct": 22.0,
+        "sea_top_quarter_pct": 9.0,
+        "indigenous_enrolments_pct": 4.0,
+        "lbote_pct": 6.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-i0t",
+            "name": "PRATT, Louise Clare",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-i0t-44-01b9a77a33b6a974",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-i0t-74636fb6e07d1082",
+            "member_id": "aph-i0t",
+            "school_name_as_recorded": "Eastern Hills Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'I0T'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 18659,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.793,
+          -33.8323
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-43216",
+        "acara_id": "43216",
+        "school_name": "Emmaus Catholic College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Kemps Creek",
+        "postcode": "2178",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.793,
+        "latitude": -33.8323,
+        "profile_year": 2025,
+        "total_enrolments": 674,
+        "girls_enrolments": 359,
+        "boys_enrolments": 315,
+        "fte_enrolments": 674.0,
+        "icsea": 996,
+        "icsea_percentile": 45,
+        "sea_bottom_quarter_pct": 34.0,
+        "sea_lower_middle_quarter_pct": 33.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 9.0,
+        "indigenous_enrolments_pct": 4.0,
+        "lbote_pct": 53.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00amr",
+            "name": "KING, the Hon. Catherine Fiona",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00amr-44-f028b4228fdd14b7",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00amr-3a0128eebb304edc",
+            "member_id": "aph-00amr",
+            "school_name_as_recorded": "Emmaus Catholic College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21184,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          152.998,
+          -27.4076
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47454",
+        "acara_id": "47454",
+        "school_name": "Everton Park State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Everton Park",
+        "postcode": "4053",
+        "remoteness_category": "Major Cities",
+        "longitude": 152.998,
+        "latitude": -27.4076,
+        "profile_year": 2025,
+        "total_enrolments": 482,
+        "girls_enrolments": 215,
+        "boys_enrolments": 267,
+        "fte_enrolments": 481.6,
+        "icsea": 1001,
+        "icsea_percentile": 47,
+        "sea_bottom_quarter_pct": 32.0,
+        "sea_lower_middle_quarter_pct": 30.0,
+        "sea_upper_middle_quarter_pct": 23.0,
+        "sea_top_quarter_pct": 15.0,
+        "indigenous_enrolments_pct": 9.0,
+        "lbote_pct": 24.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e09",
+            "name": "OWENS, Julie Ann",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e09-44-a90f2f16b150aa38",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e09-f7553c62f045c3ed",
+            "member_id": "aph-e09",
+            "school_name_as_recorded": "Everton Park State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E09'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 23590,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.98,
+          -31.1385
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-42515",
+        "acara_id": "42515",
+        "school_name": "Farrer Memorial Agricultural High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Calala",
+        "postcode": "2340",
+        "remoteness_category": "Inner Regional",
+        "longitude": 150.98,
+        "latitude": -31.1385,
+        "profile_year": 2025,
+        "total_enrolments": 606,
+        "girls_enrolments": 0,
+        "boys_enrolments": 606,
+        "fte_enrolments": 606.0,
+        "icsea": 1025,
+        "icsea_percentile": 58,
+        "sea_bottom_quarter_pct": 17.0,
+        "sea_lower_middle_quarter_pct": 33.0,
+        "sea_upper_middle_quarter_pct": 31.0,
+        "sea_top_quarter_pct": 19.0,
+        "indigenous_enrolments_pct": 13.0,
+        "lbote_pct": 2.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hwn",
+            "name": "COULTON, the Hon. Mark Maclean",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwn-44-7ba083bc5e84f13c",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwn-476fdab64841cc4a",
+            "member_id": "aph-hwn",
+            "school_name_as_recorded": "Farrer Memorial Agricultural High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWN'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 28308,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.399,
+          -38.0669
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-50402",
+        "acara_id": "50402",
+        "school_name": "Geelong Grammar School - Corio Campus",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Corio",
+        "postcode": "3214",
+        "remoteness_category": "Major Cities",
+        "longitude": 144.399,
+        "latitude": -38.0669,
+        "profile_year": 2025,
+        "total_enrolments": 1422,
+        "girls_enrolments": 614,
+        "boys_enrolments": 808,
+        "fte_enrolments": 1422.0,
+        "icsea": 1149,
+        "icsea_percentile": 95,
+        "sea_bottom_quarter_pct": 2.0,
+        "sea_lower_middle_quarter_pct": 8.0,
+        "sea_upper_middle_quarter_pct": 28.0,
+        "sea_top_quarter_pct": 62.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 36.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hwq",
+            "name": "MARLES, the Hon. Richard Donald",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwq-44-22f08f0ec5b975e8",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwq-527d7a9130bf9736",
+            "member_id": "aph-hwq",
+            "school_name_as_recorded": "Geelong Grammar School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWQ'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 30432,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.341,
+          -33.4172
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-42090",
+        "acara_id": "42090",
+        "school_name": "Gosford High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Gosford",
+        "postcode": "2250",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.341,
+        "latitude": -33.4172,
+        "profile_year": 2025,
+        "total_enrolments": 1067,
+        "girls_enrolments": 464,
+        "boys_enrolments": 603,
+        "fte_enrolments": 1058.1,
+        "icsea": 1157,
+        "icsea_percentile": 96,
+        "sea_bottom_quarter_pct": 2.0,
+        "sea_lower_middle_quarter_pct": 11.0,
+        "sea_upper_middle_quarter_pct": 27.0,
+        "sea_top_quarter_pct": 60.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 63.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-249127",
+            "name": "CONROY, the Hon. Patrick (Pat) Martin",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-249127-44-5c775a70061b773c",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-249127-093cff2b37e44619",
+            "member_id": "aph-249127",
+            "school_name_as_recorded": "Gosford High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '249127'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 16833,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.981,
+          -31.8949
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49021",
+        "acara_id": "49021",
+        "school_name": "Guildford Grammar School",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "PP-12",
+        "state": "WA",
+        "suburb": "Guildford",
+        "postcode": "6055",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.981,
+        "latitude": -31.8949,
+        "profile_year": 2025,
+        "total_enrolments": 1225,
+        "girls_enrolments": 504,
+        "boys_enrolments": 721,
+        "fte_enrolments": 1225.0,
+        "icsea": 1100,
+        "icsea_percentile": 84,
+        "sea_bottom_quarter_pct": 6.0,
+        "sea_lower_middle_quarter_pct": 19.0,
+        "sea_upper_middle_quarter_pct": 30.0,
+        "sea_top_quarter_pct": 45.0,
+        "indigenous_enrolments_pct": 7.0,
+        "lbote_pct": 11.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-198084",
+            "name": "WILSON, Richard (Rick) James",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-198084-44-0e712599bd7c9d87",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-198084-877bc6f4849902ca",
+            "member_id": "aph-198084",
+            "school_name_as_recorded": "Guildford Grammar School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '198084'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 40401,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.146,
+          -37.996
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-46189",
+        "acara_id": "46189",
+        "school_name": "Haileybury College - Keysborough Boys",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Keysborough",
+        "postcode": "3173",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.146,
+        "latitude": -37.996,
+        "profile_year": 2025,
+        "total_enrolments": 4880,
+        "girls_enrolments": 2300,
+        "boys_enrolments": 2580,
+        "fte_enrolments": 4871.8,
+        "icsea": 1191,
+        "icsea_percentile": 99,
+        "sea_bottom_quarter_pct": 1.0,
+        "sea_lower_middle_quarter_pct": 6.0,
+        "sea_upper_middle_quarter_pct": 19.0,
+        "sea_top_quarter_pct": 73.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 49.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-m2y",
+            "name": "TUDGE, the Hon. Alan Edward",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-m2y-44-692e6fd661191800",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-m2y-cf6577bf96921969",
+            "member_id": "aph-m2y",
+            "school_name_as_recorded": "Haileybury College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'M2Y'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 26946,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.926,
+          -31.8902
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48131",
+        "acara_id": "48131",
+        "school_name": "Hampton Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Morley",
+        "postcode": "6062",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.926,
+        "latitude": -31.8902,
+        "profile_year": 2025,
+        "total_enrolments": 1092,
+        "girls_enrolments": 539,
+        "boys_enrolments": 553,
+        "fte_enrolments": 1092.0,
+        "icsea": 983,
+        "icsea_percentile": 39,
+        "sea_bottom_quarter_pct": 39.0,
+        "sea_lower_middle_quarter_pct": 33.0,
+        "sea_upper_middle_quarter_pct": 20.0,
+        "sea_top_quarter_pct": 7.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 41.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-m3a",
+            "name": "WYATT, the Hon. Kenneth (Ken) George, AM",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-m3a-44-55fd7f0b019cdb1d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-m3a-c9f8bf9d79ee8f8f",
+            "member_id": "aph-m3a",
+            "school_name_as_recorded": "Hampton Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'M3A'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 19004,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.300368798093,
+          -42.8551525815878
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-53087",
+        "acara_id": "53087",
+        "school_name": "Hobart City High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "TAS",
+        "suburb": "New Town",
+        "postcode": "7008",
+        "remoteness_category": "Inner Regional",
+        "longitude": 147.300368798093,
+        "latitude": -42.8551525815878,
+        "profile_year": 2025,
+        "total_enrolments": 844,
+        "girls_enrolments": 408,
+        "boys_enrolments": 436,
+        "fte_enrolments": 840.5,
+        "icsea": 987,
+        "icsea_percentile": 41,
+        "sea_bottom_quarter_pct": 36.0,
+        "sea_lower_middle_quarter_pct": 27.0,
+        "sea_upper_middle_quarter_pct": 22.0,
+        "sea_top_quarter_pct": 15.0,
+        "indigenous_enrolments_pct": 10.0,
+        "lbote_pct": 17.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hzb",
+            "name": "BILYK, Catryna Louise",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hzb-44-b43c23c8e08caae4",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hzb-de200d94a489bf91",
+            "member_id": "aph-hzb",
+            "school_name_as_recorded": "Ogilvie High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HZB'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "successor",
+            "resolution_source_url": "https://www.decyp.tas.gov.au/institution/hobart-city-high-school/"
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22022,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.768,
+          -32.0085
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48924",
+        "acara_id": "48924",
+        "school_name": "Iona Presentation College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "PP-12",
+        "state": "WA",
+        "suburb": "Mosman Park",
+        "postcode": "6012",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.768,
+        "latitude": -32.0085,
+        "profile_year": 2025,
+        "total_enrolments": 1265,
+        "girls_enrolments": 1257,
+        "boys_enrolments": 8,
+        "fte_enrolments": 1265.0,
+        "icsea": 1141,
+        "icsea_percentile": 94,
+        "sea_bottom_quarter_pct": 3.0,
+        "sea_lower_middle_quarter_pct": 12.0,
+        "sea_upper_middle_quarter_pct": 29.0,
+        "sea_top_quarter_pct": 56.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 11.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-i0m",
+            "name": "CASH, the Hon. Michaelia Clare",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-i0m-44-9465fa0d85def696",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-i0m-96f806adb33a43c9",
+            "member_id": "aph-i0m",
+            "school_name_as_recorded": "Iona Presentation College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'I0M'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 23896,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.043,
+          -33.7806
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41811",
+        "acara_id": "41811",
+        "school_name": "James Ruse Agricultural High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Carlingford",
+        "postcode": "2118",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.043,
+        "latitude": -33.7806,
+        "profile_year": 2025,
+        "total_enrolments": 857,
+        "girls_enrolments": 367,
+        "boys_enrolments": 490,
+        "fte_enrolments": 856.9,
+        "icsea": 1222,
+        "icsea_percentile": 99,
+        "sea_bottom_quarter_pct": 1.0,
+        "sea_lower_middle_quarter_pct": 3.0,
+        "sea_upper_middle_quarter_pct": 16.0,
+        "sea_top_quarter_pct": 80.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 97.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-bu8",
+            "name": "LEIGH, the Hon. Dr Andrew Keith",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-bu8-44-35b197551ffdc3fa",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-bu8-2c6ece10884be06f",
+            "member_id": "aph-bu8",
+            "school_name_as_recorded": "James Ruse Agricultural High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'BU8'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 19647,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.91,
+          -34.3329
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49463",
+        "acara_id": "49463",
+        "school_name": "Kapunda High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "SA",
+        "suburb": "Kapunda",
+        "postcode": "5373",
+        "remoteness_category": "Inner Regional",
+        "longitude": 138.91,
+        "latitude": -34.3329,
+        "profile_year": 2025,
+        "total_enrolments": 594,
+        "girls_enrolments": 273,
+        "boys_enrolments": 321,
+        "fte_enrolments": 593.4,
+        "icsea": 972,
+        "icsea_percentile": 34,
+        "sea_bottom_quarter_pct": 45.0,
+        "sea_lower_middle_quarter_pct": 35.0,
+        "sea_upper_middle_quarter_pct": 15.0,
+        "sea_top_quarter_pct": 5.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 3.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hw9",
+            "name": "CHAMPION, Nicholas (Nick) David",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hw9-44-f7852ea8a04e3ac2",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hw9-e29bfbfc7ba1bc6c",
+            "member_id": "aph-hw9",
+            "school_name_as_recorded": "Kapunda High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HW9'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21191,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          117.568,
+          -33.6826
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48136",
+        "acara_id": "48136",
+        "school_name": "Katanning Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Katanning",
+        "postcode": "6317",
+        "remoteness_category": "Outer Regional",
+        "longitude": 117.568,
+        "latitude": -33.6826,
+        "profile_year": 2025,
+        "total_enrolments": 355,
+        "girls_enrolments": 166,
+        "boys_enrolments": 189,
+        "fte_enrolments": 355.0,
+        "icsea": 886,
+        "icsea_percentile": 8,
+        "sea_bottom_quarter_pct": 62.0,
+        "sea_lower_middle_quarter_pct": 24.0,
+        "sea_upper_middle_quarter_pct": 10.0,
+        "sea_top_quarter_pct": 4.0,
+        "indigenous_enrolments_pct": 26.0,
+        "lbote_pct": 20.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-198084",
+            "name": "WILSON, Richard (Rick) James",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-198084-44-0e712599bd7c9d87",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-198084-c2c79b62f27f5562",
+            "member_id": "aph-198084",
+            "school_name_as_recorded": "Katanning Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '198084'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 29235,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          152.377,
+          -24.8762
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47480",
+        "acara_id": "47480",
+        "school_name": "Kepnock State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Kepnock",
+        "postcode": "4670",
+        "remoteness_category": "Inner Regional",
+        "longitude": 152.377,
+        "latitude": -24.8762,
+        "profile_year": 2025,
+        "total_enrolments": 1074,
+        "girls_enrolments": 520,
+        "boys_enrolments": 554,
+        "fte_enrolments": 1074.0,
+        "icsea": 927,
+        "icsea_percentile": 17,
+        "sea_bottom_quarter_pct": 58.0,
+        "sea_lower_middle_quarter_pct": 28.0,
+        "sea_upper_middle_quarter_pct": 11.0,
+        "sea_top_quarter_pct": 3.0,
+        "indigenous_enrolments_pct": 15.0,
+        "lbote_pct": 4.0,
+        "member_count": 2,
+        "members": [
+          {
+            "member_id": "aph-148150",
+            "name": "PITT, the Hon. Keith John",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-148150-44-98f130ee83c1db90",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          },
+          {
+            "member_id": "aph-hwt",
+            "name": "ROBERT, the Hon. Stuart Rowland",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwt-44-b00a175fe699d29e",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-148150-45fb13db21fe9723",
+            "member_id": "aph-148150",
+            "school_name_as_recorded": "Kepnock State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '148150'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          },
+          {
+            "education_id": "edu-hwt-45fb13db21fe9723",
+            "member_id": "aph-hwt",
+            "school_name_as_recorded": "Kepnock State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWT'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20261,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.419,
+          -33.1356
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49423",
+        "acara_id": "49423",
+        "school_name": "Kimba Area School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "R-12",
+        "state": "SA",
+        "suburb": "Kimba",
+        "postcode": "5641",
+        "remoteness_category": "Remote",
+        "longitude": 136.419,
+        "latitude": -33.1356,
+        "profile_year": 2025,
+        "total_enrolments": 187,
+        "girls_enrolments": 81,
+        "boys_enrolments": 106,
+        "fte_enrolments": 185.0,
+        "icsea": 992,
+        "icsea_percentile": 43,
+        "sea_bottom_quarter_pct": 29.0,
+        "sea_lower_middle_quarter_pct": 36.0,
+        "sea_upper_middle_quarter_pct": 25.0,
+        "sea_top_quarter_pct": 9.0,
+        "indigenous_enrolments_pct": 3.0,
+        "lbote_pct": 2.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hws",
+            "name": "RAMSEY, Rowan Eric",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hws-44-e1687cea11765363",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hws-62f2312b42b60650",
+            "member_id": "aph-hws",
+            "school_name_as_recorded": "Kimba Area School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWS'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 25969,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.722,
+          -32.9179
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-42120",
+        "acara_id": "42120",
+        "school_name": "Lambton High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Lambton",
+        "postcode": "2299",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.722,
+        "latitude": -32.9179,
+        "profile_year": 2025,
+        "total_enrolments": 1176,
+        "girls_enrolments": 561,
+        "boys_enrolments": 615,
+        "fte_enrolments": 1171.6,
+        "icsea": 1057,
+        "icsea_percentile": 71,
+        "sea_bottom_quarter_pct": 18.0,
+        "sea_lower_middle_quarter_pct": 23.0,
+        "sea_upper_middle_quarter_pct": 28.0,
+        "sea_top_quarter_pct": 31.0,
+        "indigenous_enrolments_pct": 8.0,
+        "lbote_pct": 21.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-248181",
+            "name": "CLAYDON, Sharon Catherine",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-248181-44-dbd8167a392ce3ac",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-248181-063f2c28e28a1a95",
+            "member_id": "aph-248181",
+            "school_name_as_recorded": "Lambton High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '248181'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17969,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.015,
+          -37.8482
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45810",
+        "acara_id": "45810",
+        "school_name": "Loreto Mandeville Hall",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Toorak",
+        "postcode": "3142",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.015,
+        "latitude": -37.8482,
+        "profile_year": 2025,
+        "total_enrolments": 1220,
+        "girls_enrolments": 1220,
+        "boys_enrolments": 0,
+        "fte_enrolments": 1220.0,
+        "icsea": 1167,
+        "icsea_percentile": 97,
+        "sea_bottom_quarter_pct": 1.0,
+        "sea_lower_middle_quarter_pct": 7.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 68.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 11.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-140590",
+            "name": "O'NEIL, the Hon. Clare Ellen",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-140590-44-3564c2b1809bd0d8",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-140590-37fe6d49d40b77c4",
+            "member_id": "aph-140590",
+            "school_name_as_recorded": "Loreto Mandeville Hall",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '140590'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 13326,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          149.177,
+          -21.1526
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47414",
+        "acara_id": "47414",
+        "school_name": "Mackay State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "South Mackay",
+        "postcode": "4740",
+        "remoteness_category": "Inner Regional",
+        "longitude": 149.177,
+        "latitude": -21.1526,
+        "profile_year": 2025,
+        "total_enrolments": 1254,
+        "girls_enrolments": 559,
+        "boys_enrolments": 695,
+        "fte_enrolments": 1254.0,
+        "icsea": 936,
+        "icsea_percentile": 20,
+        "sea_bottom_quarter_pct": 50.0,
+        "sea_lower_middle_quarter_pct": 32.0,
+        "sea_upper_middle_quarter_pct": 14.0,
+        "sea_top_quarter_pct": 4.0,
+        "indigenous_enrolments_pct": 19.0,
+        "lbote_pct": 23.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-230485",
+            "name": "CHRISTENSEN, George Robert",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-230485-44-fec6ebf26c6514b0",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-230485-a56ca5a3c6a27aa2",
+            "member_id": "aph-230485",
+            "school_name_as_recorded": "Mackay State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '230485'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17698,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148.159,
+          -23.5447
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47647",
+        "acara_id": "47647",
+        "school_name": "Marist College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Emerald",
+        "postcode": "4720",
+        "remoteness_category": "Outer Regional",
+        "longitude": 148.159,
+        "latitude": -23.5447,
+        "profile_year": 2025,
+        "total_enrolments": 697,
+        "girls_enrolments": 364,
+        "boys_enrolments": 333,
+        "fte_enrolments": 697.0,
+        "icsea": 999,
+        "icsea_percentile": 46,
+        "sea_bottom_quarter_pct": 29.0,
+        "sea_lower_middle_quarter_pct": 37.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 11.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 11.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-182468",
+            "name": "THISTLETHWAITE, the Hon. Matthew (Matt) James",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-182468-44-de862a5e3f8699d9",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-182468-5ad104f8cf76b2d7",
+            "member_id": "aph-182468",
+            "school_name_as_recorded": "Marist College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '182468'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 24516,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          152.978,
+          -27.4396
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47856",
+        "acara_id": "47856",
+        "school_name": "Marist College Ashgrove",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "5-12",
+        "state": "QLD",
+        "suburb": "Ashgrove",
+        "postcode": "4060",
+        "remoteness_category": "Major Cities",
+        "longitude": 152.978,
+        "latitude": -27.4396,
+        "profile_year": 2025,
+        "total_enrolments": 1827,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1827,
+        "fte_enrolments": 1827.0,
+        "icsea": 1139,
+        "icsea_percentile": 93,
+        "sea_bottom_quarter_pct": 2.0,
+        "sea_lower_middle_quarter_pct": 13.0,
+        "sea_upper_middle_quarter_pct": 29.0,
+        "sea_top_quarter_pct": 56.0,
+        "indigenous_enrolments_pct": 3.0,
+        "lbote_pct": 14.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-83t",
+            "name": "RUDD, the Hon. Dr Kevin Michael, AC",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-83t-44-d94a057e23b02d6b",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-83t-1b3e28a4f96486e9",
+            "member_id": "aph-83t",
+            "school_name_as_recorded": "Marist Brothers College Ashgrove",
+            "source_url": "https://www.naa.gov.au/explore-collection/australias-prime-ministers/kevin-rudd/before-office",
+            "retrieved_at": "2026-10-02T00:00:00+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "rename",
+            "resolution_source_url": "https://www.marash.qld.edu.au/wp-content/uploads/MCA_Viriliter-Age_Issue7_11June25.pdf"
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21396,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.076,
+          -26.6547
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47482",
+        "acara_id": "47482",
+        "school_name": "Maroochydore State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Maroochydore",
+        "postcode": "4558",
+        "remoteness_category": "Major Cities",
+        "longitude": 153.076,
+        "latitude": -26.6547,
+        "profile_year": 2025,
+        "total_enrolments": 1205,
+        "girls_enrolments": 614,
+        "boys_enrolments": 591,
+        "fte_enrolments": 1189.0,
+        "icsea": 1011,
+        "icsea_percentile": 52,
+        "sea_bottom_quarter_pct": 29.0,
+        "sea_lower_middle_quarter_pct": 35.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 12.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 12.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-249710",
+            "name": "CHESTERS, Lisa Marie",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-249710-44-42a80835cac65f38",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-249710-10e1d18f2d3e5d6d",
+            "member_id": "aph-249710",
+            "school_name_as_recorded": "Maroochydore State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '249710'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 19851,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.919,
+          -31.0728
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-43652",
+        "acara_id": "43652",
+        "school_name": "McCarthy Catholic College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "West Tamworth",
+        "postcode": "2340",
+        "remoteness_category": "Inner Regional",
+        "longitude": 150.919,
+        "latitude": -31.0728,
+        "profile_year": 2025,
+        "total_enrolments": 935,
+        "girls_enrolments": 529,
+        "boys_enrolments": 406,
+        "fte_enrolments": 935.0,
+        "icsea": 991,
+        "icsea_percentile": 42,
+        "sea_bottom_quarter_pct": 30.0,
+        "sea_lower_middle_quarter_pct": 36.0,
+        "sea_upper_middle_quarter_pct": 24.0,
+        "sea_top_quarter_pct": 10.0,
+        "indigenous_enrolments_pct": 13.0,
+        "lbote_pct": 9.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-c2t",
+            "name": "WILKIE, Andrew Damien",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-c2t-44-740fb2375d457cae",
+                "parliament_number": 44,
+                "party": "Independent",
+                "party_abbrev": "IND",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-c2t-b24960cd95f3cd7d",
+            "member_id": "aph-c2t",
+            "school_name_as_recorded": "McCarthy Catholic College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'C2T'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22508,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.916,
+          -33.7848
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41821",
+        "acara_id": "41821",
+        "school_name": "Mitchell High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Blacktown",
+        "postcode": "2148",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.916,
+        "latitude": -33.7848,
+        "profile_year": 2025,
+        "total_enrolments": 876,
+        "girls_enrolments": 414,
+        "boys_enrolments": 462,
+        "fte_enrolments": 875.0,
+        "icsea": 978,
+        "icsea_percentile": 37,
+        "sea_bottom_quarter_pct": 44.0,
+        "sea_lower_middle_quarter_pct": 29.0,
+        "sea_upper_middle_quarter_pct": 19.0,
+        "sea_top_quarter_pct": 8.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 61.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-91219",
+            "name": "HUSIC, the Hon. Edham (Ed) Nurredin",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-91219-44-bb8460ad03e012dc",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-91219-82a5d765c30ff07f",
+            "member_id": "aph-91219",
+            "school_name_as_recorded": "Mitchell High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '91219'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 18458,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.975,
+          -23.8071
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-46619",
+        "acara_id": "46619",
+        "school_name": "Mount Larcom State School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-10",
+        "state": "QLD",
+        "suburb": "Mount Larcom",
+        "postcode": "4695",
+        "remoteness_category": "Outer Regional",
+        "longitude": 150.975,
+        "latitude": -23.8071,
+        "profile_year": 2025,
+        "total_enrolments": 83,
+        "girls_enrolments": 36,
+        "boys_enrolments": 47,
+        "fte_enrolments": 83.0,
+        "icsea": 886,
+        "icsea_percentile": 8,
+        "sea_bottom_quarter_pct": 76.0,
+        "sea_lower_middle_quarter_pct": 21.0,
+        "sea_upper_middle_quarter_pct": 2.0,
+        "sea_top_quarter_pct": 1.0,
+        "indigenous_enrolments_pct": 16.0,
+        "lbote_pct": 1.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-139441",
+            "name": "O'DOWD, Kenneth (Ken) Desmond",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-139441-44-73c42f6e5bc696cc",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-139441-3b7302bebb2f9803",
+            "member_id": "aph-139441",
+            "school_name_as_recorded": "Mt Larcom State School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '139441'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22629,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.118,
+          -37.8472
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-46208",
+        "acara_id": "46208",
+        "school_name": "Mount Scopus Memorial College",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Burwood",
+        "postcode": "3125",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.118,
+        "latitude": -37.8472,
+        "profile_year": 2025,
+        "total_enrolments": 1170,
+        "girls_enrolments": 549,
+        "boys_enrolments": 621,
+        "fte_enrolments": 1170.0,
+        "icsea": 1159,
+        "icsea_percentile": 96,
+        "sea_bottom_quarter_pct": 1.0,
+        "sea_lower_middle_quarter_pct": 5.0,
+        "sea_upper_middle_quarter_pct": 28.0,
+        "sea_top_quarter_pct": 67.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 21.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-fkl",
+            "name": "FRYDENBERG, the Hon. Joshua (Josh) Anthony",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-fkl-44-41307dd3c6aa9549",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-fkl-8aff7af82c2e91ac",
+            "member_id": "aph-fkl",
+            "school_name_as_recorded": "Mt Scopus Memorial College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'FKL'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 30176,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          152.962,
+          -26.6232
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47429",
+        "acara_id": "47429",
+        "school_name": "Nambour State College",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "QLD",
+        "suburb": "Nambour",
+        "postcode": "4560",
+        "remoteness_category": "Major Cities",
+        "longitude": 152.962,
+        "latitude": -26.6232,
+        "profile_year": 2025,
+        "total_enrolments": 1469,
+        "girls_enrolments": 730,
+        "boys_enrolments": 739,
+        "fte_enrolments": 1465.0,
+        "icsea": 977,
+        "icsea_percentile": 36,
+        "sea_bottom_quarter_pct": 39.0,
+        "sea_lower_middle_quarter_pct": 36.0,
+        "sea_upper_middle_quarter_pct": 19.0,
+        "sea_top_quarter_pct": 6.0,
+        "indigenous_enrolments_pct": 10.0,
+        "lbote_pct": 8.0,
+        "member_count": 2,
+        "members": [
+          {
+            "member_id": "aph-dzw",
+            "name": "ELLIOT, the Hon. Maria Justine (Justine)",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dzw-44-725d2b58cf1741d7",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          },
+          {
+            "member_id": "aph-83t",
+            "name": "RUDD, the Hon. Dr Kevin Michael, AC",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-83t-44-d94a057e23b02d6b",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-83t-851c0011f66e825c",
+            "member_id": "aph-83t",
+            "school_name_as_recorded": "Nambour State High School",
+            "source_url": "https://www.naa.gov.au/explore-collection/australias-prime-ministers/kevin-rudd/before-office",
+            "retrieved_at": "2026-10-02T00:00:00+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "successor",
+            "resolution_source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf"
+          },
+          {
+            "education_id": "edu-dzw-ac0b51d89dd8b2e4",
+            "member_id": "aph-dzw",
+            "school_name_as_recorded": "Nambour High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DZW'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "successor",
+            "resolution_source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf"
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20784,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148.466353,
+          -37.704106
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45446",
+        "acara_id": "45446",
+        "school_name": "Orbost Secondary College",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Secondary",
+        "campus_type": "School Head Campus",
+        "year_range": null,
+        "state": "VIC",
+        "suburb": "Orbost",
+        "postcode": "3888",
+        "remoteness_category": null,
+        "longitude": 148.466353,
+        "latitude": -37.704106,
+        "profile_year": null,
+        "total_enrolments": null,
+        "girls_enrolments": null,
+        "boys_enrolments": null,
+        "fte_enrolments": null,
+        "icsea": null,
+        "icsea_percentile": null,
+        "sea_bottom_quarter_pct": null,
+        "sea_lower_middle_quarter_pct": null,
+        "sea_upper_middle_quarter_pct": null,
+        "sea_top_quarter_pct": null,
+        "indigenous_enrolments_pct": null,
+        "lbote_pct": null,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-i0u",
+            "name": "HANSON-YOUNG, Sarah Coral",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-i0u-44-30a00150d965ec96",
+                "parliament_number": 44,
+                "party": "Australian Greens",
+                "party_abbrev": "GRN",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-i0u-fcfc809a5d0d673c",
+            "member_id": "aph-i0u",
+            "school_name_as_recorded": "Orbost Secondary College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'I0U'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21957,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.067,
+          -37.6902
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45629",
+        "acara_id": "45629",
+        "school_name": "Parade College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "VIC",
+        "suburb": "Bundoora",
+        "postcode": "3083",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.067,
+        "latitude": -37.6902,
+        "profile_year": 2025,
+        "total_enrolments": 1968,
+        "girls_enrolments": 9,
+        "boys_enrolments": 1959,
+        "fte_enrolments": 1968.0,
+        "icsea": 1077,
+        "icsea_percentile": 78,
+        "sea_bottom_quarter_pct": 10.0,
+        "sea_lower_middle_quarter_pct": 27.0,
+        "sea_upper_middle_quarter_pct": 36.0,
+        "sea_top_quarter_pct": 28.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 17.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-53369",
+            "name": "DI NATALE, Richard",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-53369-44-9566b862c8c3e443",
+                "parliament_number": 44,
+                "party": "Australian Greens",
+                "party_abbrev": "GRN",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-53369-059cb00401cb4089",
+            "member_id": "aph-53369",
+            "school_name_as_recorded": "Parade College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '53369'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17582,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.091,
+          -38.1982
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-46219",
+        "acara_id": "46219",
+        "school_name": "Peninsula Grammar",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "VIC",
+        "suburb": "Mount Eliza",
+        "postcode": "3930",
+        "remoteness_category": "Major Cities",
+        "longitude": 145.091,
+        "latitude": -38.1982,
+        "profile_year": 2025,
+        "total_enrolments": 1270,
+        "girls_enrolments": 555,
+        "boys_enrolments": 715,
+        "fte_enrolments": 1270.0,
+        "icsea": 1125,
+        "icsea_percentile": 90,
+        "sea_bottom_quarter_pct": 4.0,
+        "sea_lower_middle_quarter_pct": 16.0,
+        "sea_upper_middle_quarter_pct": 33.0,
+        "sea_top_quarter_pct": 48.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 8.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00amv",
+            "name": "HUNT, the Hon. Gregory (Greg) Andrew",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00amv-44-fc1a3d9d50f5f4cd",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00amv-4f36537fdf0e05bb",
+            "member_id": "aph-00amv",
+            "school_name_as_recorded": "Peninsula Grammar",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 30004,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.618,
+          -34.9231
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49811",
+        "acara_id": "49811",
+        "school_name": "Prince Alfred College",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "R-12",
+        "state": "SA",
+        "suburb": "Kent Town",
+        "postcode": "5067",
+        "remoteness_category": "Major Cities",
+        "longitude": 138.618,
+        "latitude": -34.9231,
+        "profile_year": 2025,
+        "total_enrolments": 1127,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1127,
+        "fte_enrolments": 1127.0,
+        "icsea": 1143,
+        "icsea_percentile": 94,
+        "sea_bottom_quarter_pct": 3.0,
+        "sea_lower_middle_quarter_pct": 12.0,
+        "sea_upper_middle_quarter_pct": 27.0,
+        "sea_top_quarter_pct": 58.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 29.0,
+        "member_count": 2,
+        "members": [
+          {
+            "member_id": "aph-g0d",
+            "name": "BERNARDI, Cory",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-g0d-44-23c468b142180b90",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          },
+          {
+            "member_id": "aph-dyu",
+            "name": "FAWCETT, the Hon. David Julian",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dyu-44-23c468b142180b90",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-dyu-5d205f6863a0f6ae",
+            "member_id": "aph-dyu",
+            "school_name_as_recorded": "Prince Alfred College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DYU'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          },
+          {
+            "education_id": "edu-g0d-5d205f6863a0f6ae",
+            "member_id": "aph-g0d",
+            "school_name_as_recorded": "Prince Alfred College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'G0D'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 33738,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.741,
+          -34.1721
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49477",
+        "acara_id": "49477",
+        "school_name": "Renmark High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "SA",
+        "suburb": "Renmark",
+        "postcode": "5341",
+        "remoteness_category": "Outer Regional",
+        "longitude": 140.741,
+        "latitude": -34.1721,
+        "profile_year": 2025,
+        "total_enrolments": 414,
+        "girls_enrolments": 211,
+        "boys_enrolments": 203,
+        "fte_enrolments": 413.3,
+        "icsea": 930,
+        "icsea_percentile": 18,
+        "sea_bottom_quarter_pct": 53.0,
+        "sea_lower_middle_quarter_pct": 28.0,
+        "sea_upper_middle_quarter_pct": 14.0,
+        "sea_top_quarter_pct": 5.0,
+        "indigenous_enrolments_pct": 14.0,
+        "lbote_pct": 17.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-243273",
+            "name": "RUSTON, the Hon. Anne Sowerby",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-243273-44-23c468b142180b90",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-243273-25c5a9844fb7ce07",
+            "member_id": "aph-243273",
+            "school_name_as_recorded": "Renmark High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '243273'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22853,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.496,
+          -23.3886
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48031",
+        "acara_id": "48031",
+        "school_name": "Rockhampton Girls Grammar School",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "QLD",
+        "suburb": "Rockhampton",
+        "postcode": "4700",
+        "remoteness_category": "Inner Regional",
+        "longitude": 150.496,
+        "latitude": -23.3886,
+        "profile_year": 2025,
+        "total_enrolments": 405,
+        "girls_enrolments": 405,
+        "boys_enrolments": 0,
+        "fte_enrolments": 404.8,
+        "icsea": 1022,
+        "icsea_percentile": 56,
+        "sea_bottom_quarter_pct": 19.0,
+        "sea_lower_middle_quarter_pct": 34.0,
+        "sea_upper_middle_quarter_pct": 29.0,
+        "sea_top_quarter_pct": 18.0,
+        "indigenous_enrolments_pct": 13.0,
+        "lbote_pct": 14.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-249764",
+            "name": "LANDRY, the Hon. Michelle Leanne",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-249764-44-0de773ada5761da1",
+                "parliament_number": 44,
+                "party": "The Nationals",
+                "party_abbrev": "NP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-249764-234dbd32a21cd837",
+            "member_id": "aph-249764",
+            "school_name_as_recorded": "Rockhampton Girls Grammar School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '249764'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22605,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.365,
+          -42.8693
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-40445",
+        "acara_id": "40445",
+        "school_name": "Rosny College",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "11-12",
+        "state": "TAS",
+        "suburb": "Rosny Park",
+        "postcode": "7018",
+        "remoteness_category": "Inner Regional",
+        "longitude": 147.365,
+        "latitude": -42.8693,
+        "profile_year": 2025,
+        "total_enrolments": 968,
+        "girls_enrolments": 495,
+        "boys_enrolments": 473,
+        "fte_enrolments": 914.6,
+        "icsea": 987,
+        "icsea_percentile": 41,
+        "sea_bottom_quarter_pct": 35.0,
+        "sea_lower_middle_quarter_pct": 31.0,
+        "sea_upper_middle_quarter_pct": 20.0,
+        "sea_top_quarter_pct": 14.0,
+        "indigenous_enrolments_pct": 10.0,
+        "lbote_pct": 4.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-f49",
+            "name": "BROWN, the Hon. Carol Louise",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-f49-44-b43c23c8e08caae4",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-f49-2cf16f761b9398ff",
+            "member_id": "aph-f49",
+            "school_name_as_recorded": "Rosny College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'F49'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21376,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.205,
+          -33.8399
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-43878",
+        "acara_id": "43878",
+        "school_name": "SHORE - Sydney Church of England Grammar School",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "K-12",
+        "state": "NSW",
+        "suburb": "North Sydney",
+        "postcode": "2060",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.205,
+        "latitude": -33.8399,
+        "profile_year": 2025,
+        "total_enrolments": 1724,
+        "girls_enrolments": 9,
+        "boys_enrolments": 1715,
+        "fte_enrolments": 1724.0,
+        "icsea": 1205,
+        "icsea_percentile": 99,
+        "sea_bottom_quarter_pct": 0.0,
+        "sea_lower_middle_quarter_pct": 3.0,
+        "sea_upper_middle_quarter_pct": 15.0,
+        "sea_top_quarter_pct": 82.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 7.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e0h",
+            "name": "LAMING, Andrew Charles",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e0h-44-e47424b09e9274ee",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e0h-d1a4bf32115f0db9",
+            "member_id": "aph-e0h",
+            "school_name_as_recorded": "Church of England Grammar School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0H'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "provisional",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 27496,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.884,
+          -37.7494
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-45864",
+        "acara_id": "45864",
+        "school_name": "St Bernard's College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "VIC",
+        "suburb": "Essendon",
+        "postcode": "3040",
+        "remoteness_category": "Major Cities",
+        "longitude": 144.884,
+        "latitude": -37.7494,
+        "profile_year": 2025,
+        "total_enrolments": 1567,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1567,
+        "fte_enrolments": 1567.0,
+        "icsea": 1100,
+        "icsea_percentile": 84,
+        "sea_bottom_quarter_pct": 7.0,
+        "sea_lower_middle_quarter_pct": 22.0,
+        "sea_upper_middle_quarter_pct": 33.0,
+        "sea_top_quarter_pct": 38.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 7.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-i0q",
+            "name": "RYAN, the Hon. Scott Michael",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-i0q-44-de871938906d3639",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-i0q-a273f25b8c284186",
+            "member_id": "aph-i0q",
+            "school_name_as_recorded": "St Bernard's College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'I0Q'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21998,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.728,
+          -23.1153
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47905",
+        "acara_id": "47905",
+        "school_name": "St Brendan's College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Yeppoon",
+        "postcode": "4703",
+        "remoteness_category": "Inner Regional",
+        "longitude": 150.728,
+        "latitude": -23.1153,
+        "profile_year": 2025,
+        "total_enrolments": 1034,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1034,
+        "fte_enrolments": 1034.0,
+        "icsea": 994,
+        "icsea_percentile": 44,
+        "sea_bottom_quarter_pct": 25.0,
+        "sea_lower_middle_quarter_pct": 38.0,
+        "sea_upper_middle_quarter_pct": 25.0,
+        "sea_top_quarter_pct": 11.0,
+        "indigenous_enrolments_pct": 15.0,
+        "lbote_pct": 4.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-230531",
+            "name": "BUCHHOLZ, the Hon. Scott Andrew",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-230531-44-1a69ef1eac34c98b",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-230531-f1f16c19d9221edb",
+            "member_id": "aph-230531",
+            "school_name_as_recorded": "St Brendan's College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '230531'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 22733,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.892,
+          -33.8731
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41598",
+        "acara_id": "41598",
+        "school_name": "St Johns Park High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "St Johns Park",
+        "postcode": "2176",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.892,
+        "latitude": -33.8731,
+        "profile_year": 2025,
+        "total_enrolments": 923,
+        "girls_enrolments": 408,
+        "boys_enrolments": 515,
+        "fte_enrolments": 921.2,
+        "icsea": 927,
+        "icsea_percentile": 17,
+        "sea_bottom_quarter_pct": 62.0,
+        "sea_lower_middle_quarter_pct": 25.0,
+        "sea_upper_middle_quarter_pct": 11.0,
+        "sea_top_quarter_pct": 3.0,
+        "indigenous_enrolments_pct": 2.0,
+        "lbote_pct": 91.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-dzs",
+            "name": "BOWEN, the Hon. Christopher (Chris) Eyles",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dzs-44-2dae2bed840a8910",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-dzs-18a0501f5bd17148",
+            "member_id": "aph-dzs",
+            "school_name_as_recorded": "St John's Park High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DZS'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20657,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.414,
+          -33.3019
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-43267",
+        "acara_id": "43267",
+        "school_name": "St Peter's Catholic College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Tuggerah",
+        "postcode": "2259",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.414,
+        "latitude": -33.3019,
+        "profile_year": 2025,
+        "total_enrolments": 1078,
+        "girls_enrolments": 594,
+        "boys_enrolments": 484,
+        "fte_enrolments": 1078.0,
+        "icsea": 1045,
+        "icsea_percentile": 66,
+        "sea_bottom_quarter_pct": 14.0,
+        "sea_lower_middle_quarter_pct": 35.0,
+        "sea_upper_middle_quarter_pct": 32.0,
+        "sea_top_quarter_pct": 19.0,
+        "indigenous_enrolments_pct": 5.0,
+        "lbote_pct": 10.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-hze",
+            "name": "SESELJA, the Hon. Zdenko Matthew (Zed)",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hze-44-b6a814dc652fa242",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hze-6065cbdd9b574a67",
+            "member_id": "aph-hze",
+            "school_name_as_recorded": "St Peters Catholic College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HZE'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21371,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.219,
+          -33.8922
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-41149",
+        "acara_id": "41149",
+        "school_name": "Sydney Boys High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Moore Park",
+        "postcode": "2021",
+        "remoteness_category": "Major Cities",
+        "longitude": 151.219,
+        "latitude": -33.8922,
+        "profile_year": 2025,
+        "total_enrolments": 1205,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1205,
+        "fte_enrolments": 1201.6,
+        "icsea": 1189,
+        "icsea_percentile": 99,
+        "sea_bottom_quarter_pct": 2.0,
+        "sea_lower_middle_quarter_pct": 7.0,
+        "sea_upper_middle_quarter_pct": 21.0,
+        "sea_top_quarter_pct": 70.0,
+        "indigenous_enrolments_pct": 0.0,
+        "lbote_pct": 93.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e3l",
+            "name": "MORRISON, the Hon. Scott John AC",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e3l-44-ad615c4fbd32e54d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e3l-4dd4b1a178f61ef1",
+            "member_id": "aph-e3l",
+            "school_name_as_recorded": "Sydney Boys' High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E3L'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 18044,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          152.951,
+          -27.445
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47447",
+        "acara_id": "47447",
+        "school_name": "The Gap State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "The Gap",
+        "postcode": "4061",
+        "remoteness_category": "Major Cities",
+        "longitude": 152.951,
+        "latitude": -27.445,
+        "profile_year": 2025,
+        "total_enrolments": 1702,
+        "girls_enrolments": 823,
+        "boys_enrolments": 879,
+        "fte_enrolments": 1700.4,
+        "icsea": 1123,
+        "icsea_percentile": 90,
+        "sea_bottom_quarter_pct": 5.0,
+        "sea_lower_middle_quarter_pct": 15.0,
+        "sea_upper_middle_quarter_pct": 31.0,
+        "sea_top_quarter_pct": 49.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 19.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-dzw",
+            "name": "ELLIOT, the Hon. Maria Justine (Justine)",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dzw-44-725d2b58cf1741d7",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-dzw-855112277b2077d0",
+            "member_id": "aph-dzw",
+            "school_name_as_recorded": "The Gap State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DZW'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17214,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.96,
+          -32.0655
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-48158",
+        "acara_id": "48158",
+        "school_name": "Thornlie Senior High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "WA",
+        "suburb": "Thornlie",
+        "postcode": "6108",
+        "remoteness_category": "Major Cities",
+        "longitude": 115.96,
+        "latitude": -32.0655,
+        "profile_year": 2025,
+        "total_enrolments": 1125,
+        "girls_enrolments": 538,
+        "boys_enrolments": 587,
+        "fte_enrolments": 1125.0,
+        "icsea": 969,
+        "icsea_percentile": 33,
+        "sea_bottom_quarter_pct": 47.0,
+        "sea_lower_middle_quarter_pct": 30.0,
+        "sea_upper_middle_quarter_pct": 17.0,
+        "sea_top_quarter_pct": 6.0,
+        "indigenous_enrolments_pct": 7.0,
+        "lbote_pct": 42.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e68",
+            "name": "STERLE, Glenn",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e68-44-01b9a77a33b6a974",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "senate"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e68-d0b955fb47813249",
+            "member_id": "aph-e68",
+            "school_name_as_recorded": "Thornlie Senior High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E68'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 17105,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          151.965,
+          -27.5452
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47417",
+        "acara_id": "47417",
+        "school_name": "Toowoomba State High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "QLD",
+        "suburb": "Mount Lofty",
+        "postcode": "4350",
+        "remoteness_category": "Inner Regional",
+        "longitude": 151.965,
+        "latitude": -27.5452,
+        "profile_year": 2025,
+        "total_enrolments": 775,
+        "girls_enrolments": 386,
+        "boys_enrolments": 389,
+        "fte_enrolments": 775.0,
+        "icsea": 934,
+        "icsea_percentile": 19,
+        "sea_bottom_quarter_pct": 53.0,
+        "sea_lower_middle_quarter_pct": 26.0,
+        "sea_upper_middle_quarter_pct": 15.0,
+        "sea_top_quarter_pct": 7.0,
+        "indigenous_enrolments_pct": 14.0,
+        "lbote_pct": 28.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-00amn",
+            "name": "LEY, the Hon. Sussan Penelope",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-00amn-44-c6c61ab865b5b03d",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-00amn-a17d94295c1817fe",
+            "member_id": "aph-00amn",
+            "school_name_as_recorded": "Toowoomba State High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 20983,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          146.806,
+          -19.252
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47981",
+        "acara_id": "47981",
+        "school_name": "Townsville Grammar School",
+        "school_sector": "Independent",
+        "government_non_government": "Non-government",
+        "school_type": "Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "Prep-12",
+        "state": "QLD",
+        "suburb": "North Ward",
+        "postcode": "4810",
+        "remoteness_category": "Outer Regional",
+        "longitude": 146.806,
+        "latitude": -19.252,
+        "profile_year": 2025,
+        "total_enrolments": 1288,
+        "girls_enrolments": 631,
+        "boys_enrolments": 657,
+        "fte_enrolments": 1288.0,
+        "icsea": 1116,
+        "icsea_percentile": 88,
+        "sea_bottom_quarter_pct": 5.0,
+        "sea_lower_middle_quarter_pct": 17.0,
+        "sea_upper_middle_quarter_pct": 29.0,
+        "sea_top_quarter_pct": 50.0,
+        "indigenous_enrolments_pct": 3.0,
+        "lbote_pct": 29.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-230886",
+            "name": "ANDREWS, the Hon. Karen Lesley",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-230886-44-8a30314714341bb9",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-230886-212e44280942f68d",
+            "member_id": "aph-230886",
+            "school_name_as_recorded": "Townsville Grammar School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '230886'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 31821,
+        "finance_status": "benchmark_average",
+        "finance_method": "peer_group_average_high_dispersion_fallback",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138.62,
+          -34.9702
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-49479",
+        "acara_id": "49479",
+        "school_name": "Unley High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "SA",
+        "suburb": "Netherby",
+        "postcode": "5062",
+        "remoteness_category": "Major Cities",
+        "longitude": 138.62,
+        "latitude": -34.9702,
+        "profile_year": 2025,
+        "total_enrolments": 1547,
+        "girls_enrolments": 665,
+        "boys_enrolments": 882,
+        "fte_enrolments": 1540.5,
+        "icsea": 1084,
+        "icsea_percentile": 80,
+        "sea_bottom_quarter_pct": 11.0,
+        "sea_lower_middle_quarter_pct": 24.0,
+        "sea_upper_middle_quarter_pct": 32.0,
+        "sea_top_quarter_pct": 34.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 30.0,
+        "member_count": 2,
+        "members": [
+          {
+            "member_id": "aph-hwk",
+            "name": "BUTLER, the Hon. Mark Christopher",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwk-44-d1a112a6fbfff1f2",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          },
+          {
+            "member_id": "aph-hwa",
+            "name": "RISHWORTH, the Hon. Amanda Louise",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-hwa-44-17b1cb36ee72496a",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-hwa-08433f04fe0c4d14",
+            "member_id": "aph-hwa",
+            "school_name_as_recorded": "Unley High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWA'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          },
+          {
+            "education_id": "edu-hwk-08433f04fe0c4d14",
+            "member_id": "aph-hwk",
+            "school_name_as_recorded": "Unley High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWK'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 19712,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          153.052,
+          -27.4965
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-47858",
+        "acara_id": "47858",
+        "school_name": "Villanova College",
+        "school_sector": "Catholic",
+        "government_non_government": "Non-government",
+        "school_type": "Pri/Sec",
+        "campus_type": "Pri/Sec",
+        "year_range": "5-12",
+        "state": "QLD",
+        "suburb": "Coorparoo",
+        "postcode": "4151",
+        "remoteness_category": "Major Cities",
+        "longitude": 153.052,
+        "latitude": -27.4965,
+        "profile_year": 2025,
+        "total_enrolments": 1561,
+        "girls_enrolments": 0,
+        "boys_enrolments": 1561,
+        "fte_enrolments": 1561.0,
+        "icsea": 1135,
+        "icsea_percentile": 92,
+        "sea_bottom_quarter_pct": 2.0,
+        "sea_lower_middle_quarter_pct": 12.0,
+        "sea_upper_middle_quarter_pct": 31.0,
+        "sea_top_quarter_pct": 54.0,
+        "indigenous_enrolments_pct": 1.0,
+        "lbote_pct": 13.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-e0d",
+            "name": "VASTA, Ross Xavier",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-e0d-44-105514b1796a76ed",
+                "parliament_number": 44,
+                "party": "Liberal Party of Australia",
+                "party_abbrev": "LP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-e0d-19af48f0bbf3310c",
+            "member_id": "aph-e0d",
+            "school_name_as_recorded": "Villanova College",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0D'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 21743,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          150.858,
+          -34.5652
+        ]
+      },
+      "properties": {
+        "institution_id": "acara-42919",
+        "acara_id": "42919",
+        "school_name": "Warilla High School",
+        "school_sector": "Government",
+        "government_non_government": "Government",
+        "school_type": "Sec",
+        "campus_type": "Sec",
+        "year_range": "7-12",
+        "state": "NSW",
+        "suburb": "Barrack Heights",
+        "postcode": "2528",
+        "remoteness_category": "Major Cities",
+        "longitude": 150.858,
+        "latitude": -34.5652,
+        "profile_year": 2025,
+        "total_enrolments": 1020,
+        "girls_enrolments": 514,
+        "boys_enrolments": 506,
+        "fte_enrolments": 1019.8,
+        "icsea": 968,
+        "icsea_percentile": 32,
+        "sea_bottom_quarter_pct": 44.0,
+        "sea_lower_middle_quarter_pct": 31.0,
+        "sea_upper_middle_quarter_pct": 18.0,
+        "sea_top_quarter_pct": 7.0,
+        "indigenous_enrolments_pct": 10.0,
+        "lbote_pct": 18.0,
+        "member_count": 1,
+        "members": [
+          {
+            "member_id": "aph-dzp",
+            "name": "BIRD, the Hon. Sharon Leah",
+            "parliaments": [
+              44
+            ],
+            "services": [
+              {
+                "service_id": "srv-dzp-44-463792eb2cb9932b",
+                "parliament_number": 44,
+                "party": "Australian Labor Party",
+                "party_abbrev": "ALP",
+                "chamber": "representatives"
+              }
+            ]
+          }
+        ],
+        "education_assertions": [
+          {
+            "education_id": "edu-dzp-e45a23e4e7f97ee0",
+            "member_id": "aph-dzp",
+            "school_name_as_recorded": "Warilla High School",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DZP'",
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "confidence": "verified",
+            "attended_status": "attended_unspecified",
+            "institution_resolution": "direct",
+            "resolution_source_url": null
+          }
+        ],
+        "parliaments": [
+          44
+        ],
+        "finance_year": 2024,
+        "finance_metric": "total_net_recurrent_income_per_student",
+        "finance_value": 18490,
+        "finance_status": "estimated_indexed",
+        "finance_method": "acara_state_sector_geolocation_index",
+        "finance_source": "ACARA National Report on Schooling",
+        "temporal_warning": "School profile and finance values describe the institution in their reporting year, not the resources available when the parliamentarian attended. Reviewed successor mappings describe the successor institution."
+      }
+    }
+  ]
+}

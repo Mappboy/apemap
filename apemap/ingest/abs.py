@@ -90,13 +90,15 @@ def ingest_abs_benchmarks(
 
 def run_abs_ingestion(
     db_path: Path | str | None = None,
+    conn: duckdb.DuckDBPyConnection | None = None,
     export_parquet_files: bool = True,
     output_dir: Path | str | None = None,
 ) -> dict[str, Any]:
     """Execute end-to-end ingestion of ABS reference benchmarks.
 
     Args:
-        db_path: Target DuckDB database path (defaults to data/aped.duckdb).
+        db_path: Target DuckDB database path (defaults to data/aped.duckdb; ignored if conn is provided).
+        conn: Optional caller-managed DuckDB connection. If provided, caller retains ownership.
         export_parquet_files: Export updated canonical tables to Parquet.
         output_dir: Destination directory for Parquet exports.
 
@@ -106,16 +108,18 @@ def run_abs_ingestion(
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
     effective_out_dir = output_dir or PROCESSED_DIR
 
-    conn = get_connection(effective_db_path)
+    should_close_conn = conn is None
+    active_conn = conn or get_connection(effective_db_path)
     try:
-        init_schema(conn)
-        benchmarks_loaded = ingest_abs_benchmarks(conn, 2025)
+        init_schema(active_conn)
+        benchmarks_loaded = ingest_abs_benchmarks(active_conn, 2025)
 
         parquet_paths: dict[str, Path] = {}
         if export_parquet_files:
-            parquet_paths = export_to_parquet(conn, effective_out_dir)
+            parquet_paths = export_to_parquet(active_conn, effective_out_dir)
     finally:
-        conn.close()
+        if should_close_conn:
+            active_conn.close()
 
     return {
         "benchmark_year": 2025,

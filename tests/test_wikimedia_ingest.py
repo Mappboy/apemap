@@ -12,10 +12,13 @@ from unittest.mock import MagicMock
 import duckdb
 import pytest
 import requests
+from rich.text import Text
 from typer.testing import CliRunner
 
 from apemap.cli import app
-from apemap.db import get_connection, init_schema
+from tests.db_fixtures import DatabaseFactory, build_template
+
+from apemap.db import get_connection
 from apemap.ingest.review import (
     MEMBER_REVIEW_GENERATED_COLUMNS,
     MEMBER_REVIEW_MANUAL_COLUMNS,
@@ -43,13 +46,8 @@ def mock_session() -> MagicMock:
     return session
 
 
-@pytest.fixture
-def test_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
-    """Provide a minimal DuckDB database for enrichment tests."""
-    db_file = tmp_path / "enrich_test.duckdb"
-    conn = get_connection(db_file)
-    init_schema(conn)
-
+def seed_wikimedia_db(conn: duckdb.DuckDBPyConnection) -> None:
+    """Seed the domain fixture once inside the template transaction."""
     # Insert test members
     # Member 1: Has APH ID, no wikidata_id, DOB matches Wikidata
     # Member 2: Has APH ID, has existing wikidata_id
@@ -140,8 +138,23 @@ def test_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         """
     )
 
-    conn.close()
-    return db_file, get_connection(db_file)
+
+@pytest.fixture(scope="session")
+def wikimedia_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build a closed, immutable seeded template once per test session."""
+    return build_template(
+        tmp_path_factory.mktemp("wikimedia_db_template") / "seed.duckdb",
+        seed_wikimedia_db,
+    )
+
+
+@pytest.fixture
+def test_db(
+    wikimedia_db_template: Path,
+    database_factory: DatabaseFactory,
+) -> tuple[Path, duckdb.DuckDBPyConnection]:
+    """Give every test a separate database and finalized connection."""
+    return database_factory(wikimedia_db_template)
 
 
 # --------------------------------------------------------------------------
@@ -149,6 +162,7 @@ def test_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.unit
 def test_normalize_qid() -> None:
     assert normalize_qid("Q4772000") == "Q4772000"
     assert normalize_qid("http://www.wikidata.org/entity/Q4772000") == "Q4772000"
@@ -157,6 +171,7 @@ def test_normalize_qid() -> None:
     assert normalize_qid(None) is None
 
 
+@pytest.mark.unit
 def test_normalize_date() -> None:
     assert normalize_date("1963-03-02") == "1963-03-02"
     assert normalize_date("1963-03-02T00:00:00Z") == "1963-03-02"
@@ -165,6 +180,7 @@ def test_normalize_date() -> None:
     assert normalize_date(None) is None
 
 
+@pytest.mark.unit
 def test_normalize_gender() -> None:
     assert normalize_gender("Male") == "male"
     assert normalize_gender("female") == "female"
@@ -180,6 +196,7 @@ def test_normalize_gender() -> None:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.unit
 def test_client_initialization_defaults(tmp_path: Path) -> None:
     client = WikimediaClient(cache_dir=tmp_path)
     assert client.timeout == 45
@@ -189,6 +206,7 @@ def test_client_initialization_defaults(tmp_path: Path) -> None:
     assert (tmp_path / "institutions").exists()
 
 
+@pytest.mark.unit
 def test_lookup_member_by_aph_id_timeout_error(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
@@ -208,6 +226,7 @@ def test_lookup_member_by_aph_id_timeout_error(
     assert not cache_file.exists()
 
 
+@pytest.mark.unit
 def test_lookup_member_by_aph_id_success(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
@@ -259,6 +278,7 @@ def test_lookup_member_by_aph_id_success(
     mock_session.get.assert_called_once()
 
 
+@pytest.mark.unit
 def test_lookup_member_by_aph_id_conflict(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
@@ -282,6 +302,7 @@ def test_lookup_member_by_aph_id_conflict(
     assert res["wikidata_id"] is None
 
 
+@pytest.mark.unit
 def test_lookup_member_by_name_fallback_disambiguation(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
@@ -327,6 +348,7 @@ def test_lookup_member_by_name_fallback_disambiguation(
     assert res_ambig["wikidata_id"] is None
 
 
+@pytest.mark.unit
 def test_lookup_institution_with_redirect_and_coords(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:
@@ -385,6 +407,7 @@ def test_lookup_institution_with_redirect_and_coords(
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.integration
 def test_run_wikimedia_enrichment_end_to_end(
     tmp_path: Path,
     test_db: tuple[Path, duckdb.DuckDBPyConnection],
@@ -596,17 +619,23 @@ def test_run_wikimedia_enrichment_end_to_end(
 # --------------------------------------------------------------------------
 
 
-def test_cli_ingest_wikimedia_help() -> None:
-    res = runner.invoke(app, ["ingest", "wikimedia", "--help"])
+@pytest.mark.unit
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_ingest_wikimedia_help(force_color: str | None) -> None:
+    res = runner.invoke(
+        app, ["ingest", "wikimedia", "--help"], env={"FORCE_COLOR": force_color}
+    )
+    output = Text.from_ansi(res.output).plain
     assert res.exit_code == 0
-    assert "Enrich canonical members and review unmatched schools" in res.output
-    assert "--parliament" in res.output
-    assert "--refresh" in res.output
-    assert "--members" in res.output
-    assert "--schools" in res.output
-    assert "--timeout" in res.output
+    assert "Enrich canonical members and review unmatched schools" in output
+    assert "--parliament" in output
+    assert "--refresh" in output
+    assert "--members" in output
+    assert "--schools" in output
+    assert "--timeout" in output
 
 
+@pytest.mark.integration
 def test_cli_ingest_wikimedia_execution(
     tmp_path: Path, test_db: tuple[Path, duckdb.DuckDBPyConnection]
 ) -> None:
@@ -653,10 +682,12 @@ def test_cli_ingest_wikimedia_execution(
     assert "Members Processed" in result.output
 
 
-def test_cli_run_all_includes_enrich_wikimedia_flag() -> None:
-    res = runner.invoke(app, ["run-all", "--help"])
+@pytest.mark.unit
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_run_all_includes_enrich_wikimedia_flag(force_color: str | None) -> None:
+    res = runner.invoke(app, ["run-all", "--help"], env={"FORCE_COLOR": force_color})
     assert res.exit_code == 0
-    assert "--enrich-wikimedia" in res.output
+    assert "--enrich-wikimedia" in Text.from_ansi(res.output).plain
 
 
 # --------------------------------------------------------------------------
@@ -664,6 +695,7 @@ def test_cli_run_all_includes_enrich_wikimedia_flag() -> None:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.unit
 def test_merge_review_rows_preserves_manual_decisions(tmp_path: Path) -> None:
     csv_file = tmp_path / "member_review.csv"
 
@@ -795,6 +827,7 @@ def test_merge_review_rows_preserves_manual_decisions(tmp_path: Path) -> None:
     assert mem3["notes"] == "Brand new"
 
 
+@pytest.mark.unit
 def test_merge_review_rows_preserves_reviewed_rows_not_in_generator(
     tmp_path: Path,
 ) -> None:
@@ -860,6 +893,7 @@ def test_merge_review_rows_preserves_reviewed_rows_not_in_generator(
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.unit
 def test_evaluate_school_candidate_filtering() -> None:
     # 1. Human candidate rejected
     cand_human = {
@@ -981,6 +1015,7 @@ def test_evaluate_school_candidate_filtering() -> None:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.unit
 def test_member_name_fallback_single_unconfirmed_is_ambiguous(
     tmp_path: Path, mock_session: MagicMock
 ) -> None:

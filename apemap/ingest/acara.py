@@ -7,10 +7,12 @@ and populates canonical DuckDB tables and Parquet artifacts.
 
 from __future__ import annotations
 
+import csv
 import json
 import logging
+import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -31,13 +33,30 @@ from apemap.db import (
     get_connection,
     init_schema,
     migrate_historical_finances,
+    temporary_dataframe_view,
 )
+from apemap.ingest.http import create_retry_session
 
 logger = logging.getLogger(__name__)
 
 
+class AcaraIngestResult(TypedDict):
+    """Structured result contract for ACARA ingestion pipeline."""
+
+    institutions_loaded: int
+    school_snapshots_loaded: int
+    school_finances_loaded: int
+    school_finances_2021_migrated: int
+    parquet_exported: bool
+    exported_files: dict[str, str]
+
+
 def download_acara_dataset(
-    url: str, target_path: Path | str, force: bool = False, timeout: int = 120
+    url: str,
+    target_path: Path | str,
+    force: bool = False,
+    timeout: int = 120,
+    session: requests.Session | None = None,
 ) -> Path:
     """Download an official ACARA dataset file via HTTP streaming.
 
@@ -46,6 +65,7 @@ def download_acara_dataset(
         target_path: Local filesystem destination.
         force: If True, re-download even if target file already exists.
         timeout: HTTP request timeout in seconds.
+        session: Optional caller-managed requests.Session.
 
     Returns:
         Resolved Path to the downloaded file.
@@ -58,13 +78,26 @@ def download_acara_dataset(
     path.parent.mkdir(parents=True, exist_ok=True)
     logger.info("Downloading ACARA dataset from %s to %s", url, path)
 
-    response = requests.get(url, stream=True, timeout=timeout)
-    response.raise_for_status()
+    sess = session or create_retry_session()
+    should_close = session is None
+    temp_path = path.with_suffix(f"{path.suffix}.tmp")
+    try:
+        response = sess.get(url, stream=True, timeout=timeout)
+        response.raise_for_status()
 
-    with open(path, "wb") as f:
-        for chunk in response.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                f.write(chunk)
+        with open(temp_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    f.write(chunk)
+        temp_path.replace(path)
+    except (requests.RequestException, OSError) as e:
+        logger.error("Failed to download ACARA dataset from %s: %s", url, e)
+        if temp_path.exists():
+            temp_path.unlink()
+        raise
+    finally:
+        if should_close:
+            sess.close()
 
     logger.info("Successfully downloaded %s (%d bytes)", path.name, path.stat().st_size)
     return path
@@ -101,34 +134,49 @@ def convert_xlsx_to_csv(
     logger.info("Converting %s to %s", in_path.name, out_path.name)
 
     wb = openpyxl.load_workbook(str(in_path), read_only=True, data_only=True)
-    target_sheet = sheet_name
-    if not target_sheet or target_sheet not in wb.sheetnames:
-        # Pick sheet containing 'Location' or 'Profile' or the second sheet if first is DataDictionary
-        for name in wb.sheetnames:
-            if "datadictionary" not in name.lower():
-                target_sheet = name
-                break
-        if not target_sheet:
-            target_sheet = wb.sheetnames[0]
+    try:
+        target_sheet = sheet_name
+        if not target_sheet or target_sheet not in wb.sheetnames:
+            # Pick sheet containing 'Location' or 'Profile' or the second sheet if first is DataDictionary
+            for name in wb.sheetnames:
+                if "datadictionary" not in name.lower():
+                    target_sheet = name
+                    break
+            if not target_sheet:
+                target_sheet = wb.sheetnames[0]
 
-    ws = wb[target_sheet]
-    rows = ws.iter_rows(values_only=True)
-    header = next(rows)
-    if not header:
-        raise ValueError(f"Sheet {target_sheet} is empty in {in_path}")
+        ws = wb[target_sheet]
+        rows = ws.iter_rows(values_only=True)
+        try:
+            header = next(rows)
+        except StopIteration:
+            header = None
+        if not header:
+            raise ValueError(f"Sheet {target_sheet} is empty in {in_path}")
 
-    header_clean = [
-        str(c).strip() if c is not None else f"col_{i}" for i, c in enumerate(header)
-    ]
+        header_clean = [
+            str(c).strip() if c is not None else f"col_{i}"
+            for i, c in enumerate(header)
+        ]
+        num_cols = len(header_clean)
 
-    data_rows = []
-    for r in rows:
-        if any(cell is not None for cell in r):
-            data_rows.append(r[: len(header_clean)])
+        row_count = 0
+        with open(out_path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(header_clean)
+            for r in rows:
+                if any(cell is not None for cell in r):
+                    row_slice = list(r[:num_cols])
+                    if len(row_slice) < num_cols:
+                        row_slice.extend([""] * (num_cols - len(row_slice)))
+                    writer.writerow(
+                        [cell if cell is not None else "" for cell in row_slice]
+                    )
+                    row_count += 1
 
-    df = pd.DataFrame(data_rows, columns=header_clean)
-    df.to_csv(out_path, index=False, encoding="utf-8")
-    logger.info("Wrote %d rows to %s", len(df), out_path)
+        logger.info("Wrote %d rows to %s", row_count, out_path)
+    finally:
+        wb.close()
     return out_path
 
 
@@ -259,6 +307,43 @@ def load_institutions_dataframe(
                         "latitude": lat,
                     }
 
+    # Preserve profile-only schools rather than losing annual histories to missing
+    # current location rows. Absence is historical-only evidence, not proof of closure.
+    long_path = ext_dir / "school-profile-2008-2025.csv"
+    if long_path.exists():
+        history = pd.read_csv(long_path, dtype=str).fillna("")
+        if "Calendar Year" in history.columns:
+            history = history.sort_values("Calendar Year")
+        for _, row in history.drop_duplicates("ACARA SML ID", keep="last").iterrows():
+            aid = str(row["ACARA SML ID"]).strip()
+            if not aid or aid in records_by_id:
+                continue
+            sector = str(row.get("School Sector", "Other"))
+            records_by_id[aid] = {
+                "institution_id": f"acara-{aid}",
+                "acara_id": aid,
+                "school_name": str(row.get("School Name", "")) or f"ACARA school {aid}",
+                "school_type": str(row.get("School Type", "")) or None,
+                "sector": sector
+                if sector in ("Government", "Catholic", "Independent")
+                else "Other",
+                "campus_type": None,
+                "state": str(row.get("State", "")) or None,
+                "suburb": str(row.get("Suburb", "")) or None,
+                "postcode": str(row.get("Postcode", "")) or None,
+                "longitude": None,
+                "latitude": None,
+                "institution_status": "historical_only",
+            }
+    current_ids = None
+    if loc_2025_csv.exists():
+        current_frame = pd.read_csv(loc_2025_csv, dtype=str)
+        current_ids = set(current_frame["ACARA SML ID"].dropna().astype(str))
+    for record in records_by_id.values():
+        record["country"] = "Australia"
+        record.setdefault("institution_status", "unknown")
+        if current_ids is not None and record["acara_id"] not in current_ids:
+            record["institution_status"] = "historical_only"
     if not records_by_id:
         return pd.DataFrame(
             columns=[
@@ -279,8 +364,42 @@ def load_institutions_dataframe(
     return pd.DataFrame(list(records_by_id.values()))
 
 
+def _clean_int(val: Any) -> int | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none"):
+        return None
+    try:
+        return int(round(float(s)))
+    except (ValueError, TypeError):
+        return None
+
+
+def _clean_float(val: Any) -> float | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none"):
+        return None
+    try:
+        return float(s)
+    except (ValueError, TypeError):
+        return None
+
+
+def _clean_str(val: Any) -> str | None:
+    if val is None or pd.isna(val):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in ("np", "na", "n/a", "null", "none", "nan"):
+        return None
+    return s
+
+
 def load_snapshots_dataframe(
     external_dir: Path | str | None = None,
+    review_path: Path | None = None,
 ) -> pd.DataFrame:
     """Compile canonical school_snapshots DataFrame from ACARA Profile files.
 
@@ -298,6 +417,7 @@ def load_snapshots_dataframe(
     ]
 
     snapshots: dict[tuple[str, int], dict[str, Any]] = {}
+    profile_reviews: list[dict[str, Any]] = []
 
     for pfile in candidates:
         if not pfile.exists():
@@ -325,19 +445,79 @@ def load_snapshots_dataframe(
                     except ValueError:
                         year_val = 2025
 
-                icsea_val = None
+                total_enrolments = _clean_int(row.get("Total Enrolments"))
+                girls_enrolments = _clean_int(
+                    row.get("Girls Enrolments") or row.get("Girls")
+                )
+                boys_enrolments = _clean_int(
+                    row.get("Boys Enrolments") or row.get("Boys")
+                )
+                fte_enrolments = _clean_float(
+                    row.get("Full Time Equivalent Enrolments")
+                    or row.get("FTE Enrolments")
+                )
+                icsea = _clean_int(row.get("ICSEA"))
+                icsea_percentile = _clean_int(
+                    row.get("ICSEA Percentile") or row.get("ICSEA Percentile (%)")
+                )
+                sea_bottom_quarter_pct = _clean_float(
+                    row.get("Bottom SEA Quarter (%)") or row.get("Bottom SEA Quarter")
+                )
+                sea_lower_middle_quarter_pct = _clean_float(
+                    row.get("Lower Middle SEA Quarter (%)")
+                    or row.get("Lower Middle SEA Quarter")
+                )
+                sea_upper_middle_quarter_pct = _clean_float(
+                    row.get("Upper Middle SEA Quarter (%)")
+                    or row.get("Upper Middle SEA Quarter")
+                )
+                sea_top_quarter_pct = _clean_float(
+                    row.get("Top SEA Quarter (%)") or row.get("Top SEA Quarter")
+                )
+                quartet = [
+                    sea_bottom_quarter_pct,
+                    sea_lower_middle_quarter_pct,
+                    sea_upper_middle_quarter_pct,
+                    sea_top_quarter_pct,
+                ]
                 if (
-                    pd.notna(row.get("ICSEA"))
-                    and str(row.get("ICSEA")).strip().isdigit()
+                    all(value is not None for value in quartet)
+                    and abs(sum(value for value in quartet if value is not None) - 100)
+                    > 3
                 ):
-                    icsea_val = int(row["ICSEA"])
-
-                enrol_val = None
-                if (
-                    pd.notna(row.get("Total Enrolments"))
-                    and str(row.get("Total Enrolments")).strip().isdigit()
-                ):
-                    enrol_val = int(row["Total Enrolments"])
+                    profile_reviews.append(
+                        {
+                            "source_file": pfile.name,
+                            "acara_id": aid,
+                            "snapshot_year": year_val,
+                            "raw_sea_quarters": json.dumps(quartet),
+                            "action": "Invalid SEA total: all four canonical percentages withheld",
+                        }
+                    )
+                    logger.warning(
+                        "Withholding invalid SEA quartet for ACARA %s/%s: %s",
+                        aid,
+                        year_val,
+                        quartet,
+                    )
+                    sea_bottom_quarter_pct = sea_lower_middle_quarter_pct = (
+                        sea_upper_middle_quarter_pct
+                    ) = sea_top_quarter_pct = None
+                indigenous_enrolments_pct = _clean_float(
+                    row.get("Indigenous Enrolments (%)")
+                    or row.get("Indigenous Enrolments")
+                )
+                lbote_pct = _clean_float(
+                    row.get("Language Background Other Than English - Yes (%)")
+                    or row.get("LBOTE (%)")
+                    or row.get("LBOTE")
+                )
+                year_range = _clean_str(row.get("Year Range"))
+                remoteness_category = _clean_str(
+                    row.get("Geolocation")
+                    or row.get("Remoteness Category")
+                    or row.get("Remoteness")
+                )
 
                 inst_id = f"acara-{aid}"
                 key = (inst_id, year_val)
@@ -345,20 +525,59 @@ def load_snapshots_dataframe(
                     snapshots[key] = {
                         "institution_id": inst_id,
                         "snapshot_year": year_val,
-                        "total_enrolments": enrol_val,
-                        "icsea": icsea_val,
+                        "total_enrolments": total_enrolments,
+                        "girls_enrolments": girls_enrolments,
+                        "boys_enrolments": boys_enrolments,
+                        "fte_enrolments": fte_enrolments,
+                        "icsea": icsea,
+                        "icsea_percentile": icsea_percentile,
+                        "sea_bottom_quarter_pct": sea_bottom_quarter_pct,
+                        "sea_lower_middle_quarter_pct": sea_lower_middle_quarter_pct,
+                        "sea_upper_middle_quarter_pct": sea_upper_middle_quarter_pct,
+                        "sea_top_quarter_pct": sea_top_quarter_pct,
+                        "indigenous_enrolments_pct": indigenous_enrolments_pct,
+                        "lbote_pct": lbote_pct,
+                        "year_range": year_range,
+                        "remoteness_category": remoteness_category,
                         "financial_profile_2021": None,
                     }
         except Exception as e:
             logger.warning("Error reading snapshot file %s: %s", pfile, e)
 
+    if review_path is not None and profile_reviews:
+        review_path.parent.mkdir(parents=True, exist_ok=True)
+        with review_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=[
+                    "source_file",
+                    "acara_id",
+                    "snapshot_year",
+                    "raw_sea_quarters",
+                    "action",
+                ],
+            )
+            writer.writeheader()
+            writer.writerows(profile_reviews)
     if not snapshots:
         return pd.DataFrame(
             columns=[
                 "institution_id",
                 "snapshot_year",
                 "total_enrolments",
+                "girls_enrolments",
+                "boys_enrolments",
+                "fte_enrolments",
                 "icsea",
+                "icsea_percentile",
+                "sea_bottom_quarter_pct",
+                "sea_lower_middle_quarter_pct",
+                "sea_upper_middle_quarter_pct",
+                "sea_top_quarter_pct",
+                "indigenous_enrolments_pct",
+                "lbote_pct",
+                "year_range",
+                "remoteness_category",
                 "financial_profile_2021",
             ]
         )
@@ -520,13 +739,14 @@ def run_acara_ingestion(
     download_latest: bool = True,
     use_longitudinal: bool = True,
     db_path: Path | str | None = None,
+    conn: DuckDBPyConnection | None = None,
     gpkg_path: Path | str | None = None,
     finance_path: Path | str | None = None,
     finance_year: int = 2021,
     export_parquet_files: bool = True,
     output_dir: Path | str | None = None,
     external_dir: Path | str | None = None,
-) -> dict[str, Any]:
+) -> AcaraIngestResult:
     """Execute complete ACARA ingestion pipeline and DuckDB table synchronization.
 
     1. Optionally downloads official 2025 School Location and Profile XLSX files.
@@ -539,7 +759,8 @@ def run_acara_ingestion(
     Args:
         download_latest: Whether to download fresh files from ACARA blob storage.
         use_longitudinal: Whether to download and process the 2008-2025 longitudinal profile.
-        db_path: Path to DuckDB file or None for in-memory.
+        db_path: Path to DuckDB file or None for in-memory (ignored if conn is provided).
+        conn: Optional caller-managed DuckDB connection. If provided, caller retains ownership.
         gpkg_path: Optional path to legacy aped.gpkg for financial migration.
         finance_path: Optional path to local authorised school finances file.
         finance_year: School finances reporting year (defaults to 2021).
@@ -548,7 +769,7 @@ def run_acara_ingestion(
         external_dir: Directory containing or receiving ACARA external data.
 
     Returns:
-        Dictionary of ingestion metrics and counts.
+        Structured dictionary of ingestion metrics and counts.
     """
     ext_dir = Path(external_dir or EXTERNAL_DIR).resolve()
     ext_dir.mkdir(parents=True, exist_ok=True)
@@ -557,6 +778,10 @@ def run_acara_ingestion(
 
     # 1. Download official ACARA datasets if requested
     if download_latest:
+        if os.environ.get("APEMAP_OFFLINE") == "1":
+            raise RuntimeError(
+                "Cannot download ACARA datasets when offline mode is enabled."
+            )
         try:
             # Download School Location 2025
             loc_xlsx = ext_dir / "School Location 2025.xlsx"
@@ -578,74 +803,94 @@ def run_acara_ingestion(
 
     # 2. Compile DataFrames
     inst_df = load_institutions_dataframe(external_dir=ext_dir)
-    snap_df = load_snapshots_dataframe(external_dir=ext_dir)
+    snap_df = load_snapshots_dataframe(
+        external_dir=ext_dir, review_path=out_dir / "upstream_profile_review.csv"
+    )
 
     # 3. Synchronize with DuckDB
-    conn = get_connection(db_path)
-    init_schema(conn)
+    should_close_conn = conn is None
+    active_conn = conn or get_connection(db_path)
+    conn = active_conn
+    try:
+        init_schema(conn)
 
-    # Insert institutions
-    if not inst_df.empty:
-        conn.register("df_institutions_staging", inst_df)
-        conn.execute(
-            """
-            INSERT INTO institutions (
-                institution_id, acara_id, school_name, school_type,
-                sector, campus_type, state, suburb, postcode, longitude, latitude
-            )
-            SELECT
-                institution_id, acara_id, school_name, school_type,
-                sector, campus_type, state, suburb, postcode, longitude, latitude
-            FROM df_institutions_staging
-            ON CONFLICT (institution_id) DO NOTHING
-            """
-        )
-        conn.unregister("df_institutions_staging")
+        # Insert institutions
+        if not inst_df.empty:
+            with temporary_dataframe_view(conn, "df_institutions_staging", inst_df):
+                conn.execute(
+                    """
+                    INSERT INTO institutions (
+                        institution_id, acara_id, school_name, school_type,
+                        sector, campus_type, state, suburb, postcode, longitude, latitude
+                        , country, institution_status
+                    )
+                    SELECT
+                        institution_id, acara_id, school_name, school_type,
+                        sector, campus_type, state, suburb, postcode, longitude, latitude
+                        , country, institution_status
+                    FROM df_institutions_staging
+                    ON CONFLICT (institution_id) DO UPDATE SET
+                        country = EXCLUDED.country,
+                        institution_status = CASE WHEN institutions.institution_status IN ('closed', 'merged')
+                            THEN institutions.institution_status ELSE EXCLUDED.institution_status END
+                    """
+                )
 
-    # Insert school snapshots
-    if not snap_df.empty:
-        # Filter snapshots to only valid institutions in institutions table to preserve FK integrity
-        conn.register("df_snapshots_staging", snap_df)
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO school_snapshots (
-                institution_id, snapshot_year, total_enrolments, icsea, financial_profile_2021
-            )
-            SELECT s.institution_id, s.snapshot_year, s.total_enrolments, s.icsea, s.financial_profile_2021
-            FROM df_snapshots_staging s
-            WHERE s.institution_id IN (SELECT institution_id FROM institutions)
-            """
-        )
-        conn.unregister("df_snapshots_staging")
+        # Insert school snapshots
+        if not snap_df.empty:
+            # Filter snapshots to only valid institutions in institutions table to preserve FK integrity
+            with temporary_dataframe_view(conn, "df_snapshots_staging", snap_df):
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO school_snapshots (
+                        institution_id, snapshot_year, total_enrolments, girls_enrolments, boys_enrolments,
+                        fte_enrolments, icsea, icsea_percentile, sea_bottom_quarter_pct, sea_lower_middle_quarter_pct,
+                        sea_upper_middle_quarter_pct, sea_top_quarter_pct, indigenous_enrolments_pct, lbote_pct,
+                        year_range, remoteness_category, financial_profile_2021
+                    )
+                    SELECT
+                        s.institution_id, s.snapshot_year, s.total_enrolments, s.girls_enrolments, s.boys_enrolments,
+                        s.fte_enrolments, s.icsea, s.icsea_percentile, s.sea_bottom_quarter_pct, s.sea_lower_middle_quarter_pct,
+                        s.sea_upper_middle_quarter_pct, s.sea_top_quarter_pct, s.indigenous_enrolments_pct, s.lbote_pct,
+                        s.year_range, s.remoteness_category, s.financial_profile_2021
+                    FROM df_snapshots_staging s
+                    WHERE s.institution_id IN (SELECT institution_id FROM institutions)
+                    """
+                )
 
-    # 4. Ingest or migrate school finances
-    if finance_path:
-        ingest_school_finances(conn, finance_path, reporting_year=finance_year)
-    else:
-        migrate_historical_finances(conn, gpkg_path=gpkg_path)
+        # 4. Ingest or migrate school finances
+        if finance_path:
+            ingest_school_finances(conn, finance_path, reporting_year=finance_year)
+        else:
+            migrate_historical_finances(conn, gpkg_path=gpkg_path)
 
-    # Count final tables
-    res_inst = conn.execute("SELECT count(*) FROM institutions").fetchone()
-    inst_count = res_inst[0] if res_inst is not None else 0
-    res_snap = conn.execute("SELECT count(*) FROM school_snapshots").fetchone()
-    snap_count = res_snap[0] if res_snap is not None else 0
-    res_fin = conn.execute("SELECT count(*) FROM school_finances").fetchone()
-    fin_count = res_fin[0] if res_fin is not None else 0
-    res_fin_2021 = conn.execute("SELECT count(*) FROM school_finances_2021").fetchone()
-    fin_2021_count = res_fin_2021[0] if res_fin_2021 is not None else 0
+        # Count final tables
+        res_inst = conn.execute("SELECT count(*) FROM institutions").fetchone()
+        inst_count = res_inst[0] if res_inst is not None else 0
+        res_snap = conn.execute("SELECT count(*) FROM school_snapshots").fetchone()
+        snap_count = res_snap[0] if res_snap is not None else 0
+        res_fin = conn.execute("SELECT count(*) FROM school_finances").fetchone()
+        fin_count = res_fin[0] if res_fin is not None else 0
+        res_fin_2021 = conn.execute(
+            "SELECT count(*) FROM school_finances_2021"
+        ).fetchone()
+        fin_2021_count = res_fin_2021[0] if res_fin_2021 is not None else 0
 
-    # 5. Export Parquet if requested
-    exported_files: dict[str, Path] = {}
-    if export_parquet_files:
-        exported_files = export_to_parquet(conn, out_dir)
+        # 5. Export Parquet if requested
+        exported_files: dict[str, Path] = {}
+        if export_parquet_files:
+            exported_files = export_to_parquet(conn, out_dir)
 
-    summary = {
-        "institutions_loaded": inst_count,
-        "school_snapshots_loaded": snap_count,
-        "school_finances_loaded": fin_count,
-        "school_finances_2021_migrated": fin_2021_count,
-        "parquet_exported": export_parquet_files,
-        "exported_files": {k: str(v) for k, v in exported_files.items()},
-    }
-    logger.info("ACARA ingestion finished successfully: %s", summary)
-    return summary
+        summary: AcaraIngestResult = {
+            "institutions_loaded": inst_count,
+            "school_snapshots_loaded": snap_count,
+            "school_finances_loaded": fin_count,
+            "school_finances_2021_migrated": fin_2021_count,
+            "parquet_exported": export_parquet_files,
+            "exported_files": {k: str(v) for k, v in exported_files.items()},
+        }
+        logger.info("ACARA ingestion finished successfully: %s", summary)
+        return summary
+    finally:
+        if should_close_conn:
+            active_conn.close()

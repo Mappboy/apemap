@@ -20,6 +20,8 @@ from apemap.analysis import (
     get_age_bracket,
 )
 from apemap.cli import app
+from tests.db_fixtures import DatabaseFactory, build_template
+
 from apemap.db import (
     CANONICAL_TABLES,
     ensure_spatial,
@@ -47,14 +49,9 @@ def table_row_count(conn: duckdb.DuckDBPyConnection, table: str) -> int:
     return int(row[0])
 
 
-@pytest.fixture
-def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
-    """Provide a temporary DuckDB database populated with deterministic test data."""
-    db_file = tmp_path / "test_aped.duckdb"
-    conn = get_connection(db_file)
+def seed_cli_db(conn: duckdb.DuckDBPyConnection) -> None:
+    """Seed the domain fixture once inside the template transaction."""
     ensure_spatial(conn)
-    init_schema(conn)
-
     # Insert 200+ members to pass parliament size sanity check
     # Member 1: Born 1970-01-01 -> Age on 2022-07-26 is 52. Attended Gov school.
     # Member 2: Born 1980-08-01 -> Age on 2022-07-26 is 41. Attended Catholic school.
@@ -216,9 +213,25 @@ def populated_db(tmp_path: Path) -> tuple[Path, duckdb.DuckDBPyConnection]:
         """
     )
 
-    return db_file, conn
+
+@pytest.fixture(scope="session")
+def cli_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build a closed, immutable seeded template once per test session."""
+    return build_template(
+        tmp_path_factory.mktemp("cli_db_template") / "seed.duckdb", seed_cli_db
+    )
 
 
+@pytest.fixture
+def populated_db(
+    cli_db_template: Path,
+    database_factory: DatabaseFactory,
+) -> tuple[Path, duckdb.DuckDBPyConnection]:
+    """Give every test a separate database and finalized connection."""
+    return database_factory(cli_db_template)
+
+
+@pytest.mark.unit
 def test_cli_help_displays_subcommands() -> None:
     """Ensure top-level CLI help lists all required issue subcommands."""
     result = runner.invoke(app, ["--help"])
@@ -227,6 +240,7 @@ def test_cli_help_displays_subcommands() -> None:
         assert cmd in result.output
 
 
+@pytest.mark.unit
 def test_compute_age_at_date_determinism() -> None:
     """Verify age calculations are exact and evaluated against fixed benchmark dates."""
     # Person born 1980-07-27, tested against 2022-07-26 (day before 42nd birthday) -> 41
@@ -247,6 +261,7 @@ def test_compute_age_at_date_determinism() -> None:
     assert get_age_bracket(None) == "Unknown"
 
 
+@pytest.mark.integration
 def test_sector_summary_distinguishes_mps_and_instances(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -274,6 +289,7 @@ def test_sector_summary_distinguishes_mps_and_instances(
     assert summary["total_attendance_instances"] == 4
 
 
+@pytest.mark.integration
 def test_funding_summary_reports_sample_size_n(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -294,6 +310,7 @@ def test_funding_summary_reports_sample_size_n(
     assert funding["overall_net_recurrent_income_sample_size"] == 2
 
 
+@pytest.mark.integration
 def test_funding_summary_does_not_overweight_shared_schools(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -333,6 +350,7 @@ def test_funding_summary_does_not_overweight_shared_schools(
     assert sec_gov["net_recurrent_income_per_student_avg"] == 17000
 
 
+@pytest.mark.integration
 def test_opening_day_demographics_use_one_opening_service_per_person(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -379,6 +397,7 @@ def test_opening_day_demographics_use_one_opening_service_per_person(
     assert demographics["parties"] == {"ALP": 227}
 
 
+@pytest.mark.unit
 def test_unsupported_parliament_is_rejected_by_analysis() -> None:
     """Do not manufacture a benchmark date for an unsupported parliament."""
     conn = get_connection()
@@ -388,6 +407,7 @@ def test_unsupported_parliament_is_rejected_by_analysis() -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_validate_database_success(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -399,6 +419,55 @@ def test_validate_database_success(
     assert report.checks_passed == report.checks_run
 
 
+@pytest.mark.integration
+def test_profile_query_failures_fail_validation_and_do_not_skip_year_check(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """A legacy view and missing profile column cannot hide an invalid year."""
+    _, conn = populated_db
+    conn.execute(
+        """
+        CREATE OR REPLACE VIEW v_member_secondary_education AS
+        SELECT education_id FROM member_education WHERE level = 'secondary';
+        ALTER TABLE school_snapshots DROP COLUMN girls_enrolments;
+        UPDATE school_snapshots SET snapshot_year = 1999 WHERE institution_id = 'inst-gov';
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any(
+        "girls_enrolments" in failure and "apemap transform" in failure
+        for failure in report.failures
+    )
+    assert any("invalid snapshot years" in failure for failure in report.failures)
+    assert report.checks_run > report.checks_passed
+
+
+@pytest.mark.integration
+def test_profile_validation_accepts_nulls_and_reports_invalid_values(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+) -> None:
+    """Source nulls are valid; invalid counts, percentages and SEA totals fail."""
+    _, conn = populated_db
+    assert validate_database(conn, [47]).passed is True
+    conn.execute(
+        """
+        UPDATE school_snapshots SET girls_enrolments = -1, lbote_pct = 101,
+            sea_bottom_quarter_pct = 10, sea_lower_middle_quarter_pct = 10,
+            sea_upper_middle_quarter_pct = 10, sea_top_quarter_pct = 10
+        WHERE institution_id = 'inst-gov'
+        """
+    )
+    report = validate_database(conn, [47])
+    assert report.passed is False
+    assert any("negative enrolment values" in failure for failure in report.failures)
+    assert any(
+        "percentage values outside 0-100" in failure for failure in report.failures
+    )
+    assert any("SEA quarters summing" in failure for failure in report.failures)
+
+
+@pytest.mark.integration
 def test_validate_database_detects_empty_table(tmp_path: Path) -> None:
     """Verify validation fails when canonical tables are empty."""
     db_file = tmp_path / "empty.duckdb"
@@ -411,6 +480,7 @@ def test_validate_database_detects_empty_table(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_validate_database_detects_foreign_key_orphan(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -437,7 +507,11 @@ def test_validate_database_detects_foreign_key_orphan(
             source_url VARCHAR NOT NULL,
             retrieved_at TIMESTAMPTZ NOT NULL,
             confidence VARCHAR NOT NULL,
-            reviewer_notes VARCHAR
+            reviewer_notes VARCHAR,
+            school_name_as_recorded VARCHAR,
+            institution_resolution VARCHAR,
+            resolution_source_url VARCHAR,
+            evidence_origin VARCHAR
         )
         """
     )
@@ -461,6 +535,7 @@ def test_validate_database_detects_foreign_key_orphan(
     assert any("member_education -> members" in f for f in report.failures)
 
 
+@pytest.mark.integration
 def test_validate_database_detects_invalid_opening_chamber_benchmark(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -481,6 +556,7 @@ def test_validate_database_detects_invalid_opening_chamber_benchmark(
     )
 
 
+@pytest.mark.integration
 def test_validate_database_detects_service_overlap_failure(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -498,6 +574,7 @@ def test_validate_database_detects_service_overlap_failure(
     assert any("service records that do not overlap" in f for f in report.failures)
 
 
+@pytest.mark.integration
 def test_cli_transform(tmp_path: Path) -> None:
     """Test apemap transform CLI command initializes schema."""
     db_file = tmp_path / "transform.duckdb"
@@ -516,6 +593,7 @@ def test_cli_transform(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_cli_validate_command(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
 ) -> None:
@@ -527,6 +605,7 @@ def test_cli_validate_command(
     assert "VALIDATION CHECKS PASSED" in result.output
 
 
+@pytest.mark.integration
 def test_cli_analyze_command(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -557,6 +636,7 @@ def test_cli_analyze_command(
     assert p47["sectors"]["unique_parliamentarians_by_sector"]["Combined/Multiple"] == 1
 
 
+@pytest.mark.integration
 def test_cli_export_command_and_reproducibility(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -613,9 +693,14 @@ def test_cli_export_command_and_reproducibility(
         str(Path("analysis") / "metadata.json"),
         str(Path("analysis") / "demographics.json"),
         str(Path("analysis") / "education_sectors.json"),
+        str(Path("analysis") / "party_sectors.json"),
+        str(Path("analysis") / "shared_schools.json"),
+        str(Path("analysis") / "cross_parliament.json"),
         str(Path("analysis") / "school_finance.json"),
         str(Path("analysis") / "parliament_comparison.json"),
         "parliament_47_combined.geojson",
+        "parliament_coverage.csv",
+        "parliament_coverage.json",
     }
     assert set(manifest_1) == expected_artifacts
     assert manifest_1 == manifest_2
@@ -628,6 +713,87 @@ def test_cli_export_command_and_reproducibility(
     ).read_bytes()
 
 
+@pytest.mark.integration
+def test_cli_export_web_release_with_provenance(
+    populated_db: tuple[Path, duckdb.DuckDBPyConnection],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The public CLI generates all web files and forwards release provenance."""
+    db_file, conn = populated_db
+    out_dir = tmp_path / "web-release"
+    dates_path = tmp_path / "source-dates.json"
+    dates_path.write_text(json.dumps({"aph": "2026-09-28", "acara": "2026-09-29"}))
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "1780000000")
+    before = {table: table_row_count(conn, table) for table in CANONICAL_TABLES}
+    result = runner.invoke(
+        app,
+        [
+            "export",
+            "--db-path",
+            str(db_file),
+            "-p",
+            "47",
+            "--output-dir",
+            str(out_dir),
+            "--web-release",
+            "--data-release-version",
+            "2026.09.30",
+            "--source-commit",
+            "b" * 40,
+            "--source-snapshot-dates",
+            str(dates_path),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    manifest = json.loads((out_dir / "manifest.json").read_text())
+    assert manifest["data_release_version"] == "2026.09.30"
+    assert manifest["source_commit"] == "b" * 40
+    assert manifest["source_snapshot_dates"]["acara"] == "2026-09-29"
+    assert set(manifest["files"]) == {
+        "results-summary.json",
+        "schools.geojson",
+        "downloads/parliament-education.csv",
+        "downloads/school-profiles.parquet",
+    }
+    for name, entry in manifest["files"].items():
+        data = (out_dir / name).read_bytes()
+        assert entry["sha256"] == hashlib.sha256(data).hexdigest()
+        assert entry["size_bytes"] == len(data)
+    assert before == {table: table_row_count(conn, table) for table in CANONICAL_TABLES}
+    assert "Web Release Manifest:" in result.output
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "metadata", ["not json", "[]", '{"acara": 2025}', '{"acara": "yesterday"}']
+)
+def test_cli_export_rejects_invalid_source_snapshot_dates_before_writing(
+    tmp_path: Path,
+    metadata: str,
+) -> None:
+    dates_path = tmp_path / "source-dates.json"
+    dates_path.write_text(metadata)
+    out_dir = tmp_path / "release"
+    result = runner.invoke(
+        app,
+        [
+            "export",
+            "--db-path",
+            str(tmp_path / "missing.duckdb"),
+            "--output-dir",
+            str(out_dir),
+            "--web-release",
+            "--source-snapshot-dates",
+            str(dates_path),
+        ],
+    )
+    assert result.exit_code != 0
+    assert "source snapshot dates" in result.output.lower()
+    assert not out_dir.exists()
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize("command", ["analyze", "export", "validate", "run-all"])
 def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> None:
     """All parliament-specific CLI commands reject unknown benchmark metadata."""
@@ -639,6 +805,7 @@ def test_cli_rejects_unsupported_parliament(command: str, tmp_path: Path) -> Non
     assert "Unsupported parliament number" in result.output
 
 
+@pytest.mark.integration
 def test_cli_run_all_mocked(
     populated_db: tuple[Path, duckdb.DuckDBPyConnection],
     tmp_path: Path,
@@ -650,9 +817,16 @@ def test_cli_run_all_mocked(
     with (
         patch("apemap.cli.run_acara_ingestion") as mock_acara,
         patch("apemap.cli.run_aph_ingestion") as mock_aph,
+        patch("apemap.cli.run_aec_ingestion") as mock_aec,
+        patch("apemap.cli.run_abs_ingestion") as mock_abs,
+        patch("apemap.cli.ingest_all_funding") as mock_funding,
+        patch("requests.get", side_effect=AssertionError("Unexpected network access")),
     ):
         mock_acara.return_value = {}
         mock_aph.return_value = {}
+        mock_aec.return_value = {}
+        mock_abs.return_value = {}
+        mock_funding.return_value = {"acara_benchmarks": 0}
 
         result = runner.invoke(
             app,
@@ -673,6 +847,9 @@ def test_cli_run_all_mocked(
         assert "APEMAP Pipeline Completed Successfully!" in result.output
         mock_acara.assert_called_once()
         mock_aph.assert_called_once()
+        mock_aec.assert_called_once()
+        mock_abs.assert_called_once()
+        mock_funding.assert_called_once()
         assert (out_dir / "parliament_47_combined.geojson").exists()
         assert (out_dir / "members.parquet").exists()
 
@@ -699,6 +876,9 @@ def test_cli_run_all_mocked(
         assert result.exit_code == 0
         assert mock_acara.call_count == 2
         assert mock_aph.call_count == 2
+        assert mock_aec.call_count == 2
+        assert mock_abs.call_count == 2
+        assert mock_funding.call_count == 2
         second_counts = {
             table: table_row_count(conn, table) for table in CANONICAL_TABLES
         }

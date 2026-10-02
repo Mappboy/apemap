@@ -1,4 +1,4 @@
-Calendar Year,ACARA SML ID,School Name,Suburb,State,Postcode,School Sector,School Type,Campus Type,ICSEA,Total Enrolments
-2025,48250,Shenton College,Shenton Park,WA,6008,Government,Secondary,School Single Entity,1125,2450
-2025,53105,Greater Shepparton Secondary College,Shepparton,VIC,3630,Government,Secondary,School Single Entity,950,2100
-2025,46144,Methodist Ladies' College,Kew,VIC,3101,Independent,Combined,School Single Entity,1180,2150
+Calendar Year,ACARA SML ID,School Name,Suburb,State,Postcode,School Sector,School Type,Campus Type,Year Range,Geolocation,ICSEA,ICSEA Percentile,Bottom SEA Quarter (%),Lower Middle SEA Quarter (%),Upper Middle SEA Quarter (%),Top SEA Quarter (%),Total Enrolments,Girls Enrolments,Boys Enrolments,Full Time Equivalent Enrolments,Indigenous Enrolments (%),Language Background Other Than English - Yes (%)
+2025,48250,Shenton College,Shenton Park,WA,6008,Government,Secondary,School Single Entity,7-12,Major Cities,1125,88,6.0,14.0,30.0,50.0,2450,1200,1250,2410.5,2.0,18.0
+2025,53105,Greater Shepparton Secondary College,Shepparton,VIC,3630,Government,Secondary,School Single Entity,7-12,Inner Regional,950,22,35.0,30.0,22.0,13.0,2100,1050,1050,2080.0,9.0,24.0
+2025,46144,Methodist Ladies' College,Kew,VIC,3101,Independent,Combined,School Single Entity,Prep-12,Major Cities,1180,97,2.0,8.0,24.0,66.0,2150,2150,0,2140.0,1.0,28.0

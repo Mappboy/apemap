@@ -1,0 +1,2712 @@
+{
+  "metadata": {
+    "finance_licence": "ACARA My School Terms of Use (July 2020)",
+    "finance_reporting_year": 2024,
+    "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+    "parliament_numbers": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "42": "2008-02-12",
+      "43": "2010-09-28",
+      "44": "2013-11-12",
+      "45": "2016-08-30",
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "42": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 42,
+      "schools": [
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "GILLARD, the Hon. Julia Eileen AC",
+              "member_id": "aph-83l",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 3
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RUDD, the Hon. Dr Kevin Michael, AC",
+              "member_id": "aph-83t",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 3
+    },
+    "43": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 43,
+      "schools": [
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "GILLARD, the Hon. Julia Eileen AC",
+              "member_id": "aph-83l",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 3
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RUDD, the Hon. Dr Kevin Michael, AC",
+              "member_id": "aph-83t",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-rockhampton-grammar-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'DOWD, Kenneth (Ken) Desmond",
+              "member_id": "aph-139441",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Rockhampton Grammar School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-xavier-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SHORTEN, the Hon. William (Bill) Richard",
+              "member_id": "aph-00atg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+              "member_id": "aph-210911",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Xavier College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 5
+    },
+    "44": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 44,
+      "schools": [
+        {
+          "institution_id": "inst-unmatched-aquinas-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+              "member_id": "aph-00an3",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SUKKAR, the Hon. Michael Sven",
+              "member_id": "aph-242515",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Aquinas College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47480",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "PITT, the Hon. Keith John",
+              "member_id": "aph-148150",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Kepnock State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RUDD, the Hon. Dr Kevin Michael, AC",
+              "member_id": "aph-83t",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-49811",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BERNARDI, Cory",
+              "member_id": "aph-g0d",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "FAWCETT, the Hon. David Julian",
+              "member_id": "aph-dyu",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Prince Alfred College",
+          "sector": "Independent",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-rockhampton-grammar-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'DOWD, Kenneth (Ken) Desmond",
+              "member_id": "aph-139441",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Rockhampton Grammar School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-saint-ignatius-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "GILLESPIE, the Hon. Dr David Arthur",
+              "member_id": "aph-72184",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "JOYCE, the Hon. Barnaby Thomas Gerard",
+              "member_id": "aph-e5d",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "NP": 2
+          },
+          "school_name": "St Ignatius College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-xavier-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SHORTEN, the Hon. William (Bill) Richard",
+              "member_id": "aph-00atg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+              "member_id": "aph-210911",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Xavier College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 9
+    },
+    "45": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 45,
+      "schools": [
+        {
+          "institution_id": "inst-unmatched-saint-ignatius-college",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "FALINSKI, Jason George",
+              "member_id": "aph-g86",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "GILLESPIE, the Hon. Dr David Arthur",
+              "member_id": "aph-72184",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "JOYCE, the Hon. Barnaby Thomas Gerard",
+              "member_id": "aph-e5d",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 2
+          },
+          "school_name": "St Ignatius College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-aquinas-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+              "member_id": "aph-00an3",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SUKKAR, the Hon. Michael Sven",
+              "member_id": "aph-242515",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Aquinas College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-hobart-matriculation-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BILYK, Catryna Louise",
+              "member_id": "aph-hzb",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McKIM, Nicholas (Nick) James",
+              "member_id": "aph-jkm",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "GRN": 1
+          },
+          "school_name": "Hobart Matriculation College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47480",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "PITT, the Hon. Keith John",
+              "member_id": "aph-148150",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Kepnock State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-42095",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "ROBERTS, Malcolm Ieuan",
+              "member_id": "aph-266524",
+              "party": "Pauline Hanson's One Nation",
+              "party_abbrev": "PHON"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SWANSON, Meryl Jane",
+              "member_id": "aph-264170",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "PHON": 1
+          },
+          "school_name": "Kurri Kurri High School",
+          "sector": "Government",
+          "state": "NSW"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-49811",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BERNARDI, Cory",
+              "member_id": "aph-g0d",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "FAWCETT, the Hon. David Julian",
+              "member_id": "aph-dyu",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Prince Alfred College",
+          "sector": "Independent",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-rockhampton-grammar-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'DOWD, Kenneth (Ken) Desmond",
+              "member_id": "aph-139441",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Rockhampton Grammar School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47417",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "LEY, the Hon. Sussan Penelope",
+              "member_id": "aph-00amn",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Toowoomba State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-wesley-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BROADBENT, Russell Evan",
+              "member_id": "aph-mt4",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "HILL, the Hon. Julian Christopher",
+              "member_id": "aph-86256",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Wesley College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-xavier-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SHORTEN, the Hon. William (Bill) Richard",
+              "member_id": "aph-00atg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+              "member_id": "aph-210911",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Xavier College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 13
+    },
+    "46": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 46,
+      "schools": [
+        {
+          "institution_id": "inst-unmatched-saint-ignatius-college",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "FALINSKI, Jason George",
+              "member_id": "aph-g86",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "GILLESPIE, the Hon. Dr David Arthur",
+              "member_id": "aph-72184",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "JOYCE, the Hon. Barnaby Thomas Gerard",
+              "member_id": "aph-e5d",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 2
+          },
+          "school_name": "St Ignatius College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-aquinas-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+              "member_id": "aph-00an3",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SUKKAR, the Hon. Michael Sven",
+              "member_id": "aph-242515",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Aquinas College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-45357",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "IRONS, the Hon. Stephen (Steve) James",
+              "member_id": "aph-hym",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "WEBSTER, Dr Anne Elizabeth",
+              "member_id": "aph-281688",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Blackburn High School",
+          "sector": "Government",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "acara-50255",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLBECK, the Hon. Richard Mansell",
+              "member_id": "aph-00aol",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "LAMBIE, Jacquiline (Jacqui) Louise",
+              "member_id": "aph-250026",
+              "party": "Jacqui Lambie Network",
+              "party_abbrev": "JLN"
+            }
+          ],
+          "parties": {
+            "JLN": 1,
+            "LP": 1
+          },
+          "school_name": "Don College",
+          "sector": "Government",
+          "state": "TAS"
+        },
+        {
+          "institution_id": "acara-47895",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "McVEIGH, the Hon. Dr John Joseph",
+              "member_id": "aph-125865",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "RENNICK, Gerard Brock",
+              "member_id": "aph-283596",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Downlands College",
+          "sector": "Catholic",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-gawler-high-school",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BELL, Angie Marion",
+              "member_id": "aph-282981",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "BIRMINGHAM, the Hon. Simon John",
+              "member_id": "aph-h6x",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Gawler High School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-hobart-matriculation-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BILYK, Catryna Louise",
+              "member_id": "aph-hzb",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McKIM, Nicholas (Nick) James",
+              "member_id": "aph-jkm",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "GRN": 1
+          },
+          "school_name": "Hobart Matriculation College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47480",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "PITT, the Hon. Keith John",
+              "member_id": "aph-148150",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Kepnock State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-42095",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "ROBERTS, Malcolm Ieuan",
+              "member_id": "aph-266524",
+              "party": "Pauline Hanson's One Nation",
+              "party_abbrev": "PHON"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SWANSON, Meryl Jane",
+              "member_id": "aph-264170",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "PHON": 1
+          },
+          "school_name": "Kurri Kurri High School",
+          "sector": "Government",
+          "state": "NSW"
+        },
+        {
+          "institution_id": "inst-unmatched-mlc",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "PAYNE, the Hon. Marise Ann",
+              "member_id": "aph-m56",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THWAITES, the Hon. Kate Lynne",
+              "member_id": "aph-282212",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "MLC",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47647",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SMITH, David Philip Benedict",
+              "member_id": "aph-276714",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THISTLETHWAITE, the Hon. Matthew (Matt) James",
+              "member_id": "aph-182468",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Marist College",
+          "sector": "Catholic",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-46208",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BURNS, Joshua (Josh) Solomon",
+              "member_id": "aph-278522",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "FRYDENBERG, the Hon. Joshua (Josh) Anthony",
+              "member_id": "aph-fkl",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Mount Scopus Memorial College",
+          "sector": "Independent",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-49811",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BERNARDI, Cory",
+              "member_id": "aph-g0d",
+              "party": "Independent",
+              "party_abbrev": "IND"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "FAWCETT, the Hon. David Julian",
+              "member_id": "aph-dyu",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "IND": 1,
+            "LP": 1
+          },
+          "school_name": "Prince Alfred College",
+          "sector": "Independent",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-rockhampton-grammar-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'DOWD, Kenneth (Ken) Desmond",
+              "member_id": "aph-139441",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Rockhampton Grammar School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-45855",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "VAN, David Allan",
+              "member_id": "aph-283601",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "WALLACE, Andrew Bruce",
+              "member_id": "aph-265967",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "St Bede's College",
+          "sector": "Catholic",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "inst-unmatched-saint-peters-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "RYAN, the Hon. Scott Michael",
+              "member_id": "aph-i0q",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "STEVENS, James William",
+              "member_id": "aph-176304",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "St Peter's College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47417",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "LEY, the Hon. Sussan Penelope",
+              "member_id": "aph-00amn",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Toowoomba State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-wesley-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BROADBENT, Russell Evan",
+              "member_id": "aph-mt4",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "HILL, the Hon. Julian Christopher",
+              "member_id": "aph-86256",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Wesley College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-xavier-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SHORTEN, the Hon. William (Bill) Richard",
+              "member_id": "aph-00atg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+              "member_id": "aph-210911",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Xavier College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 22
+    },
+    "47": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 47,
+      "schools": [
+        {
+          "institution_id": "acara-50255",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLBECK, the Hon. Richard Mansell",
+              "member_id": "aph-00aol",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "LAMBIE, Jacquiline (Jacqui) Louise",
+              "member_id": "aph-250026",
+              "party": "Jacqui Lambie Network",
+              "party_abbrev": "JLN"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "TYRRELL, Tammy Marie",
+              "member_id": "aph-300639",
+              "party": "Jacqui Lambie Network",
+              "party_abbrev": "Jacqui Lambie Network"
+            }
+          ],
+          "parties": {
+            "JLN": 1,
+            "Jacqui Lambie Network": 1,
+            "LP": 1
+          },
+          "school_name": "Don College",
+          "sector": "Government",
+          "state": "TAS"
+        },
+        {
+          "institution_id": "inst-unmatched-aquinas-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+              "member_id": "aph-00an3",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SUKKAR, the Hon. Michael Sven",
+              "member_id": "aph-242515",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Aquinas College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47408",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "CHANDLER-MATHER, Max",
+              "member_id": "aph-300121",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WATT, the Hon. Murray Patrick",
+              "member_id": "aph-245759",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "GRN": 1
+          },
+          "school_name": "Brisbane State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-gawler-high-school",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BELL, Angie Marion",
+              "member_id": "aph-282981",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "BIRMINGHAM, the Hon. Simon John",
+              "member_id": "aph-h6x",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Gawler High School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-hobart-matriculation-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BILYK, Catryna Louise",
+              "member_id": "aph-hzb",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McKIM, Nicholas (Nick) James",
+              "member_id": "aph-jkm",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "GRN": 1
+          },
+          "school_name": "Hobart Matriculation College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-48036",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "HAMILTON, Garth Russell",
+              "member_id": "aph-291387",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "SCARR, Paul Martin",
+              "member_id": "aph-282997",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Ipswich Grammar School",
+          "sector": "Independent",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47480",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "PITT, the Hon. Keith John",
+              "member_id": "aph-148150",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "ROBERT, the Hon. Stuart Rowland",
+              "member_id": "aph-hwt",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 1,
+            "NP": 1
+          },
+          "school_name": "Kepnock State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-42095",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "ROBERTS, Malcolm Ieuan",
+              "member_id": "aph-266524",
+              "party": "Pauline Hanson's One Nation",
+              "party_abbrev": "PHON"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SWANSON, Meryl Jane",
+              "member_id": "aph-264170",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "PHON": 1
+          },
+          "school_name": "Kurri Kurri High School",
+          "sector": "Government",
+          "state": "NSW"
+        },
+        {
+          "institution_id": "acara-46150",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "HUME, the Hon. Edwina Jane (Jane)",
+              "member_id": "aph-266499",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "McKENZIE, Zoe Anne",
+              "member_id": "aph-124514",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Lauriston Girls' School",
+          "sector": "Independent",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "inst-unmatched-mlc",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "PAYNE, the Hon. Marise Ann",
+              "member_id": "aph-m56",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THWAITES, the Hon. Kate Lynne",
+              "member_id": "aph-282212",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "MLC",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47647",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SMITH, David Philip Benedict",
+              "member_id": "aph-276714",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THISTLETHWAITE, the Hon. Matthew (Matt) James",
+              "member_id": "aph-182468",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Marist College",
+          "sector": "Catholic",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-norwood-high-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLBECK, the Hon. Richard Mansell",
+              "member_id": "aph-00aol",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "POCOCK, Dr Barbara Ann AM",
+              "member_id": "aph-bfq",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            }
+          ],
+          "parties": {
+            "GRN": 1,
+            "LP": 1
+          },
+          "school_name": "Norwood High School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-45855",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "VAN, David Allan",
+              "member_id": "aph-283601",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "WALLACE, Andrew Bruce",
+              "member_id": "aph-265967",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "St Bede's College",
+          "sector": "Catholic",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "inst-unmatched-saint-ignatius-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "GILLESPIE, the Hon. Dr David Arthur",
+              "member_id": "aph-72184",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "JOYCE, the Hon. Barnaby Thomas Gerard",
+              "member_id": "aph-e5d",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "NP": 2
+          },
+          "school_name": "St Ignatius College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-saint-peters-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "McLACHLAN, Andrew Lockhart CSC",
+              "member_id": "aph-287062",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "STEVENS, James William",
+              "member_id": "aph-176304",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "St Peter's College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-48037",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BOYCE, Colin Einar",
+              "member_id": "aph-299498",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "LITTLEPROUD, the Hon. David Kelly",
+              "member_id": "aph-265585",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "NP": 2
+          },
+          "school_name": "Toowoomba Grammar School",
+          "sector": "Independent",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47417",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "LEY, the Hon. Sussan Penelope",
+              "member_id": "aph-00amn",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Toowoomba State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-ulverstone-high-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "TYRRELL, Tammy Marie",
+              "member_id": "aph-300639",
+              "party": "Jacqui Lambie Network",
+              "party_abbrev": "Jacqui Lambie Network"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "URQUHART, Anne Elizabeth",
+              "member_id": "aph-231199",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "Jacqui Lambie Network": 1
+          },
+          "school_name": "Ulverstone High School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-wesley-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BROADBENT, Russell Evan",
+              "member_id": "aph-mt4",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "HILL, the Hon. Julian Christopher",
+              "member_id": "aph-86256",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Wesley College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-xavier-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SHORTEN, the Hon. William (Bill) Richard",
+              "member_id": "aph-00atg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+              "member_id": "aph-210911",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Xavier College",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 23
+    },
+    "48": {
+      "cohort": "opening_day",
+      "min_members_threshold": 2,
+      "parliament_number": 48,
+      "schools": [
+        {
+          "institution_id": "acara-50255",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLBECK, the Hon. Richard Mansell",
+              "member_id": "aph-00aol",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "LAMBIE, Jacquiline (Jacqui) Louise",
+              "member_id": "aph-250026",
+              "party": "Jacqui Lambie Network",
+              "party_abbrev": "JLN"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "TYRRELL, Tammy Marie",
+              "member_id": "aph-300639",
+              "party": "Independent",
+              "party_abbrev": "IND"
+            }
+          ],
+          "parties": {
+            "IND": 1,
+            "JLN": 1,
+            "LP": 1
+          },
+          "school_name": "Don College",
+          "sector": "Government",
+          "state": "TAS"
+        },
+        {
+          "institution_id": "acara-46150",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "HUME, the Hon. Edwina Jane (Jane)",
+              "member_id": "aph-266499",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "JORDAN-BAIRD, Alice",
+              "member_id": "aph-316021",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "McKENZIE, Zoe Anne",
+              "member_id": "aph-124514",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 2
+          },
+          "school_name": "Lauriston Girls' School",
+          "sector": "Independent",
+          "state": "VIC"
+        },
+        {
+          "institution_id": "acara-40445",
+          "is_bipartisan": false,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BROWN, the Hon. Carol Louise",
+              "member_id": "aph-f49",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "DOWLING, Richard",
+              "member_id": "aph-55842",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "WHITE, the Hon Rebecca Peta",
+              "member_id": "aph-224102",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 3
+          },
+          "school_name": "Rosny College",
+          "sector": "Government",
+          "state": "TAS"
+        },
+        {
+          "institution_id": "acara-49479",
+          "is_bipartisan": true,
+          "member_count": 3,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "BLYTH, Leah",
+              "member_id": "aph-315170",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "BUTLER, the Hon. Mark Christopher",
+              "member_id": "aph-hwk",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "RISHWORTH, the Hon. Amanda Louise",
+              "member_id": "aph-hwa",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2,
+            "LP": 1
+          },
+          "school_name": "Unley High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "acara-42090",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "CONROY, the Hon. Patrick (Pat) Martin",
+              "member_id": "aph-249127",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WHITTEN, Tyron",
+              "member_id": "aph-317026",
+              "party": "Pauline Hanson's One Nation",
+              "party_abbrev": "PHON"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "PHON": 1
+          },
+          "school_name": "Gosford High School",
+          "sector": "Government",
+          "state": "NSW"
+        },
+        {
+          "institution_id": "acara-48036",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "HAMILTON, Garth Russell",
+              "member_id": "aph-291387",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "SCARR, Paul Martin",
+              "member_id": "aph-282997",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Ipswich Grammar School",
+          "sector": "Independent",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-john-paul-college",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLLINS, Dr Jessica",
+              "member_id": "aph-297964",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "MASCARENHAS, Zaneta Felice Antoinetta",
+              "member_id": "aph-298800",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "John Paul College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-42095",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "ROBERTS, Malcolm Ieuan",
+              "member_id": "aph-266524",
+              "party": "Pauline Hanson's One Nation",
+              "party_abbrev": "PHON"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "SWANSON, Meryl Jane",
+              "member_id": "aph-264170",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "PHON": 1
+          },
+          "school_name": "Kurri Kurri High School",
+          "sector": "Government",
+          "state": "NSW"
+        },
+        {
+          "institution_id": "inst-unmatched-mlc",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ALDRED, Mary",
+              "member_id": "aph-11788",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THWAITES, the Hon. Kate Lynne",
+              "member_id": "aph-282212",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "MLC",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-47647",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "SMITH, David Philip Benedict",
+              "member_id": "aph-276714",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "THISTLETHWAITE, the Hon. Matthew (Matt) James",
+              "member_id": "aph-182468",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Marist College",
+          "sector": "Catholic",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47429",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "ELLIOT, the Hon. Maria Justine (Justine)",
+              "member_id": "aph-dzw",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Nambour State College",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-norwood-high-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "COLBECK, the Hon. Richard Mansell",
+              "member_id": "aph-00aol",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "POCOCK, Dr Barbara Ann AM",
+              "member_id": "aph-bfq",
+              "party": "Australian Greens",
+              "party_abbrev": "GRN"
+            }
+          ],
+          "parties": {
+            "GRN": 1,
+            "LP": 1
+          },
+          "school_name": "Norwood High School",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "inst-unmatched-nudgee-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "CALDWELL, Cameron",
+              "member_id": "aph-306489",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "O'BRIEN, Edward (Ted) Lynam",
+              "member_id": "aph-138932",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Nudgee College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-49477",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "CLUTTERHAM, Claire Louise",
+              "member_id": "aph-316101",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "RUSTON, the Hon. Anne Sowerby",
+              "member_id": "aph-243273",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "LP": 1
+          },
+          "school_name": "Renmark High School",
+          "sector": "Government",
+          "state": "SA"
+        },
+        {
+          "institution_id": "inst-unmatched-scotch-college",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+              "member_id": "aph-hwg",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+              "member_id": "aph-00aou",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 2
+          },
+          "school_name": "Scotch College",
+          "sector": "Other",
+          "state": null
+        },
+        {
+          "institution_id": "acara-48037",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "BOYCE, Colin Einar",
+              "member_id": "aph-299498",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "LITTLEPROUD, the Hon. David Kelly",
+              "member_id": "aph-265585",
+              "party": "The Nationals",
+              "party_abbrev": "NP"
+            }
+          ],
+          "parties": {
+            "NP": 2
+          },
+          "school_name": "Toowoomba Grammar School",
+          "sector": "Independent",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "acara-47417",
+          "is_bipartisan": false,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "representatives",
+              "display_name": "LEY, the Hon. Sussan Penelope",
+              "member_id": "aph-00amn",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            },
+            {
+              "chamber": "senate",
+              "display_name": "McGRATH, the Hon. James",
+              "member_id": "aph-217241",
+              "party": "Liberal Party of Australia",
+              "party_abbrev": "LP"
+            }
+          ],
+          "parties": {
+            "LP": 2
+          },
+          "school_name": "Toowoomba State High School",
+          "sector": "Government",
+          "state": "QLD"
+        },
+        {
+          "institution_id": "inst-unmatched-ulverstone-high-school",
+          "is_bipartisan": true,
+          "member_count": 2,
+          "members": [
+            {
+              "chamber": "senate",
+              "display_name": "TYRRELL, Tammy Marie",
+              "member_id": "aph-300639",
+              "party": "Independent",
+              "party_abbrev": "IND"
+            },
+            {
+              "chamber": "representatives",
+              "display_name": "URQUHART, Anne Elizabeth",
+              "member_id": "aph-231199",
+              "party": "Australian Labor Party",
+              "party_abbrev": "ALP"
+            }
+          ],
+          "parties": {
+            "ALP": 1,
+            "IND": 1
+          },
+          "school_name": "Ulverstone High School",
+          "sector": "Other",
+          "state": null
+        }
+      ],
+      "total_shared_schools": 18
+    }
+  }
+}

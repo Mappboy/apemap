@@ -25,6 +25,9 @@ NOTEBOOKS = (
 )
 
 
+@pytest.mark.integration
+@pytest.mark.notebook
+@pytest.mark.slow
 @pytest.mark.parametrize("notebook_name", NOTEBOOKS)
 def test_canonical_notebook_executes_without_network_or_mutation(
     notebook_name: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch

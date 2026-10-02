@@ -14,7 +14,7 @@ APEMAP (**Australian Parliamentarians Education Map**) is a Python data and anal
 
 APEMAP provides a deterministic, reproducible pipeline to map the secondary education of federal parliamentarians:
 
-- **Parliamentarian Ingestion**: Ingests member biographies and service records from the official Australian Parliament House (APH) Parliamentary Handbook API across the 46th, 47th, and 48th Parliaments.
+- **Parliamentarian Ingestion**: Ingests member biographies and dated service histories from the official Australian Parliament House (APH) Parliamentary Handbook API across the 42nd–48th Parliaments, with opening-day cohorts and explicit historical evidence gaps.
 - **ACARA School Registers**: Ingests authoritative Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and Longitudinal School Profile datasets.
 - **Deterministic School Matching**: Resolves noisy biographical school names against ACARA school registers using normalized keys, curated alias overrides, and RapidFuzz token matching.
 - **Canonical DuckDB Storage**: Consolidates members, service periods, institutions, education assertions, and historical 2021 financial profiles into an audited relational schema.
@@ -46,7 +46,7 @@ ACARA Registers ────────┘    (data/aped.duckdb)               
 
 ### Installation
 
-APEMAP requires Python `>= 3.10` and [uv](https://docs.astral.sh/uv/):
+APEMAP requires Python `>= 3.11` and [uv](https://docs.astral.sh/uv/):
 
 ```bash
 git clone https://github.com/Mappboy/apemap.git
@@ -59,6 +59,12 @@ Inspect available commands with the Typer CLI:
 ```bash
 uv run apemap --help
 ```
+
+For a fast development test loop, use
+`uv run pytest -m "not integration and not notebook and not slow"`.
+`uv run pytest` runs the complete suite; see the
+[Development Guide](docs/development.md#7-writing-tests--working-with-fixtures)
+for integration and notebook commands and fixture isolation rules.
 
 ### Running the Pipeline
 
@@ -106,9 +112,14 @@ Comprehensive guides, specifications, and methodologies are available in the [`d
 ## Data Quality & Research Caveats
 
 > [!WARNING]
-> This dataset was collated for research and civic analytics. Secondary schooling data is based on self-reported parliamentary biographies and automated matching against ACARA registers. For high-stakes or formal research applications, independent quality assurance of specific records is strongly recommended. 
-> 
+> This dataset was collated for research and civic analytics. Secondary schooling data is based on self-reported parliamentary biographies and automated matching against ACARA registers. For high-stakes or formal research applications, independent quality assurance of specific records is strongly recommended.
+>
 > Furthermore, historical 2021 school financial data reflects MySchool metrics for 2021 and does not represent school funding levels contemporaneous with when parliamentarians attended school decades ago. See [Research Methodology](docs/methodology.md) for detailed limitations.
+
+The [historical coverage guide](docs/historical-coverage.md) describes the populated
+42nd–48th release, replay commands, reviewed successor mappings and website
+contract. Coverage, evidence review queues and seven map layers are delivered
+separately from earlier research artifacts.
 
 ---
 

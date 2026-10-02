@@ -76,6 +76,10 @@ SELECT
     ps.state_or_territory,
     ps.is_opening_day_member,
     ps.is_current_member,
+    ps.source_url AS service_source_url,
+    ps.retrieved_at AS service_retrieved_at,
+    ps.service_start,
+    ps.service_end,
     i.institution_id,
     i.acara_id,
     i.school_name,
@@ -95,9 +99,26 @@ SELECT
     me.retrieved_at,
     me.confidence,
     me.reviewer_notes,
+    me.school_name_as_recorded,
+    me.institution_resolution,
+    me.resolution_source_url,
+    i.country,
+    i.institution_status,
     ss.snapshot_year,
     ss.total_enrolments,
+    ss.girls_enrolments,
+    ss.boys_enrolments,
+    ss.fte_enrolments,
     ss.icsea,
+    ss.icsea_percentile,
+    ss.sea_bottom_quarter_pct,
+    ss.sea_lower_middle_quarter_pct,
+    ss.sea_upper_middle_quarter_pct,
+    ss.sea_top_quarter_pct,
+    ss.indigenous_enrolments_pct,
+    ss.lbote_pct,
+    ss.year_range,
+    ss.remoteness_category,
     ss.financial_profile_2021,
     sf.recurrent_funding_gov_total AS historical_2021_gov_funding_total,
     sf.fees_charges_parent_total AS historical_2021_fees_parent_total,
@@ -183,14 +204,10 @@ SELECT
     eb.retrieved_at AS boundary_retrieved_at
 FROM parliament_service ps
 JOIN members m ON ps.member_id = m.member_id
+JOIN parliament_metadata pm ON pm.parliament_number = ps.parliament_number
 JOIN electoral_boundaries eb ON (
     LOWER(ps.electorate) = LOWER(eb.electorate)
-    AND eb.election_year = CASE
-        WHEN ps.parliament_number = 48 THEN 2025
-        WHEN ps.parliament_number = 47 THEN 2022
-        WHEN ps.parliament_number = 46 THEN 2019
-        ELSE 2025
-    END
+    AND eb.election_year = year(pm.general_election_date)
 )
 WHERE ps.chamber = 'representatives';
 
@@ -235,5 +252,3 @@ SELECT
     retrieved_at
 FROM school_finance_benchmarks
 ORDER BY reporting_year DESC, state_or_territory, sector, geolocation, metric;
-
-

@@ -8,12 +8,11 @@ and ST_Read(), links divisions to canonical states, and exports canonical GeoPar
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 import re
 from typing import TYPE_CHECKING, Any
 import zipfile
-
-import requests
 
 from apemap.constants import (
     AEC_2025_RETRIEVED_AT,
@@ -24,6 +23,7 @@ from apemap.constants import (
     RAW_AEC_2025_DIR,
 )
 from apemap.db import ensure_spatial, export_to_parquet, get_connection, init_schema
+from apemap.ingest.http import create_retry_session
 
 if TYPE_CHECKING:
     import duckdb
@@ -214,19 +214,28 @@ def download_and_extract_aec_boundaries(
         return shp_path
 
     zip_path = raw_dir / "AUS-March-2025-esri.zip"
-    logger.info(
-        "Downloading AEC 2025 boundary zip from %s to %s",
-        AEC_2025_SHAPEFILE_URL,
-        zip_path,
-    )
+    if not zip_path.exists() or force:
+        if os.environ.get("APEMAP_OFFLINE") == "1":
+            raise RuntimeError(
+                f"AEC boundary zip archive not found at {zip_path} and offline mode prevents downloading from {AEC_2025_SHAPEFILE_URL}."
+            )
+        logger.info(
+            "Downloading AEC 2025 boundary zip from %s to %s",
+            AEC_2025_SHAPEFILE_URL,
+            zip_path,
+        )
 
-    response = requests.get(AEC_2025_SHAPEFILE_URL, stream=True, timeout=timeout)
-    response.raise_for_status()
+        session = create_retry_session()
+        try:
+            response = session.get(AEC_2025_SHAPEFILE_URL, stream=True, timeout=timeout)
+            response.raise_for_status()
 
-    with zip_path.open("wb") as f:
-        for chunk in response.iter_content(chunk_size=65536):
-            if chunk:
-                f.write(chunk)
+            with zip_path.open("wb") as f:
+                for chunk in response.iter_content(chunk_size=65536):
+                    if chunk:
+                        f.write(chunk)
+        finally:
+            session.close()
 
     logger.info("Extracting %s into %s", zip_path, raw_dir)
     with zipfile.ZipFile(zip_path, "r") as zf:
@@ -316,6 +325,7 @@ def run_aec_ingestion(
     election_year: int = 2025,
     refresh: bool = False,
     db_path: Path | str | None = None,
+    conn: duckdb.DuckDBPyConnection | None = None,
     raw_dir: Path | str | None = None,
     export_parquet_files: bool = True,
     output_dir: Path | str | None = None,
@@ -325,7 +335,8 @@ def run_aec_ingestion(
     Args:
         election_year: Target election year (default: 2025).
         refresh: Force re-downloading AEC zip archive even if cached.
-        db_path: Target DuckDB database path (defaults to data/aped.duckdb).
+        db_path: Target DuckDB database path (defaults to data/aped.duckdb; ignored if conn is provided).
+        conn: Optional caller-managed DuckDB connection. If provided, caller retains ownership.
         raw_dir: Directory for cached raw shapefile archive.
         export_parquet_files: Export updated canonical tables to Parquet.
         output_dir: Destination directory for Parquet exports.
@@ -340,16 +351,18 @@ def run_aec_ingestion(
         target_dir=raw_dir or RAW_AEC_2025_DIR, force=refresh
     )
 
-    conn = get_connection(effective_db_path)
+    should_close_conn = conn is None
+    active_conn = conn or get_connection(effective_db_path)
     try:
-        init_schema(conn)
-        divisions_loaded = ingest_aec_boundaries(conn, shp_path, election_year)
+        init_schema(active_conn)
+        divisions_loaded = ingest_aec_boundaries(active_conn, shp_path, election_year)
 
         parquet_paths: dict[str, Path] = {}
         if export_parquet_files:
-            parquet_paths = export_to_parquet(conn, effective_out_dir)
+            parquet_paths = export_to_parquet(active_conn, effective_out_dir)
     finally:
-        conn.close()
+        if should_close_conn:
+            active_conn.close()
 
     return {
         "election_year": election_year,

@@ -167,6 +167,8 @@ cython_debug/
 *.duckdb
 *.duckdb.wal
 data/raw/
+# Full generated release bundles are distributed as versioned release assets.
+data/processed/releases/
 data/restricted/
 data/external/acara_finances_*.csv
 data/external/acara_finances_*.parquet

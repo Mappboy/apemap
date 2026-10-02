@@ -11,6 +11,7 @@ from apemap.db import get_connection, init_schema
 from apemap.ingest.abs import ingest_abs_benchmarks, run_abs_ingestion
 
 
+@pytest.mark.integration
 def test_abs_benchmark_rows_and_shares(tmp_path: Path) -> None:
     """ABS benchmark rows are exactly Government, Catholic, Independent with correct shares summing to 1.0."""
     db_path = tmp_path / "test_abs.duckdb"
@@ -71,6 +72,7 @@ def test_abs_benchmark_rows_and_shares(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_abs_ingestion_idempotence(tmp_path: Path) -> None:
     """Ingesting ABS benchmarks multiple times is deterministic and maintains primary key constraint."""
     db_path = tmp_path / "test_idempotent.duckdb"
@@ -86,6 +88,7 @@ def test_abs_ingestion_idempotence(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_abs_benchmark_comparison_analysis(tmp_path: Path) -> None:
     """Analysis functions return the authoritative comparison fields with correct domain naming."""
     db_path = tmp_path / "test_analysis_bench.duckdb"
@@ -161,6 +164,7 @@ def test_abs_benchmark_comparison_analysis(tmp_path: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_run_abs_ingestion_pipeline(tmp_path: Path) -> None:
     """run_abs_ingestion executes end-to-end and produces canonical Parquet export."""
     db_path = tmp_path / "test_pipeline.duckdb"

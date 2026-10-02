@@ -8,6 +8,8 @@ reproduced without mutating the canonical database.
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import json
 import logging
 from datetime import date, datetime
@@ -165,6 +167,128 @@ def compute_parliament_demographics(
     }
 
 
+def classify_person_education(
+    sectors: set[str],
+) -> tuple[str, str]:
+    """Classify an individual's secondary education sectors into standard and gov/non-gov categories.
+
+    Args:
+        sectors: Set of secondary education sectors (e.g. {"Government"}, {"Catholic", "Independent"}).
+
+    Returns:
+        Tuple of (standard_category, gov_non_gov_category), where:
+        standard_category is one of:
+            "Government", "Catholic", "Independent", "Combined/Multiple", "Other", "No School Recorded"
+        gov_non_gov_category is one of:
+            "government_only", "non_government_only", "mixed", "other", "no_school_recorded"
+    """
+    if not sectors:
+        return ("No School Recorded", "no_school_recorded")
+
+    has_gov = "Government" in sectors
+    has_non_gov = bool(sectors & {"Catholic", "Independent"})
+
+    if has_gov and has_non_gov:
+        gov_non_gov = "mixed"
+    elif has_gov and not has_non_gov:
+        gov_non_gov = "government_only"
+    elif has_non_gov and not has_gov:
+        gov_non_gov = "non_government_only"
+    else:
+        gov_non_gov = "other"
+
+    if len(sectors) > 1:
+        standard = "Combined/Multiple"
+    else:
+        standard = next(iter(sectors))
+
+    return (standard, gov_non_gov)
+
+
+def get_opening_day_members(
+    conn: duckdb.DuckDBPyConnection, parliament: int
+) -> list[dict[str, Any]]:
+    """Return opening-day parliamentarians with deterministic deduplication and party/chamber context.
+
+    If an MP has multiple opening-day service records in the same parliament, selects the earliest
+    service start (or lowest service_id as tiebreaker).
+    """
+    meta = PARLIAMENT_METADATA.get(parliament)
+    if meta is None:
+        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
+        raise ValueError(
+            f"Unsupported parliament number {parliament}; supported values are: {supported}."
+        )
+
+    ref_date = meta["opening_date"]
+    query = """
+    WITH ranked_service AS (
+        SELECT
+            s.service_id,
+            s.member_id,
+            s.parliament_number,
+            s.chamber,
+            s.party,
+            s.party_abbrev,
+            s.electorate,
+            s.state_or_territory,
+            s.service_start,
+            s.service_end,
+            m.display_name,
+            m.family_name,
+            m.given_name,
+            m.gender,
+            m.date_of_birth,
+            ROW_NUMBER() OVER (
+                PARTITION BY s.member_id
+                ORDER BY COALESCE(s.service_start, CAST(? AS DATE)), s.service_id
+            ) AS rank
+        FROM parliament_service s
+        JOIN members m ON s.member_id = m.member_id
+        WHERE s.parliament_number = ?
+          AND s.is_opening_day_member = TRUE
+    )
+    SELECT
+        service_id,
+        member_id,
+        parliament_number,
+        chamber,
+        party,
+        party_abbrev,
+        electorate,
+        state_or_territory,
+        service_start,
+        service_end,
+        display_name,
+        family_name,
+        given_name,
+        gender,
+        date_of_birth
+    FROM ranked_service
+    WHERE rank = 1
+    ORDER BY family_name, given_name, member_id
+    """
+    rows = conn.execute(query, [ref_date, parliament]).fetchall()
+    cols = [
+        "service_id",
+        "member_id",
+        "parliament_number",
+        "chamber",
+        "party",
+        "party_abbrev",
+        "electorate",
+        "state_or_territory",
+        "service_start",
+        "service_end",
+        "display_name",
+        "family_name",
+        "given_name",
+        "gender",
+        "date_of_birth",
+    ]
+    return [dict(zip(cols, row)) for row in rows]
+
+
 def compute_sector_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
@@ -183,7 +307,7 @@ def compute_sector_summary(
     }
     edu_rows = conn.execute(
         """
-        SELECT e.member_id, i.sector
+        SELECT e.member_id, i.sector, i.institution_id
         FROM member_education e
         JOIN institutions i ON e.institution_id = i.institution_id
         JOIN (
@@ -201,10 +325,14 @@ def compute_sector_summary(
     known_sectors = ("Government", "Catholic", "Independent", "Other")
     mp_sectors: dict[str, set[str]] = {}
     attendance_instances = {sector: 0 for sector in known_sectors}
-    for member_id, sector in edu_rows:
+    unique_schools: dict[str, str] = {}  # institution_id -> sector
+
+    for member_id, sector, inst_id in edu_rows:
         sector_name = sector if sector in known_sectors[:3] else "Other"
         mp_sectors.setdefault(member_id, set()).add(sector_name)
         attendance_instances[sector_name] += 1
+        if inst_id:
+            unique_schools[inst_id] = sector_name
 
     unique_counts = {
         "Government": 0,
@@ -214,14 +342,20 @@ def compute_sector_summary(
         "Other": 0,
         "No School Recorded": 0,
     }
+
+    gov_non_gov_counts = {
+        "government_only": 0,
+        "non_government_only": 0,
+        "mixed": 0,
+        "other": 0,
+        "no_school_recorded": 0,
+    }
+
     for member_id in all_mps:
         sectors = mp_sectors.get(member_id, set())
-        if not sectors:
-            unique_counts["No School Recorded"] += 1
-        elif len(sectors) > 1:
-            unique_counts["Combined/Multiple"] += 1
-        else:
-            unique_counts[next(iter(sectors))] += 1
+        std_cat, gng_cat = classify_person_education(sectors)
+        unique_counts[std_cat] += 1
+        gov_non_gov_counts[gng_cat] += 1
 
     known_count = len(all_mps) - unique_counts["No School Recorded"]
     unique_percentages = {
@@ -234,25 +368,124 @@ def compute_sector_summary(
             "Other",
         )
     }
+
+    gov_non_gov_percentages = {
+        cat: round(gov_non_gov_counts[cat] / known_count * 100, 2)
+        if known_count
+        else 0.0
+        for cat in ("government_only", "non_government_only", "mixed", "other")
+    }
+
+    # Denominator 2: Attendance instances
     attendance_count = sum(attendance_instances.values())
     attendance_percentages = {
         sector: count / attendance_count * 100 if attendance_count else 0.0
         for sector, count in attendance_instances.items()
     }
+    attendance_gov_non_gov = {
+        "government": attendance_instances["Government"],
+        "non_government": attendance_instances["Catholic"]
+        + attendance_instances["Independent"],
+        "other": attendance_instances["Other"],
+    }
+    attendance_gov_non_gov_percentages = {
+        "government": round(
+            attendance_gov_non_gov["government"] / attendance_count * 100, 2
+        )
+        if attendance_count
+        else 0.0,
+        "non_government": round(
+            attendance_gov_non_gov["non_government"] / attendance_count * 100, 2
+        )
+        if attendance_count
+        else 0.0,
+        "other": round(attendance_gov_non_gov["other"] / attendance_count * 100, 2)
+        if attendance_count
+        else 0.0,
+    }
+
+    # Denominator 3: Unique schools
+    total_unique_schools = len(unique_schools)
+    unique_schools_by_sector = {
+        "Government": sum(1 for s in unique_schools.values() if s == "Government"),
+        "Catholic": sum(1 for s in unique_schools.values() if s == "Catholic"),
+        "Independent": sum(1 for s in unique_schools.values() if s == "Independent"),
+        "Other": sum(1 for s in unique_schools.values() if s == "Other"),
+    }
+    unique_schools_by_sector_percentages = {
+        sector: round(count / total_unique_schools * 100, 2)
+        if total_unique_schools
+        else 0.0
+        for sector, count in unique_schools_by_sector.items()
+    }
+    unique_schools_gov_non_gov = {
+        "government": unique_schools_by_sector["Government"],
+        "non_government": unique_schools_by_sector["Catholic"]
+        + unique_schools_by_sector["Independent"],
+        "other": unique_schools_by_sector["Other"],
+    }
+    unique_schools_gov_non_gov_percentages = {
+        "government": round(
+            unique_schools_gov_non_gov["government"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+        "non_government": round(
+            unique_schools_gov_non_gov["non_government"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+        "other": round(
+            unique_schools_gov_non_gov["other"] / total_unique_schools * 100, 2
+        )
+        if total_unique_schools
+        else 0.0,
+    }
+
+    detailed_sector = {
+        "government": unique_counts["Government"],
+        "catholic": unique_counts["Catholic"],
+        "independent": unique_counts["Independent"],
+        "combined_multiple": unique_counts["Combined/Multiple"],
+        "other": unique_counts["Other"],
+        "no_school_recorded": unique_counts["No School Recorded"],
+    }
+
     benchmark_comparison = compute_sector_benchmarks(conn, parliament)
 
     return {
         "parliament_number": parliament,
+        "cohort": "opening_day",
         "total_parliamentarians": len(all_mps),
         "parliamentarians_with_known_schools": known_count,
         "parliamentarians_without_known_schools": unique_counts["No School Recorded"],
+        "known_school_denominator": known_count,
         "known_school_percentage_denominator": known_count,
+        "government_non_government": {
+            "government_only": gov_non_gov_counts["government_only"],
+            "non_government_only": gov_non_gov_counts["non_government_only"],
+            "mixed": gov_non_gov_counts["mixed"],
+            "other": gov_non_gov_counts["other"],
+            "no_school_recorded": gov_non_gov_counts["no_school_recorded"],
+        },
+        "government_non_government_percentages": gov_non_gov_percentages,
+        "detailed_sector": detailed_sector,
         "unique_parliamentarians_by_sector": unique_counts,
         "percentage_of_known_parliamentarians": unique_percentages,
         "total_attendance_instances": attendance_count,
         "attendance_instance_percentage_denominator": attendance_count,
         "attendance_instances_by_sector": attendance_instances,
         "percentage_of_attendance_instances": attendance_percentages,
+        "attendance_instances_government_non_government": attendance_gov_non_gov,
+        "percentage_of_attendance_instances_government_non_government": attendance_gov_non_gov_percentages,
+        "unique_schools": {
+            "total_unique_schools": total_unique_schools,
+            "denominator": total_unique_schools,
+            "by_sector": unique_schools_by_sector,
+            "percentages_by_sector": unique_schools_by_sector_percentages,
+            "government_non_government": unique_schools_gov_non_gov,
+            "percentages_government_non_government": unique_schools_gov_non_gov_percentages,
+        },
         "benchmark_comparison": benchmark_comparison,
     }
 
@@ -349,6 +582,326 @@ def compute_sector_benchmarks(
         }
 
     return result
+
+
+def compute_party_sector_summary(
+    conn: duckdb.DuckDBPyConnection, parliament: int
+) -> dict[str, Any]:
+    """Compute education sector breakdown grouped by political party for opening-day members.
+
+    Args:
+        conn: Active DuckDB connection.
+        parliament: Parliament number (e.g. 47).
+
+    Returns:
+        Dictionary containing overall and per-party education sector counts and percentages.
+    """
+    members = get_opening_day_members(conn, parliament)
+    total_parliamentarians = len(members)
+
+    edu_rows = conn.execute(
+        """
+        SELECT e.member_id, i.sector
+        FROM member_education e
+        JOIN institutions i ON e.institution_id = i.institution_id
+        JOIN (
+            SELECT DISTINCT member_id
+            FROM parliament_service
+            WHERE parliament_number = ?
+              AND is_opening_day_member = TRUE
+        ) s ON e.member_id = s.member_id
+        WHERE e.level = 'secondary'
+        ORDER BY e.member_id, e.education_id
+        """,
+        [parliament],
+    ).fetchall()
+
+    known_sectors = ("Government", "Catholic", "Independent", "Other")
+    mp_sectors: dict[str, set[str]] = {}
+    for member_id, sector in edu_rows:
+        sector_name = sector if sector in known_sectors[:3] else "Other"
+        mp_sectors.setdefault(member_id, set()).add(sector_name)
+
+    parties_data: dict[str, dict[str, Any]] = {}
+    for member in members:
+        member_id = member["member_id"]
+        party = member.get("party_abbrev") or member.get("party") or "Unknown"
+        party_name = member.get("party") or party
+        sectors = mp_sectors.get(member_id, set())
+        std_cat, gng_cat = classify_person_education(sectors)
+
+        if party not in parties_data:
+            parties_data[party] = {
+                "party": party,
+                "party_name": party_name,
+                "total_parliamentarians": 0,
+                "known_school_denominator": 0,
+                "parliamentarians_without_known_schools": 0,
+                "unique_parliamentarians_by_sector": {
+                    "Government": 0,
+                    "Catholic": 0,
+                    "Independent": 0,
+                    "Combined/Multiple": 0,
+                    "Other": 0,
+                    "No School Recorded": 0,
+                },
+                "percentage_of_known_parliamentarians": {},
+                "government_non_government": {
+                    "government_only": 0,
+                    "non_government_only": 0,
+                    "mixed": 0,
+                    "other": 0,
+                    "no_school_recorded": 0,
+                },
+                "government_non_government_percentages": {},
+            }
+
+        pdata = parties_data[party]
+        pdata["total_parliamentarians"] += 1
+        pdata["unique_parliamentarians_by_sector"][std_cat] += 1
+        pdata["government_non_government"][gng_cat] += 1
+        if std_cat == "No School Recorded":
+            pdata["parliamentarians_without_known_schools"] += 1
+        else:
+            pdata["known_school_denominator"] += 1
+
+    for pdata in parties_data.values():
+        known = pdata["known_school_denominator"]
+        for sector in (
+            "Government",
+            "Catholic",
+            "Independent",
+            "Combined/Multiple",
+            "Other",
+        ):
+            pdata["percentage_of_known_parliamentarians"][sector] = (
+                round(
+                    pdata["unique_parliamentarians_by_sector"][sector] / known * 100,
+                    2,
+                )
+                if known
+                else 0.0
+            )
+        for cat in ("government_only", "non_government_only", "mixed", "other"):
+            pdata["government_non_government_percentages"][cat] = (
+                round(pdata["government_non_government"][cat] / known * 100, 2)
+                if known
+                else 0.0
+            )
+
+    sorted_parties = dict(
+        sorted(
+            parties_data.items(),
+            key=lambda item: (-item[1]["total_parliamentarians"], item[0]),
+        )
+    )
+
+    return {
+        "parliament_number": parliament,
+        "cohort": "opening_day",
+        "total_parliamentarians": total_parliamentarians,
+        "parties": sorted_parties,
+    }
+
+
+def compute_shared_school_summary(
+    conn: duckdb.DuckDBPyConnection,
+    parliament: int,
+    min_members: int = 2,
+) -> dict[str, Any]:
+    """Identify secondary schools attended by multiple parliamentarians in the opening-day cohort.
+
+    Args:
+        conn: Active DuckDB connection.
+        parliament: Parliament number (e.g. 47).
+        min_members: Minimum number of members to qualify as shared (defaults to 2).
+
+    Returns:
+        Dictionary containing schools attended by at least min_members parliamentarians.
+    """
+    meta = PARLIAMENT_METADATA.get(parliament)
+    if meta is None:
+        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
+        raise ValueError(
+            f"Unsupported parliament number {parliament}; supported values are: {supported}."
+        )
+
+    ref_date = meta["opening_date"]
+    query = """
+    WITH ranked_service AS (
+        SELECT
+            s.member_id,
+            s.chamber,
+            s.party,
+            s.party_abbrev,
+            ROW_NUMBER() OVER (
+                PARTITION BY s.member_id
+                ORDER BY COALESCE(s.service_start, CAST(? AS DATE)), s.service_id
+            ) AS rank
+        FROM parliament_service s
+        WHERE s.parliament_number = ?
+          AND s.is_opening_day_member = TRUE
+    )
+    SELECT
+        i.institution_id,
+        i.school_name,
+        i.sector,
+        i.state,
+        m.member_id,
+        m.display_name,
+        s.party,
+        s.party_abbrev,
+        s.chamber
+    FROM member_education e
+    JOIN institutions i ON e.institution_id = i.institution_id
+    JOIN members m ON e.member_id = m.member_id
+    JOIN ranked_service s ON m.member_id = s.member_id AND s.rank = 1
+    WHERE e.level = 'secondary'
+    ORDER BY i.institution_id, m.display_name
+    """
+    rows = conn.execute(query, [ref_date, parliament]).fetchall()
+
+    schools_map: dict[str, dict[str, Any]] = {}
+    for (
+        inst_id,
+        school_name,
+        sector,
+        state,
+        member_id,
+        display_name,
+        party,
+        party_abbrev,
+        chamber,
+    ) in rows:
+        if inst_id not in schools_map:
+            schools_map[inst_id] = {
+                "institution_id": inst_id,
+                "school_name": school_name,
+                "sector": sector,
+                "state": state,
+                "member_ids": set(),
+                "members": [],
+                "parties": {},
+            }
+        s_data = schools_map[inst_id]
+        if member_id not in s_data["member_ids"]:
+            s_data["member_ids"].add(member_id)
+            abbrev = party_abbrev or party or "Unknown"
+            s_data["members"].append(
+                {
+                    "member_id": member_id,
+                    "display_name": display_name,
+                    "party": party,
+                    "party_abbrev": abbrev,
+                    "chamber": chamber,
+                }
+            )
+            s_data["parties"][abbrev] = s_data["parties"].get(abbrev, 0) + 1
+
+    shared_schools: list[dict[str, Any]] = []
+    for s_data in schools_map.values():
+        count = len(s_data["member_ids"])
+        if count >= min_members:
+            shared_schools.append(
+                {
+                    "institution_id": s_data["institution_id"],
+                    "school_name": s_data["school_name"],
+                    "sector": s_data["sector"],
+                    "state": s_data["state"],
+                    "member_count": count,
+                    "is_bipartisan": len(s_data["parties"]) > 1,
+                    "parties": dict(
+                        sorted(s_data["parties"].items(), key=lambda x: (-x[1], x[0]))
+                    ),
+                    "members": sorted(
+                        s_data["members"], key=lambda m: m["display_name"] or ""
+                    ),
+                }
+            )
+
+    shared_schools.sort(key=lambda s: (-s["member_count"], s["school_name"] or ""))
+
+    return {
+        "parliament_number": parliament,
+        "cohort": "opening_day",
+        "min_members_threshold": min_members,
+        "total_shared_schools": len(shared_schools),
+        "schools": shared_schools,
+    }
+
+
+def compute_cross_parliament_summary(
+    conn: duckdb.DuckDBPyConnection,
+    parliaments: list[int] | None = None,
+) -> dict[str, Any]:
+    """Compute longitudinal education and demographic comparisons across multiple parliaments.
+
+    Args:
+        conn: Active DuckDB connection.
+        parliaments: List of parliament numbers (defaults to supported_parliaments()).
+
+    Returns:
+        Dictionary containing comparative metrics and shifts across parliaments.
+    """
+    target_parliaments = sorted(parliaments or supported_parliaments())
+    by_parliament: dict[str, dict[str, Any]] = {}
+
+    for p in target_parliaments:
+        demographics = compute_parliament_demographics(conn, p)
+        sectors = compute_sector_summary(conn, p)
+        by_parliament[str(p)] = {
+            "parliament_number": p,
+            "reference_opening_date": demographics["reference_opening_date"],
+            "total_parliamentarians": demographics["total_parliamentarians"],
+            "average_age": demographics["average_age_at_opening"],
+            "median_age": demographics["median_age_at_opening"],
+            "genders": demographics["genders"],
+            "known_school_denominator": sectors["known_school_denominator"],
+            "parliamentarians_without_known_schools": sectors[
+                "parliamentarians_without_known_schools"
+            ],
+            "sector_percentages": sectors["percentage_of_known_parliamentarians"],
+            "gov_non_gov_percentages": sectors["government_non_government_percentages"],
+            "unique_schools_count": sectors["unique_schools"]["total_unique_schools"],
+        }
+
+    trends: dict[str, Any] = {}
+    if len(target_parliaments) >= 2:
+        baseline = str(target_parliaments[0])
+        latest = str(target_parliaments[-1])
+        base_sec = by_parliament[baseline]["sector_percentages"]
+        late_sec = by_parliament[latest]["sector_percentages"]
+        base_gng = by_parliament[baseline]["gov_non_gov_percentages"]
+        late_gng = by_parliament[latest]["gov_non_gov_percentages"]
+
+        sector_shifts = {
+            sector: round(late_sec.get(sector, 0.0) - base_sec.get(sector, 0.0), 2)
+            for sector in (
+                "Government",
+                "Catholic",
+                "Independent",
+                "Combined/Multiple",
+                "Other",
+            )
+        }
+        gng_shifts = {
+            cat: round(late_gng.get(cat, 0.0) - base_gng.get(cat, 0.0), 2)
+            for cat in ("government_only", "non_government_only", "mixed", "other")
+        }
+
+        trends = {
+            "baseline_parliament": target_parliaments[0],
+            "latest_parliament": target_parliaments[-1],
+            "sector_percentage_point_shifts": sector_shifts,
+            "gov_non_gov_percentage_point_shifts": gng_shifts,
+        }
+
+    return {
+        "schema_version": ANALYSIS_SCHEMA_VERSION,
+        "parliaments": target_parliaments,
+        "by_parliament": by_parliament,
+        "trends": trends,
+    }
 
 
 def compute_funding_summary(
@@ -513,7 +1066,7 @@ def export_analysis_report(
     """Export compatibility and static-chart analysis JSON files."""
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parliaments = list(parliaments or [46, 47, 48])
+    target_parliaments = list(parliaments or supported_parliaments())
     metadata = _analysis_metadata(
         target_parliaments, finance_reporting_year=finance_reporting_year
     )
@@ -525,6 +1078,8 @@ def export_analysis_report(
         parl_report: dict[str, Any] = {
             "demographics": compute_parliament_demographics(conn, parliament),
             "sectors": compute_sector_summary(conn, parliament),
+            "party_sectors": compute_party_sector_summary(conn, parliament),
+            "shared_schools": compute_shared_school_summary(conn, parliament),
             "school_finance": funding_data,
         }
         if finance_reporting_year == 2021:
@@ -562,6 +1117,28 @@ def export_analysis_report(
                 key: value["school_finance"] for key, value in report.items()
             },
         },
+    )
+    _write_json(
+        analysis_dir / "party_sectors.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["party_sectors"] for key, value in report.items()
+            },
+        },
+    )
+    _write_json(
+        analysis_dir / "shared_schools.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["shared_schools"] for key, value in report.items()
+            },
+        },
+    )
+    _write_json(
+        analysis_dir / "cross_parliament.json",
+        compute_cross_parliament_summary(conn, target_parliaments),
     )
     comparisons = {}
     for key, value in report.items():
@@ -864,7 +1441,7 @@ def compute_school_finance_estimate(
     # 2. Retrieve school metadata
     inst_row = conn.execute(
         """
-        SELECT school_name, state, sector, acara_id
+        SELECT school_name, state, sector, acara_id, institution_status
         FROM institutions
         WHERE institution_id = ?
         """,
@@ -884,7 +1461,24 @@ def compute_school_finance_estimate(
             "source": None,
         }
 
-    school_name, state, sector, aid = inst_row
+    school_name, state, sector, aid, lifecycle = inst_row
+    if (
+        not aid
+        or lifecycle in ("closed", "merged", "historical_only")
+        or sector not in ("Government", "Catholic", "Independent")
+    ):
+        return {
+            "institution_id": institution_id,
+            "reporting_year": target_year,
+            "metric": metric,
+            "value": None,
+            "status": "unavailable",
+            "method": "no_defensible_current_counterpart",
+            "peer_group": None,
+            "relative_multiplier": None,
+            "benchmark_value": None,
+            "source": None,
+        }
     geo = get_school_geolocation(aid)
 
     # 3. Retrieve target peer benchmark

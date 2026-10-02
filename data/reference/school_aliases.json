@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "description": "Historical school amalgamations, renames, abbreviations, and explicit disambiguation overrides.",
-  "total_aliases": 92,
+  "total_aliases": 93,
   "aliases": {
     "hollywood high school": {
       "canonical_acara_id": "48250",
@@ -34,7 +34,10 @@
       "state": "TAS",
       "sector": "Government",
       "school_type": "Sec",
-      "notes": "Amalgamated with New Town High School in 2022 to form Hobart City High School"
+      "notes": "Amalgamated with New Town High School in 2022 to form Hobart City High School",
+      "source_url": "https://www.decyp.tas.gov.au/institution/hobart-city-high-school/",
+      "relationship_type": "successor",
+      "reviewed_at": "2026-10-02"
     },
     "hobart matriculation college": {
       "canonical_acara_id": "40444",
@@ -277,20 +280,26 @@
       "notes": "Kelvin Grove State High School amalgamated into Kelvin Grove State College"
     },
     "nambour high school": {
-      "canonical_acara_id": "47573",
-      "canonical_name": "Flagstone State Community College",
+      "canonical_acara_id": "47429",
+      "canonical_name": "Nambour State College",
       "state": "QLD",
       "sector": "Government",
-      "school_type": "Sec",
-      "notes": "Nambour High School amalgamated into Nambour State College"
+      "school_type": "Pri/Sec",
+      "notes": "Nambour High School amalgamated into Nambour State College",
+      "source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf",
+      "relationship_type": "successor",
+      "reviewed_at": "2026-10-02"
     },
     "nambour state high school": {
-      "canonical_acara_id": "47573",
-      "canonical_name": "Flagstone State Community College",
+      "canonical_acara_id": "47429",
+      "canonical_name": "Nambour State College",
       "state": "QLD",
       "sector": "Government",
-      "school_type": "Sec",
-      "notes": "Nambour State High School amalgamated into Nambour State College"
+      "school_type": "Pri/Sec",
+      "notes": "Nambour State High School amalgamated into Nambour State College",
+      "source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf",
+      "relationship_type": "successor",
+      "reviewed_at": "2026-10-02"
     },
     "nanango state high": {
       "canonical_acara_id": "47574",
@@ -739,6 +748,17 @@
       "sector": "Catholic",
       "school_type": "Prim",
       "notes": "Sacred Heart Girls' College (Oakleigh, VIC)"
+    },
+    "marist brothers college ashgrove": {
+      "canonical_acara_id": "47856",
+      "canonical_name": "Marist College Ashgrove",
+      "state": "QLD",
+      "sector": "Catholic",
+      "school_type": "Pri/Sec",
+      "notes": "Historical name at the same Ashgrove college; source is the college archives",
+      "relationship_type": "rename",
+      "source_url": "https://www.marash.qld.edu.au/wp-content/uploads/MCA_Viriliter-Age_Issue7_11June25.pdf",
+      "reviewed_at": "2026-10-02"
     }
   }
 }

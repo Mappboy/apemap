@@ -41,6 +41,7 @@ def test_db(tmp_path: Path) -> Path:
     return db_path
 
 
+@pytest.mark.integration
 def test_ingest_school_finances_csv(tmp_path: Path, test_db: Path) -> None:
     """Ingest authorised school finance records from CSV keyed by ACARA ID."""
     csv_file = tmp_path / "test_finances_2024.csv"
@@ -149,6 +150,7 @@ def test_ingest_school_finances_csv(tmp_path: Path, test_db: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_annual_composite_primary_key(test_db: Path) -> None:
     """school_finances supports multiple reporting years per institution without collision."""
     conn = get_connection(test_db)
@@ -194,6 +196,7 @@ def test_annual_composite_primary_key(test_db: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_backward_compatibility_view_school_finances_2021(test_db: Path) -> None:
     """The school_finances_2021 view exposes only 2021 records and is backward-compatible."""
     conn = get_connection(test_db)
@@ -221,6 +224,7 @@ def test_backward_compatibility_view_school_finances_2021(test_db: Path) -> None
     conn.close()
 
 
+@pytest.mark.integration
 def test_parquet_export_includes_both_finances(tmp_path: Path, test_db: Path) -> None:
     """export_to_parquet exports both school_finances and school_finances_2021."""
     conn = get_connection(test_db)
@@ -245,6 +249,7 @@ def test_parquet_export_includes_both_finances(tmp_path: Path, test_db: Path) ->
     conn.close()
 
 
+@pytest.mark.integration
 def test_referential_integrity_check(test_db: Path) -> None:
     """Referential integrity validation check verifies school_finances -> institutions."""
     conn = get_connection(test_db)
@@ -270,6 +275,7 @@ def test_referential_integrity_check(test_db: Path) -> None:
     conn.close()
 
 
+@pytest.mark.integration
 def test_migrate_historical_finances_populates_school_finances(tmp_path: Path) -> None:
     """migrate_historical_finances returns 0 when gpkg does not exist and handles gracefully."""
     conn = get_connection(":memory:")
@@ -281,6 +287,7 @@ def test_migrate_historical_finances_populates_school_finances(tmp_path: Path) -
     conn.close()
 
 
+@pytest.mark.integration
 def test_finance_reporting_year_wiring_and_compatibility(tmp_path: Path) -> None:
     """Test annual finance-year threading through analysis, export, and CLI options."""
     import json

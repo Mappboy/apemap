@@ -1,0 +1,24 @@
+{
+  "finance_licence": "ACARA My School Terms of Use (July 2020)",
+  "finance_reporting_year": 2024,
+  "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+  "parliament_numbers": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "reference_opening_dates": {
+    "42": "2008-02-12",
+    "43": "2010-09-28",
+    "44": "2013-11-12",
+    "45": "2016-08-30",
+    "46": "2019-07-02",
+    "47": "2022-07-26",
+    "48": "2025-07-22"
+  },
+  "schema_version": "1.0"
+}

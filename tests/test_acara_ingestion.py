@@ -8,10 +8,11 @@ from pathlib import Path
 import openpyxl
 import pandas as pd
 import pytest
+from rich.text import Text
 from typer.testing import CliRunner
 
 from apemap.cli import app
-from apemap.db import get_connection, init_schema
+from apemap.db import get_connection, init_schema, temporary_dataframe_view
 from apemap.ingest.acara import (
     convert_xlsx_to_csv,
     load_institutions_dataframe,
@@ -121,7 +122,19 @@ def mock_external_dir(tmp_path: Path) -> Path:
                 "Sector": "Government",
                 "School Type": "Secondary",
                 "Total Enrolments": "1250",
+                "Girls Enrolments": "620",
+                "Boys Enrolments": "630",
+                "Full Time Equivalent Enrolments": "1240.5",
                 "ICSEA": "1080",
+                "ICSEA Percentile": "75",
+                "Bottom SEA Quarter (%)": "10.0",
+                "Lower Middle SEA Quarter (%)": "25.0",
+                "Upper Middle SEA Quarter (%)": "35.0",
+                "Top SEA Quarter (%)": "30.0",
+                "Indigenous Enrolments (%)": "5.0",
+                "Language Background Other Than English - Yes (%)": "15.0",
+                "Year Range": "7-12",
+                "Geolocation": "Major Cities",
             },
             {
                 "Calendar Year": "2025",
@@ -131,7 +144,19 @@ def mock_external_dir(tmp_path: Path) -> Path:
                 "Sector": "Catholic",
                 "School Type": "Combined",
                 "Total Enrolments": "850",
+                "Girls Enrolments": "400",
+                "Boys Enrolments": "450",
+                "Full Time Equivalent Enrolments": "845.0",
                 "ICSEA": "1120",
+                "ICSEA Percentile": "85",
+                "Bottom SEA Quarter (%)": "5.0",
+                "Lower Middle SEA Quarter (%)": "15.0",
+                "Upper Middle SEA Quarter (%)": "40.0",
+                "Top SEA Quarter (%)": "40.0",
+                "Indigenous Enrolments (%)": "2.0",
+                "Language Background Other Than English - Yes (%)": "20.0",
+                "Year Range": "Prep-12",
+                "Geolocation": "Inner Regional",
             },
         ]
     )
@@ -140,6 +165,7 @@ def mock_external_dir(tmp_path: Path) -> Path:
     return ext_dir
 
 
+@pytest.mark.unit
 def test_convert_xlsx_to_csv(tmp_path: Path) -> None:
     """Verify XLSX to CSV conversion extracts correct data rows and headers."""
     wb = openpyxl.Workbook()
@@ -164,6 +190,7 @@ def test_convert_xlsx_to_csv(tmp_path: Path) -> None:
     assert df.iloc[0]["School Name"] == "Test High"
 
 
+@pytest.mark.unit
 def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
     """Verify institutions dataframe correctly maps sectors, parses IDs, and enriches coordinates."""
     df = load_institutions_dataframe(external_dir=mock_external_dir)
@@ -181,6 +208,8 @@ def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
         "postcode",
         "longitude",
         "latitude",
+        "country",
+        "institution_status",
     }
 
     # Verify sector mappings
@@ -199,8 +228,9 @@ def test_load_institutions_dataframe(mock_external_dir: Path) -> None:
     assert only_loc["state"] == "WA"
 
 
+@pytest.mark.unit
 def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
-    """Verify snapshots dataframe parses year, enrolments, ICSEA, and institution_id."""
+    """Verify snapshots dataframe parses year, enrolments, ICSEA, and socio-educational profile."""
     df = load_snapshots_dataframe(external_dir=mock_external_dir)
 
     assert len(df) == 2
@@ -208,16 +238,84 @@ def test_load_snapshots_dataframe(mock_external_dir: Path) -> None:
         "institution_id",
         "snapshot_year",
         "total_enrolments",
+        "girls_enrolments",
+        "boys_enrolments",
+        "fte_enrolments",
         "icsea",
+        "icsea_percentile",
+        "sea_bottom_quarter_pct",
+        "sea_lower_middle_quarter_pct",
+        "sea_upper_middle_quarter_pct",
+        "sea_top_quarter_pct",
+        "indigenous_enrolments_pct",
+        "lbote_pct",
+        "year_range",
+        "remoteness_category",
         "financial_profile_2021",
     }
 
     row1 = df[df["institution_id"] == "acara-40001"].iloc[0]
     assert row1["snapshot_year"] == 2025
     assert row1["total_enrolments"] == 1250
+    assert row1["girls_enrolments"] == 620
+    assert row1["boys_enrolments"] == 630
+    assert row1["fte_enrolments"] == 1240.5
     assert row1["icsea"] == 1080
+    assert row1["icsea_percentile"] == 75
+    assert row1["sea_bottom_quarter_pct"] == 10.0
+    assert row1["sea_lower_middle_quarter_pct"] == 25.0
+    assert row1["sea_upper_middle_quarter_pct"] == 35.0
+    assert row1["sea_top_quarter_pct"] == 30.0
+    assert row1["indigenous_enrolments_pct"] == 5.0
+    assert row1["lbote_pct"] == 15.0
+    assert row1["year_range"] == "7-12"
+    assert row1["remoteness_category"] == "Major Cities"
+    assert row1["financial_profile_2021"] is None
 
 
+@pytest.mark.unit
+def test_load_snapshots_null_and_missing_handling(tmp_path: Path) -> None:
+    """Verify missing value conventions ('NP', 'NA', empty string) resolve to None."""
+    ext_dir = tmp_path / "external"
+    ext_dir.mkdir(parents=True)
+    df_raw = pd.DataFrame(
+        [
+            {
+                "Calendar Year": "2025",
+                "ACARA SML ID": "99999",
+                "Total Enrolments": "NP",
+                "Girls Enrolments": "NA",
+                "Boys Enrolments": "",
+                "Full Time Equivalent Enrolments": "None",
+                "ICSEA": "NP",
+                "ICSEA Percentile": "N/A",
+                "Bottom SEA Quarter (%)": "NP",
+                "Indigenous Enrolments (%)": "",
+                "Language Background Other Than English - Yes (%)": "null",
+                "Year Range": "None",
+                "Geolocation": "nan",
+            }
+        ]
+    )
+    df_raw.to_csv(ext_dir / "school-profile-2025.csv", index=False)
+
+    df = load_snapshots_dataframe(external_dir=ext_dir)
+    assert len(df) == 1
+    row = df.iloc[0]
+    assert row["total_enrolments"] is None
+    assert row["girls_enrolments"] is None
+    assert row["boys_enrolments"] is None
+    assert row["fte_enrolments"] is None
+    assert row["icsea"] is None
+    assert row["icsea_percentile"] is None
+    assert row["sea_bottom_quarter_pct"] is None
+    assert row["indigenous_enrolments_pct"] is None
+    assert row["lbote_pct"] is None
+    assert row["year_range"] is None
+    assert row["remoteness_category"] is None
+
+
+@pytest.mark.integration
 def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) -> None:
     """Verify complete ingestion pipeline synchronizes institutions and snapshots into DuckDB."""
     db_file = tmp_path / "test.duckdb"
@@ -252,15 +350,21 @@ def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) ->
     assert rows[0] == ("Test Government High School", "Government")
 
 
-def test_cli_ingest_acara_help() -> None:
+@pytest.mark.unit
+@pytest.mark.parametrize("force_color", [None, "1"])
+def test_cli_ingest_acara_help(force_color: str | None) -> None:
     """Verify apemap ingest acara command is exposed with appropriate help documentation."""
-    result = runner.invoke(app, ["ingest", "acara", "--help"])
+    result = runner.invoke(
+        app, ["ingest", "acara", "--help"], env={"FORCE_COLOR": force_color}
+    )
+    output = Text.from_ansi(result.output).plain
     assert result.exit_code == 0
-    assert "acara [OPTIONS]" in result.output
-    assert "--download" in result.output
-    assert "--longitudinal" in result.output
+    assert "acara [OPTIONS]" in output
+    assert "--download" in output
+    assert "--longitudinal" in output
 
 
+@pytest.mark.unit
 def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -> None:
     """Verify apemap ingest acara --no-download executes via Typer CLI."""
     db_file = tmp_path / "cli_test.duckdb"
@@ -289,3 +393,56 @@ def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -
         assert result.exit_code == 0
         assert "ACARA Ingestion & Finance Isolation Summary" in result.output
         mock_run.assert_called_once()
+
+
+@pytest.mark.integration
+def test_run_acara_ingestion_caller_owned_connection(
+    mock_external_dir: Path, tmp_path: Path
+) -> None:
+    """Verify caller-provided DuckDB connection remains open and owned by caller."""
+    db_file = tmp_path / "acara_caller.duckdb"
+    conn = get_connection(db_file)
+    out_dir = tmp_path / "processed_acara_caller"
+
+    summary = run_acara_ingestion(
+        download_latest=False,
+        use_longitudinal=True,
+        conn=conn,
+        export_parquet_files=False,
+        output_dir=out_dir,
+        external_dir=mock_external_dir,
+    )
+
+    assert summary["institutions_loaded"] >= 4
+    # Connection should still be open and queryable
+    row = conn.execute("SELECT count(*) FROM institutions").fetchone()
+    assert row is not None
+    assert row[0] >= 4
+    conn.close()
+
+
+@pytest.mark.unit
+def test_temporary_dataframe_view_cleanup(tmp_path: Path) -> None:
+    """Verify temporary_dataframe_view registers and safely unregisters view on normal and error exits."""
+    conn = get_connection(":memory:")
+    df = pd.DataFrame([{"a": 1, "b": "test"}])
+
+    # Normal exit
+    with temporary_dataframe_view(conn, "view_test", df):
+        res = conn.execute("SELECT * FROM view_test").df()
+        assert len(res) == 1
+
+    # View should be unregistered now
+    with pytest.raises(Exception):
+        conn.execute("SELECT * FROM view_test")
+
+    # Error exit
+    with pytest.raises(RuntimeError):
+        with temporary_dataframe_view(conn, "view_err", df):
+            raise RuntimeError("forced failure inside context")
+
+    # View should still be unregistered
+    with pytest.raises(Exception):
+        conn.execute("SELECT * FROM view_err")
+
+    conn.close()

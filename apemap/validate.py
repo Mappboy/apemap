@@ -6,6 +6,8 @@ foreign key integrity, check constraints, and parliamentary coverage benchmarks.
 
 from __future__ import annotations
 
+from apemap.constants import supported_parliaments
+
 import logging
 from dataclasses import dataclass, field
 
@@ -46,12 +48,12 @@ def validate_database(
 
     Args:
         conn: DuckDB database connection.
-        parliaments: Parliaments to evaluate (default: [46, 47, 48]).
+        parliaments: Parliaments to evaluate (default: supported_parliaments()).
 
     Returns:
         ValidationReport with test counts and diagnostics.
     """
-    target_parls = parliaments or [46, 47, 48]
+    target_parls = parliaments or supported_parliaments()
     unsupported = [p for p in target_parls if p not in PARLIAMENT_METADATA]
     if unsupported:
         supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
@@ -205,8 +207,8 @@ def validate_database(
                 SELECT
                     count(*),
                     count(DISTINCT member_id),
-                    sum(CASE WHEN is_opening_day_member THEN 1 ELSE 0 END),
-                    sum(CASE WHEN is_current_member THEN 1 ELSE 0 END)
+                    count(DISTINCT CASE WHEN is_opening_day_member THEN member_id END),
+                    count(DISTINCT CASE WHEN is_current_member THEN member_id END)
                 FROM parliament_service
                 WHERE parliament_number = ?
                 """,
@@ -281,33 +283,38 @@ def validate_database(
                 f"Error checking service overlap for Parliament {p}: {e}"
             )
 
-    # 5. Opening-Day Chamber Benchmarks (Parliament 47: 151 Reps + 76 Senators)
-    if 47 in target_parls:
+    # 5. Occupied opening-day membership, including documented casual vacancies.
+    for p in target_parls:
         report.checks_run += 1
         try:
             ch_rows = conn.execute(
                 """
-                SELECT chamber, count(*)
+                SELECT chamber, count(DISTINCT member_id)
                 FROM parliament_service
-                WHERE parliament_number = 47
+                WHERE parliament_number = ?
                   AND is_opening_day_member = TRUE
                 GROUP BY chamber
-                """
+                """,
+                [p],
             ).fetchall()
             ch_counts = dict(ch_rows)
             reps_count = ch_counts.get("representatives", 0)
             senate_count = ch_counts.get("senate", 0)
-            if reps_count != 151 or senate_count != 76:
+            meta = PARLIAMENT_METADATA[p]
+            if (
+                reps_count != meta["expected_representatives"]
+                or senate_count != meta["expected_senators"]
+            ):
                 report.add_failure(
-                    f"Parliament 47 opening-day chamber benchmark failed: "
-                    f"expected 151 representatives and 76 senators, found "
+                    f"Parliament {p} opening-day chamber benchmark failed: "
+                    f"expected {meta['expected_representatives']} representatives and {meta['expected_senators']} senators, found "
                     f"{reps_count} representatives and {senate_count} senators"
                 )
             else:
                 report.checks_passed += 1
         except Exception as e:
             report.add_failure(
-                f"Error checking Parliament 47 opening-day chamber benchmarks: {e}"
+                f"Error checking Parliament {p} opening-day chamber benchmarks: {e}"
             )
 
     # 6. Core View Existence and Queryability
@@ -453,6 +460,74 @@ def validate_database(
                 report.add_failure(fail)
     except Exception as e:
         logger.debug("validate_funding_records skipped or failed: %s", e)
+
+    # 14. Run profile checks independently: a missing column must not hide bad years.
+    profile_checks = (
+        (
+            "enrolments",
+            "negative enrolment values",
+            """
+            SELECT count(*) FROM school_snapshots
+            WHERE total_enrolments < 0 OR girls_enrolments < 0 OR boys_enrolments < 0 OR fte_enrolments < 0
+            """,
+        ),
+        (
+            "percentage bounds",
+            "percentage values outside 0-100",
+            """
+            SELECT count(*) FROM school_snapshots
+            WHERE (sea_bottom_quarter_pct < 0 OR sea_bottom_quarter_pct > 100)
+               OR (sea_lower_middle_quarter_pct < 0 OR sea_lower_middle_quarter_pct > 100)
+               OR (sea_upper_middle_quarter_pct < 0 OR sea_upper_middle_quarter_pct > 100)
+               OR (sea_top_quarter_pct < 0 OR sea_top_quarter_pct > 100)
+               OR (indigenous_enrolments_pct < 0 OR indigenous_enrolments_pct > 100)
+               OR (lbote_pct < 0 OR lbote_pct > 100)
+               OR (icsea_percentile < 0 OR icsea_percentile > 100)
+            """,
+        ),
+        (
+            "SEA quarter totals",
+            "records with SEA quarters summing outside ~100%",
+            """
+            SELECT count(*) FROM school_snapshots
+            WHERE ABS((sea_bottom_quarter_pct + sea_lower_middle_quarter_pct
+                     + sea_upper_middle_quarter_pct + sea_top_quarter_pct) - 100.0) > 3.0
+            """,
+        ),
+        (
+            "snapshot years",
+            "invalid snapshot years",
+            "SELECT count(*) FROM school_snapshots WHERE snapshot_year < 2000 OR snapshot_year > 2030",
+        ),
+        (
+            "snapshot uniqueness",
+            "duplicate (institution_id, snapshot_year)",
+            """
+            SELECT count(*) FROM (
+                SELECT institution_id, snapshot_year, count(*)
+                FROM school_snapshots
+                GROUP BY institution_id, snapshot_year
+                HAVING count(*) > 1
+            )
+            """,
+        ),
+    )
+    for name, description, sql in profile_checks:
+        report.checks_run += 1
+        try:
+            result = conn.execute(sql).fetchone()
+            invalid_count = result[0] if result else 0
+            if invalid_count:
+                report.add_failure(
+                    f"Found {invalid_count} {description} in school_snapshots"
+                )
+            else:
+                report.checks_passed += 1
+        except Exception as e:
+            report.add_failure(
+                f"School profile check '{name}' failed: {e}. "
+                "Run 'apemap transform' to migrate the database before validation."
+            )
 
     logger.info(
         "Validation completed: %d checks run, %d passed, %d failures",

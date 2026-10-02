@@ -74,6 +74,7 @@ def matcher_with_sample_fixtures(tmp_path: Path) -> SchoolMatcher:
     )
 
 
+@pytest.mark.unit
 def test_historical_amalgamation_override(
     matcher_with_sample_fixtures: SchoolMatcher,
 ) -> None:
@@ -97,6 +98,7 @@ def test_historical_amalgamation_override(
     assert res_shepparton.total_enrolments == 2100
 
 
+@pytest.mark.unit
 def test_abbreviation_override(matcher_with_sample_fixtures: SchoolMatcher) -> None:
     """Verify acronym override mappings (e.g. MLC)."""
     res = matcher_with_sample_fixtures.match("MLC")
@@ -108,6 +110,7 @@ def test_abbreviation_override(matcher_with_sample_fixtures: SchoolMatcher) -> N
     assert res.total_enrolments == 2150
 
 
+@pytest.mark.unit
 def test_exact_and_normalized_matching(
     matcher_with_sample_fixtures: SchoolMatcher,
 ) -> None:
@@ -122,6 +125,7 @@ def test_exact_and_normalized_matching(
     assert res_case.confidence == "verified"
 
 
+@pytest.mark.unit
 def test_fuzzy_token_matching(matcher_with_sample_fixtures: SchoolMatcher) -> None:
     """Verify RapidFuzz token matching resolves minor variations with provisional confidence."""
     res_fuzzy = matcher_with_sample_fixtures.match("Greater Shepparton College")
@@ -130,6 +134,7 @@ def test_fuzzy_token_matching(matcher_with_sample_fixtures: SchoolMatcher) -> No
     assert "Fuzzy token-match" in (res_fuzzy.reviewer_notes or "")
 
 
+@pytest.mark.unit
 def test_unmatched_and_international(
     matcher_with_sample_fixtures: SchoolMatcher,
 ) -> None:

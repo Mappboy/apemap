@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "finance_licence": "ACARA My School Terms of Use (July 2020)",
+    "finance_reporting_year": 2024,
+    "finance_source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
+    "parliament_numbers": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "reference_opening_dates": {
+      "42": "2008-02-12",
+      "43": "2010-09-28",
+      "44": "2013-11-12",
+      "45": "2016-08-30",
+      "46": "2019-07-02",
+      "47": "2022-07-26",
+      "48": "2025-07-22"
+    },
+    "schema_version": "1.0"
+  },
+  "parliaments": {
+    "42": {
+      "finance": {
+        "gross_missing_n": 56,
+        "gross_n": 0,
+        "net_missing_n": 56,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 56
+      },
+      "known_age_n": 223,
+      "known_school_n": 47,
+      "missing_age_n": 3,
+      "missing_school_n": 179,
+      "parliament_number": 42,
+      "reference_opening_date": "2008-02-12",
+      "total_parliamentarians": 226
+    },
+    "43": {
+      "finance": {
+        "gross_missing_n": 87,
+        "gross_n": 0,
+        "net_missing_n": 87,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 87
+      },
+      "known_age_n": 223,
+      "known_school_n": 71,
+      "missing_age_n": 3,
+      "missing_school_n": 155,
+      "parliament_number": 43,
+      "reference_opening_date": "2010-09-28",
+      "total_parliamentarians": 226
+    },
+    "44": {
+      "finance": {
+        "gross_missing_n": 121,
+        "gross_n": 0,
+        "net_missing_n": 121,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 121
+      },
+      "known_age_n": 222,
+      "known_school_n": 101,
+      "missing_age_n": 2,
+      "missing_school_n": 123,
+      "parliament_number": 44,
+      "reference_opening_date": "2013-11-12",
+      "total_parliamentarians": 224
+    },
+    "45": {
+      "finance": {
+        "gross_missing_n": 174,
+        "gross_n": 0,
+        "net_missing_n": 174,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 174
+      },
+      "known_age_n": 219,
+      "known_school_n": 143,
+      "missing_age_n": 7,
+      "missing_school_n": 83,
+      "parliament_number": 45,
+      "reference_opening_date": "2016-08-30",
+      "total_parliamentarians": 226
+    },
+    "46": {
+      "finance": {
+        "gross_missing_n": 220,
+        "gross_n": 0,
+        "net_missing_n": 220,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 220
+      },
+      "known_age_n": 221,
+      "known_school_n": 188,
+      "missing_age_n": 6,
+      "missing_school_n": 39,
+      "parliament_number": 46,
+      "reference_opening_date": "2019-07-02",
+      "total_parliamentarians": 227
+    },
+    "47": {
+      "finance": {
+        "gross_missing_n": 225,
+        "gross_n": 0,
+        "net_missing_n": 225,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 225
+      },
+      "known_age_n": 215,
+      "known_school_n": 194,
+      "missing_age_n": 12,
+      "missing_school_n": 33,
+      "parliament_number": 47,
+      "reference_opening_date": "2022-07-26",
+      "total_parliamentarians": 227
+    },
+    "48": {
+      "finance": {
+        "gross_missing_n": 212,
+        "gross_n": 0,
+        "net_missing_n": 212,
+        "net_n": 0,
+        "reporting_year": 2024,
+        "schools_in_scope": 212
+      },
+      "known_age_n": 194,
+      "known_school_n": 179,
+      "missing_age_n": 32,
+      "missing_school_n": 47,
+      "parliament_number": 48,
+      "reference_opening_date": "2025-07-22",
+      "total_parliamentarians": 226
+    }
+  }
+}

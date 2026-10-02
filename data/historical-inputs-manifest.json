@@ -1,0 +1,128 @@
+{
+  "created_at": "2026-10-01T22:23:59.813516+00:00",
+  "description": "Historical inputs: existing APH/AEC snapshots and ACARA downloaded on 2026-10-01; CSV conversion via apemap.ingest.acara",
+  "files": {
+    "data/raw/aec/2025/AUS-March-2025-esri.zip": {
+      "required": true,
+      "sha256": "bdc0393d8448477bf187ac84473978330f776b5ea2ed6343f7eb891187263a09",
+      "size_bytes": 22689664,
+      "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+    },
+    "data/raw/aec/2025/AUS_ELB_region.dbf": {
+      "required": true,
+      "sha256": "cc36b63b0937b5b97ddcf6b6000015edf6fa558a718fcef568aab9e8c49cb9b7",
+      "size_bytes": 24022,
+      "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+    },
+    "data/raw/aec/2025/AUS_ELB_region.prj": {
+      "required": true,
+      "sha256": "e6e1cc4c5a68009271bab9d22f2f99c861944e577a1e385d8f6b0636a5d8a3fa",
+      "size_bytes": 168,
+      "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+    },
+    "data/raw/aec/2025/AUS_ELB_region.shp": {
+      "required": true,
+      "sha256": "57bbf38dbf8e1caa7360af43fb2154f5827ac12aee5a4927c04a497a31b1987b",
+      "size_bytes": 68966304,
+      "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+    },
+    "data/raw/aec/2025/AUS_ELB_region.shx": {
+      "required": true,
+      "sha256": "0b6187d15d6ea7f6fb937159d5cc43e43dacd2e45c6a2af1ba6bfe347d06bbd1",
+      "size_bytes": 1300,
+      "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+    },
+    "data/raw/aph/individuals.json": {
+      "required": true,
+      "sha256": "aad9e3798b32d94f6dd849cac20a40b25967664e1f845ce2a070e16f87873093",
+      "size_bytes": 10741777,
+      "source": "https://handbookapi.aph.gov.au/api/individuals"
+    },
+    "data/raw/historical/acara/School Location 2025.xlsx": {
+      "required": true,
+      "sha256": "eb8077bbe5d14326de86f1e27580e0bf5125170ce13c30f165d3de1a317558c4",
+      "size_bytes": 2317091,
+      "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
+    },
+    "data/raw/historical/acara/School Profile 2008-2025.xlsx": {
+      "required": true,
+      "sha256": "f17ef835e7680d0a887dcdb495bb16661743ec55e535696bf343ff0a01ea48dc",
+      "size_bytes": 29934507,
+      "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
+    },
+    "data/raw/historical/acara/acara_school_results.json": {
+      "required": true,
+      "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+      "size_bytes": 11195583,
+      "source": "Existing ACARA cache; original retrieval date unrecorded"
+    },
+    "data/raw/historical/acara/school-location-2025.csv": {
+      "required": true,
+      "sha256": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+      "size_bytes": 3348391,
+      "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
+    },
+    "data/raw/historical/acara/school-profile-2008-2025.csv": {
+      "required": true,
+      "sha256": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934",
+      "size_bytes": 52328060,
+      "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
+    },
+    "data/reference/acara_school_finance_benchmarks.csv": {
+      "required": true,
+      "sha256": "1f69e652e6eda2904297fca554c7a8055fa3e1adf17f057771d75a2ec0d89e36",
+      "size_bytes": 1239662,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/historical_service_overrides.csv": {
+      "required": true,
+      "sha256": "ec7249c820f00219106e0cf48ef95da59480d2e1d2d08621705a99e208904337",
+      "size_bytes": 147,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/manual_member_education.csv": {
+      "required": true,
+      "sha256": "d15900997513342f70e996d31a8a34669cdfb94d08491115e77d169f3662ecb7",
+      "size_bytes": 872,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/manual_school_funding.csv": {
+      "required": true,
+      "sha256": "ee17862bc12c8a8e782df21ffbe8f0bec8a54480be389a781092ec9c00b1fcd2",
+      "size_bytes": 906,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/nsw_ram_allocations.csv": {
+      "required": true,
+      "sha256": "cc81aacbe324ca2a2dad5ab2836fb48417db42fc396aac576b415ce431833fe8",
+      "size_bytes": 1252,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/nt_school_funding.csv": {
+      "required": true,
+      "sha256": "02640e617b9021d664f43ce058e777ce3b78310a6da472fd72c82d13c5dd7315",
+      "size_bytes": 252,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/qld_non_state_grants.csv": {
+      "required": true,
+      "sha256": "80d722b624be5277d021392ec474a58ced1052391e63890f791e318cd2595f07",
+      "size_bytes": 313,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/school_aliases.json": {
+      "required": true,
+      "sha256": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f",
+      "size_bytes": 27091,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    },
+    "data/reference/tasmania_srp_allocations.csv": {
+      "required": true,
+      "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
+      "size_bytes": 369,
+      "source": "Reviewed APEMAP reference input; individual source URLs in records"
+    }
+  },
+  "licensing": "APH Commonwealth copyright; ACARA attribution and Data Access terms; AEC CC BY 4.0; project reference data CC BY 4.0",
+  "schema_version": "1.0"
+}
