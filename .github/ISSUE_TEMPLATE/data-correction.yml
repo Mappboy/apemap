@@ -1,0 +1,71 @@
+name: Data correction or missing school
+description: Correct a school, parliamentarian, or secondary-school attendance record.
+title: "[Data correction]: "
+labels:
+  - transparency
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report a correction or missing school with a source that supports the proposed change.
+        Records are reviewed before changes enter the dataset. Attendance evidence does not imply graduation.
+  - type: dropdown
+    id: entity_kind
+    attributes:
+      label: Record type
+      description: Choose the record that needs correcting or adding.
+      options:
+        - School
+        - Parliamentarian
+        - School attendance record
+    validations:
+      required: true
+  - type: textarea
+    id: entity_identity
+    attributes:
+      label: School or parliamentarian identity
+      description: Give the name and record ID if known. Include school location; for attendance, identify both the parliamentarian and school.
+      placeholder: "School: name, location, institution ID; Parliamentarian: name, member ID"
+    validations:
+      required: true
+  - type: input
+    id: release_version
+    attributes:
+      label: Dataset release
+      description: Copy the release version shown on the results page or download. Write unknown if it is unavailable.
+      placeholder: "0.3.1"
+    validations:
+      required: true
+  - type: input
+    id: parliament
+    attributes:
+      label: Parliament
+      description: Give the parliament number or numbers affected. Write all if this is a school-wide correction, or unknown if unsure.
+      placeholder: "48"
+    validations:
+      required: true
+  - type: textarea
+    id: claimed_correction
+    attributes:
+      label: Claimed correction
+      description: Explain the current record and the proposed change. For a missing school or attendance record, describe what should be added.
+      placeholder: |
+        Current record:
+        Proposed correction or addition:
+    validations:
+      required: true
+  - type: input
+    id: evidence_url
+    attributes:
+      label: Source or evidence URL
+      description: Link to the source supporting this correction. Prefer an official biography or other attributable record. State graduation only if the source explicitly supports it.
+      placeholder: "https://www.aph.gov.au/…"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Optional notes
+      description: Add a relevant source excerpt, retrieval date, extra links, or uncertainty that will help review the report.
+    validations:
+      required: false
