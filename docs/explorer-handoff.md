@@ -62,6 +62,10 @@ node --test tests/prototype.test.cjs
 
 The audit reconciles distinct people, classifications, represented schools,
 mapped/unmapped counts, school/member arrays, service context and per-term layers.
+It requires complete headline/detail classification counts, reconciles known and
+missing schooling denominators, and checks every expected member/term relationship
+in both the aggregate and term-specific maps. Party names remain valid when the
+source has no abbreviation.
 It records raw and gzip bytes for each web asset. Run strict release verification
 first: the semantic audit does not replace hash, privacy or geometry verification.
 

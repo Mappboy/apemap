@@ -10,6 +10,50 @@ from pathlib import Path
 from typing import Any
 
 
+def _audit_school_relationships(
+    props: dict[str, Any],
+    expected: dict[str, set[int]],
+    cohort_rows: dict[tuple[str, str], dict[str, Any]],
+    label: str,
+) -> list[str]:
+    """Check every school/member/term relationship in either public map grain."""
+    errors: list[str] = []
+    people = props["members"]
+    ids = [member["member_id"] for member in people]
+    if (
+        len(ids) != len(set(ids))
+        or set(ids) != set(expected)
+        or props["member_count"] != len(ids)
+    ):
+        errors.append(f"{label}: distinct member relationship counts disagree")
+    expected_terms = {term for terms in expected.values() for term in terms}
+    if set(props["parliaments"]) != expected_terms:
+        errors.append(f"{label}: parliament arrays disagree")
+    for member in people:
+        mid = member["member_id"]
+        service_terms = {service["parliament_number"] for service in member["services"]}
+        if service_terms != expected.get(mid, set()) or service_terms != set(
+            member["parliaments"]
+        ):
+            errors.append(f"{label}: member {mid} service/parliament arrays disagree")
+        for service in member["services"]:
+            p = str(service["parliament_number"])
+            row = cohort_rows.get((p, mid))
+            # members.json uses the full party name when no abbreviation exists.
+            abbrev = service["party_abbrev"] or service["party"]
+            if (
+                row is None
+                or any(service[key] != row[key] for key in ("party", "chamber"))
+                or abbrev != row["party_abbrev"]
+            ):
+                errors.append(
+                    f"{label}: member {mid} service context disagrees in parliament {p}"
+                )
+            elif member["name"] != row["display_name"]:
+                errors.append(f"{label}: member {mid} display name disagrees")
+    return errors
+
+
 def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
     """Reconcile published person/service/school grains; do not derive new metrics."""
     root = release_dir.resolve()
@@ -34,9 +78,9 @@ def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
     mapped = {f["properties"]["institution_id"]: f for f in features}
     if len(mapped) != len(features):
         errors.append("School features contain duplicate institution IDs")
-    expected_people: dict[str, set[str]] = {}
-    expected_terms: dict[str, set[int]] = {}
+    expected_relationships: dict[str, dict[str, set[int]]] = {}
     cohort_rows: dict[tuple[str, str], dict[str, Any]] = {}
+    layers: dict[str, list[dict[str, Any]]] = {}
     counts: dict[str, Any] = {}
     for p in sorted(selected, key=int):
         people = members.get(p, [])
@@ -49,11 +93,43 @@ def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
                 f"Parliament {p}: distinct opening-day people do not reconcile"
             )
         categories = Counter(m["government_non_government"] for m in people)
-        if any(
-            categories[key] != value
-            for key, value in summary.get("government_non_government", {}).items()
+        headline_keys = (
+            "government_only",
+            "non_government_only",
+            "mixed",
+            "other",
+            "no_school_recorded",
+        )
+        detailed_keys = {
+            "Government": "government",
+            "Catholic": "catholic",
+            "Independent": "independent",
+            "Combined/Multiple": "combined_multiple",
+            "Other": "other",
+            "No School Recorded": "no_school_recorded",
+        }
+        detailed = Counter(m["education_classification"] for m in people)
+        if (
+            set(categories) - set(headline_keys)
+            or {key: categories[key] for key in headline_keys}
+            != summary.get("government_non_government")
+            or set(detailed) - set(detailed_keys)
+            or {key: detailed[label] for label, key in detailed_keys.items()}
+            != summary.get("detailed_sector")
         ):
             errors.append(f"Parliament {p}: person sector counts do not reconcile")
+        missing = sum(not member["schools"] for member in people)
+        known = len(people) - missing
+        if (
+            summary.get("known_school_denominator") != known
+            or summary.get("known_education_count") != known
+            or summary.get("missing_education_count") != missing
+            or categories["no_school_recorded"] != missing
+            or detailed["No School Recorded"] != missing
+        ):
+            errors.append(
+                f"Parliament {p}: known/missing person denominators do not reconcile"
+            )
         school_ids: set[str] = set()
         for member in people:
             cohort_rows[p, member["member_id"]] = member
@@ -64,8 +140,9 @@ def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
             for school in member["schools"]:
                 iid = school["institution_id"]
                 school_ids.add(iid)
-                expected_people.setdefault(iid, set()).add(member["member_id"])
-                expected_terms.setdefault(iid, set()).add(int(p))
+                expected_relationships.setdefault(iid, {}).setdefault(
+                    member["member_id"], set()
+                ).add(int(p))
         mapped_ids = school_ids & mapped.keys()
         if len(school_ids) != summary.get("number_of_represented_schools"):
             errors.append(
@@ -76,6 +153,7 @@ def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
         ) != summary.get("unmapped_schools_count"):
             errors.append(f"Parliament {p}: mapped/unmapped counts do not reconcile")
         layer = read(f"web/parliament_{p}_combined.geojson")["features"]
+        layers[p] = layer
         layer_ids = [f["properties"]["institution_id"] for f in layer]
         if len(layer_ids) != len(set(layer_ids)) or set(layer_ids) != mapped_ids:
             errors.append(f"Parliament {p}: map layer does not match its cohort")
@@ -92,38 +170,30 @@ def audit_explorer_contract(release_dir: Path) -> dict[str, Any]:
             "unmapped_schools": len(school_ids - mapped.keys()),
         }
     for iid, feature in mapped.items():
-        props = feature["properties"]
-        people = props["members"]
-        ids = [m["member_id"] for m in people]
-        if (
-            len(ids) != len(set(ids))
-            or set(ids) != expected_people.get(iid, set())
-            or props["member_count"] != len(ids)
-        ):
-            errors.append(f"School {iid}: distinct member relationship counts disagree")
-        if set(props["parliaments"]) != expected_terms.get(iid, set()):
-            errors.append(f"School {iid}: parliament arrays disagree")
-        for member in people:
-            service_terms: set[int] = set()
-            for service in member["services"]:
-                p = str(service["parliament_number"])
-                service_terms.add(int(p))
-                row = cohort_rows.get((p, member["member_id"]))
-                if row is None or any(
-                    service[key] != row[key]
-                    for key in ("party", "party_abbrev", "chamber")
-                ):
-                    errors.append(
-                        f"School {iid}: member {member['member_id']} service context disagrees in parliament {p}"
-                    )
-                elif iid not in {s["institution_id"] for s in row["schools"]}:
-                    errors.append(
-                        f"School {iid}: attendance relationship missing from member list"
-                    )
-            if service_terms != set(member["parliaments"]):
-                errors.append(
-                    f"School {iid}: member service/parliament arrays disagree"
+        errors.extend(
+            _audit_school_relationships(
+                feature["properties"],
+                expected_relationships.get(iid, {}),
+                cohort_rows,
+                f"School {iid}",
+            )
+        )
+    for p, layer in layers.items():
+        for feature in layer:
+            iid = feature["properties"]["institution_id"]
+            expected = {
+                mid: {int(p)}
+                for mid, terms in expected_relationships.get(iid, {}).items()
+                if int(p) in terms
+            }
+            errors.extend(
+                _audit_school_relationships(
+                    feature["properties"],
+                    expected,
+                    cohort_rows,
+                    f"Parliament {p} school {iid}",
                 )
+            )
     assets = {}
     for path in sorted((root / "web").iterdir()):
         if path.suffix in (".json", ".geojson"):
