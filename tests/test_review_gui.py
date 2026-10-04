@@ -78,6 +78,29 @@ class FixtureService:
         self.prepared: list[dict[str, Any]] = []
         self.revision = "empty"
         self.source_revision = "fixture-source"
+        self.institutions = [
+            {
+                "institution_ref": "acara:123",
+                "acara_id": "123",
+                "school_name": "Fixture School",
+                "state": "TAS",
+                "suburb": "Hobart",
+                "sector": "Government",
+                "school_type": "Secondary",
+                "institution_status": "current",
+            },
+            {
+                "institution_ref": "acara:456",
+                "acara_id": "456",
+                "school_name": "Fixture School",
+                "state": "VIC",
+                "suburb": "Melbourne",
+                "sector": "Independent",
+                "school_type": "Combined",
+                "institution_status": "historical_only",
+            },
+        ]
+        self.lookup_calls: list[tuple[str, int]] = []
 
     def candidates(
         self,
@@ -111,6 +134,16 @@ class FixtureService:
                 "members": [{"aph_id": "abc", "display_name": "Fixture Member"}],
             },
         }
+
+    def lookup_institutions(
+        self, query: str, *, limit: int = 20
+    ) -> list[dict[str, Any]]:
+        self.lookup_calls.append((query, limit))
+        return [
+            row
+            for row in self.institutions
+            if query.casefold() in row["school_name"].casefold()
+        ][:limit]
 
     def prepare(
         self,
@@ -236,6 +269,105 @@ def test_detail_context_sources_history_and_preview_do_not_save(
     html = client.get(response.headers["Location"]).get_data(as_text=True)
     assert "Decision saved" in html and "gui-event-1" in html
     assert service.rows[0]["status"] == "accepted"
+
+
+def test_local_school_lookup_is_read_only_bounded_and_disambiguates_results(
+    gui: tuple[Any, FixtureService],
+) -> None:
+    client, service = gui
+    response = client.get("/institutions/lookup", query_string={"q": " Fixture "})
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["query"] == "Fixture"
+    assert service.lookup_calls == [("Fixture", 20)]
+    assert [row["institution_ref"] for row in payload["results"]] == [
+        "acara:123",
+        "acara:456",
+    ]
+    assert [row["state"] for row in payload["results"]] == ["TAS", "VIC"]
+    assert payload["results"][1]["suburb"] == "Melbourne"
+    assert payload["results"][1]["school_type"] == "Combined"
+    assert payload["results"][1]["sector"] == "Independent"
+    assert payload["results"][1]["institution_status"] == "historical_only"
+    assert client.get("/institutions/lookup?q=missing").get_json()["results"] == []
+    calls_before_empty = list(service.lookup_calls)
+    assert client.get("/institutions/lookup?q=%20").get_json()["results"] == []
+    assert service.lookup_calls == calls_before_empty
+    assert (
+        client.get("/institutions/lookup", query_string={"q": "x" * 201}).status_code
+        == 400
+    )
+    service.institutions.extend(
+        {
+            **service.institutions[0],
+            "acara_id": str(index),
+            "institution_ref": f"acara:{index}",
+        }
+        for index in range(25)
+    )
+    assert len(client.get("/institutions/lookup?q=Fixture").get_json()["results"]) == 20
+    assert service.revision == "empty"
+    assert not service.prepared and not service.saved
+
+
+def test_lookup_controls_only_render_for_school_and_education_and_use_local_script(
+    gui: tuple[Any, FixtureService],
+) -> None:
+    client, service = gui
+    for path in (f"/items/{SCHOOL_ID}", "/new/member_education"):
+        response = client.get(path)
+        html = response.get_data(as_text=True)
+        assert "data-institution-lookup" in html
+        assert 'data-lookup-url="/institutions/lookup"' in html
+        assert 'type="button" data-lookup-search' in html
+        assert 'src="/static/institution-lookup.js" defer' in html
+        assert "Search by school name" in html
+        assert "script-src 'self'" in response.headers["Content-Security-Policy"]
+        assert "connect-src 'self'" in response.headers["Content-Security-Policy"]
+    for path in (
+        f"/items/{member_review_id('abc', 'gender')}",
+        "/new/manual_institution",
+        f"/items/{service_review_id('abc', 47)}",
+    ):
+        html = client.get(path).get_data(as_text=True)
+        assert "data-institution-lookup" not in html
+        assert "institution-lookup.js" not in html
+    assert client.get("/static/institution-lookup.js").status_code == 200
+    assert not service.lookup_calls and not service.prepared and not service.saved
+
+
+@pytest.mark.parametrize("mode", ["guided", "json"])
+def test_chosen_school_reference_preserves_the_remaining_review_draft(
+    gui: tuple[Any, FixtureService],
+    mode: str,
+) -> None:
+    client, service = gui
+    chosen = client.get("/institutions/lookup?q=Fixture").get_json()["results"][1]
+    payload = {
+        **SCHOOL_PAYLOAD,
+        "institution_ref": chosen["institution_ref"],
+        "draft_context": "Retain this context",
+    }
+    response = client.post(
+        f"/items/{SCHOOL_ID}/preview",
+        data=form(
+            client,
+            payload=json.dumps(payload),
+            payload_mode=mode,
+            field_recorded_name=SCHOOL_PAYLOAD["recorded_name"],
+            field_institution_ref=chosen["institution_ref"],
+            field_relationship_type="direct",
+            reviewer="Draft reviewer",
+            notes="Retain my notes",
+        ),
+    )
+    assert response.status_code == 200
+    proposed = service.prepared[-1]["event"]
+    assert proposed["payload"] == payload
+    assert proposed["reviewer"] == "Draft reviewer"
+    assert proposed["notes"] == "Retain my notes"
+    assert proposed["source_url"] == SOURCE
+    assert not service.saved and service.revision == "empty"
 
 
 @pytest.mark.parametrize("action", ["accept", "map", "reject", "research", "supersede"])

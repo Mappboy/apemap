@@ -10,5 +10,6 @@
   <a class="skip" href="#main">Skip to review</a>
   <header><a href="{{ url_for('queue') }}">APEMAP evidence review</a><p>Local, offline review · decisions take effect on the next source build</p></header>
   <main id="main">{% block content %}{% endblock %}</main>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -13,7 +13,7 @@ import time
 from typing import Any, Protocol
 from urllib.parse import urlsplit
 
-from flask import Flask, abort, redirect, render_template, request, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 from apemap.review.store import StaleReviewError
 
@@ -128,6 +128,10 @@ class ReviewServiceLike(Protocol):
     ) -> list[dict[str, Any]]: ...
 
     def show(self, review_id: str) -> dict[str, Any]: ...
+
+    def lookup_institutions(
+        self, query: str, *, limit: int = 20
+    ) -> list[dict[str, Any]]: ...
 
     def prepare(
         self,
@@ -299,7 +303,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
     @app.after_request
     def response_headers(response: Any) -> Any:
         response.headers["Content-Security-Policy"] = (
-            "default-src 'none'; style-src 'self'; form-action 'self'; "
+            "default-src 'none'; style-src 'self'; script-src 'self'; "
+            "connect-src 'self'; form-action 'self'; "
             "base-uri 'none'; frame-ancestors 'none'"
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -398,6 +403,17 @@ def create_app(service: ReviewServiceLike) -> Flask:
         if not review_id:
             abort(400, "Enter a review identifier")
         return redirect(url_for("detail", review_id=review_id))
+
+    @app.get("/institutions/lookup")
+    def lookup_institutions() -> Any:
+        query = request.args.get("q", "").strip()
+        if len(query) > 200:
+            abort(400, "School name must be 200 characters or fewer")
+        try:
+            results = service.lookup_institutions(query, limit=20) if query else []
+        except ValueError as err:
+            return jsonify({"error": str(err), "results": []}), 400
+        return jsonify({"query": query, "results": results[:20]})
 
     @app.get("/items/<path:review_id>")
     def detail(review_id: str) -> str:

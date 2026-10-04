@@ -25,10 +25,21 @@
   <label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type == 'school' %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
   {% if fields %}
   <fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') == 'guided' %}checked{% endif %}>Use the fields below</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
-  <div class="guided-fields">{% for name, label, kind, choices in fields %}<label>{{ label }}
+  <div class="guided-fields">{% for name, label, kind, choices in fields %}<div class="guided-field"><label>{{ label }}
     {% if kind == 'select' %}<select name="field_{{ name }}"><option value="">Choose a value</option>{% for choice in choices %}<option value="{{ choice }}" {% if (form_values.get('field_' + name, payload.get(name)) if error else payload.get(name)) == choice %}selected{% endif %}>{{ choice | replace('_', ' ') }}</option>{% endfor %}</select>
     {% else %}<input name="field_{{ name }}" type="{{ kind }}" {% if kind == 'number' %}step="any"{% endif %} value="{{ form_values.get('field_' + name, payload.get(name, '')) if error else payload.get(name, '') }}">{% endif %}
-  </label>{% endfor %}</div>
+  </label>
+  {% if name == 'institution_ref' and item.entity_type in ['school', 'member_education'] %}
+  <fieldset class="institution-lookup" data-institution-lookup data-lookup-url="{{ url_for('lookup_institutions') }}">
+    <legend>Find a local ACARA school</legend>
+    <label>School name<input type="search" name="lookup_query" data-lookup-query maxlength="200" autocomplete="off" value="{{ form_values.get('lookup_query', payload.get('recorded_name', payload.get('recorded_school_name', ''))) }}"></label>
+    <button type="button" data-lookup-search>Search local register</button>
+    <p data-lookup-status role="status" aria-live="polite">Search by school name, then choose a result to fill its reference. Your decision still needs validation and preview.</p>
+    <p>Snapshot status describes inclusion in the local 2025 location snapshot when available; unknown means that status snapshot is unavailable.</p>
+    <ul data-lookup-results class="institution-results" aria-label="Matching ACARA schools" hidden></ul>
+    <noscript>School lookup requires JavaScript. You can still enter an institution reference above.</noscript>
+  </fieldset>
+  {% endif %}</div>{% endfor %}</div>
   {% if item.entity_type == 'member' %}<label class="choice"><input type="checkbox" name="clear_value" value="1" {% if form_values.get('clear_value') == '1' or payload.get('value', '') is none %}checked{% endif %}>Clear this member field (record a null value)</label>{% endif %}
   {% else %}<input type="hidden" name="payload_mode" value="json">{% endif %}
   <label>Complete JSON payload<textarea name="payload" rows="14" spellcheck="false">{{ form_values.get('payload', payload | json_text) if error else payload | json_text }}</textarea></label>
@@ -58,3 +69,4 @@
 </section>
 {% endif %}
 {% endblock %}
+{% block scripts %}{% if item.entity_type in ['school', 'member_education'] %}<script src="{{ url_for('static', filename='institution-lookup.js') }}" defer></script>{% endif %}{% endblock %}

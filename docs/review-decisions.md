@@ -132,6 +132,14 @@ preview. Browser edits append decisions to the same ledger; there is no second
 database of review authority. Existing generated CSVs remain available for offline
 inspection.
 
+School relationship and education forms include a school-name search over the
+local ACARA register selected by `--external-dir`. Choose a result to fill the
+institution reference as `acara:ID`; suburb, state, sector and school type help
+distinguish schools with the same name. The lookup reads pinned source files and
+does not fetch ACARA data or save a decision. Snapshot status describes register
+presence, not proof of closure or historical continuity. Supply the relationship
+or attendance evidence and preview the decision before saving it.
+
 ```powershell
 uv run apemap review --db-path data/aped-review.duckdb serve --port 8765
 ```

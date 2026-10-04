@@ -23,6 +23,14 @@ fieldset { border: 1px solid #c9d2c7; border-radius: .3rem; margin: 1rem 0; }
 .filters label { flex: 1 1 160px; }
 .filters a { margin-bottom: 1.1rem; }
 .guided-fields label { flex: 1 1 240px; }
+.guided-field { flex: 1 1 240px; min-width: 0; }
+.institution-lookup { padding: .8rem; background: #e9eee7; }
+.institution-lookup p { font-size: .9rem; }
+.institution-results { list-style: none; margin: .6rem 0 0; padding: 0; max-height: 24rem; overflow-y: auto; }
+.institution-results li { padding: .7rem 0; border-top: 1px solid #c9d2c7; }
+.institution-results strong, .institution-results span { display: block; overflow-wrap: anywhere; }
+.institution-results span { font-size: .9rem; }
+.institution-results button { font-size: .9rem; }
 .table-wrap { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; background: white; }
 caption { text-align: left; padding: .5rem 0; }
