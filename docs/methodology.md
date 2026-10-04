@@ -82,28 +82,28 @@ APEMAP applies a strict source authority hierarchy to ensure data provenance and
 [2. ACARA Official Registers] (Authoritative school names, SML IDs, coordinates, sectors)
             │
             ▼
-[3. Curated School Aliases] (Explicit overrides in data/reference/school_aliases.json)
+[3. Curated School Aliases] (Explicit overrides in data/reference/review/decisions.jsonl)
             │
             ▼
 [4. Wikipedia / Wikidata] (Supplementary enrichment, identifier-first linking, QA cross-check)
             │
             ▼
-[5. Manual Review & Promotion] (Unmatched school review via data/processed/ review CSVs)
+[5. Manual Review & Replay] (Authoritative decisions, exported queue views)
 ```
 
 1. **Official APH Handbook API**: The Australian Parliament House (APH) Parliamentary Handbook API (`https://handbookapi.aph.gov.au/api/individuals`) is the authoritative source for member identity, parliamentary service, chamber, party, electorate, birth date, gender, and self-reported education text.
 2. **ACARA Official Registers**: The Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and School Profile datasets are the authoritative sources for Australian school identities, SML IDs, coordinates, sectors, and ICSEA values.
-3. **Curated Overrides**: `data/reference/school_aliases.json` records verified historical name changes, school amalgamations, and disambiguation rules promoted from manual reviews into deterministic future runs.
+3. **Curated Overrides**: `data/reference/review/decisions.jsonl` records sourced member, education, school and service decisions. Accepted mappings replay deterministically; unsourced legacy aliases remain research decisions.
 4. **Wikipedia / Wikidata Supplementary Enrichment**:
-   - **Identifier-first linking**: Parliamentarians are linked to Wikidata entities using their unique Parliament of Australia MP identifier ([Property P10020](https://www.wikidata.org/wiki/Property:P10020)), populating `members.wikidata_id` with a bare QID (e.g. `Q4772000`). Name-based fallback matching is only accepted when unambiguous and corroborated by birth date or Australian political context; ambiguous single candidates are flagged for review rather than auto-linked.
+   - **Identifier-first linking**: Unambiguous Parliament of Australia MP identifiers ([Property P10020](https://www.wikidata.org/wiki/Property:P10020)) may populate `members.wikidata_id` automatically with a bare QID. Name-only and conflicting candidates require review.
    - **Non-mutation of official data**: Wikimedia enrichment **never silently overwrites** non-null verified APH demographics (birth dates, gender) or ACARA institutional attributes. APH and ACARA remain authoritative.
    - **Automated candidate sanity filtering**: Unmatched school suggestions undergo automated sanity filtering before reaching human reviewers. Suggestions are rejected if they represent non-school entity types (`human`, `town`, `suburb`, `city`, `list article`, `disambiguation page`, `religious order`, `company`, etc.), fall outside Australian geographic bounds (unless verified as international), or fail token similarity thresholds (`similarity < 70` without supporting historical evidence).
-   - **Demographic cross-checks & school suggestions**: Discrepancies and supplemental values available in Wikidata are written to `data/processed/wikimedia_member_review.csv`. Filtered school suggestions are written to `data/processed/wikimedia_school_review.csv`. Both remain `unconfirmed` in canonical database tables until promoted.
-5. **Manual Review & Promotion**:
-   - **CSV-based review storage**: Manual decisions are recorded directly in the review CSVs via explicit decision columns (`review_status`, `resolved_*`, `manual_source_url`, `review_notes`).
-   - **Allowed statuses**: Review decisions use a controlled vocabulary: `pending`, `accepted`, `rejected`, and `needs_research`.
-   - **Idempotent rerun preservation**: Rerunning `apemap ingest wikimedia` never deletes manual review decisions. A key-based merge preserves existing decisions and user notes while updating generated candidate columns and pruning obsolete unreviewed candidates.
-   - **Promotion via `school_aliases.json`**: Accepted school mappings are promoted into `data/reference/school_aliases.json` where they flow deterministically into subsequent pipeline runs (`apemap ingest aph`). Review decisions are tracked through Git history without requiring bespoke database review tables or web curation frameworks.
+   - **Demographic cross-checks & school suggestions**: Discrepancies and supplemental values available in Wikidata are written to `data/processed/wikimedia_member_review.csv`. Filtered school suggestions are written to `data/processed/wikimedia_school_review.csv`. Suggestions remain queue data until a sourced decision is recorded and replayed.
+5. **Manual Review & Replay**:
+   - Decisions append immutable events through a shared CLI/local-review service. The log retains evidence, reviewer, dates, rationale and explicit supersession links.
+   - Generated CSVs are views with `pending`, `accepted`, `rejected` and `needs_research` states. Existing annotations require an explicit validated import.
+   - Conflicting terminal decisions stop replay until a reviewed supersession resolves them. Replaying accepted corrections is transactional and idempotent.
+   - Fresh ingestion applies the effective decision projection. See [Review decisions](review-decisions.md) for the correction and provenance rules.
 
 ---
 
@@ -127,7 +127,7 @@ Once school candidate strings are extracted, they are resolved against ACARA's c
 
 ```mermaid
 flowchart TD
-    Raw[Raw School Name Candidate] --> Step0{Explicit Alias in<br/>school_aliases.json?}
+    Raw[Raw School Name Candidate] --> Step0{Explicit Alias in<br/>review/decisions.jsonl?}
     Step0 -- Yes --> Match0[Match: Verified Override]
     Step0 -- No --> Step1{Exact Match in<br/>ACARA Register?}
     Step1 -- Yes --> Match1[Match: Verified Exact]
@@ -143,7 +143,7 @@ flowchart TD
 ### Matching Tiers
 
 1. **Tier 0: Explicit Alias Override (`confidence = 'verified'`)**
-   Evaluates `data/reference/school_aliases.json` to resolve historical amalgamations (e.g. schools that merged or changed names) and known ambiguous names.
+   Accepted mappings in `data/reference/review/decisions.jsonl` override parsed source matches during replay. Source-only matching uses the following tiers; unresolved research decisions block unsupported fuzzy identities.
 2. **Tier 1: Exact Name Match (`confidence = 'verified'`)**
    Case-insensitive exact match against ACARA official school names.
 3. **Tier 2: Normalized Key Match (`confidence = 'verified'`)**
@@ -292,7 +292,7 @@ Database consistency is validated by `apemap validate`, which enforces 11 mandat
 Users of APEMAP data should consider the following limitations:
 
 1. **Biographical Gaps**: Education records are self-reported by parliamentarians to the Parliamentary Handbook. Incomplete entries exist where parliamentarians chose not to report secondary schooling.
-2. **Amalgamations and Closures**: Schools frequently merge, change names, or close. While `data/reference/school_aliases.json` accounts for common mergers, historical institutional continuity is complex.
+2. **Amalgamations and Closures**: Schools frequently merge, change names, or close. While `data/reference/review/decisions.jsonl` accounts for common mergers, historical institutional continuity is complex.
 3. **Multi-Campus Institutions**: Certain schools operate multiple campuses across cities or states. Where specific campus details are omitted in biographies, records are linked to the primary administrative campus.
-4. **International Schools**: Parliamentarians educated overseas are matched to synthetic unconfirmed institution records and excluded from domestic sector distributions.
+4. **International Schools**: Unreviewed overseas schools remain unconfirmed placeholders. Sourced manual institution definitions can preserve verified identities and countries; unknown locations remain absent.
 5. **Descriptive, Non-Causal Nature**: Relationships between parliamentarian schooling and political outcomes are descriptive observations. They should not be interpreted as evidence of causal mechanisms.

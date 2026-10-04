@@ -19,6 +19,7 @@ APEMAP provides a deterministic, reproducible pipeline to map the secondary educ
 - **Deterministic School Matching**: Resolves noisy biographical school names against ACARA school registers using normalized keys, curated alias overrides, and RapidFuzz token matching.
 - **Canonical DuckDB Storage**: Consolidates members, service periods, institutions, education assertions, and historical 2021 financial profiles into an audited relational schema.
 - **Integrity Validation**: Enforces relational integrity, non-null constraints, and opening-day seat benchmarks via automated validation gates.
+- **Reviewed Corrections**: An append-only decision log records sourced member, education, institution and service corrections and replays them after ingestion.
 - **Deterministic Analytics & Exports**: Generates sector distributions, demographic benchmarks, MySchool funding comparisons, Parquet tables, and spatial GeoJSON layers.
 
 ---
@@ -86,6 +87,11 @@ uv run apemap run-all
 ```
 
 For detailed instructions on using local cached data versus live network refreshes, see the [Quickstart Guide](docs/quickstart.md).
+
+Review corrections with `uv run apemap review --help`. Generated CSVs are queue
+views; decisions live in `data/reference/review/decisions.jsonl`. Install
+`uv sync --extra review-ui` for the optional local reviewer. See
+[Review decisions](docs/review-decisions.md) for evidence, imports and replay.
 
 ---
 

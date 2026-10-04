@@ -48,6 +48,12 @@ release-v<version>/
 
 ---
 
+The release manifest and web metadata include `review_snapshot` provenance from
+the database's consumed decision revision and source fingerprints. Building a
+release never substitutes a newer working ledger. The build database retains the
+exact consumed ledger and input-manifest bytes; keep it or the matching Git/source
+revision when reproducing a release.
+
 ## 3. CLI Release Commands
 
 The `apemap release` command group provides tools for building, verifying, and comparing release bundles.
@@ -184,7 +190,7 @@ Merge the form into the default branch before deploying links that depend on
 it. GitHub requires a nonempty source field but does not validate its URL or
 verify the claim. Reviewers must check the cited source, identify the canonical
 record, and distinguish attendance from graduation before accepting a change.
-Use the existing source/review and alias-promotion workflow described in the
+Use the authoritative decision-log review and replay workflow described in the
 [methodology](methodology.md); a submitted report is not verified evidence by
 itself.
 

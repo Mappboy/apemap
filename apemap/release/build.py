@@ -111,6 +111,10 @@ def build_release(
     try:
         init_schema(active_conn)
         ensure_spatial(active_conn)
+        from apemap.review.integration import review_snapshot_metadata
+
+        # Read the revision actually consumed by ingestion, never a newer working log.
+        review_snapshot = review_snapshot_metadata(active_conn)
 
         # 1. Validation Gate
         logger.info("Validating canonical database before release build...")
@@ -204,6 +208,7 @@ def build_release(
             "cohort": "opening_day",
             "licensing": "Creative Commons Attribution 4.0 International / ACARA / APH",
             "attribution": "APEMAP — Australian Parliamentarians Education Map",
+            "review_snapshot": review_snapshot,
         }
         (web_dir / "metadata.json").write_text(
             json.dumps(web_metadata, indent=2, sort_keys=True) + "\n",
@@ -248,6 +253,7 @@ def build_release(
             "source_commit": commit_sha,
             "generated_at": gen_timestamp,
             "source_snapshot_dates": snapshot_dates,
+            "review_snapshot": review_snapshot,
             "cohort_definition": "opening_day",
             "parliaments": target_parls,
             "supported_parliaments": supported_parliaments(),

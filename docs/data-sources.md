@@ -31,7 +31,7 @@ These sources are actively fetched or read during pipeline execution:
 | **NT School Funding** | NT Department of Education | School Needs Based Funding Formula Allocations | Public Resourcing Releases in `school_public_funding` | © Northern Territory Government (CC BY 4.0) |
 | **Queensland Grants** | QLD Department of Education | State Recurrent Grant Scheme for Non-State Schools | Public Allocation Tables in `school_public_funding` | © State of Queensland (CC BY 4.0) |
 | **Manual Disclosures** | Authoritative School Reports | Annual report financial statements | Canonical CSV `manual_school_funding.csv` | Authoritative Public Disclosures |
-| **School Aliases** | APEMAP Project | `data/reference/school_aliases.json` | Project repository | CC BY 4.0 |
+| **School Aliases** | APEMAP Project | `data/reference/review/decisions.jsonl` | Project repository | CC BY 4.0 |
 | **Wikipedia / Wikidata** | Wikimedia Foundation | MediaWiki Action API & Wikidata SPARQL | HTTPS GET / Disk cache (`data/raw/wikimedia/`) | CC0 / CC BY-SA 4.0 |
 | **AEC Federal Boundaries** | Australian Electoral Commission | National 2025 Federal Boundaries (`AUS-March-2025-esri.zip`) | HTTPS GET / Disk cache (`data/raw/aec/2025/`) | © Commonwealth of Australia (CC BY 4.0) |
 | **ABS Schools Benchmark** | Australian Bureau of Statistics | Schools, 2025 Statistical Release | Canonical reference in `education_sector_benchmarks` | © Commonwealth of Australia (CC BY 4.0) |

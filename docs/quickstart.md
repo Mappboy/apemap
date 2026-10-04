@@ -69,7 +69,7 @@ uv run apemap validate --help
 An important distinction exists between working with existing data and refreshing upstream sources:
 
 ### A. Working with Local / Existing Data (Default)
-The repository includes checked-in reference data (`data/reference/school_aliases.json`), cached APH individual records (`data/raw/aph/individuals.json`), and sample ACARA files (`data/external/`).
+The repository includes checked-in reference data (`data/reference/review/decisions.jsonl`), cached APH individual records (`data/raw/aph/individuals.json`), and sample ACARA files (`data/external/`).
 By default, commands do **not** trigger live external network downloads:
 - `apemap ingest aph` uses `data/raw/aph/individuals.json` if present.
 - `apemap ingest acara --no-download` parses local CSV/Excel files in `data/external/`.

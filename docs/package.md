@@ -47,6 +47,7 @@ apemap/
 ├── db.py                 # DuckDB connection handling, schema DDL, and data migration
 ├── export.py             # Parquet table generation, GeoJSON feature collections
 ├── validate.py           # Automated relational validation and integrity gates
+├── review/               # Events, authority store, candidates, replay, migration and local reviewer
 └── ingest/
     ├── __init__.py
     ├── aph.py            # APH Handbook API client, individual parsing, caching
@@ -58,6 +59,16 @@ apemap/
 ---
 
 ## 3. High-Level Subsystem Overview
+
+### `apemap.review`
+
+The shared review service validates evidence and stable identities, appends
+immutable decisions, resolves explicit supersession, and previews/replays the
+effective projection. The manual institution registry is a view of accepted
+definition events in the same ledger. CLI and optional local GUI share the same
+service; generated CSVs and DuckDB review tables are disposable projections.
+Migration preserves exact legacy lineage and compares archived loaders against
+new ingestion with explicit research-policy deltas.
 
 ### `apemap.analysis`
 Provides deterministic, aggregation-only functions that query canonical views. All functions accept an active DuckDB connection and return structured Python dictionaries and Pandas DataFrames.
@@ -107,7 +118,7 @@ Generates portable Parquet tables and spatial GeoJSON layers.
 ### `apemap.ingest.matching`
 Implements the school-matching pipeline via `SchoolMatcher`.
 - Maps raw, noisy school names from parliamentary records against the ACARA school register.
-- Uses exact alias overrides (`data/reference/school_aliases.json`), normalisation keys, and RapidFuzz token-set scoring.
+- Produces exact, normalised and RapidFuzz source matches. Review integration supplies research blocks and applies accepted mappings during replay.
 - Retains unmatched institutions as provisional records (`inst-unmatched-...`) with `confidence='unconfirmed'`.
 
 ```python

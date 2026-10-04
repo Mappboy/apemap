@@ -31,6 +31,7 @@ apemap
 │   └── wikimedia # Enrich members & review unmatched schools via Wikimedia
 ├── inputs
 │   └── verify    # Audit cached source files against inputs manifest
+├── review        # Authoritative queues, decisions, history, preview and replay
 ├── transform     # Initialize DuckDB schema, canonical views, and table macros
 ├── validate      # Check DB relational integrity, constraints, & coverage gates
 ├── backtest-benchmarks # Empirical backtesting of finance benchmarks
@@ -66,7 +67,7 @@ uv run apemap ingest aph [OPTIONS]
 ### Pipeline Behavior
 - **Network Access**: Only when `--refresh` is supplied or `data/raw/aph/individuals.json` does not exist locally.
 - **Database Mutation**: Yes (modifies `members`, `parliament_service`, `institutions`, `member_education`).
-- **Inputs**: `data/raw/aph/individuals.json` (or live APH API), `data/reference/school_aliases.json`, ACARA reference registers.
+- **Inputs**: `data/raw/aph/individuals.json` (or live APH API), `data/reference/review/decisions.jsonl`, ACARA reference registers.
 - **Outputs**:
   - `data/aped.duckdb`
   - `data/processed/unmatched_schools.csv`
@@ -159,12 +160,13 @@ uv run apemap ingest wikimedia [OPTIONS]
   - `data/processed/wikimedia_member_review.csv` (discrepancies, missing supplemental values, conflicts, manual decisions)
   - `data/processed/wikimedia_school_review.csv` (filtered unmatched school suggestions and manual review decisions)
 
-### Review & Promotion Workflow
-1. **Inspect Review CSVs**: Reviewers inspect the generated candidate rows in `data/processed/wikimedia_member_review.csv` and `data/processed/wikimedia_school_review.csv`.
-2. **Record Decisions Directly**: Set `review_status` to `accepted`, `rejected`, or `needs_research`, and populate resolved attributes (`resolved_school_name`, `resolved_acara_id`, `resolved_wikidata_id`, etc.) and `review_notes`.
-3. **Commit Review Decisions**: Commit modified review CSVs to version control. Reviewer decisions and rationale are tracked transparently through Git history.
-4. **Promote Accepted School Mappings**: For accepted domestic school resolutions, add the mapping to `data/reference/school_aliases.json`. When the pipeline next runs (`apemap ingest aph`), the alias is matched deterministically via Tier 0.
-5. **Idempotent Reruns**: Rerunning `apemap ingest wikimedia` updates generated metadata while strictly preserving existing manual review statuses and notes.
+### Review workflow
+
+Generated CSVs are disposable queue views. Use `uv run apemap review --help` to
+export queues, record supported decisions, inspect history, validate and replay.
+All mutations append events to `data/reference/review/decisions.jsonl`; ordinary
+ingestion replays accepted corrections. Existing CSV annotations require an
+explicit dry-run import with evidence validation. See [Review decisions](review-decisions.md).
 
 ### Example Usage
 ```bash
@@ -504,3 +506,27 @@ uv run apemap release diff <old-release-dir> <new-release-dir> [OPTIONS]
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--json` | `BOOL` | `False` | Output diff report as formatted JSON. |
+
+---
+
+## 11. `apemap review`
+
+Review commands share the append-only decision log with the optional local GUI.
+Generated queues are disposable views. See [Review Decisions](review-decisions.md)
+for evidence requirements, explicit CSV imports and migration lineage.
+
+```powershell
+uv run apemap review build --db-path data/aped-review.duckdb
+uv run apemap review --db-path data/aped-review.duckdb list
+uv run apemap review show <review-id>
+uv run apemap review history <review-id>
+uv run apemap review check
+uv run apemap review import --source <annotated-csv> --reviewer <name>
+uv run apemap review --db-path data/aped-review.duckdb serve
+```
+
+The group accepts `--log-path`, `--db-path` and `--external-dir` before the
+subcommand. CSV import is a dry run until `--apply` is supplied. Use
+`accept`, `reject`, `research` or `supersede` to append a decision and
+`add-education` or `add-institution` to create an assertion or registry entry.
+Each command's `--help` describes its payload and evidence arguments.
