@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Evidence review{% endblock %} · APEMAP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='review.css') }}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to review</a>
+  <header><a href="{{ url_for('queue') }}">APEMAP evidence review</a><p>Local, offline review · decisions take effect on the next source build</p></header>
+  <main id="main">{% block content %}{% endblock %}</main>
+</body>
+</html>

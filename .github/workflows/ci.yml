@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
@@ -32,10 +34,19 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-groups --frozen
+        run: uv sync --all-groups --extra review-ui --frozen
 
       - name: Check lockfile sync
         run: uv lock --check
+
+      - name: Validate review ledger and immutable base events
+        env:
+          REVIEW_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          uv run apemap review check
+          if [ -n "$REVIEW_BASE" ] && [ "$REVIEW_BASE" != "0000000000000000000000000000000000000000" ]; then
+            uv run apemap review check --base "$REVIEW_BASE"
+          fi
 
       - name: Run Ruff Lint
         run: uv run ruff check .
@@ -68,7 +79,7 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-groups --frozen
+        run: uv sync --all-groups --extra review-ui --frozen
 
       - name: Restore pinned raw inputs
         env:
@@ -100,7 +111,7 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-groups --frozen
+        run: uv sync --all-groups --extra review-ui --frozen
 
       - name: Restore pinned raw inputs
         env:
@@ -135,7 +146,7 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-groups --frozen
+        run: uv sync --all-groups --extra review-ui --frozen
 
       - name: Restore pinned raw inputs
         env:

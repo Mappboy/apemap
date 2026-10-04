@@ -23,6 +23,11 @@ dependencies = [
 [project.scripts]
 apemap = "apemap.cli:app"
 
+[project.optional-dependencies]
+review-ui = [
+    "flask>=3.1,<4",
+]
+
 [dependency-groups]
 dev = [
     "deptry>=0.23.0",
