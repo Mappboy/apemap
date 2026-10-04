@@ -52,6 +52,7 @@ from apemap.release import (
     diff_releases,
     verify_release,
 )
+from apemap.review.cli import review_app
 from apemap.validate import validate_database
 
 
@@ -67,6 +68,8 @@ ingest_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(ingest_app, name="ingest")
+
+app.add_typer(review_app, name="review")
 
 inputs_app = typer.Typer(
     name="inputs",
@@ -1528,6 +1531,7 @@ def run_all_cmd(
     parl_list = parse_parliament_args(parliament)
     validate_supported_parliaments(parl_list)
 
+    consumed_manifest: bytes | None = None
     if offline:
         if download:
             raise typer.BadParameter("Cannot combine --offline with --download.")
@@ -1539,6 +1543,7 @@ def run_all_cmd(
         console.print("[dim]Preflighting offline inputs against manifest...[/dim]")
         try:
             preflight_offline_inputs(manifest_path=inputs_manifest)
+            consumed_manifest = (inputs_manifest or DEFAULT_MANIFEST_PATH).read_bytes()
             console.print("[green]Offline input preflight passed.[/green]")
         except RuntimeError as err:
             console.print(f"[bold red]Offline Preflight Failed:[/bold red] {err}")
@@ -1615,6 +1620,14 @@ def run_all_cmd(
     conn = get_connection(effective_db_path)
     try:
         init_schema(conn)
+        if consumed_manifest is not None:
+            from apemap.review.integration import attach_source_manifest
+
+            attach_source_manifest(
+                conn,
+                inputs_manifest or DEFAULT_MANIFEST_PATH,
+                manifest_bytes=consumed_manifest,
+            )
         res = conn.execute("SELECT count(*) FROM school_finances").fetchone()
         fin_count = res[0] if res else 0
         if fin_count == 0:

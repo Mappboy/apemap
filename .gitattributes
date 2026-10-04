@@ -1,12 +1,18 @@
 # Reviewed reference text is hash-pinned and must have identical bytes on all hosts.
 data/reference/*.csv text eol=lf
 data/reference/*.json text eol=lf
+data/reference/review/*.jsonl text eol=lf merge=union
+data/reference/review/*.json text eol=lf
+# Captured recipe manifest digests are reproducible across checkout hosts.
+data/*inputs-manifest.json text eol=lf
 # Tracked ACARA inputs are also byte-pinned by the inputs manifest.
 data/external/school-location-2022.csv text eol=lf
 data/external/school-profile-2022.csv text eol=lf
 data/external/acara_school_results.json text eol=lf
-# These snapshots preserve the exact previous working files, including newlines.
+# These snapshots retain their exact preserved bytes, including newlines.
 archive/reference/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/reference/2026-10-05/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/legacy-review/2026-10-05/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 archive/inputs/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 archive/input-provisioning/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 archive/notebooks/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

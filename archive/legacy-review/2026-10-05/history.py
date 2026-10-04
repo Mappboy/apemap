@@ -1,4 +1,4 @@
-"""Explicit legacy migration readers and disposable historical evidence exports."""
+"""Reviewable historical education inputs and persistent research queues."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from typing import Any
 from apemap.constants import (
     ATTENDED_STATUSES,
     CONFIDENCE_LEVELS,
+    REFERENCE_DIR,
     PARLIAMENT_METADATA,
     CANONICAL_CHAMBERS,
     current_parliament,
@@ -37,14 +38,16 @@ HISTORICAL_REVIEW_COLUMNS = [
     "is_international",
     "suggested_action",
     "notes",
+    "review_status",
+    "resolved_value",
+    "manual_source_url",
+    "review_notes",
 ]
 
 
 def load_manual_education(path: Path | None = None) -> dict[str, list[dict[str, str]]]:
     """Read accepted, sourced education evidence; do not infer by name."""
-    if path is None:
-        return {}
-    source = path
+    source = path or REFERENCE_DIR / "manual_member_education.csv"
     records: dict[str, list[dict[str, str]]] = {}
     if not source.exists():
         return records
@@ -72,9 +75,7 @@ def load_service_overrides(
     path: Path | None = None,
 ) -> dict[tuple[str, int], list[ServiceStint]]:
     """Read sourced replacement intervals for an entire member/term, never guesses."""
-    if path is None:
-        return {}
-    source = path
+    source = path or REFERENCE_DIR / "historical_service_overrides.csv"
     records: dict[tuple[str, int], list[ServiceStint]] = {}
     if not source.exists():
         return records
@@ -155,7 +156,25 @@ def load_service_overrides(
 def write_review_queue(
     path: Path, rows: list[dict[str, Any]], key_columns: list[str], columns: list[str]
 ) -> None:
-    """Regenerate an evidence export without reading any prior CSV edits."""
-    manual = {"review_status", "resolved_value", "manual_source_url", "review_notes"}
-    generated_columns = [column for column in columns if column not in manual]
-    merge_review_rows(rows, path, key_columns, generated_columns, [])
+    """Persist generated candidates while preserving manual review decisions."""
+    generated = [
+        {key: str(value) if value is not None else "" for key, value in row.items()}
+        for row in rows
+    ]
+    manual = [
+        c
+        for c in (
+            "review_status",
+            "resolved_value",
+            "manual_source_url",
+            "review_notes",
+        )
+        if c in columns
+    ]
+    merged = merge_review_rows(
+        generated, path, key_columns, [c for c in columns if c not in manual], manual
+    )
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns)
+        writer.writeheader()
+        writer.writerows(merged)

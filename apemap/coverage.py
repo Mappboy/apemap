@@ -13,6 +13,12 @@ from apemap.analysis import compute_school_finance_estimate, backtest_finance_be
 from apemap.constants import PARLIAMENT_METADATA, TEMPORAL_WARNING, select_parliaments
 
 
+def _is_overseas_country(country: str | None) -> bool:
+    """Recognize explicit foreign countries and the legacy overseas sentinel."""
+    normalized = (country or "").strip().casefold()
+    return normalized not in {"", "australia", "au", "aus", "unknown"}
+
+
 def compute_parliament_coverage(
     conn: duckdb.DuckDBPyConnection,
     parliaments: list[int] | None = None,
@@ -64,7 +70,11 @@ def compute_parliament_coverage(
                 "secondary_education_assertions": len(assertions),
                 "represented_schools": len(institutions),
                 "domestic_schools_matched_acara": len(
-                    {r[2] for r in assertions if r[4] and r[5] != "overseas"}
+                    {
+                        r[2]
+                        for r in assertions
+                        if r[4] and not _is_overseas_country(r[5])
+                    }
                 ),
                 "historical_schools": len(
                     {
@@ -75,7 +85,7 @@ def compute_parliament_coverage(
                     }
                 ),
                 "overseas_schools": len(
-                    {r[2] for r in assertions if r[5] == "overseas"}
+                    {r[2] for r in assertions if _is_overseas_country(r[5])}
                 ),
                 "unresolved_school_records": sum(
                     r[3] == "unconfirmed" for r in assertions

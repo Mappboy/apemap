@@ -1,6 +1,8 @@
-"""Disposable review evidence exports and Wikimedia candidate quality filters.
+"""Manual review persistence, candidate evaluation, and reconciliation helpers.
 
-Authoritative human decisions live in the tracked append-only review log.
+This module provides schema definitions, candidate sanity filtering, and merge
+preservation logic for Wikimedia member and school review artifacts. Manual review
+decisions stored in CSV review files are preserved across enrichment pipeline reruns.
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ from typing import Any
 
 from rapidfuzz import fuzz
 
-
+from apemap.constants import REFERENCE_DIR
 from apemap.ingest.matching import (
     is_international_text,
     normalize_school_key,
@@ -40,9 +42,6 @@ MEMBER_REVIEW_GENERATED_COLUMNS = [
     "source_url",
     "status",
     "notes",
-    "retrieved_at",
-    "source_query",
-    "candidates",
 ]
 
 MEMBER_REVIEW_MANUAL_COLUMNS = [
@@ -54,7 +53,7 @@ MEMBER_REVIEW_MANUAL_COLUMNS = [
     "review_notes",
 ]
 
-MEMBER_REVIEW_COLUMNS = MEMBER_REVIEW_GENERATED_COLUMNS
+MEMBER_REVIEW_COLUMNS = MEMBER_REVIEW_GENERATED_COLUMNS + MEMBER_REVIEW_MANUAL_COLUMNS
 
 SCHOOL_REVIEW_GENERATED_COLUMNS = [
     "institution_id",
@@ -69,9 +68,6 @@ SCHOOL_REVIEW_GENERATED_COLUMNS = [
     "institution_type",
     "confidence",
     "notes",
-    "retrieved_at",
-    "source_url",
-    "source_query",
 ]
 
 SCHOOL_REVIEW_MANUAL_COLUMNS = [
@@ -94,7 +90,7 @@ SCHOOL_REVIEW_MANUAL_COLUMNS = [
     "review_notes",
 ]
 
-SCHOOL_REVIEW_COLUMNS = SCHOOL_REVIEW_GENERATED_COLUMNS
+SCHOOL_REVIEW_COLUMNS = SCHOOL_REVIEW_GENERATED_COLUMNS + SCHOOL_REVIEW_MANUAL_COLUMNS
 
 # --------------------------------------------------------------------------
 # Disallowed Types for School Filtering
@@ -136,9 +132,7 @@ def load_historical_school_aliases(
     path: Path | str | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Load historical school aliases from school_aliases.json for supporting evidence."""
-    if path is None:
-        return {}
-    ref_path = Path(path)
+    ref_path = Path(path or (REFERENCE_DIR / "school_aliases.json"))
     if not ref_path.exists():
         return {}
 
@@ -275,21 +269,111 @@ def merge_review_rows(
     generated_columns: list[str],
     manual_columns: list[str],
 ) -> list[dict[str, Any]]:
-    """Regenerate a disposable CSV without importing edited exports as decisions.
+    """Merge newly generated review evidence rows with existing manual review decisions.
 
-    The legacy name/signature remains for callers; manual_columns are omitted.
+    Guarantees:
+    - Retains existing manual decisions across reruns.
+    - Updates generated evidence columns with the latest pipeline run.
+    - Preserves previously reviewed rows (review_status != 'pending' or non-empty manual fields)
+      even if no longer generated in the current run.
+    - Drops unreviewed obsolete rows.
+    - Sets missing review_status to 'pending'.
+    - Produces a deterministically sorted CSV artifact.
     """
     path = Path(existing_path)
-    rows = [
-        {column: row.get(column, "") for column in generated_columns}
-        for row in generated_rows
-    ]
-    rows.sort(
-        key=lambda row: tuple(str(row.get(key, "")).lower() for key in key_columns)
+    old_rows: dict[tuple[str, ...], dict[str, Any]] = {}
+
+    if path.exists():
+        try:
+            with open(path, mode="r", encoding="utf-8", newline="") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    key = tuple(str(row.get(k, "")).strip() for k in key_columns)
+                    if any(key):
+                        old_rows[key] = dict(row)
+        except Exception as exc:
+            logger.warning("Failed to load existing review CSV %s: %s", path, exc)
+
+    merged: list[dict[str, Any]] = []
+    seen_keys: set[tuple[str, ...]] = set()
+
+    for gen_row in generated_rows:
+        key = tuple(str(gen_row.get(k, "")).strip() for k in key_columns)
+        seen_keys.add(key)
+        old_row = old_rows.get(key)
+
+        merged_row: dict[str, Any] = {}
+
+        # 1. Populate generated columns from latest run
+        for col in generated_columns:
+            merged_row[col] = gen_row.get(col, "")
+
+        # 2. Populate manual columns, preferring existing user edits if present
+        for col in manual_columns:
+            if (
+                old_row
+                and col in old_row
+                and old_row[col] is not None
+                and str(old_row[col]).strip() != ""
+            ):
+                merged_row[col] = old_row[col]
+            else:
+                # Default to generated historical evidence if available, otherwise default
+                val = gen_row.get(col, "")
+                if col == "review_status" and not val:
+                    val = "pending"
+                merged_row[col] = val
+
+        # Ensure review_status is non-empty and valid
+        curr_status = str(merged_row.get("review_status", "")).strip().lower()
+        if curr_status not in VALID_REVIEW_STATUSES:
+            merged_row["review_status"] = "pending"
+        else:
+            merged_row["review_status"] = curr_status
+
+        merged.append(merged_row)
+
+    # 3. Preserve previously reviewed rows that are no longer generated
+    for old_key, old_row in old_rows.items():
+        if old_key not in seen_keys:
+            old_status = str(old_row.get("review_status", "")).strip().lower()
+            has_manual_notes = any(
+                str(old_row.get(c, "")).strip() != ""
+                for c in manual_columns
+                if c
+                not in (
+                    "review_status",
+                    "historical_source",
+                    "historical_match_name",
+                    "historical_acara_id",
+                    "historical_value",
+                )
+            )
+            # If reviewer accepted, rejected, flagged needs_research, or added manual notes
+            if (
+                old_status in ("accepted", "rejected", "needs_research")
+                or has_manual_notes
+            ):
+                preserved_row: dict[str, Any] = {}
+                for col in generated_columns + manual_columns:
+                    preserved_row[col] = old_row.get(col, "")
+                if preserved_row.get("review_status") not in VALID_REVIEW_STATUSES:
+                    preserved_row["review_status"] = (
+                        old_status if old_status in VALID_REVIEW_STATUSES else "pending"
+                    )
+                merged.append(preserved_row)
+
+    # 4. Deterministic sorting by key columns
+    merged.sort(
+        key=lambda r: tuple(str(r.get(k, "")).strip().lower() for k in key_columns)
     )
+
+    # 5. Write out merged CSV
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=generated_columns)
+    all_columns = generated_columns + manual_columns
+    with open(path, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=all_columns)
         writer.writeheader()
-        writer.writerows(rows)
-    return rows
+        writer.writerows(merged)
+
+    return merged

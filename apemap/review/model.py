@@ -298,6 +298,15 @@ def validate_event(event: ReviewEvent) -> None:
             _text(payload.get("country"), "country")
             if payload.get("sector") not in CANONICAL_SECTORS:
                 raise ValueError("Invalid institution sector")
+            if payload.get("institution_status", "manual") not in (
+                "manual",
+                "unknown",
+                "current",
+                "historical_only",
+                "closed",
+                "merged",
+            ):
+                raise ValueError("Invalid institution status")
             for name, bound in (("latitude", 90), ("longitude", 180)):
                 value = payload.get(name)
                 if value is not None and (

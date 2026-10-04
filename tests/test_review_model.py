@@ -185,6 +185,29 @@ def test_education_does_not_infer_graduation() -> None:
         validate_events([education])
 
 
+@pytest.mark.parametrize("status", ["closed", "historical_only", "invalid"])
+def test_manual_institution_status_is_explicit_and_validated(status: str) -> None:
+    event = school_event().to_dict()
+    event.update(
+        decision_id="institution-status",
+        entity_type="manual_institution",
+        review_id=institution_review_id("manual:old-school"),
+        action="accept",
+        payload={
+            "institution_ref": "manual:old-school",
+            "school_name": "Old School",
+            "country": "Australia",
+            "sector": "Other",
+            "institution_status": status,
+        },
+    )
+    if status == "invalid":
+        with pytest.raises(ValueError, match="institution status"):
+            ReviewEvent.from_dict(event)
+    else:
+        assert ReviewEvent.from_dict(event).payload["institution_status"] == status
+
+
 def test_nonfinite_payload_rejected() -> None:
     value = school_event().to_dict()
     value["legacy"] = {"latitude": float("nan")}

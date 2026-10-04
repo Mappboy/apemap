@@ -42,17 +42,6 @@ from apemap.ingest.matching import (
     split_school_string,
     normalize_school_key,
 )
-from apemap.review.integration import (
-    apply_review_events,
-    bootstrap_reviewed_source_people,
-    capture_raw_individual_inventory,
-    capture_review_snapshot,
-    capture_review_sources,
-    configure_review_matcher,
-    read_review_events,
-    restore_review_sources,
-    review_snapshot_metadata,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -86,8 +75,6 @@ def run_aph_ingestion(
     manual_education_path: Path | None = None,
     retrieved_at: datetime | None = None,
     service_overrides_path: Path | None = None,
-    aliases_path: Path | None = None,
-    decision_log_path: Path | str | None = None,
 ) -> AphIngestResult:
     """Execute APH ingestion for specified parliaments and populate DuckDB.
 
@@ -111,7 +98,6 @@ def run_aph_ingestion(
 
     out_dir = Path(output_dir or PROCESSED_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
-    review_events = read_review_events(decision_log_path)
 
     # Initialize components
     client = AphClient(cache_dir=cache_dir or RAW_APH_DIR)
@@ -123,10 +109,8 @@ def run_aph_ingestion(
 
     matcher = SchoolMatcher(
         external_dir=external_dir or EXTERNAL_DIR,
-        aliases_file=aliases_path,
         require_alias_sources=any(p < 46 for p in parliaments),
     )
-    configure_review_matcher(matcher, review_events)
 
     # Coverage counters per parliament
     coverage_metrics: dict[int, dict[str, Any]] = {}
@@ -375,10 +359,6 @@ def run_aph_ingestion(
     try:
         init_schema(conn)
         conn.execute("BEGIN TRANSACTION")
-        previous_provenance = review_snapshot_metadata(conn).get(
-            "source_provenance", {}
-        )
-        restore_review_sources(conn)
         previous_times = dict(
             conn.execute(
                 "SELECT service_id, retrieved_at FROM parliament_service"
@@ -414,21 +394,6 @@ def run_aph_ingestion(
                     FROM tmp_members
                     ON CONFLICT (member_id) DO NOTHING
                     """
-                )
-                conn.execute(
-                    """UPDATE members SET
-                        family_name = source.family_name,
-                        given_name = source.given_name,
-                        display_name = source.display_name,
-                        gender = source.gender,
-                        date_of_birth = source.date_of_birth
-                    FROM tmp_members source
-                    WHERE members.member_id = source.member_id
-                        AND (members.family_name IS DISTINCT FROM source.family_name
-                            OR members.given_name IS DISTINCT FROM source.given_name
-                            OR members.display_name IS DISTINCT FROM source.display_name
-                            OR members.gender IS DISTINCT FROM source.gender
-                            OR members.date_of_birth IS DISTINCT FROM source.date_of_birth)"""
                 )
                 conn.execute(
                     """DELETE FROM member_education me
@@ -534,85 +499,6 @@ def run_aph_ingestion(
                     """
                 )
 
-        capture_raw_individual_inventory(
-            conn, raw_individuals, retrieved_at=retrieval_time
-        )
-        bootstrap_reviewed_source_people(
-            conn,
-            review_events,
-            matcher,
-            parliaments=parliaments,
-            refreshed_aph_ids={
-                str(raw["PHID"]).strip().lower()
-                for raw in raw_individuals
-                if str(raw.get("PHID") or "").strip()
-            },
-        )
-        capture_review_sources(conn, parliaments=parliaments)
-        apply_review_events(
-            conn,
-            events=review_events,
-            matcher=matcher,
-            decision_log_path=decision_log_path,
-        )
-        capture_review_snapshot(
-            conn,
-            review_events,
-            decision_log_path=decision_log_path,
-            source_provenance={
-                **previous_provenance,
-                "source": "APH Parliamentary Handbook",
-                "raw_individuals_sha256": hashlib.sha256(
-                    json.dumps(raw_individuals, sort_keys=True, default=str).encode()
-                ).hexdigest(),
-                "retrieved_at": retrieval_time.isoformat(),
-                "parliaments": sorted(parliaments),
-                "acara_files": {
-                    path.name: hashlib.sha256(path.read_bytes()).hexdigest()
-                    for path in sorted(matcher.source_paths)
-                },
-            },
-        )
-        # Coverage describes effective facts, including removals/additions and
-        # corrected service sets, rather than the pre-review parser counters.
-        for p, metrics in coverage_metrics.items():
-            service_rows = conn.execute(
-                """SELECT member_id, is_opening_day_member, is_current_member
-                FROM parliament_service WHERE parliament_number = ?""",
-                [p],
-            ).fetchall()
-            metrics["total_parliamentarians"] = len({row[0] for row in service_rows})
-            metrics["opening_day_parliamentarians"] = sum(
-                bool(row[1]) for row in service_rows
-            )
-            metrics["current_parliamentarians"] = sum(
-                bool(row[2]) for row in service_rows
-            )
-            schools = conn.execute(
-                """SELECT DISTINCT me.education_id, me.confidence, i.sector,
-                        i.country, i.institution_id
-                FROM member_education me
-                JOIN institutions i USING (institution_id)
-                JOIN parliament_service ps USING (member_id)
-                WHERE ps.parliament_number = ?""",
-                [p],
-            ).fetchall()
-            metrics["matched_schools"] = sum(
-                row[1] in ("verified", "provisional") for row in schools
-            )
-            metrics["unmatched_schools"] = sum(
-                row[1] == "unconfirmed" for row in schools
-            )
-            metrics["international_schools"] = sum(
-                bool(row[3] and row[3] != "Australia")
-                or str(row[4]).startswith("inst-international-")
-                for row in schools
-            )
-            metrics["sectors"] = {
-                sector: sum(row[2] == sector for row in schools)
-                for sector in ("Government", "Catholic", "Independent", "Other")
-            }
-            metrics["unclassified_sectors"] = metrics["sectors"]["Other"]
         conn.execute("COMMIT")
         write_review_queue(
             out_dir / "historical_service_review.csv",
@@ -663,23 +549,12 @@ def run_aph_ingestion(
         if export_parquet_files:
             parquet_paths = export_to_parquet(conn, out_dir)
 
-        counts: dict[str, int] = {}
-        # Identifiers come exclusively from this fixed canonical table inventory.
-        for table in (
-            "members",
-            "parliament_service",
-            "institutions",
-            "member_education",
-        ):
-            result = conn.execute(f"SELECT count(*) FROM {table}").fetchone()
-            assert result is not None
-            counts[table] = int(result[0])
         return {
             "parliaments": parliaments,
-            "members_count": counts["members"],
-            "service_count": counts["parliament_service"],
-            "institutions_count": counts["institutions"],
-            "education_count": counts["member_education"],
+            "members_count": len(members_map),
+            "service_count": len(service_map),
+            "institutions_count": len(institutions_map),
+            "education_count": len(education_records),
             "snapshots_count": 0,
             "unmatched_count": len(unmatched_reviews),
             "unmatched_csv": unmatched_csv_path,

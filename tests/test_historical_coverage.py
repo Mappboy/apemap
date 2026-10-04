@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import csv
 import json
 from pathlib import Path
 from typing import Any
@@ -210,7 +209,7 @@ def test_all_layers_and_latest_profile_grain(tmp_path: Path) -> None:
             )
 
 
-def test_missing_education_review_survives_rerun(tmp_path: Path) -> None:
+def test_missing_education_export_discards_local_edits(tmp_path: Path) -> None:
     raw = historical_member()
     raw["SecondarySchool"] = ""
     run_aph_ingestion(
@@ -220,23 +219,16 @@ def test_missing_education_review_survives_rerun(tmp_path: Path) -> None:
         output_dir=tmp_path,
     )
     path = tmp_path / "historical_education_review.csv"
-    with path.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        columns = reader.fieldnames
-        rows = list(reader)
-    rows[0]["review_status"] = "needs_research"
-    rows[0]["review_notes"] = "Keep this decision"
-    with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns or [])
-        writer.writeheader()
-        writer.writerows(rows)
+    path.write_text("review_status,review_notes\naccepted,Local CSV edit\n")
     run_aph_ingestion(
         raw_individuals=[raw],
         db_path=tmp_path / "db.duckdb",
         external_dir=tmp_path,
         output_dir=tmp_path,
     )
-    assert "Keep this decision" in path.read_text()
+    assert "Local CSV edit" not in path.read_text()
+    assert "review_status" not in path.read_text()
+    assert "No APH secondary-school evidence" in path.read_text()
 
 
 def test_corrected_source_removes_stale_generated_rows(tmp_path: Path) -> None:
