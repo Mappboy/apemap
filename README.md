@@ -96,6 +96,7 @@ Comprehensive guides, specifications, and methodologies are available in the [`d
 | Guide | Description |
 | :--- | :--- |
 | [**Quickstart Guide**](docs/quickstart.md) | Clone-to-useful-result walkthrough and troubleshooting. |
+| [**Review, Update & Publish**](docs/review-update-publish.md) | Step-by-step review of schools and members, data corrections, validation, and publication. |
 | [**CLI Reference**](docs/cli.md) | Full command documentation, arguments, and options. |
 | [**Python Package**](docs/package.md) | Programmatic Python API and subsystem architecture. |
 | [**Research Methodology**](docs/methodology.md) | Matching algorithm, cohort definitions, and research caveats. |
