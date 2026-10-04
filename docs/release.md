@@ -140,3 +140,58 @@ Dataset releases are published automatically via GitHub Actions ([`.github/workf
 - **Automated Verification**: Before publication, the workflow builds the release bundle in an isolated offline environment and runs `apemap release verify --strict-assertions`.
 - **Packaging**: The bundle is archived into `apemap-release-v<version>.tar.gz` alongside `manifest.json` and `SHA256SUMS`.
 - **GitHub Release**: The artifacts are uploaded to a draft-free GitHub Release tagged as `data-v<version>`.
+
+### Original v0.3.0 publication checkpoint
+
+The historical v0.3.0 archive remains a draft preview, separate from the
+[v0.3.1 candidate](releases/0.3.1-candidate/README.md). Its recorded verification
+passed **213/213 checks across 49 files**. Preserve these original bytes:
+
+| Field | Recorded value |
+| --- | --- |
+| Archive | `apemap-historical-v0.3.0.tar.gz` |
+| SHA-256 | `48efea9e49556d766bf496d857d037b90dc96063b9e0d86a50a38f534fbd97fc` |
+| Data source commit | `19dcd581081d87cbe32eaa4ed3c0a9906cb5d5c6` |
+
+Before a maintainer publishes this preview, confirm the release tag and recorded
+source commit satisfy the main-branch publication policy, download the existing
+draft asset, check its archive hash, and run strict read-back verification on the
+extracted bundle. Confirm the same 49-file inventory and all 213 checks pass.
+After publication, verify that the public asset downloads with the same archive
+hash and that its manifest and checksum inventory still match. Record that
+verification in the release notes.
+
+Do not rebuild, replace, retag, or publish v0.3.0 as part of a frontend or
+correction-form change. If data or release contents need changing, use a new
+version and the normal verified release workflow.
+
+## 5. Public Data Corrections
+
+Use the [data correction form](https://github.com/Mappboy/apemap/issues/new?template=data-correction.yml)
+to report a school, parliamentarian, or attendance correction, including a
+missing school. It requests the entity identity, dataset release, parliament,
+claimed correction, supporting source URL, and optional notes. The form applies
+the existing `transparency` label; it does not create labels or change data.
+
+The cpoole.dev results page can prefill the release and parliament through the
+stable text-field IDs `release_version` and `parliament`, for example:
+
+```text
+https://github.com/Mappboy/apemap/issues/new?template=data-correction.yml&release_version=0.3.1&parliament=48
+```
+
+Merge the form into the default branch before deploying links that depend on
+it. GitHub requires a nonempty source field but does not validate its URL or
+verify the claim. Reviewers must check the cited source, identify the canonical
+record, and distinguish attendance from graduation before accepting a change.
+Use the existing source/review and alias-promotion workflow described in the
+[methodology](methodology.md); a submitted report is not verified evidence by
+itself.
+
+Record accepted changes in the canonical inputs or reference mappings with
+their provenance, then validate and publish a new immutable release. Existing
+archives, manifests, and hashes stay unchanged. The public site continues to
+show the pinned release until its data version is deliberately updated.
+
+Form syntax and URL prefills follow the
+[GitHub form schema](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema).
