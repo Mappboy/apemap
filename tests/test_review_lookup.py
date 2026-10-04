@@ -32,6 +32,9 @@ def lookup_service(tmp_path: Path) -> ReviewService:
     )
     (external / "school-profile-2008-2025.csv").write_text(
         "ACARA SML ID,School Name,School Sector,School Type,State,Suburb,Calendar Year\n"
+        "101,Earlier School,Independent,Secondary,VIC,Fairfield,2008\n"
+        "103,Earlier School,Government,Secondary,TAS,Hobart,2008\n"
+        "101,Fairfield School,Independent,Secondary,VIC,Fairfield,2025\n"
         "300,Old Fairfield High,Government,Secondary,TAS,Launceston,2008\n",
         encoding="utf-8",
     )
@@ -91,6 +94,17 @@ def test_lookup_exposes_historical_snapshot_status(
         lookup_service.lookup_institutions("fairfield school")[0]["institution_status"]
         == "unknown"
     )
+
+
+def test_lookup_finds_annual_names_without_duplicate_ids_or_losing_ambiguity(
+    lookup_service: ReviewService,
+) -> None:
+    results = lookup_service.lookup_institutions("earlier")
+    assert [row["institution_ref"] for row in results] == ["acara:103", "acara:101"]
+    assert all(row["school_name"] == "Fairfield School" for row in results)
+    assert all(row["institution_status"] == "current" for row in results)
+    results = lookup_service.lookup_institutions("school")
+    assert len({row["acara_id"] for row in results}) == len(results)
 
 
 def test_lookup_cleans_missing_metadata_and_ignores_invalid_ids(

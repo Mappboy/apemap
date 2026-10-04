@@ -249,6 +249,9 @@ class SchoolMatcher:
 
         self._load_aliases()
         self._load_reference_data()
+        self.registered_names: dict[str, set[str]] = {
+            aid: {ref["school_name"]} for aid, ref in self.acara_id_map.items()
+        }
         self.current_ids = set(self.acara_id_map)
         current_location = self.external_dir / "school-location-2025.csv"
         if current_location.exists():
@@ -278,6 +281,7 @@ class SchoolMatcher:
             aid, name = str(row[id_col]).strip(), str(row[name_col]).strip()
             if not aid or not name:
                 continue
+            self.registered_names.setdefault(aid, set()).add(name)
             sector = str(row.get("School Sector", "Other"))
             if sector not in ("Government", "Catholic", "Independent"):
                 sector = "Other"

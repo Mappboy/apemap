@@ -51,6 +51,18 @@ def _register_text(value: Any) -> str | None:
     return text if text and text.casefold() not in {"nan", "none", "<na>"} else None
 
 
+def _school_lookup_rank(query: str, name: str) -> int | None:
+    if query == name:
+        return 0
+    if name.startswith(query):
+        return 1
+    if query in name:
+        return 2
+    if all(token in name for token in query.split()):
+        return 3
+    return None
+
+
 def default_reviewer() -> str:
     result = subprocess.run(
         [
@@ -90,7 +102,7 @@ class ReviewService:
         self.db_path = Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
         self.external_dir = Path(external_dir or EXTERNAL_DIR)
         self._lookup_revision: tuple[tuple[str, int, int], ...] | None = None
-        self._lookup_rows: list[tuple[str, dict[str, Any]]] = []
+        self._lookup_rows: list[tuple[tuple[str, ...], dict[str, Any]]] = []
 
     def events(self, *, allow_conflicts: bool = False) -> list[ReviewEvent]:
         return load_events(self.log_path, allow_conflicts=allow_conflicts)
@@ -102,7 +114,7 @@ class ReviewService:
             aliases_file=self.external_dir / ".no-review-aliases.json",
         )
 
-    def _institution_lookup_rows(self) -> list[tuple[str, dict[str, Any]]]:
+    def _institution_lookup_rows(self) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
         """Cache register metadata until a local source file changes."""
         names = (
             "acara_school_results.json",
@@ -134,7 +146,17 @@ class ReviewService:
                     continue
                 rows.append(
                     (
-                        normalize_school_key(name),
+                        tuple(
+                            sorted(
+                                {
+                                    normalize_school_key(variant)
+                                    for variant in matcher.registered_names.get(
+                                        aid, {name}
+                                    )
+                                    if _register_text(variant)
+                                }
+                            )
+                        ),
                         {
                             "institution_ref": f"acara:{aid}",
                             "acara_id": aid,
@@ -176,20 +198,17 @@ class ReviewService:
         if len(key) < 2:
             return []
         ranked: list[tuple[tuple[Any, ...], dict[str, Any]]] = []
-        for name, row in self._institution_lookup_rows():
-            if key == name:
-                rank = 0
-            elif name.startswith(key):
-                rank = 1
-            elif key in name:
-                rank = 2
-            elif all(token in name for token in key.split()):
-                rank = 3
-            else:
+        for names, row in self._institution_lookup_rows():
+            ranks = [
+                rank
+                for name in names
+                if (rank := _school_lookup_rank(key, name)) is not None
+            ]
+            if not ranks:
                 continue
             order = (
-                rank,
-                name,
+                min(ranks),
+                row["school_name"].casefold(),
                 row["state"] or "",
                 row["suburb"] or "",
                 row["acara_id"],
