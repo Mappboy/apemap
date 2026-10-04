@@ -68,13 +68,6 @@
       "recorded_date": "2024",
       "required": true
     },
-    "data/reference/school_aliases.json": {
-      "sha256": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f",
-      "size_bytes": 27091,
-      "source": "Canonical School Name Aliases Mapping",
-      "recorded_date": "2026-10-02",
-      "required": true
-    },
     "data/reference/tasmania_srp_allocations.csv": {
       "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
       "size_bytes": 369,
@@ -125,5 +118,6 @@
       "required": true
     }
   },
-  "archive_size_bytes": 46242386
+  "archive_size_bytes": 46242386,
+  "review_authority": "Mutable review ledger/registry is validated separately; consumed ledger and source fingerprints are captured in replay and release metadata."
 }

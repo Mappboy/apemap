@@ -2,7 +2,8 @@
 
 These are the exact previous working bytes of the three legacy correction inputs.
 Issue 51 supersedes them with `data/reference/review/decisions.jsonl` and the manual
-institution registry. The implementing commit records the cutover.
+institution registry. Commit `c5158aa` introduces the replacement authority and
+replay implementation; the following migration checkpoint retires the active copies.
 
 Three education assertions and four sourced school relationships were migrated.
 The remaining 89 school aliases are research decisions with exact original values

@@ -90,6 +90,12 @@ def verify_inputs_manifest(
         return False, [f"Manifest {m_path} contains no files entry."]
 
     for rel_path, file_info in files_dict.items():
+        if rel_path.startswith("data/reference/review/"):
+            errors.append(
+                f"Mutable review authority must not be hash-pinned in upstream inputs: '{rel_path}'. "
+                "Capture its consumed revision in build/release review metadata instead."
+            )
+            continue
         if not is_safe_relative_path(rel_path):
             errors.append(f"Unsafe path in manifest: '{rel_path}'")
             continue

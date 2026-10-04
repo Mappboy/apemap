@@ -393,3 +393,27 @@ def test_spatial_offline_does_not_install_in_empty_cache(
         with pytest.raises(RuntimeError, match="offline mode prevents"):
             ensure_spatial(conn, allow_install=False)
     assert not list(tmp_path.rglob("*.duckdb_extension"))
+
+
+@pytest.mark.unit
+def test_mutable_review_log_cannot_be_pinned_as_upstream_input(tmp_path: Path) -> None:
+    ledger = tmp_path / "data/reference/review/decisions.jsonl"
+    ledger.parent.mkdir(parents=True)
+    ledger.write_bytes(b"{}\n")
+    manifest = tmp_path / "inputs-manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "data/reference/review/decisions.jsonl": {
+                        "sha256": compute_sha256(ledger),
+                        "size_bytes": ledger.stat().st_size,
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    valid, errors = verify_inputs_manifest(manifest, base_dir=tmp_path)
+    assert not valid
+    assert "Mutable review authority" in errors[0]
