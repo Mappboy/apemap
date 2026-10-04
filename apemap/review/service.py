@@ -20,7 +20,7 @@ from apemap.constants import (
     RAW_WIKIMEDIA_DIR,
 )
 from apemap.db import get_connection
-from apemap.ingest.matching import SchoolMatcher
+from apemap.ingest.matching import SchoolMatcher, normalize_school_key
 from apemap.review.candidates import (
     annotate_candidates,
     build_candidates,
@@ -41,6 +41,14 @@ from apemap.review.model import (
 from apemap.review.store import StaleReviewError, append_events, log_revision
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
+
+
+def _register_text(value: Any) -> str | None:
+    """Keep missing CSV metadata out of lookup labels."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text if text and text.casefold() not in {"nan", "none", "<na>"} else None
 
 
 def default_reviewer() -> str:
@@ -81,6 +89,8 @@ class ReviewService:
         self.log_path = Path(log_path)
         self.db_path = Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
         self.external_dir = Path(external_dir or EXTERNAL_DIR)
+        self._lookup_revision: tuple[tuple[str, int, int], ...] | None = None
+        self._lookup_rows: list[tuple[str, dict[str, Any]]] = []
 
     def events(self, *, allow_conflicts: bool = False) -> list[ReviewEvent]:
         return load_events(self.log_path, allow_conflicts=allow_conflicts)
@@ -91,6 +101,103 @@ class ReviewService:
             external_dir=self.external_dir,
             aliases_file=self.external_dir / ".no-review-aliases.json",
         )
+
+    def _institution_lookup_rows(self) -> list[tuple[str, dict[str, Any]]]:
+        """Cache register metadata until a local source file changes."""
+        names = (
+            "acara_school_results.json",
+            "school-location-2025.csv",
+            "school-location-2022.csv",
+            "school-profile-2025.csv",
+            "school-profile-2008-2025.csv",
+            "school-profile-2022.csv",
+        )
+        revision = []
+        for name in names:
+            path = self.external_dir / name
+            if path.is_file():
+                stat = path.stat()
+                revision.append((name, stat.st_mtime_ns, stat.st_size))
+        source_revision = tuple(revision)
+        if source_revision != self._lookup_revision:
+            matcher = self.matcher()
+            current_ids = {aid.strip() for aid in matcher.current_ids}
+            has_current_register = (
+                self.external_dir / "school-location-2025.csv"
+            ).is_file()
+            rows = []
+            for aid, ref in matcher.acara_id_map.items():
+                if not aid.isascii() or not aid.isdecimal():
+                    continue
+                name = _register_text(ref.get("school_name"))
+                if not name:
+                    continue
+                rows.append(
+                    (
+                        normalize_school_key(name),
+                        {
+                            "institution_ref": f"acara:{aid}",
+                            "acara_id": aid,
+                            "school_name": name,
+                            **{
+                                field: _register_text(ref.get(field))
+                                for field in (
+                                    "state",
+                                    "suburb",
+                                    "sector",
+                                    "school_type",
+                                )
+                            },
+                            "institution_status": (
+                                "current" if aid in current_ids else "historical_only"
+                            )
+                            if has_current_register
+                            else "unknown",
+                        },
+                    )
+                )
+            self._lookup_rows = rows
+            self._lookup_revision = source_revision
+        return self._lookup_rows
+
+    def lookup_institutions(
+        self, query: str, *, limit: int = 20
+    ) -> list[dict[str, Any]]:
+        """Find ACARA school names locally without resolving or saving a decision.
+
+        Return distinct IDs even when names collide. Status describes presence in
+        the pinned 2025 register, never inferred closure or a successor mapping.
+        """
+        if len(query) > 200:
+            raise ValueError("School-name queries must be at most 200 characters")
+        if not 1 <= limit <= 50:
+            raise ValueError("School lookup limit must be between 1 and 50")
+        key = normalize_school_key(query)
+        if len(key) < 2:
+            return []
+        ranked: list[tuple[tuple[Any, ...], dict[str, Any]]] = []
+        for name, row in self._institution_lookup_rows():
+            if key == name:
+                rank = 0
+            elif name.startswith(key):
+                rank = 1
+            elif key in name:
+                rank = 2
+            elif all(token in name for token in key.split()):
+                rank = 3
+            else:
+                continue
+            order = (
+                rank,
+                name,
+                row["state"] or "",
+                row["suburb"] or "",
+                row["acara_id"],
+            )
+            ranked.append((order, row))
+        return [
+            dict(row) for _, row in sorted(ranked, key=lambda item: item[0])[:limit]
+        ]
 
     def source_revision(self) -> str:
         paths = [
