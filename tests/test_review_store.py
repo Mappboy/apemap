@@ -89,6 +89,52 @@ def test_invalid_batch_cannot_partially_append(tmp_path: Path) -> None:
     assert not path.exists()
 
 
+def test_source_guards_check_before_validation_and_before_commit(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "decisions.jsonl"
+    checks: list[str] = []
+
+    def guard() -> None:
+        checks.append("guard")
+
+    def validate(events: Any) -> None:
+        checks.append("validate")
+
+    append_events(
+        path,
+        [school_event()],
+        expected_revision=log_revision(path),
+        source_check=guard,
+        validator=validate,
+    )
+    assert checks == ["guard", "validate", "guard"]
+    assert len(load_events(path)) == 1
+
+
+def test_source_changed_during_validation_prevents_commit(tmp_path: Path) -> None:
+    path = tmp_path / "decisions.jsonl"
+    changed = False
+
+    def guard() -> None:
+        if changed:
+            raise StaleReviewError("Source changed")
+
+    def validate(events: Any) -> None:
+        nonlocal changed
+        changed = True
+
+    with pytest.raises(StaleReviewError):
+        append_events(
+            path,
+            [school_event()],
+            expected_revision=log_revision(path),
+            source_check=guard,
+            validator=validate,
+        )
+    assert not path.exists() and not list(tmp_path.glob("*.tmp"))
+
+
 def test_busy_writer_reports_retry_without_writing(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     with patch(

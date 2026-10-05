@@ -82,9 +82,9 @@ def append_events(
             raise ValueError("Decision log must end with a newline before appending")
         existing = load_events(path, allow_conflicts=True)
         validator(existing + events)
-        if source_check is not None:
-            source_check()
         if not events:
+            if source_check is not None:
+                source_check()
             return
         descriptor, temporary = tempfile.mkstemp(
             prefix=f".{path.name}.", suffix=".tmp", dir=path.parent

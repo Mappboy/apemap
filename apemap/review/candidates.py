@@ -150,7 +150,10 @@ def school_member_context(
 
 
 def build_candidates(
-    conn: duckdb.DuckDBPyConnection, *, cache_dir: Path = RAW_WIKIMEDIA_DIR
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    cache_dir: Path = RAW_WIKIMEDIA_DIR,
+    review_id: str | None = None,
 ) -> list[dict[str, Any]]:
     """Generate cases from canonical source snapshots and cached evidence only."""
     members = _rows(conn, "members")
@@ -171,15 +174,19 @@ def build_candidates(
         institution = institutions.get(row["institution_id"], {})
         name = row.get("school_name_as_recorded") or institution.get("school_name", "")
         payload = {"aph_id": member["aph_id"], "recorded_school_name": name}
-        item = candidate(
-            education_review_id(member["aph_id"], name),
-            "member_education",
-            payload,
-            {**row, "display_name": member["display_name"]},
-            by_member.get(row["member_id"], []),
-        )
-        result[item["candidate_id"]] = item
+        education_id = education_review_id(member["aph_id"], name)
+        if review_id is None or review_id == education_id:
+            item = candidate(
+                education_id,
+                "member_education",
+                payload,
+                {**row, "display_name": member["display_name"]},
+                by_member.get(row["member_id"], []),
+            )
+            result[item["candidate_id"]] = item
         school_id = school_review_id(name)
+        if review_id is not None and review_id != school_id:
+            continue
         school_item = candidate(
             school_id,
             "school",
@@ -199,8 +206,15 @@ def build_candidates(
         aph_id = member.get("aph_id")
         if not aph_id:
             continue
+        if review_id is not None and not (
+            review_id.startswith(f"member:{aph_id.lower()}:")
+            or review_id == education_review_id(aph_id, "")
+        ):
+            continue
         parliaments = by_member.get(member["member_id"], [])
-        if member["member_id"] not in educated:
+        if member["member_id"] not in educated and (
+            review_id is None or review_id == education_review_id(aph_id, "")
+        ):
             item = candidate(
                 education_review_id(aph_id, ""),
                 "member_education",
@@ -212,6 +226,8 @@ def build_candidates(
                 parliaments,
             )
             result[item["candidate_id"]] = item
+        if review_id is not None and not review_id.startswith("member:"):
+            continue
         member_cache = cache_dir / "members"
         identity_path = member_cache / f"{aph_id}.json"
         if not identity_path.exists():
@@ -228,6 +244,9 @@ def build_candidates(
             caches = [(None, "aph_id", {})]
         for filename, kind, cached in caches:
             for member_field in ("date_of_birth", "gender", "wikidata_id"):
+                case_id = member_review_id(aph_id, member_field)
+                if review_id is not None and review_id != case_id:
+                    continue
                 proposed = cached.get(member_field)
                 if (
                     proposed is None
@@ -251,7 +270,7 @@ def build_candidates(
                     "cache_missing": not bool(cached),
                 }
                 item = candidate(
-                    member_review_id(aph_id, member_field),
+                    case_id,
                     "member",
                     {"aph_id": aph_id, "field": member_field},
                     evidence,
@@ -266,9 +285,12 @@ def build_candidates(
                 (member["aph_id"], row["parliament_number"]), []
             ).append(row)
     for (aph_id, parliament), rows in grouped_services.items():
+        case_id = service_review_id(aph_id, parliament)
+        if review_id is not None and review_id != case_id:
+            continue
         rows.sort(key=lambda row: row["service_id"])
         item = candidate(
-            service_review_id(aph_id, parliament),
+            case_id,
             "service",
             {"aph_id": aph_id, "parliament_number": parliament},
             {"intervals": rows},
@@ -277,22 +299,26 @@ def build_candidates(
         result[item["candidate_id"]] = item
     # Retain cached school suggestions without HTTP or editing the cache.
     cache_institutions = cache_dir / "institutions"
-    if cache_institutions.exists():
+    if (
+        review_id is None or review_id.startswith("school:")
+    ) and cache_institutions.exists():
         from apemap.ingest.review import evaluate_school_candidate
 
         for path in sorted(cache_institutions.glob("*.json")):
             cached = _cache_object(path)
             name = cached.get("raw_school_text", "")
+            case_id = school_review_id(name) if name else ""
+            if review_id is not None and case_id != review_id:
+                continue
             if name and evaluate_school_candidate(name, cached)[0]:
-                review_id = school_review_id(name)
                 parliaments = [
                     p
                     for item in result.values()
-                    if item["review_id"] == review_id
+                    if item["review_id"] == case_id
                     for p in item["parliaments"]
                 ]
                 item = candidate(
-                    review_id, "school", {"recorded_name": name}, cached, parliaments
+                    case_id, "school", {"recorded_name": name}, cached, parliaments
                 )
                 result[item["candidate_id"]] = item
     return sorted(

@@ -2,6 +2,7 @@
 
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 import shutil
 from typing import Any
@@ -28,6 +29,125 @@ from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError, encode_event
 from tests.db_fixtures import DatabaseFactory
 from tests.test_review_model import school_event
+
+
+def test_register_cache_is_content_bound_and_blocked_keys_are_isolated(
+    review_service: ReviewService, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from apemap.review import service as module
+
+    constructor = module.SchoolMatcher
+    calls = 0
+
+    def counted(*args: Any, **kwargs: Any) -> Any:
+        nonlocal calls
+        calls += 1
+        return constructor(*args, **kwargs)
+
+    monkeypatch.setattr(module, "SchoolMatcher", counted)
+    first = review_service.matcher()
+    first.review_blocked_keys.add("test school")
+    assert not review_service.matcher().review_blocked_keys
+    assert calls == 1
+    resolver = review_service.institution_resolver()
+    metadata = resolver("acara:1")
+    assert metadata is not None
+    metadata["school_name"] = "Client mutation"
+    assert resolver("acara:1") != metadata
+    target = review_service.resolve_institution("acara:1")
+    assert target is not None and target["school_name"] == "Test High School"
+    path = review_service.external_dir / "school-location-2025.csv"
+    original = path.stat()
+    path.write_bytes(path.read_bytes().replace(b"Test High", b"Next High"))
+    os.utime(path, ns=(original.st_atime_ns, original.st_mtime_ns))
+    assert (
+        review_service.matcher().acara_id_map["1"]["school_name"] == "Next High School"
+    )
+    target = review_service.resolve_institution("acara:1")
+    assert target is not None and target["school_name"] == "Next High School"
+    old_target = resolver("acara:1")
+    assert old_target is not None and old_target["school_name"] == "Test High School"
+    assert calls == 2
+
+
+def test_case_candidate_projection_matches_whole_queue(
+    review_service: ReviewService, tmp_path: Path
+) -> None:
+    from apemap.db import get_connection
+
+    cache = tmp_path / "cache"
+    (cache / "institutions").mkdir(parents=True)
+    (cache / "institutions" / "lead.json").write_text(
+        json.dumps(
+            {
+                "raw_school_text": "Test High School",
+                "suggested_institution_name": "Possible School",
+                "source_url": "https://example.org/history",
+                "status": "candidate",
+            }
+        ),
+        encoding="utf-8",
+    )
+    with get_connection(review_service.db_path, read_only=True) as conn:
+        whole = build_candidates(conn, cache_dir=cache)
+        for key in {row["review_id"] for row in whole}:
+            assert build_candidates(conn, cache_dir=cache, review_id=key) == [
+                row for row in whole if row["review_id"] == key
+            ]
+        assert build_candidates(conn, cache_dir=cache, review_id="school:missing") == []
+
+
+def test_prepare_projects_once_per_before_and_after(
+    review_service: ReviewService, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from apemap.review import integration as module
+
+    original = module.project_review_records
+    calls = 0
+
+    def counted(*args: Any, **kwargs: Any) -> Any:
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(module, "project_review_records", counted)
+    review_service.prepare(
+        school_review_id("Test High School"),
+        "research",
+        {"recorded_name": "Test High School"},
+        reviewer="Reviewer",
+        notes="Check history",
+    )
+    assert calls == 2
+
+
+@pytest.mark.parametrize("changed", ["source", "ledger"])
+def test_changes_during_semantic_diff_invalidate_preview(
+    review_service: ReviewService, monkeypatch: pytest.MonkeyPatch, changed: str
+) -> None:
+    original = review_service.semantic_diff
+
+    def change_inputs(*args: Any, **kwargs: Any) -> Any:
+        result = original(*args, **kwargs)
+        if changed == "source":
+            with (review_service.external_dir / "school-location-2025.csv").open(
+                "a", encoding="utf-8"
+            ) as stream:
+                stream.write("3,New School,Government,Secondary,TAS,-42,147\n")
+        else:
+            review_service.log_path.write_bytes(encode_event(school_event()))
+        return result
+
+    monkeypatch.setattr(review_service, "semantic_diff", change_inputs)
+    with pytest.raises(StaleReviewError, match="inputs changed"):
+        review_service.prepare(
+            school_review_id("Test High School"),
+            "research",
+            {"recorded_name": "Test High School"},
+            reviewer="Reviewer",
+            notes="Check history",
+        )
+
 
 pytestmark = pytest.mark.integration
 

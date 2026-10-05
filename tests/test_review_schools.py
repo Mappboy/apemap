@@ -420,6 +420,106 @@ def test_stale_form_retains_draft_and_requires_fresh_preview(
     assert client.post(f"/items/{REVIEW_ID}/preview", data=draft).status_code == 200
 
 
+def test_unrelated_decision_does_not_stale_school_form(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    client, service = real_school
+    draft = guided(client)
+    other = service.prepare(
+        school_review_id("Another School"),
+        "research",
+        {"recorded_name": "Another School"},
+        reviewer="Other Reviewer",
+        notes="Other research",
+    )
+    service.save(other)
+    baseline = service.log_path.read_bytes()
+    response = client.post(f"/items/{REVIEW_ID}/preview", data=draft)
+    assert response.status_code == 200
+    assert "Confirmed recorded-name relationship" in response.get_data(as_text=True)
+    assert service.log_path.read_bytes() == baseline
+
+
+def test_changed_manual_target_refreshes_page_and_retains_draft(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    from apemap.review.model import institution_review_id
+
+    client, service = real_school
+    definition = replace(
+        event("accept", "definition"),
+        entity_type="manual_institution",
+        review_id=institution_review_id("manual:overseas"),
+        payload={
+            "institution_ref": "manual:overseas",
+            "school_name": "Overseas School",
+            "country": "Ireland",
+            "sector": "Other",
+        },
+        source_url=SOURCE,
+    )
+    mapping = replace(
+        event("supersede", "mapped"),
+        supersedes=["earlier"],
+        replacement_action="map",
+        payload={
+            "recorded_name": NAME,
+            "institution_ref": "manual:overseas",
+            "relationship_type": "alias",
+        },
+    )
+    with service.log_path.open("ab") as stream:
+        stream.write(encode_event(definition) + encode_event(mapping))
+    draft = guided(client, field_institution_ref="manual:overseas")
+    replacement = replace(
+        definition,
+        decision_id="definition-new",
+        action="supersede",
+        supersedes=["definition"],
+        replacement_action="accept",
+        payload={**definition.payload, "country": "England"},
+    )
+    with service.log_path.open("ab") as stream:
+        stream.write(encode_event(replacement))
+    response = client.post(f"/items/{REVIEW_ID}/preview", data=draft)
+    html = response.get_data(as_text=True)
+    assert response.status_code == 409 and "England" in html
+    assert (
+        "Your draft is retained" in html
+        and "Confirmed recorded-name relationship" in html
+    )
+    assert "data-save-school" not in html
+
+
+def test_unrelated_change_during_preview_retries_without_losing_draft(
+    real_school: tuple[Any, ReviewService], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, service = real_school
+    draft = guided(client)
+    original = service.semantic_diff
+    calls = 0
+
+    def raced_diff(*args: Any, **kwargs: Any) -> Any:
+        nonlocal calls
+        result = original(*args, **kwargs)
+        calls += 1
+        if calls == 1:
+            unrelated = replace(
+                event("research", "unrelated"),
+                review_id=school_review_id("Other School"),
+                payload={"recorded_name": "Other School"},
+            )
+            with service.log_path.open("ab") as stream:
+                stream.write(encode_event(unrelated))
+        return result
+
+    monkeypatch.setattr(service, "semantic_diff", raced_diff)
+    response = client.post(f"/items/{REVIEW_ID}/preview", data=draft)
+    assert response.status_code == 200 and calls == 2
+    assert "Confirmed recorded-name relationship" in response.get_data(as_text=True)
+    assert len(service.events()) == 2  # No preview writes.
+
+
 def test_guided_conflict_supersedes_every_head(
     real_school: tuple[Any, ReviewService],
 ) -> None:
