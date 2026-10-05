@@ -249,10 +249,9 @@ def test_research_rejection_remove_target_but_retain_provenance(
     [
         ("field_relationship_type", ""),
         ("field_institution_ref", ""),
-        ("source_url", ""),
     ],
 )
-def test_mapping_requires_target_relationship_and_evidence(
+def test_mapping_requires_target_and_relationship(
     real_school: tuple[Any, ReviewService], field: str, value: str
 ) -> None:
     client, service = real_school
@@ -264,6 +263,134 @@ def test_mapping_requires_target_relationship_and_evidence(
         == 400
     )
     assert service.log_path.read_bytes() == baseline
+
+
+def test_mapping_without_source_previews_and_saves_append_only(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    client, service = real_school
+    baseline = service.log_path.read_bytes()
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview", data=guided(client, source_url="")
+    )
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200 and "No source URL supplied." in html
+    assert "Evidence source URL (optional)" in html
+    assert service.log_path.read_bytes() == baseline
+    values = Inputs(html).values
+    saved = client.post(
+        f"/items/{REVIEW_ID}/save",
+        data={
+            "csrf_token": values["csrf_token"],
+            "preview_token": values["preview_token"],
+        },
+    )
+    assert saved.status_code == 303
+    assert service.log_path.read_bytes().startswith(baseline)
+    assert service.events()[-1].source_url == ""
+
+
+@pytest.mark.parametrize(
+    "source", ["not a URL", "javascript:alert(1)", "https://user:secret@example.org"]
+)
+def test_mapping_rejects_invalid_optional_source(
+    real_school: tuple[Any, ReviewService], source: str
+) -> None:
+    client, service = real_school
+    baseline = service.log_path.read_bytes()
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview", data=guided(client, source_url=source)
+    )
+    assert response.status_code == 400 and "data-save-school" not in response.get_data(
+        as_text=True
+    )
+    assert service.log_path.read_bytes() == baseline
+
+
+@pytest.mark.parametrize("snapshot", [False, True])
+def test_parliamentarian_context_uses_source_attendance_and_service(
+    real_school: tuple[Any, ReviewService],
+    database_factory: DatabaseFactory,
+    snapshot: bool,
+) -> None:
+    client, service = real_school
+    path, conn = database_factory(None)
+    conn.executemany(
+        "INSERT INTO members (member_id, family_name, given_name, display_name, aph_id) VALUES (?, 'Person', 'Test', ?, ?)",
+        [
+            ("one", "First Person", "ONE"),
+            ("two", "Second <Person>", "TWO"),
+            ("other", "Unrelated Person", "OTHER"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO parliament_service (service_id, member_id, parliament_number, chamber, party, party_abbrev, electorate, state_or_territory) VALUES (?, ?, ?, 'representatives', 'Party', 'P', ?, ?)",
+        [
+            ("s1", "one", 47, "Canberra", "ACT"),
+            ("s2", "one", 48, "Canberra", "ACT"),
+            ("s3", "one", 48, "Canberra", "ACT"),
+            ("s4", "two", 48, "Hobart", "TAS"),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO institutions (institution_id, school_name, sector, suburb, state, country) VALUES (?, ?, 'Other', ?, ?, ?)",
+        [
+            ("i1", NAME, "Griffith", "ACT", "Australia"),
+            ("i2", NAME.upper(), "Dublin", None, "Ireland"),
+            ("i3", "Another School", None, None, None),
+        ],
+    )
+    conn.executemany(
+        "INSERT INTO member_education (education_id, member_id, institution_id, level, attended_status, source_url, retrieved_at, confidence, school_name_as_recorded) VALUES (?, ?, ?, 'secondary', 'attended_unspecified', ?, '2026-10-02T00:00:00+00:00', 'verified', ?)",
+        [
+            ("e1", "one", "i1", SOURCE, NAME),
+            ("e2", "two", "i2", "javascript:alert(1)", NAME.upper()),
+            ("e3", "other", "i3", SOURCE, "Another School"),
+        ],
+    )
+    if snapshot:
+        from apemap.review.integration import capture_review_sources
+
+        capture_review_sources(conn)
+        conn.execute("UPDATE parliament_service SET state_or_territory = 'VIC'")
+        conn.execute("UPDATE institutions SET country = 'Changed country'")
+        conn.execute("UPDATE members SET display_name = 'Changed name'")
+        conn.execute(
+            "UPDATE member_education SET school_name_as_recorded = 'Changed school'"
+        )
+    conn.close()
+    service.db_path = path
+    baseline = hashlib.sha256(path.read_bytes()).hexdigest()
+    members = service.show(REVIEW_ID)["context"]["members"]
+    assert [member["display_name"] for member in members] == [
+        "First Person",
+        "Second <Person>",
+    ]
+    assert len(members[0]["services"]) == 2  # Repeated service intervals share a term.
+    html = client.get(f"/items/{REVIEW_ID}").get_data(as_text=True)
+    assert 'href="https://handbook.aph.gov.au/individual/ONE"' in html
+    assert "Second &lt;Person&gt;" in html and "Unrelated Person" not in html
+    assert (
+        "Represented state/territory: ACT" in html
+        and "Represented state/territory: TAS" in html
+    )
+    assert "Griffith · ACT · Australia" in html and "Dublin · Ireland" in html
+    assert "Changed country" not in html and "Changed school" not in html
+    assert "Review attendance" in html and 'href="javascript:alert(1)"' not in html
+    assert html.index("Parliamentarians using this school name") < html.index(
+        "Possible matches"
+    )
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == baseline
+
+
+def test_school_without_database_has_explicit_missing_member_context(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    client, service = real_school
+    assert service.show(REVIEW_ID)["context"]["members"] == []
+    assert "No parliamentarian context is available" in client.get(
+        f"/items/{REVIEW_ID}"
+    ).get_data(as_text=True)
 
 
 def test_stale_form_retains_draft_and_requires_fresh_preview(
@@ -450,8 +577,11 @@ def test_exact_manual_resolution_only_accepts_one_active_definition(
     assert service.resolve_institution("manual:overseas") is None
 
 
+@pytest.mark.parametrize("source", [SOURCE, ""])
 def test_readable_canonical_preview_leaves_database_unchanged(
-    real_school: tuple[Any, ReviewService], database_factory: DatabaseFactory
+    real_school: tuple[Any, ReviewService],
+    database_factory: DatabaseFactory,
+    source: str,
 ) -> None:
     client, service = real_school
     path, conn = database_factory(None)
@@ -475,7 +605,9 @@ def test_readable_canonical_preview_leaves_database_unchanged(
     conn.close()
     service.db_path = path
     baseline = hashlib.sha256(path.read_bytes()).hexdigest()
-    response = client.post(f"/items/{REVIEW_ID}/preview", data=guided(client))
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview", data=guided(client, source_url=source)
+    )
     html = response.get_data(as_text=True)
     assert response.status_code == 200
     assert "Affected education assertions" in html and "1 updated" in html

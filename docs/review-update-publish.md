@@ -139,6 +139,8 @@ confirmed absence of schooling information.
 6. Record the source URL, actual retrieval date, evidence summary, reviewer and
    decision through the review service. Unreviewed queues are `pending`; record
    acceptance, rejection or research with a rationale in the decision log.
+   For an obvious school relationship, its mapping source URL may be omitted;
+   attendance and other accepted decision types still require their own source.
 
 **Checkpoint:** another reviewer can identify the person, reproduce the evidence,
 and understand why each claim was accepted or left unresolved.

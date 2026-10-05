@@ -8,6 +8,7 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import duckdb
 
@@ -80,6 +81,72 @@ def _cache_object(path: Path) -> dict[str, Any]:
     if not isinstance(cached, dict):
         raise ValueError(f"Invalid Wikimedia cache object: {path}")
     return cached
+
+
+def school_member_context(
+    conn: duckdb.DuckDBPyConnection, review_id: str
+) -> list[dict[str, Any]]:
+    """Find source attendance and service context by the immutable school key."""
+    members = {row["member_id"]: row for row in _rows(conn, "members")}
+    institutions = {row["institution_id"]: row for row in _rows(conn, "institutions")}
+    services: dict[str, list[dict[str, Any]]] = {}
+    for row in _rows(conn, "parliament_service"):
+        services.setdefault(row["member_id"], []).append(row)
+    result: dict[str, dict[str, Any]] = {}
+    for row in _rows(conn, "member_education"):
+        institution = institutions.get(row["institution_id"], {})
+        name = row.get("school_name_as_recorded") or institution.get("school_name", "")
+        if not name or school_review_id(name) != review_id:
+            continue
+        member = members.get(row["member_id"])
+        if not member:
+            continue
+        aph_id = member.get("aph_id")
+        if row["member_id"] not in result:
+            service_rows = services.get(row["member_id"], [])
+            terms = {
+                (
+                    term["parliament_number"],
+                    term["chamber"],
+                    term.get("electorate") or "",
+                    term["state_or_territory"],
+                )
+                for term in service_rows
+            }
+            result[row["member_id"]] = {
+                "display_name": member["display_name"],
+                "aph_id": aph_id,
+                "biography_url": f"https://handbook.aph.gov.au/individual/{quote(aph_id, safe='')}"
+                if aph_id
+                else None,
+                "services": [
+                    {
+                        "parliament": parliament,
+                        "chamber": chamber,
+                        "electorate": electorate,
+                        "state": state,
+                    }
+                    for parliament, chamber, electorate, state in sorted(terms)
+                ],
+                "education": [],
+            }
+        result[row["member_id"]]["education"].append(
+            {
+                "review_id": education_review_id(aph_id, name) if aph_id else None,
+                "recorded_name": name,
+                "source_url": row.get("source_url"),
+                "attended_status": row.get("attended_status"),
+                "years_attended": row.get("years_attended"),
+                "location": " · ".join(
+                    str(institution[key])
+                    for key in ("suburb", "state", "country")
+                    if institution.get(key)
+                ),
+            }
+        )
+    return json_value(
+        sorted(result.values(), key=lambda member: member["display_name"])
+    )
 
 
 def build_candidates(

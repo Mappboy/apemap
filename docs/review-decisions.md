@@ -13,7 +13,10 @@ authorities.
 Use `uv run apemap review --help` to inspect the review commands. Export a queue,
 inspect the candidate and evidence, then record a decision through the CLI or
 optional local reviewer. An accepted decision requires an explicit reviewer,
-review date and source URL; explanatory notes are optional. Rejection and research
+review date; explanatory notes are optional. Source URLs are optional for school
+mappings when the relationship is obvious from the available context. Other
+accepted decision types require a source URL. Omit an optional URL or use an empty
+string in JSON; any supplied URL must be a valid HTTP(S) URL. Rejection and research
 require a reason. Institution relationship evidence is separate
 from evidence that a member attended a school. Unknown graduation, location and
 historical-continuity facts remain unknown.
@@ -155,10 +158,18 @@ confirmed institution references remain leads, never automatic ACARA matches.
 Only evidence with the same explicit reference is grouped under one target.
 
 Choose **Same school**, **Alternate name**, **Renamed school**, or **Successor
-institution**, then supply the supporting source URL. **Use this source** explicitly
+institution**, then optionally supply a supporting source URL. **Use this source** explicitly
 copies an evidence link; selecting a school preserves your source, reviewer and
 notes. For non-ACARA schools, enter an existing `manual:` reference, or open the
 manual-institution form in another tab and save its definition first.
+
+The school page shows associated parliamentarians with links to their Parliamentary
+Handbook biographies, attendance review items and original attendance sources.
+Parliamentary service includes chamber, electorate and represented state/territory;
+source institution location includes known suburb, state and country. These are
+source snapshot contexts, not inferred school locations. A represented state does
+not establish where the member attended school. Context is unavailable without
+the local review database; an omitted mapping source URL is explicit in the preview.
 
 **Preview mapping** shows the relationship, replacements and canonical education
 effects when a review database is available. **Save mapping** appends a decision;

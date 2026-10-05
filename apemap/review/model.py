@@ -209,9 +209,13 @@ def validate_event(event: ReviewEvent) -> None:
         raise ValueError("map is only valid for schools")
     if action in ("reject", "research") and not event.notes.strip():
         raise ValueError("Rejection/research requires a reason or note")
+    if not isinstance(event.source_url, str):
+        raise ValueError(
+            "source_url must be a string; omit it or use an empty string when optional"
+        )
     if event.source_url:
         evidence_url(event.source_url)
-    if action in ("accept", "map"):
+    if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
     expected_id = event.review_id

@@ -27,6 +27,7 @@ from apemap.review.candidates import (
     export_candidates,
     json_value,
     load_into_duckdb,
+    school_member_context,
 )
 from apemap.review.model import (
     DEFAULT_LOG_PATH,
@@ -370,6 +371,12 @@ class ReviewService:
         ]
         heads = active_heads(self.events(allow_conflicts=True)).get(review_id, [])
         decision = heads[0] if len(heads) == 1 else None
+        context = dict(candidates[0]["payload"]) if candidates else {}
+        if entity == "school":
+            context["members"] = []
+            if self.db_path.exists():
+                with get_connection(self.db_path, read_only=True) as conn:
+                    context["members"] = school_member_context(conn, review_id)
         return {
             "review_id": review_id,
             "entity_type": entity,
@@ -377,7 +384,7 @@ class ReviewService:
             "decision": decision.to_dict() if decision else None,
             "history": self.history(review_id),
             "conflicts": [event.to_dict() for event in heads] if len(heads) > 1 else [],
-            "context": candidates[0]["payload"] if candidates else {},
+            "context": context,
         }
 
     def status(self) -> dict[str, Any]:

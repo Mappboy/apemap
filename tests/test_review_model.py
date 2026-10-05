@@ -142,6 +142,40 @@ def test_invalid_schema_fields_rejected(changes: dict[str, Any]) -> None:
         school_event(**changes)
 
 
+@pytest.mark.parametrize("action", ["accept", "map", "supersede"])
+def test_school_source_url_can_be_omitted(action: str) -> None:
+    value = school_event().to_dict()
+    value.pop("source_url")
+    value["action"] = action
+    if action == "supersede":
+        value.update(supersedes=["earlier"], replacement_action="map")
+    assert ReviewEvent.from_dict(value).source_url == ""
+
+
+@pytest.mark.parametrize(
+    "source", [None, 0, False, " ", "not a URL", "https://user:secret@example.org"]
+)
+def test_optional_school_source_is_validated_when_supplied(source: Any) -> None:
+    with pytest.raises(ValueError, match="source_url"):
+        school_event(source_url=source)
+
+
+@pytest.mark.parametrize(
+    "entity", ["member", "member_education", "service", "manual_institution"]
+)
+def test_other_accepted_entities_still_require_source_url(entity: str) -> None:
+    prefixes = {"member_education": "education", "manual_institution": "institution"}
+    value = school_event().to_dict()
+    value.update(
+        entity_type=entity,
+        review_id=f"{prefixes.get(entity, entity)}:test",
+        action="accept",
+        source_url="",
+    )
+    with pytest.raises(ValueError, match="source_url must be a nonempty string"):
+        ReviewEvent.from_dict(value)
+
+
 def test_real_acara_and_manual_registry_references_required() -> None:
     event = school_event()
     with pytest.raises(ValueError, match="does not exist"):
