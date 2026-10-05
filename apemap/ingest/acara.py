@@ -8,6 +8,7 @@ and populates canonical DuckDB tables and Parquet artifacts.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import logging
 import os
@@ -36,6 +37,15 @@ from apemap.db import (
     temporary_dataframe_view,
 )
 from apemap.ingest.http import create_retry_session
+from apemap.ingest.matching import SchoolMatcher
+from apemap.review.integration import (
+    apply_review_events,
+    capture_review_snapshot,
+    capture_review_sources,
+    read_review_events,
+    restore_review_sources,
+    review_snapshot_metadata,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -746,6 +756,7 @@ def run_acara_ingestion(
     export_parquet_files: bool = True,
     output_dir: Path | str | None = None,
     external_dir: Path | str | None = None,
+    decision_log_path: Path | str | None = None,
 ) -> AcaraIngestResult:
     """Execute complete ACARA ingestion pipeline and DuckDB table synchronization.
 
@@ -775,6 +786,7 @@ def run_acara_ingestion(
     ext_dir.mkdir(parents=True, exist_ok=True)
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
+    review_events = read_review_events(decision_log_path)
 
     # 1. Download official ACARA datasets if requested
     if download_latest:
@@ -813,6 +825,11 @@ def run_acara_ingestion(
     conn = active_conn
     try:
         init_schema(conn)
+        conn.execute("BEGIN TRANSACTION")
+        previous_provenance = review_snapshot_metadata(conn).get(
+            "source_provenance", {}
+        )
+        restore_review_sources(conn)
 
         # Insert institutions
         if not inst_df.empty:
@@ -864,6 +881,26 @@ def run_acara_ingestion(
         else:
             migrate_historical_finances(conn, gpkg_path=gpkg_path)
 
+        matcher = SchoolMatcher(external_dir=ext_dir)
+        capture_review_sources(conn)
+        apply_review_events(conn, events=review_events, matcher=matcher)
+        capture_review_snapshot(
+            conn,
+            review_events,
+            decision_log_path=decision_log_path,
+            source_provenance={
+                **previous_provenance,
+                "acara": {
+                    "source": "ACARA school register and profiles",
+                    "files": {
+                        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                        for path in matcher.source_paths
+                    },
+                },
+            },
+        )
+        conn.execute("COMMIT")
+
         # Count final tables
         res_inst = conn.execute("SELECT count(*) FROM institutions").fetchone()
         inst_count = res_inst[0] if res_inst is not None else 0
@@ -891,6 +928,12 @@ def run_acara_ingestion(
         }
         logger.info("ACARA ingestion finished successfully: %s", summary)
         return summary
+    except Exception:
+        try:
+            conn.execute("ROLLBACK")
+        except Exception:
+            pass
+        raise
     finally:
         if should_close_conn:
             active_conn.close()

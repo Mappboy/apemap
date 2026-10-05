@@ -236,9 +236,10 @@ class SchoolMatcher:
         self.external_dir = Path(external_dir or EXTERNAL_DIR)
         self.require_alias_sources = require_alias_sources
         self.reference_dir = Path(reference_dir or REFERENCE_DIR)
-        self.aliases_file = Path(
-            aliases_file or (self.reference_dir / "school_aliases.json")
-        )
+        # Legacy aliases are read only when explicitly requested for migration/parity.
+        self.aliases_file = Path(aliases_file) if aliases_file is not None else None
+        self.review_blocked_keys: set[str] = set()
+        self.source_paths: set[Path] = set()
 
         self.exact_map: dict[str, dict[str, Any]] = {}
         self.norm_map: dict[str, dict[str, Any]] = {}
@@ -248,9 +249,13 @@ class SchoolMatcher:
 
         self._load_aliases()
         self._load_reference_data()
+        self.registered_names: dict[str, set[str]] = {
+            aid: {ref["school_name"]} for aid, ref in self.acara_id_map.items()
+        }
         self.current_ids = set(self.acara_id_map)
         current_location = self.external_dir / "school-location-2025.csv"
         if current_location.exists():
+            self.source_paths.add(current_location)
             current_frame = pd.read_csv(current_location, dtype=str)
             id_column = (
                 "ACARA SML ID" if "ACARA SML ID" in current_frame.columns else "ACARAId"
@@ -264,6 +269,7 @@ class SchoolMatcher:
         path = self.external_dir / "school-profile-2008-2025.csv"
         if not path.exists():
             return
+        self.source_paths.add(path)
         frame = pd.read_csv(path, dtype=str).fillna("")
         id_col = "ACARA SML ID" if "ACARA SML ID" in frame.columns else "ACARAId"
         name_col = "School Name" if "School Name" in frame.columns else "SchoolName"
@@ -271,10 +277,21 @@ class SchoolMatcher:
             return
         if "Calendar Year" in frame.columns:
             frame = frame.sort_values("Calendar Year", ascending=False)
-        for _, row in frame.drop_duplicates([id_col, name_col]).iterrows():
+        fields = [
+            id_col,
+            name_col,
+            "School Sector",
+            "School Type",
+            "State",
+            "Suburb",
+            "Postcode",
+        ]
+        frame = frame[[key for key in fields if key in frame.columns]]
+        for row in frame.drop_duplicates([id_col, name_col]).to_dict("records"):
             aid, name = str(row[id_col]).strip(), str(row[name_col]).strip()
             if not aid or not name:
                 continue
+            self.registered_names.setdefault(aid, set()).add(name)
             sector = str(row.get("School Sector", "Other"))
             if sector not in ("Government", "Catholic", "Independent"):
                 sector = "Other"
@@ -303,8 +320,9 @@ class SchoolMatcher:
         self.candidate_keys = sorted(set(self.norm_map) - self.ambiguous_keys)
 
     def _load_aliases(self) -> None:
-        if not self.aliases_file.exists():
+        if self.aliases_file is None or not self.aliases_file.exists():
             return
+        self.source_paths.add(self.aliases_file)
         try:
             with open(self.aliases_file, encoding="utf-8") as f:
                 data = json.load(f)
@@ -329,6 +347,7 @@ class SchoolMatcher:
         ]
         for pfile in profile_candidates:
             if pfile.exists():
+                self.source_paths.add(pfile)
                 try:
                     p_df = pd.read_csv(pfile, dtype=str)
                     id_col = (
@@ -341,7 +360,14 @@ class SchoolMatcher:
                             p_df = p_df.sort_values(
                                 "Calendar Year", ascending=False
                             ).drop_duplicates(id_col)
-                        for _, row in p_df.iterrows():
+                        p_df = p_df[
+                            [
+                                key
+                                for key in (id_col, "ICSEA", "Total Enrolments")
+                                if key in p_df.columns
+                            ]
+                        ]
+                        for row in p_df.to_dict("records"):
                             aid = str(row[id_col]).strip()
                             icsea_val = None
                             if (
@@ -366,6 +392,7 @@ class SchoolMatcher:
         # 2. Load primary school register from JSON if present
         json_file = self.external_dir / "acara_school_results.json"
         if json_file.exists():
+            self.source_paths.add(json_file)
             try:
                 with open(json_file, encoding="utf-8") as f:
                     schools_json = json.load(f)
@@ -437,6 +464,7 @@ class SchoolMatcher:
         ]
         for lfile in loc_candidates:
             if lfile.exists():
+                self.source_paths.add(lfile)
                 try:
                     loc_df = pd.read_csv(lfile, dtype=str)
                     id_col = (
@@ -455,7 +483,22 @@ class SchoolMatcher:
                         else "SchoolSector"
                     )
                     if id_col in loc_df.columns and name_col in loc_df.columns:
-                        for _, row in loc_df.iterrows():
+                        fields = [
+                            id_col,
+                            name_col,
+                            sec_col,
+                            "Latitude",
+                            "Longitude",
+                            "School Type",
+                            "Campus Type",
+                            "State",
+                            "Suburb",
+                            "Postcode",
+                        ]
+                        loc_df = loc_df[
+                            [key for key in fields if key in loc_df.columns]
+                        ]
+                        for row in loc_df.to_dict("records"):
                             aid = str(row[id_col]).strip()
                             s_name = str(row[name_col]).strip()
                             if not s_name:
@@ -525,6 +568,29 @@ class SchoolMatcher:
         is_intl = is_international_text(cleaned)
         low = cleaned.lower()
         norm_key = normalize_school_key(cleaned)
+
+        # Unresolved review cases may retain a register-exact identity, but must
+        # never gain a fuzzy identity merely because an old override was removed.
+        if norm_key in self.review_blocked_keys and (
+            norm_key not in self.norm_map or norm_key in self.ambiguous_keys
+        ):
+            return MatchedInstitution(
+                institution_id=f"inst-unmatched-{norm_key.replace(' ', '-')[:40]}",
+                acara_id=None,
+                school_name=cleaned,
+                school_type="Secondary",
+                sector="Other",
+                campus_type=None,
+                state=None,
+                suburb=None,
+                postcode=None,
+                longitude=None,
+                latitude=None,
+                confidence="unconfirmed",
+                is_international=is_intl,
+                raw_input=raw_school,
+                reviewer_notes="School identity requires sourced review",
+            )
 
         # 0. Explicit Override / Historical Amalgamation Alias Check
         alias_info = self.aliases.get(low) or self.aliases.get(norm_key)

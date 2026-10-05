@@ -36,6 +36,7 @@ from apemap.ingest.pipeline import run_aph_ingestion
 from apemap.inputs import compute_sha256, preflight_offline_inputs
 from apemap.release.build import build_release
 from apemap.release.verify import verify_release
+from apemap.review.integration import attach_source_manifest
 
 
 def prepare_historical_inputs(
@@ -76,6 +77,8 @@ def prepare_historical_inputs(
                 sources[path] = (
                     "Reviewed APEMAP reference input; individual source URLs in records"
                 )
+        # The mutable review ledger/registry lives in a subdirectory and is
+        # captured separately by replay, rather than pinned as an upstream source.
         # Include the existing AEC cache required by the coordinated pipeline.
         for path in sorted((DATA_DIR / "raw/aec/2025").iterdir()):
             if path.is_file():
@@ -106,6 +109,7 @@ def prepare_historical_inputs(
             )
             + "\n",
             encoding="utf-8",
+            newline="\n",
         )
     preflight_offline_inputs(manifest_path=manifest_path)
     for name in ("school-profile-2008-2025.csv", "school-location-2025.csv"):
@@ -126,7 +130,8 @@ def build_historical_release(
 ) -> dict[str, Any]:
     """Populate all terms and verify a public release without modifying old artifacts."""
     prepare_historical_inputs(input_dir, manifest_path, download=download)
-    input_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_bytes = manifest_path.read_bytes()
+    input_manifest = json.loads(manifest_bytes)
     source_time = datetime.fromisoformat(input_manifest["created_at"])
     if db_path.exists():
         raise FileExistsError(f"Use a fresh historical database path: {db_path}")
@@ -154,6 +159,7 @@ def build_historical_release(
             output_dir=review_dir,
             retrieved_at=source_time,
         )
+        attach_source_manifest(conn, manifest_path, manifest_bytes=manifest_bytes)
         # Historical profile-only institutions must exist before finance/funding resolution.
         ingest_all_funding(conn, retrieved_at=source_time)
         export_parliament_coverage(conn, review_dir, finance_year=2024)

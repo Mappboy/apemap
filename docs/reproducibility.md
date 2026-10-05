@@ -93,18 +93,22 @@ To understand reproducibility differences:
 ### Why We Default to Local Cache
 Official government endpoints (such as `handbookapi.aph.gov.au` or the ACARA portal) can update their records, alter biographical wording, or become temporarily unavailable. Upstream Wikimedia queries can also reflect crowdsourced edits over time.
 APH/AEC raw payloads are distributed in the pinned input release; curated aliases
-are tracked in `data/reference/school_aliases.json`. Optional Wikimedia responses
+are tracked in `data/reference/review/decisions.jsonl`. Optional Wikimedia responses
 under `data/raw/wikimedia/` are local caches and are not part of this release.
 The strict offline pipeline uses the manifested sources without refreshing them.
 Automated tests block live HTTP requests and use local inputs or mocked fixtures.
 
 When an intentional dataset update is desired, supply `--refresh` and `--download` to incorporate live upstream changes.
 
-### Preservation of Manual Review Decisions Across Reruns
-Rerunning `apemap ingest wikimedia` (whether offline against cache or online with `--refresh`) is guaranteed to be idempotent and safe for manual curation:
-- Existing human review decisions (`accepted`, `rejected`, `needs_research`, or any row with manual notes/values) stored in `data/processed/wikimedia_member_review.csv` and `data/processed/wikimedia_school_review.csv` are preserved via key-based merging.
-- Generated metadata columns are updated with current candidate information, while manual resolution columns are kept intact.
-- Obsolete unreviewed candidates (rows still in `pending` without notes that no longer appear in the unmatched query) are cleanly pruned.
+### Preservation of review decisions across reruns
+
+The authoritative [review log](review-decisions.md) preserves immutable decisions
+independently of generated CSV queues. Ordinary ingestion applies its effective
+projection; replaying the same sources and log is idempotent. Existing annotated
+CSVs are preserved for an explicit validated import rather than silently adopted.
+Static upstream manifests exclude the mutable ledger and registry. Ingestion and
+release metadata separately identify the exact consumed review revision and source
+fingerprint, so appending a decision does not invalidate unchanged source pins.
 
 ---
 

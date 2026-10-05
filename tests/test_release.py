@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 import pytest
@@ -77,6 +78,36 @@ def test_build_and_verify_release(tmp_path: Path) -> None:
     assert report["valid"] is True
     assert report["errors"] == []
     assert report["verified_files_count"] == results["files_count"]
+
+
+@pytest.mark.unit
+def test_release_records_the_consumed_review_snapshot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Release provenance describes the applied revision, not the working log."""
+    from apemap.review import integration
+
+    db_path = create_release_db(tmp_path / "review_snapshot.duckdb")
+    ledger = tmp_path / "decisions.jsonl"
+    ledger.write_bytes(b"")
+    monkeypatch.setattr(integration, "DEFAULT_LOG_PATH", ledger)
+    from apemap.db import get_connection
+
+    with get_connection(db_path) as conn:
+        snapshot = integration.capture_review_snapshot(
+            conn, [], source_provenance={"aph": "pinned-aph-digest"}
+        )
+    # A later working revision must neither replace the stored provenance nor be
+    # read while building a release from an already ingested database.
+    ledger.write_text("invalid later working revision\n", encoding="utf-8")
+    output = tmp_path / "review-release"
+    build_release(db_path=db_path, output_dir=output, parliaments=[47], strict=False)
+    manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    web_metadata = json.loads(
+        (output / "web/metadata.json").read_text(encoding="utf-8")
+    )
+    assert manifest["review_snapshot"] == snapshot
+    assert web_metadata["review_snapshot"] == snapshot
 
 
 @pytest.mark.unit

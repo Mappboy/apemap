@@ -32,21 +32,18 @@ and O'Sullivan on
 both after opening day. The Handbook supplies the occupied-membership evidence;
 constitutional seat capacity alone would be the wrong denominator for that term.
 
-`data/reference/manual_member_education.csv` supplements APH by identifier with
-primary evidence. Gillard and Rudd records use National Archives biographies.
-Attendance remains `attended_unspecified` unless evidence supports another
-status. Education IDs depend on the member and recorded school name, so improving
-a match does not create a new assertion. `school_name_as_recorded` preserves the
-biography's name independently of the canonical institution name.
+The authoritative [review log](review-decisions.md) supplements APH by identifier
+with sourced evidence. Gillard and Rudd records retain National Archives biographies.
+Attendance remains `attended_unspecified` unless evidence supports another status.
+Education IDs depend on the member and original recorded school name, so improving
+a match does not create a new assertion. School names as recorded remain separate
+from canonical institution names.
 
-Uncertain service histories and education gaps remain in persistent
-`historical_service_review.csv` and `historical_education_review.csv` queues.
-Reruns preserve reviewer decisions; a queue decision is not automatically accepted
-evidence. Accepted education belongs in the manual evidence CSV. Accepted service
-corrections belong in `historical_service_overrides.csv`, with source URL,
-retrieval date and review notes. Override intervals replace the entire member/term
-and must be sourced, nonoverlapping and inside its dates. The checked-in service
-override file currently contains a header only.
+Uncertain service histories and education gaps remain queue views. Supported
+corrections are appended to the decision log and replayed after ingestion. Service
+corrections replace the entire member/term interval group and must be sourced,
+nonoverlapping and inside its dates. Legacy inputs and their exact prior values
+are preserved in `archive/reference/2026-10-05/`.
 
 ## Historical institutions and financial interpretation
 
@@ -55,8 +52,9 @@ as `historical_only`. Missing coordinates remain null; these schools contribute
 to coverage but cannot appear as map points. Ambiguous historical names go to
 review. Historical ingestion requires source URLs for curated aliases. Renames
 and successors retain `institution_resolution` and `resolution_source_url`.
-Unsourced legacy aliases remain available for explicit contemporary-only runs,
-but do not establish historical continuity in this coordinated release.
+All 89 unsourced legacy aliases remain research decisions rather than accepted
+relationships. The reviewed migration report declares contemporary coverage
+changes; historical review blocks prevent unrelated fuzzy assignments.
 
 Reviewed successors include Ogilvie High → Hobart City High and Nambour High →
 Nambour State College. The prior Nambour aliases incorrectly identified unrelated

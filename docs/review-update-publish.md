@@ -75,17 +75,16 @@ Do not refresh sources merely to review existing records. Keep raw snapshots,
 ## 2. Open the review queues and identify priorities
 
 Start with existing queues in `data/processed/` or the baseline release's
-`review/` directory. Copy any prior manually reviewed CSVs into `$ReviewDir`
-before regenerating them there; merge preservation only reads the same output
-path. Keep CSV headers, row keys and UTF-8 encoding, and treat identifiers and
-postcodes as text when opening them in a spreadsheet editor.
+`review/` directory. Export current decision-aware queues through the review CLI.
+Keep prior annotated CSVs unchanged for the explicit dry-run import workflow.
+Treat identifiers and postcodes as text when inspecting spreadsheet exports.
 
-| File | What to review | Editable decision fields |
+| File | What to review | Decision authority |
 | --- | --- | --- |
-| `historical_education_review.csv` | Missing education, unresolved school names and overseas institutions | `review_status`, `resolved_value`, `manual_source_url`, `review_notes` |
-| `historical_service_review.csv` | Uncertain service dates and membership histories | `review_status`, `resolved_value`, `manual_source_url`, `review_notes` |
-| `wikimedia_member_review.csv` | Identifier conflicts and demographic differences | `review_status`, `resolved_value`, `manual_source_url`, `review_notes`, historical evidence fields |
-| `wikimedia_school_review.csv` | Candidate school identities and locations | `review_status`, `resolved_*`, `manual_source_url`, `address_source_url`, `review_notes`, historical evidence fields |
+| `historical_education_review.csv` | Missing education, unresolved school names and overseas institutions | Review decision log |
+| `historical_service_review.csv` | Uncertain service dates and membership histories | Review decision log |
+| `wikimedia_member_review.csv` | Identifier conflicts and demographic differences | Review decision log |
+| `wikimedia_school_review.csv` | Candidate school identities and locations | Review decision log |
 | `unmatched_schools.csv` | Generated list of education gaps | Use a persistent review queue for decisions; this file is rewritten |
 | `upstream_profile_review.csv` | Invalid upstream profile percentages | Record evidence separately; this is a generated diagnostic, not an override input |
 
@@ -138,8 +137,10 @@ confirmed absence of schooling information.
    evidence explicitly supports `graduated` or `attended_did_not_graduate`.
    Record multiple schools separately; do not choose one just to simplify counts.
 6. Record the source URL, actual retrieval date, evidence summary, reviewer and
-   decision. Choose `pending`, `accepted`, `rejected` or `needs_research`.
-   Explain rejection or unresolved conflicts in `review_notes`.
+   decision through the review service. Unreviewed queues are `pending`; record
+   acceptance, rejection or research with a rationale in the decision log.
+   For an obvious school relationship, its mapping source URL may be omitted;
+   attendance and other accepted decision types still require their own source.
 
 **Checkpoint:** another reviewer can identify the person, reproduce the evidence,
 and understand why each claim was accepted or left unresolved.
@@ -163,70 +164,57 @@ and understand why each claim was accepted or left unresolved.
 6. Check profile and finance years. Recent data describes that reporting year or
    a reviewed successor, not the resources available when the member attended.
    Preserve missing values and recorded source anomalies.
-7. Complete the queue's manual fields, evidence URLs and notes. Generated
-   candidate columns can change on rerun, so put decisions in the manual fields.
+7. Append the supported decision, evidence URLs and notes through the review
+   service. Generated candidate columns can change on rerun; decision history
+   remains immutable in the log.
 
 **Checkpoint:** every accepted match has identity/location evidence and any
 historical relationship is explicit. Unresolved schools remain visible as gaps.
 
-## 5. Apply accepted corrections to reproducible inputs
+## 5. Record supported corrections and preview replay
 
-**An `accepted` queue row is a review record, not an automatic database update.**
-Promote supported decisions into the inputs consumed by ingestion:
+Use the authoritative [review decision workflow](review-decisions.md). Queue CSVs
+are exported views; an accepted CSV row is not an automatic database update.
 
-| Correction | Where to apply it | Required evidence and limits |
-| --- | --- | --- |
-| Add or supplement a member's secondary education | `data/reference/manual_member_education.csv` | `aph_id`, `school_name`, `source_url`, `retrieved_at`, `confidence`, `reviewer_notes`, `attended_status` |
-| Resolve a spelling, rename or successor to ACARA | `data/reference/school_aliases.json` | Canonical ID/name, state, sector, school type, notes, `source_url`, `relationship_type` and `reviewed_at` |
-| Correct a member's service history | `data/reference/historical_service_overrides.csv` | Full replacement intervals for the member/term, with URL, retrieval date and review notes |
-| Correct demographics, remove a false APH education claim, or apply an overseas school's reviewed coordinates | No general review-CSV application command exists | Keep the decision queued and make a focused ingestion/reference feature with regression tests before claiming it is applied |
+1. Inspect the candidate, original source, current canonical values and decision
+   history. Select the stable review ID and record reviewer, actual review date,
+   evidence URL and any explanatory notes. Rejection and research need a reason.
+2. Record supported member, education, institution or service corrections through
+   the review CLI or optional local reviewer. Manual institutions receive stable
+   `manual:` identities and location evidence; do not invent ACARA identifiers.
+3. Preview before/after changes. Service replacements include every interval for
+   the member/term. School relationship evidence is distinct from attendance
+   evidence. Retain original names, attendance uncertainty and unknown coordinates.
+4. Append decisions, validate the ledger and replay. Later corrections explicitly
+   supersede prior decisions; never edit historical lines. Conflicts stop replay
+   until a reviewed supersession resolves them.
+5. To reuse existing annotated CSVs, run the explicit dry-run import first. Supply
+   missing evidence and resolve invalid values before applying its proposed batch.
+   Preserve the original CSV unchanged as import lineage.
 
-For manual education, copy the existing CSV header exactly. Confidence values
-are `verified`, `provisional` or `unconfirmed`. Strong attendance evidence does
-not guarantee a verified institution match: final assertion confidence is capped
-by the matcher. Do not invent attendance years or graduation dates.
-
-For aliases, use the recorded school name as the key and verify the canonical
-ACARA ID exists in the source register. Use `rename` or `successor` when supported
-by evidence; update `total_aliases` if adding/removing entries. Historical runs
-including terms before 46 require sourced aliases. See the reviewed Ogilvie and
-Nambour entries for examples; their sources establish different relationships.
-
-Service overrides replace **all** generated intervals for that member/parliament.
-Supply every interval that must remain, within the term dates and without
-overlap. Use `representatives` or `senate`, ISO dates, and an empty end date only
-where the open term and evidence allow it. Never add a single replacement row
-while assuming the member's other intervals will survive.
-
-Save a review log in `$ReviewDir` containing IDs, old/new values, sources, actual
-retrieval dates, reviewer, disposition and the affected input file. Retain queue
-decisions alongside the source correction. Rebuild from inputs instead of
-manually editing DuckDB or exported JSON/GeoJSON.
+**Checkpoint:** fresh ingestion plus replay reproduces the reviewed result. No
+manual edit of DuckDB, derived JSON/GeoJSON or a generated queue is authoritative.
 
 ## 6. Update input pins and rebuild
 
-1. Inspect the reference diff and archive exact prior files when replacing or
-   removing an artifact requires preservation under [AGENTS.md](../AGENTS.md).
-   A focused record edit remains reviewable in Git history.
-2. Update the hash and byte size of **only the intentionally changed inputs** in
-   every applicable manifest: `data/inputs-manifest.json` for the standard
-   workflow and `data/historical-inputs-manifest.json` for historical replay.
-   Add new consumed references to the inventory with source/provenance metadata.
-   Preserve raw-source acquisition dates; a review date is not a new retrieval
-   date for an unchanged APH/ACARA snapshot.
-3. Obtain the new hash and size for each edited file, then update its manifest
-   entry. For example:
+1. Inspect appended decisions and any intentionally refreshed upstream snapshots.
+   Archive exact prior research files when replacing or removing an artifact
+   requires preservation under [AGENTS.md](../AGENTS.md).
+2. Update hashes and byte sizes only for intentionally changed upstream source
+   inputs in the applicable standard/historical manifests. Do not pin the mutable
+   review log or registry in those manifests. Preserve acquisition dates for
+   unchanged APH/ACARA snapshots.
+3. Validate source pins and the authoritative review ledger separately:
 
    ```powershell
-   Get-FileHash -Algorithm SHA256 data/reference/school_aliases.json
-   (Get-Item data/reference/school_aliases.json).Length
    uv run apemap inputs verify
    uv run apemap inputs verify --manifest data/historical-inputs-manifest.json
+   uv run apemap review check
    ```
 
-   Store the SHA-256 in lowercase. A changed raw archive also needs a new pinned
-   archive URL/hash and distribution asset; keep the existing archive pin when
-   only tracked references changed. Never repin an unexplained mismatch.
+   Ingestion records the consumed ledger hash and source fingerprint; releases
+   carry that review snapshot separately. Appending a review decision does not
+   require repinning an unchanged upstream source archive.
 4. Choose the build recipe that matches the intended release. Use a fresh
    database and output directory, outside the baseline paths.
 
@@ -322,7 +310,10 @@ Parquet exports as substitutes for this public bundle. The separate
 `export --web-release` format has a different layout and is not interchangeable
 with `release build`; use the frontend's expected contract.
 
-Keep review notes outside the finished bundle. Any intentional bundle change
+Education decision notes become public `reviewer_notes` alongside the assertion's
+evidence, so write them as publication-ready provenance. The full decision ledger,
+reviewer identities and working review database stay outside the public bundle.
+Any intentional bundle change
 requires rebuilding its manifest/checksums and reverifying; never overwrite an
 already published version.
 

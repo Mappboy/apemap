@@ -77,7 +77,7 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv sync --all-groups --frozen
+        run: uv sync --all-groups --extra review-ui --frozen
 
       - name: Restore pinned raw inputs
         env:
@@ -86,6 +86,9 @@ jobs:
 
       - name: Preinstall DuckDB spatial extension
         run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
+
+      - name: Validate authoritative review decisions
+        run: uv run apemap review check
 
       - name: Verify inputs manifest
         run: uv run apemap inputs verify

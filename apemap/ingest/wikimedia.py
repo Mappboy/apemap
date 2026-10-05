@@ -5,6 +5,7 @@ from __future__ import annotations
 from apemap.constants import supported_parliaments
 
 import json
+import hashlib
 import logging
 import re
 import time
@@ -42,6 +43,14 @@ from apemap.ingest.review import (
     evaluate_school_candidate,
     load_historical_school_aliases,
     merge_review_rows,
+)
+from apemap.review.integration import (
+    apply_review_events,
+    capture_review_snapshot,
+    capture_review_sources,
+    read_review_events,
+    review_snapshot_metadata,
+    restore_review_sources,
 )
 
 logger = logging.getLogger(__name__)
@@ -225,6 +234,18 @@ class WikimediaClient:
                 "source_query": sparql_query.strip(),
                 "status": "conflict",
                 "notes": f"Multiple Wikidata entities claim APH ID {clean_aph_id}: {non_null_qids}",
+                "candidates": [
+                    {
+                        "qid": qid,
+                        "bindings": [
+                            binding
+                            for binding in bindings
+                            if normalize_qid(binding.get("item", {}).get("value"))
+                            == qid
+                        ],
+                    }
+                    for qid in non_null_qids
+                ],
             }
             cache_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
             return payload
@@ -442,6 +463,7 @@ class WikimediaClient:
             "source_query": sparql_query.strip(),
             "status": status,
             "notes": notes,
+            "candidates": list(candidate_items.values()),
         }
         cache_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return payload
@@ -634,6 +656,7 @@ class WikimediaClient:
             "confidence": "suggested",
             "retrieved_at": retrieval_iso,
             "source_url": resp.url,
+            "source_query": json.dumps(wiki_params, sort_keys=True),
             "notes": f"Derived from Wikipedia/Wikidata page {target_title} ({target_qid})",
         }
         cache_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -652,6 +675,7 @@ def run_wikimedia_enrichment(
     timeout: int = DEFAULT_WIKIMEDIA_TIMEOUT,
     rate_delay: float = 0.5,
     client: WikimediaClient | None = None,
+    decision_log_path: Path | str | None = None,
 ) -> dict[str, Any]:
     """Execute Wikimedia enrichment pipeline for canonical members and unmatched schools."""
     if parliaments is None:
@@ -659,6 +683,7 @@ def run_wikimedia_enrichment(
 
     out_dir = Path(output_dir or PROCESSED_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
+    review_events = read_review_events(decision_log_path)
 
     wm_client = client or WikimediaClient(
         cache_dir=cache_dir, timeout=timeout, rate_delay=rate_delay
@@ -676,8 +701,14 @@ def run_wikimedia_enrichment(
     member_discrepancies = 0
     schools_processed = 0
     schools_suggested = 0
+    consumed_cache_paths: set[Path] = set()
 
     try:
+        conn.execute("BEGIN TRANSACTION")
+        previous_provenance = review_snapshot_metadata(conn).get(
+            "source_provenance", {}
+        )
+        restore_review_sources(conn)
         parl_placeholders = ", ".join(str(p) for p in parliaments)
 
         # -------------------------------------------------------------
@@ -707,6 +738,16 @@ def run_wikimedia_enrichment(
                 result: dict[str, Any] | None = None
                 if aph_id:
                     result = wm_client.lookup_member_by_aph_id(aph_id, refresh=refresh)
+                    identity_cache = (
+                        wm_client.members_cache_dir
+                        / f"{_sanitize_filename(aph_id.strip())}.json"
+                    )
+                    if (
+                        result
+                        and result.get("status") != "error"
+                        and identity_cache.exists()
+                    ):
+                        consumed_cache_paths.add(identity_cache)
 
                 # Fallback to name search only if APH ID was missing or confirmed not found on Wikidata
                 # (Do not fallback on network errors or timeouts to prevent compounding server load)
@@ -716,6 +757,16 @@ def run_wikimedia_enrichment(
                     result = wm_client.lookup_member_by_name(
                         disp_name, dob=dob, refresh=refresh
                     )
+                    name_cache = (
+                        wm_client.members_cache_dir
+                        / f"name_{_sanitize_filename(disp_name.strip().lower())}.json"
+                    )
+                    if (
+                        result
+                        and result.get("status") != "error"
+                        and name_cache.exists()
+                    ):
+                        consumed_cache_paths.add(name_cache)
 
                 if not result:
                     continue
@@ -731,6 +782,7 @@ def run_wikimedia_enrichment(
                     continue
 
                 matched_qid = result.get("wikidata_id")
+                review_start = len(member_reviews)
                 wiki_title = result.get("wikipedia_title")
                 wiki_url = result.get("wikipedia_url") or result.get("source_url")
                 wiki_dob = result.get("date_of_birth")
@@ -916,34 +968,24 @@ def run_wikimedia_enrichment(
                             }
                         )
 
+                for review in member_reviews[review_start:]:
+                    review["retrieved_at"] = result.get("retrieved_at", "")
+                    review["source_query"] = result.get("source_query", "")
+                    review["candidates"] = json.dumps(
+                        result.get("candidates", []), sort_keys=True
+                    )
+
             if members_to_update:
-                # DuckDB limitation: UPDATE on a table referenced by foreign keys triggers
-                # an internal delete-insert cycle that checks FK constraints. To update members
-                # safely, backup referencing child tables to temp tables, detach rows, perform
-                # the update, and restore referencing rows.
-                conn.execute(
-                    "CREATE TEMP TABLE _backup_ps AS SELECT * FROM parliament_service;"
-                )
-                conn.execute(
-                    "CREATE TEMP TABLE _backup_me AS SELECT * FROM member_education;"
-                )
-                conn.execute("DELETE FROM parliament_service;")
-                conn.execute("DELETE FROM member_education;")
-                try:
+                # Indexed parent updates need transactional catalog detachment;
+                # deleting referencing rows alone still trips DuckDB eager FKs.
+                from apemap.review.integration import detached_member_children
+
+                with detached_member_children(conn):
                     for mem_id, qid in members_to_update.items():
                         conn.execute(
                             "UPDATE members SET wikidata_id = ? WHERE member_id = ?",
                             [qid, mem_id],
                         )
-                finally:
-                    conn.execute(
-                        "INSERT INTO parliament_service SELECT * FROM _backup_ps;"
-                    )
-                    conn.execute(
-                        "INSERT INTO member_education SELECT * FROM _backup_me;"
-                    )
-                    conn.execute("DROP TABLE _backup_ps;")
-                    conn.execute("DROP TABLE _backup_me;")
 
         # -------------------------------------------------------------
         # Part 2: Unmatched-School Wikimedia Suggestions
@@ -989,6 +1031,16 @@ def run_wikimedia_enrichment(
                 )
 
                 suggestion = wm_client.lookup_institution(school_name, refresh=refresh)
+                institution_cache = (
+                    wm_client.institutions_cache_dir
+                    / f"{_sanitize_filename(school_name.strip().lower())}.json"
+                )
+                if (
+                    suggestion
+                    and suggestion.get("status") != "error"
+                    and institution_cache.exists()
+                ):
+                    consumed_cache_paths.add(institution_cache)
                 if suggestion and suggestion.get("wikidata_id"):
                     accepted_for_review, reason = evaluate_school_candidate(
                         school_name,
@@ -1032,6 +1084,9 @@ def run_wikimedia_enrichment(
                             ),
                             "confidence": "suggested",
                             "notes": suggestion.get("notes") or "",
+                            "retrieved_at": suggestion.get("retrieved_at", ""),
+                            "source_url": suggestion.get("source_url", ""),
+                            "source_query": suggestion.get("source_query", ""),
                             # Historical supporting evidence
                             "historical_match_name": (
                                 hist_evidence["historical_match_name"]
@@ -1066,12 +1121,53 @@ def run_wikimedia_enrichment(
                         }
                     )
 
+        capture_review_sources(conn)
+        apply_review_events(
+            conn, events=review_events, decision_log_path=decision_log_path
+        )
+        capture_review_snapshot(
+            conn,
+            review_events,
+            decision_log_path=decision_log_path,
+            source_provenance={
+                **previous_provenance,
+                "wikimedia": {
+                    "source": "Wikipedia/Wikidata",
+                    "parliaments": sorted(
+                        set(parliaments)
+                        | set(
+                            previous_provenance.get("wikimedia", {}).get(
+                                "parliaments", []
+                            )
+                        )
+                    ),
+                    "cache_files": {
+                        **previous_provenance.get("wikimedia", {}).get(
+                            "cache_files", {}
+                        ),
+                        **{
+                            str(path.relative_to(wm_client.cache_dir)): hashlib.sha256(
+                                path.read_bytes()
+                            ).hexdigest()
+                            for path in sorted(consumed_cache_paths)
+                        },
+                    },
+                },
+            },
+        )
+        conn.execute("COMMIT")
+    except Exception:
+        try:
+            conn.execute("ROLLBACK")
+        except Exception:
+            pass
+        raise
     finally:
         wm_client.close()
         if should_close_conn:
             active_conn.close()
 
-    # Write review artifacts preserving manual review decisions across runs
+    # Evidence exports are regenerated; review authority is never read from CSVs.
     member_review_path = out_dir / "wikimedia_member_review.csv"
     merge_review_rows(
         generated_rows=member_reviews,

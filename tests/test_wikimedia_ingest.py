@@ -34,8 +34,101 @@ from apemap.ingest.wikimedia import (
     normalize_qid,
     run_wikimedia_enrichment,
 )
+from apemap.review.model import ReviewEvent, member_review_id
+from apemap.review.integration import capture_review_snapshot, review_snapshot_metadata
 
 runner = CliRunner()
+
+
+def test_reviewed_qid_takes_precedence_over_autofill_and_can_be_withdrawn(
+    tmp_path: Path,
+    test_db: tuple[Path, duckdb.DuckDBPyConnection],
+    mock_session: MagicMock,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    db_file, _ = test_db
+    cache = tmp_path / "cache"
+    client = WikimediaClient(cache_dir=cache, session=mock_session, rate_delay=0)
+
+    def lookup(aph_id: str, refresh: bool = False) -> dict[str, Any]:
+        if aph_id == "R36":
+            return {"status": "matched", "wikidata_id": "Q4772000"}
+        return {
+            "status": "error",
+            "notes": "Offline fixture has no other identity evidence",
+        }
+
+    monkeypatch.setattr(client, "lookup_member_by_aph_id", lookup)
+    path = tmp_path / "decisions.jsonl"
+    accepted = ReviewEvent(
+        decision_id="reviewed-qid",
+        review_id=member_review_id("R36", "wikidata_id"),
+        entity_type="member",
+        action="accept",
+        payload={"aph_id": "R36", "field": "wikidata_id", "value": "Q900"},
+        source_url="https://example.org/identity",
+        reviewed_at="2026-10-05",
+        recorded_at="2026-10-05T00:00:00+00:00",
+        reviewer="Researcher",
+    )
+    path.write_text(json.dumps(accepted.to_dict()) + "\n")
+    with get_connection(db_file) as conn:
+        capture_review_snapshot(
+            conn,
+            [accepted],
+            decision_log_path=path,
+            source_provenance={
+                "source": "APH Parliamentary Handbook",
+                "raw_individuals_sha256": "fixture-hash",
+            },
+        )
+    (cache / "members" / "unconsumed.json").write_text("{}")
+    run_wikimedia_enrichment(
+        [47],
+        db_path=db_file,
+        output_dir=tmp_path,
+        client=client,
+        enrich_schools=False,
+        decision_log_path=path,
+    )
+    with get_connection(db_file) as conn:
+        assert conn.execute(
+            "SELECT wikidata_id FROM members WHERE aph_id='R36'"
+        ).fetchone() == ("Q900",)
+        assert conn.execute(
+            "SELECT wikidata_id FROM review_source_members WHERE aph_id='R36'"
+        ).fetchone() == ("Q4772000",)
+        provenance = review_snapshot_metadata(conn)["source_provenance"]
+        assert provenance["raw_individuals_sha256"] == "fixture-hash"
+        assert provenance["wikimedia"]["cache_files"] == {}
+    withdrawn = ReviewEvent(
+        decision_id="withdrawn-qid",
+        review_id=accepted.review_id,
+        entity_type="member",
+        action="supersede",
+        replacement_action="research",
+        supersedes=[accepted.decision_id],
+        payload={"aph_id": "R36", "field": "wikidata_id"},
+        reviewed_at="2026-10-05",
+        recorded_at="2026-10-05T01:00:00+00:00",
+        reviewer="Researcher",
+        notes="Research the conflicting identity",
+    )
+    path.write_text(
+        json.dumps(accepted.to_dict()) + "\n" + json.dumps(withdrawn.to_dict()) + "\n"
+    )
+    run_wikimedia_enrichment(
+        [47],
+        db_path=db_file,
+        output_dir=tmp_path,
+        client=client,
+        enrich_schools=False,
+        decision_log_path=path,
+    )
+    with get_connection(db_file) as conn:
+        assert conn.execute(
+            "SELECT wikidata_id FROM members WHERE aph_id='R36'"
+        ).fetchone() == ("Q4772000",)
 
 
 @pytest.fixture
@@ -300,6 +393,8 @@ def test_lookup_member_by_aph_id_conflict(
     assert res is not None
     assert res["status"] == "conflict"
     assert res["wikidata_id"] is None
+    assert [candidate["qid"] for candidate in res["candidates"]] == ["Q11111", "Q22222"]
+    assert all(candidate["bindings"] for candidate in res["candidates"])
 
 
 @pytest.mark.unit
@@ -346,6 +441,14 @@ def test_lookup_member_by_name_fallback_disambiguation(
     assert res_ambig is not None
     assert res_ambig["status"] == "ambiguous"
     assert res_ambig["wikidata_id"] is None
+    assert {candidate["qid"] for candidate in res_ambig["candidates"]} == {
+        "Q100",
+        "Q200",
+    }
+    assert {candidate["dob"] for candidate in res_ambig["candidates"]} == {
+        "1960-01-01",
+        "1980-05-20",
+    }
 
 
 @pytest.mark.unit
@@ -696,201 +799,47 @@ def test_cli_run_all_includes_enrich_wikimedia_flag(force_color: str | None) -> 
 
 
 @pytest.mark.unit
-def test_merge_review_rows_preserves_manual_decisions(tmp_path: Path) -> None:
-    csv_file = tmp_path / "member_review.csv"
-
-    # 1. Initial generation
-    initial_generated = [
-        {
-            "member_id": "mem-1",
-            "field": "wikidata_id",
-            "aph_id": "R36",
-            "display_name": "Anthony Albanese",
-            "wikidata_id": "",
-            "aph_value": "",
-            "wikidata_value": "Q4772000",
-            "wikipedia_title": "Anthony Albanese",
-            "source_url": "https://query.wikidata.org",
-            "status": "ambiguous",
-            "notes": "Ambiguous initial",
-            "historical_value": "",
-            "historical_source": "",
-            "review_status": "pending",
-        },
-        {
-            "member_id": "mem-2",
-            "field": "date_of_birth",
-            "aph_id": "M3C",
-            "display_name": "Adam Bandt",
-            "wikidata_id": "Q4678667",
-            "aph_value": "1972-03-11",
-            "wikidata_value": "1972-03-12",
-            "wikipedia_title": "Adam Bandt",
-            "source_url": "https://query.wikidata.org",
-            "status": "discrepancy",
-            "notes": "DOB discrepancy",
-            "historical_value": "1972-03-11",
-            "historical_source": "APH Parliamentary Handbook",
-            "review_status": "pending",
-        },
-    ]
-
-    merge_review_rows(
-        generated_rows=initial_generated,
-        existing_path=csv_file,
-        key_columns=("member_id", "field"),
-        generated_columns=MEMBER_REVIEW_GENERATED_COLUMNS,
-        manual_columns=MEMBER_REVIEW_MANUAL_COLUMNS,
+def test_review_export_regenerates_evidence_without_manual_columns(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "member_review.csv"
+    path.write_text(
+        "member_id,field,review_status,resolved_value\nmem-1,date_of_birth,accepted,1960-01-01\n"
     )
-
-    # Simulate reviewer editing mem-1 to accepted, adding manual notes and resolved value
-    rows = []
-    with open(csv_file, mode="r", encoding="utf-8") as f:
-        for r in csv.DictReader(f):
-            if r["member_id"] == "mem-1":
-                r["review_status"] = "accepted"
-                r["resolved_value"] = "Q4772000"
-                r["manual_source_url"] = "https://handbook.aph.gov.au/individual/R36"
-                r["review_notes"] = "Confirmed against official bio"
-            rows.append(r)
-
-    with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(
-            f, fieldnames=MEMBER_REVIEW_GENERATED_COLUMNS + MEMBER_REVIEW_MANUAL_COLUMNS
-        )
-        writer.writeheader()
-        writer.writerows(rows)
-
-    # 2. Subsequent pipeline run with updated generated evidence
-    updated_generated = [
-        {
-            "member_id": "mem-1",
-            "field": "wikidata_id",
-            "aph_id": "R36",
-            "display_name": "Anthony Albanese",
-            "wikidata_id": "",
-            "aph_value": "",
-            "wikidata_value": "Q4772000",
-            "wikipedia_title": "Anthony Albanese",
-            "source_url": "https://query.wikidata.org/updated",
-            "status": "ambiguous",
-            "notes": "Updated generated notes",
-            "historical_value": "",
-            "historical_source": "",
-            "review_status": "pending",
-        },
-        # mem-2 is no longer emitted by generator (e.g. resolved in APH)
-        # mem-3 is newly emitted
-        {
-            "member_id": "mem-3",
-            "field": "wikidata_id",
-            "aph_id": "T44",
-            "display_name": "New MP",
-            "wikidata_id": "",
-            "aph_value": "",
-            "wikidata_value": "Q999",
-            "wikipedia_title": "New MP",
-            "source_url": "https://query.wikidata.org",
-            "status": "ambiguous",
-            "notes": "Brand new",
-            "historical_value": "",
-            "historical_source": "",
-            "review_status": "pending",
-        },
-    ]
-
-    merged = merge_review_rows(
-        generated_rows=updated_generated,
-        existing_path=csv_file,
-        key_columns=("member_id", "field"),
-        generated_columns=MEMBER_REVIEW_GENERATED_COLUMNS,
-        manual_columns=MEMBER_REVIEW_MANUAL_COLUMNS,
+    rows = merge_review_rows(
+        [
+            {
+                "member_id": "mem-1",
+                "field": "date_of_birth",
+                "wikidata_value": "1970-01-01",
+            }
+        ],
+        path,
+        ["member_id", "field"],
+        MEMBER_REVIEW_GENERATED_COLUMNS,
+        MEMBER_REVIEW_MANUAL_COLUMNS,
     )
-
-    merged_by_key = {(r["member_id"], r["field"]): r for r in merged}
-
-    # Verify mem-1 retained manual decisions while generated fields updated
-    mem1 = merged_by_key[("mem-1", "wikidata_id")]
-    assert mem1["review_status"] == "accepted"
-    assert mem1["resolved_value"] == "Q4772000"
-    assert mem1["manual_source_url"] == "https://handbook.aph.gov.au/individual/R36"
-    assert mem1["review_notes"] == "Confirmed against official bio"
-    assert mem1["source_url"] == "https://query.wikidata.org/updated"
-    assert mem1["notes"] == "Updated generated notes"
-
-    # Verify mem-2 was unreviewed and obsolete so dropped cleanly
-    assert ("mem-2", "date_of_birth") not in merged_by_key
-
-    # Verify mem-3 is present with default pending review_status
-    mem3 = merged_by_key[("mem-3", "wikidata_id")]
-    assert mem3["review_status"] == "pending"
-    assert mem3["notes"] == "Brand new"
+    assert rows[0]["wikidata_value"] == "1970-01-01"
+    assert "review_status" not in rows[0]
+    assert "resolved_value" not in path.read_text()
 
 
 @pytest.mark.unit
-def test_merge_review_rows_preserves_reviewed_rows_not_in_generator(
+def test_review_export_drops_obsolete_rows_even_if_csv_was_edited(
     tmp_path: Path,
 ) -> None:
-    csv_file = tmp_path / "school_review.csv"
-
-    # Pre-populate CSV with a row that was previously reviewed as 'accepted'
-    initial_row = {
-        "institution_id": "inst-old-1",
-        "raw_school_text": "Old Closed School",
-        "suggested_institution_name": "Old School",
-        "wikidata_id": "Q12345",
-        "wikipedia_url": "https://en.wikipedia.org/wiki/Old_School",
-        "country": "Australia",
-        "locality": "Sydney",
-        "latitude": "-33.8",
-        "longitude": "151.2",
-        "institution_type": "high school",
-        "confidence": "suggested",
-        "notes": "Historical note",
-        "historical_match_name": "Old School Canonical",
-        "historical_acara_id": "40001",
-        "historical_source": "school_aliases.json",
-        "review_status": "accepted",
-        "resolved_school_name": "Old School Canonical",
-        "resolved_acara_id": "40001",
-        "resolved_wikidata_id": "Q12345",
-        "resolved_country": "Australia",
-        "resolved_state": "NSW",
-        "resolved_suburb": "Sydney",
-        "resolved_postcode": "2000",
-        "resolved_address": "123 School St",
-        "resolved_latitude": "-33.8",
-        "resolved_longitude": "151.2",
-        "manual_source_url": "https://acara.edu.au",
-        "address_source_url": "https://acara.edu.au",
-        "review_notes": "Accepted historical mapping",
-    }
-    with open(csv_file, mode="w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(
-            f, fieldnames=SCHOOL_REVIEW_GENERATED_COLUMNS + SCHOOL_REVIEW_MANUAL_COLUMNS
-        )
-        writer.writeheader()
-        writer.writerow(initial_row)
-
-    # Generator emits an empty list (inst-old-1 no longer appears in unmatched query)
-    merged = merge_review_rows(
-        generated_rows=[],
-        existing_path=csv_file,
-        key_columns=("institution_id",),
-        generated_columns=SCHOOL_REVIEW_GENERATED_COLUMNS,
-        manual_columns=SCHOOL_REVIEW_MANUAL_COLUMNS,
+    path = tmp_path / "school_review.csv"
+    path.write_text("institution_id,review_status\nold,accepted\n")
+    rows = merge_review_rows(
+        [],
+        path,
+        ["institution_id"],
+        SCHOOL_REVIEW_GENERATED_COLUMNS,
+        SCHOOL_REVIEW_MANUAL_COLUMNS,
     )
-
-    # Row must be preserved because it was accepted by a reviewer
-    assert len(merged) == 1
-    assert merged[0]["institution_id"] == "inst-old-1"
-    assert merged[0]["review_status"] == "accepted"
-    assert merged[0]["resolved_acara_id"] == "40001"
-
-
-# --------------------------------------------------------------------------
-# Candidate Filtering & Geographic Sanity Tests
-# --------------------------------------------------------------------------
+    assert rows == []
+    with path.open(newline="") as handle:
+        assert list(csv.DictReader(handle)) == []
 
 
 @pytest.mark.unit

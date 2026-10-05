@@ -1,0 +1,2378 @@
+{
+  "accepted_education": 3,
+  "alias_audit": [
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45704",
+        "canonical_name": "Academy of Mary Immaculate",
+        "notes": "Academy of Mary Immaculate (Fitzroy, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "academy of mary immaculate fitzroy",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45704",
+          "Campus Type": "School Single Entity",
+          "School Name": "Academy of Mary Immaculate",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Fitzroy"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45647",
+        "canonical_name": "Assumption College",
+        "notes": "Assumption College (Kilmore, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "assumption college kilmore",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45647",
+          "Campus Type": "School Single Entity",
+          "School Name": "Assumption College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Kilmore"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48483",
+        "canonical_name": "North Perth Primary School",
+        "notes": "Australian Islamic College Kewdale/Dianella (WA)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "australian islamic college, dianella and kewdale",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48483",
+          "Campus Type": "School Single Entity",
+          "School Name": "North Perth Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "North Perth"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49568",
+        "canonical_name": "SA School and Services for Vision Impaired",
+        "notes": "Banksia Park International High School (St Agnes, SA)",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "SA"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "banksia park high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49568",
+          "Campus Type": "School Single Entity",
+          "School Name": "SA School and Services for Vision Impaired",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "SA",
+          "Suburb": "Park Holme"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "52837",
+        "canonical_name": "Faith Christian School of Distance Education - Woodridge Campus",
+        "notes": "Beaumaris High School / Secondary College (VIC)",
+        "school_type": "Sec",
+        "sector": "Independent",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [
+        "state"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "beaumans high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "52837",
+          "Campus Type": "School Sub-Campus",
+          "School Name": "Faith Christian School of Distance Education - Woodridge Campus",
+          "School Sector": "Independent",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Woodridge"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45396",
+        "canonical_name": "Western Port Secondary College",
+        "notes": "Benalla High School amalgamated to form Benalla P-12 College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "benalla high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45396",
+          "Campus Type": "School Single Entity",
+          "School Name": "Western Port Secondary College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Hastings"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45902",
+        "canonical_name": "Mother of God School",
+        "notes": "Carey Baptist Grammar School (Kew, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "carey grammar school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45902",
+          "Campus Type": "School Single Entity",
+          "School Name": "Mother of God School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Ardeer"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47525",
+        "canonical_name": "Kirwan State High School",
+        "notes": "Centenary Heights State High School (Toowoomba, QLD)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "centenary heights high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47525",
+          "Campus Type": "School Single Entity",
+          "School Name": "Kirwan State High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Kirwan"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43667",
+        "canonical_name": "Christian Brothers' High School Lewisham",
+        "notes": "Christian Brothers' High School Lewisham (NSW)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "christian brothers'",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43667",
+          "Campus Type": "School Single Entity",
+          "School Name": "Christian Brothers' High School Lewisham",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Lewisham"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47886",
+        "canonical_name": "Clairvaux MacKillop College",
+        "notes": "Clairvaux MacKillop College (Upper Mount Gravatt, QLD)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "clairvaux mackillop school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47886",
+          "Campus Type": "School Single Entity",
+          "School Name": "Clairvaux MacKillop College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Upper Mount Gravatt"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47530",
+        "canonical_name": "Rosewood State High School",
+        "notes": "Coorparoo State High School renamed to Coorparoo Secondary College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "coorparoo state high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47530",
+          "Campus Type": "School Single Entity",
+          "School Name": "Rosewood State High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Rosewood"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43914",
+        "canonical_name": "Danebank - An Anglican School for Girls",
+        "notes": "Danebank - An Anglican School for Girls (Hurstville, NSW)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "danebank anglican girls school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43914",
+          "Campus Type": "School Single Entity",
+          "School Name": "Danebank - An Anglican School for Girls",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Hurstville"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40003",
+        "canonical_name": "Holy Rosary Catholic School",
+        "notes": "Deakin High School is now Alfred Deakin High School",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "ACT"
+      },
+      "metadata_disagreements": [
+        "state"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "deakin high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40003",
+          "Campus Type": "School Single Entity",
+          "School Name": "Holy Rosary Catholic School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "TAS",
+          "Suburb": "Claremont"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "42200",
+        "canonical_name": "Lismore Public School",
+        "notes": "Duval High School amalgamated in 2019 to form Armidale Secondary College",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "duval high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "42200",
+          "Campus Type": "School Single Entity",
+          "School Name": "Lismore Public School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Lismore"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "50354",
+        "canonical_name": "Roma Mitchell Secondary College",
+        "notes": "Enfield High School amalgamated to form Roma Mitchell Secondary College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "enfield high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "50354",
+          "Campus Type": "School Single Entity",
+          "School Name": "Roma Mitchell Secondary College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "SA",
+          "Suburb": "Gepps Cross"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49830",
+        "canonical_name": "Trinity College North",
+        "notes": "Eynesbury Senior College (Adelaide, SA)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "eynesbury college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49830",
+          "Campus Type": "School Single Entity",
+          "School Name": "Trinity College North",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "SA",
+          "Suburb": "Evanston South"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47883",
+        "canonical_name": "St Peter Claver College",
+        "notes": "Frawley College amalgamated to form Southern Cross Catholic College in 1995",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "frawley college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47883",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Peter Claver College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Riverview"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49458",
+        "canonical_name": "Gawler and District College B-12",
+        "notes": "Gawler High School amalgamated to form Gawler and District College B-12 in 2013",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "gawler high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49458",
+          "Campus Type": "School Single Entity",
+          "School Name": "Gawler and District College B-12",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "SA",
+          "Suburb": "Evanston"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45914",
+        "canonical_name": "Sacred Heart School",
+        "notes": "The Geelong College (Newtown, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "geelong college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45914",
+          "Campus Type": "School Single Entity",
+          "School Name": "Sacred Heart School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Mildura"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "46102",
+        "canonical_name": "Thomas Carr College",
+        "notes": "Geelong Grammar School (Corio, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "geelong grammar school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "46102",
+          "Campus Type": "School Single Entity",
+          "School Name": "Thomas Carr College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Tarneit"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43818",
+        "canonical_name": "Tuntable Falls Community School",
+        "notes": "Gosford Christian School renamed to St Philip's Christian College - Gosford",
+        "school_type": "Prim",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "gosford christian school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43818",
+          "Campus Type": "School Single Entity",
+          "School Name": "Tuntable Falls Community School",
+          "School Sector": "Independent",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Tuntable Falls Via Nimbin"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48312",
+        "canonical_name": "River Valley Primary School",
+        "notes": "Harvey Senior High School (WA)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "harvey agricultural senior high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48312",
+          "Campus Type": "School Single Entity",
+          "School Name": "River Valley Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Burekup"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40444",
+        "canonical_name": "Elizabeth College",
+        "notes": "Hobart Matriculation College was renamed to Elizabeth College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "hobart matriculation college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40444",
+          "Campus Type": "School Single Entity",
+          "School Name": "Elizabeth College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "TAS",
+          "Suburb": "North Hobart"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48250",
+        "canonical_name": "Shenton College",
+        "notes": "Amalgamated with Swanbourne High School in 2001 to form Shenton College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "hollywood high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48250",
+          "Campus Type": "School Single Entity",
+          "School Name": "Shenton College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "WA",
+          "Suburb": "Shenton Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40487",
+        "canonical_name": "Port Lincoln Junior Primary School",
+        "notes": "The Hutchins School (Sandy Bay, TAS)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [
+        "state"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "hutchins school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40487",
+          "Campus Type": "School Single Entity",
+          "School Name": "Port Lincoln Junior Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "SA",
+          "Suburb": "Port Lincoln"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47551",
+        "canonical_name": "Bray Park State High School",
+        "notes": "Innisfail State High School amalgamated to form Innisfail State College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "innisfail state high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47551",
+          "Campus Type": "School Single Entity",
+          "School Name": "Bray Park State High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Bray Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "42686",
+        "canonical_name": "Gralee School",
+        "notes": "Jannali Girls High School amalgamated to form The Jannali High School",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "jannali girls high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "42686",
+          "Campus Type": "School Single Entity",
+          "School Name": "Gralee School",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Leeton"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48320",
+        "canonical_name": "Capel Primary School",
+        "notes": "John Curtin Senior High School renamed to John Curtin College of the Arts",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "john curtin high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48320",
+          "Campus Type": "School Single Entity",
+          "School Name": "Capel Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Capel"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "50438",
+        "canonical_name": "Beaconsfield Primary School - Rottnest Island Campus",
+        "notes": "Kambah High School site amalgamated into Namadgi School in 2011",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "ACT"
+      },
+      "metadata_disagreements": [
+        "state"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "kambah high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "50438",
+          "Campus Type": "School Sub-Campus",
+          "School Name": "Beaconsfield Primary School - Rottnest Island Campus",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Rottnest Island"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48322",
+        "canonical_name": "Carlisle Primary School",
+        "notes": "Kambalda Senior High School amalgamated into Kambalda West District High School",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "kambalda senior high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48322",
+          "Campus Type": "School Single Entity",
+          "School Name": "Carlisle Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Kewdale"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47555",
+        "canonical_name": "Maleny State High School",
+        "notes": "Kelvin Grove State High School amalgamated into Kelvin Grove State College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "kelvin grove state high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47555",
+          "Campus Type": "School Single Entity",
+          "School Name": "Maleny State High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Maleny"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45712",
+        "canonical_name": "Kilbreda College",
+        "notes": "Kilbreda College (Mentone, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "kilbreda girls college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45712",
+          "Campus Type": "School Single Entity",
+          "School Name": "Kilbreda College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Mentone"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43883",
+        "canonical_name": "The King's School",
+        "notes": "The King's School (North Parramatta, NSW)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "king's school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43883",
+          "Campus Type": "School Head Campus",
+          "School Name": "The King's School",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "North Parramatta"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49444",
+        "canonical_name": "Lameroo Regional Community School",
+        "notes": "Lameroo Area School renamed to Lameroo Regional Community School",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "lameroo area school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49444",
+          "Campus Type": "School Single Entity",
+          "School Name": "Lameroo Regional Community School",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "SA",
+          "Suburb": "Lameroo"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48329",
+        "canonical_name": "Wangkatjungka Remote Community School",
+        "notes": "Leeming Senior High School (WA)",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "leeming high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48329",
+          "Campus Type": "School Single Entity",
+          "School Name": "Wangkatjungka Remote Community School",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "WA",
+          "Suburb": "Christmas Creek"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45719",
+        "canonical_name": "St Joseph's School",
+        "notes": "Loreto Convent Toorak is known as Loreto Mandeville Hall",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "loreto convent, toorak",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45719",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Joseph's School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Numurkah"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45927",
+        "canonical_name": "St Brendan's School",
+        "notes": "Lowther Hall Anglican Grammar School (Essendon, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "lowther hall anglican girls school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45927",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Brendan's School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Lakes Entrance"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45091",
+        "canonical_name": "Northern School For Autism",
+        "notes": "Lyndale Secondary College (Dandenong North, VIC)",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "lyndale secondary",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45091",
+          "Campus Type": "School Head Campus",
+          "School Name": "Northern School For Autism",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "VIC",
+          "Suburb": "Reservoir"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45437",
+        "canonical_name": "MacRobertson Girls High School",
+        "notes": "The Mac.Robertson Girls' High School (Melbourne, VIC)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "macrobertson high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45437",
+          "Campus Type": "School Single Entity",
+          "School Name": "MacRobertson Girls High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Melbourne"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48454",
+        "canonical_name": "Morley Primary School",
+        "notes": "Maddington Senior High School renamed to Yule Brook College",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "maddington senior high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48454",
+          "Campus Type": "School Single Entity",
+          "School Name": "Morley Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Morley"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47565",
+        "canonical_name": "Tullawong State High School",
+        "notes": "Mansfield State High School (Mansfield, QLD)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mansfield high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47565",
+          "Campus Type": "School Single Entity",
+          "School Name": "Tullawong State High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Caboolture"
+        }
+      ]
+    },
+    {
+      "disposition": "map",
+      "legacy": {
+        "canonical_acara_id": "47856",
+        "canonical_name": "Marist College Ashgrove",
+        "notes": "Historical name at the same Ashgrove college; source is the college archives",
+        "relationship_type": "rename",
+        "reviewed_at": "2026-10-02",
+        "school_type": "Pri/Sec",
+        "sector": "Catholic",
+        "source_url": "https://www.marash.qld.edu.au/wp-content/uploads/MCA_Viriliter-Age_Issue7_11June25.pdf",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Existing sourced relationship; target metadata agrees",
+      "recorded_name": "marist brothers college ashgrove",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47856",
+          "Campus Type": "School Single Entity",
+          "School Name": "Marist College Ashgrove",
+          "School Sector": "Catholic",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Ashgrove"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "46138",
+        "canonical_name": "Ruyton Girls' School",
+        "notes": "Melbourne Girls Grammar (South Yarra, VIC)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "melbourne girls grammar school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "46138",
+          "Campus Type": "School Single Entity",
+          "School Name": "Ruyton Girls' School",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "VIC",
+          "Suburb": "Kew"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43913",
+        "canonical_name": "Meriden School",
+        "notes": "Meriden School (Strathfield, NSW)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "meriden girls school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43913",
+          "Campus Type": "School Single Entity",
+          "School Name": "Meriden School",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Strathfield"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48348",
+        "canonical_name": "Dalkeith Primary School",
+        "notes": "Mirrabooka Senior High School (WA)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mirrabooka senior high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48348",
+          "Campus Type": "School Single Entity",
+          "School Name": "Dalkeith Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Dalkeith"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "46144",
+        "canonical_name": "Methodist Ladies' College",
+        "notes": "Acronym for Methodist Ladies' College (Kew, VIC)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mlc",
+      "target_rows": [
+        {
+          "ACARA SML ID": "46144",
+          "Campus Type": "School Head Campus",
+          "School Name": "Methodist Ladies' College",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "VIC",
+          "Suburb": "Kew"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48011",
+        "canonical_name": "Brisbane Boys' College",
+        "notes": "Mount St Michael's College (Ashgrove, QLD)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mount saint michael's college ashgrove",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48011",
+          "Campus Type": "School Single Entity",
+          "School Name": "Brisbane Boys' College",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Toowong"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45964",
+        "canonical_name": "Mount St Joseph Girls' College",
+        "notes": "Mount St. Joseph Girls' College (Altona, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mount st joseph's college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45964",
+          "Campus Type": "School Single Entity",
+          "School Name": "Mount St Joseph Girls' College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Altona"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45706",
+        "canonical_name": "Mount Lilydale Mercy College",
+        "notes": "Mount Lilydale Mercy College (Lilydale, VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "mt lilydale college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45706",
+          "Campus Type": "School Single Entity",
+          "School Name": "Mount Lilydale Mercy College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Lilydale"
+        }
+      ]
+    },
+    {
+      "disposition": "map",
+      "legacy": {
+        "canonical_acara_id": "47429",
+        "canonical_name": "Nambour State College",
+        "notes": "Nambour High School amalgamated into Nambour State College",
+        "relationship_type": "successor",
+        "reviewed_at": "2026-10-02",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Existing sourced relationship; target metadata agrees",
+      "recorded_name": "nambour high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47429",
+          "Campus Type": "School Head Campus",
+          "School Name": "Nambour State College",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Nambour"
+        }
+      ]
+    },
+    {
+      "disposition": "map",
+      "legacy": {
+        "canonical_acara_id": "47429",
+        "canonical_name": "Nambour State College",
+        "notes": "Nambour State High School amalgamated into Nambour State College",
+        "relationship_type": "successor",
+        "reviewed_at": "2026-10-02",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "source_url": "https://namboursc.eq.edu.au/supportandresources/formsanddocuments/annualreports/annual-report-2016.pdf",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Existing sourced relationship; target metadata agrees",
+      "recorded_name": "nambour state high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47429",
+          "Campus Type": "School Head Campus",
+          "School Name": "Nambour State College",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Nambour"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47574",
+        "canonical_name": "North Lakes State College",
+        "notes": "Nanango State High School",
+        "school_type": "Pri/Sec",
+        "sector": "Government",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "nanango state high",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47574",
+          "Campus Type": "School Single Entity",
+          "School Name": "North Lakes State College",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "North Lakes"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "41604",
+        "canonical_name": "Prairiewood High School",
+        "notes": "Narrabeen Boys High School merged to form Narrabeen Sports High School",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "narrabeen boys high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "41604",
+          "Campus Type": "School Single Entity",
+          "School Name": "Prairiewood High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "NSW",
+          "Suburb": "Prairiewood"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "42687",
+        "canonical_name": "Kandeer School",
+        "notes": "Newtown High School of the Performing Arts (Newtown, NSW)",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "newtown high school of the performing arts",
+      "target_rows": [
+        {
+          "ACARA SML ID": "42687",
+          "Campus Type": "School Single Entity",
+          "School Name": "Kandeer School",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "North Albury"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49544",
+        "canonical_name": "East Torrens Primary School",
+        "notes": "Norwood High School renamed to Norwood International High School",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "norwood high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49544",
+          "Campus Type": "School Single Entity",
+          "School Name": "East Torrens Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "SA",
+          "Suburb": "Hectorville"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47865",
+        "canonical_name": "Ryan Catholic College",
+        "notes": "St Joseph's Nudgee College (Boondall, QLD)",
+        "school_type": "Pri/Sec",
+        "sector": "Catholic",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "nudgee college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47865",
+          "Campus Type": "School Single Entity",
+          "School Name": "Ryan Catholic College",
+          "School Sector": "Catholic",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Kirwan"
+        }
+      ]
+    },
+    {
+      "disposition": "map",
+      "legacy": {
+        "canonical_acara_id": "53087",
+        "canonical_name": "Hobart City High School",
+        "notes": "Amalgamated with New Town High School in 2022 to form Hobart City High School",
+        "relationship_type": "successor",
+        "reviewed_at": "2026-10-02",
+        "school_type": "Sec",
+        "sector": "Government",
+        "source_url": "https://www.decyp.tas.gov.au/institution/hobart-city-high-school/",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Existing sourced relationship; target metadata agrees",
+      "recorded_name": "ogilvie high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "53087",
+          "Campus Type": "School Head Campus",
+          "School Name": "Hobart City High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "TAS",
+          "Suburb": "New Town"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45753",
+        "canonical_name": "St Augustine's School",
+        "notes": "Padua College (Mornington, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "padua catholic college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45753",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Augustine's School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Wodonga"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "42693",
+        "canonical_name": "Yanco Agricultural High School",
+        "notes": "Peakhurst High School became Georges River College Peakhurst Campus",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "peakhurst high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "42693",
+          "Campus Type": "School Single Entity",
+          "School Name": "Yanco Agricultural High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "NSW",
+          "Suburb": "Yanco"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49833",
+        "canonical_name": "Pembroke School - Middle School Campus",
+        "notes": "Pembroke School (Kensington Park, SA)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "pembroke",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49833",
+          "Campus Type": "School Head Campus",
+          "School Name": "Pembroke School - Middle School Campus",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "SA",
+          "Suburb": "Kensington Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43900",
+        "canonical_name": "Korowal School",
+        "notes": "Acronym for Presbyterian Ladies' College, Sydney",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "plc sydney",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43900",
+          "Campus Type": "School Single Entity",
+          "School Name": "Korowal School",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Hazelbrook"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48674",
+        "canonical_name": "Beldon Primary School",
+        "notes": "Prendiville Catholic College (Ocean Reef, WA)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "prendiville ladies college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48674",
+          "Campus Type": "School Single Entity",
+          "School Name": "Beldon Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Beldon"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45115",
+        "canonical_name": "Southern Autistic School",
+        "notes": "Princes Hill Secondary College (Princes Hill, VIC)",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "princess hill high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45115",
+          "Campus Type": "School Single Entity",
+          "School Name": "Southern Autistic School",
+          "School Sector": "Government",
+          "School Type": "Combined",
+          "State": "VIC",
+          "Suburb": "East Bentleigh"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40097",
+        "canonical_name": "Queechy High School",
+        "notes": "Queechy High School (Launceston, TAS)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "queechy high school (launceston)",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40097",
+          "Campus Type": "School Single Entity",
+          "School Name": "Queechy High School",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "TAS",
+          "Suburb": "Norwood"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48092",
+        "canonical_name": "Redlands College",
+        "notes": "The Rockhampton Grammar School (Rockhampton, QLD)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "rockhampton grammar school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48092",
+          "Campus Type": "School Single Entity",
+          "School Name": "Redlands College",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Wellington Point"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40445",
+        "canonical_name": "Rosny College",
+        "notes": "Rosny College (Rosny, TAS)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "rosny college (hobart)",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40445",
+          "Campus Type": "School Single Entity",
+          "School Name": "Rosny College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "TAS",
+          "Suburb": "Rosny Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45763",
+        "canonical_name": "St Columba's School",
+        "notes": "Sacred Heart Girls' College (Oakleigh, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "sacred heart high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45763",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Columba's School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Ballarat North"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40726",
+        "canonical_name": "Sale College",
+        "notes": "Sale High School amalgamated to form Sale College in 1996",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "sale high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40726",
+          "Campus Type": "School Head Campus",
+          "School Name": "Sale College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Sale"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45870",
+        "canonical_name": "Salesian College Chadstone",
+        "notes": "Salesian College Chadstone (VIC)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "salesian college, chadstone, victoria",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45870",
+          "Campus Type": "School Single Entity",
+          "School Name": "Salesian College Chadstone",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Chadstone"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43904",
+        "canonical_name": "Trinity Anglican College - Albury",
+        "notes": "The Scots College (Bellevue Hill, NSW)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "scots college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43904",
+          "Campus Type": "School Single Entity",
+          "School Name": "Trinity Anglican College - Albury",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "NSW",
+          "Suburb": "Thurgoona"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "53105",
+        "canonical_name": "Greater Shepparton Secondary College",
+        "notes": "Amalgamated into Greater Shepparton Secondary College in 2020",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "shepparton high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "53105",
+          "Campus Type": "School Head Campus",
+          "School Name": "Greater Shepparton Secondary College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "VIC",
+          "Suburb": "Shepparton"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40108",
+        "canonical_name": "Taroona Primary School",
+        "notes": "Sorell School (Sorell, TAS)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "sorell high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40108",
+          "Campus Type": "School Single Entity",
+          "School Name": "Taroona Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "TAS",
+          "Suburb": "Taroona"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "52834",
+        "canonical_name": "Karalundi College",
+        "notes": "South Fremantle High School amalgamated in 2018 to form Fremantle College",
+        "school_type": "Sec",
+        "sector": "Independent",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "south fremantle high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "52834",
+          "Campus Type": "School Single Entity",
+          "School Name": "Karalundi College",
+          "School Sector": "Independent",
+          "School Type": "Secondary",
+          "State": "WA",
+          "Suburb": "Via Meekatharra"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48722",
+        "canonical_name": "Marri Grove Primary School",
+        "notes": "St Brigid's College (Lesmurdie, WA)",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st brigid's ladies college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48722",
+          "Campus Type": "School Single Entity",
+          "School Name": "Marri Grove Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Byford"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49968",
+        "canonical_name": "St Clare's College",
+        "notes": "St Clare's College (Griffith, ACT)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "ACT"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st clare's college (act)",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49968",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Clare's College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "ACT",
+          "Suburb": "Griffith"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43444",
+        "canonical_name": "St Christopher's Catholic Primary School",
+        "notes": "St Clare's High School (Taree, NSW)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st clare's high school taree",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43444",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Christopher's Catholic Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Panania"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43503",
+        "canonical_name": "St Christopher's Catholic Primary School",
+        "notes": "St Gregory's College Campbelltown (Gregory Hills, NSW)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st gregory's college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43503",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Christopher's Catholic Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Holsworthy"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45778",
+        "canonical_name": "St Mary's School",
+        "notes": "St Joseph's College (Echuca, VIC)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st joseph's college (echuca)",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45778",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Mary's School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Malvern East"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "47864",
+        "canonical_name": "Gilroy Santa Maria College",
+        "notes": "St Joseph's College Gregory Terrace (Spring Hill, QLD)",
+        "school_type": "Sec",
+        "sector": "Catholic",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st joseph's college gregory terrace",
+      "target_rows": [
+        {
+          "ACARA SML ID": "47864",
+          "Campus Type": "School Single Entity",
+          "School Name": "Gilroy Santa Maria College",
+          "School Sector": "Catholic",
+          "School Type": "Secondary",
+          "State": "QLD",
+          "Suburb": "Ingham"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43236",
+        "canonical_name": "St Rose Catholic Primary School",
+        "notes": "St Leo's Catholic College (Wahroonga, NSW)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st leo's college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43236",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Rose Catholic Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Collaroy Plateau"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43530",
+        "canonical_name": "St Peter's Primary School",
+        "notes": "St Michael's Regional High School amalgamated in 2004 to form Kildare Catholic College",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st michael's regional high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43530",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Peter's Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Port Macquarie"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43513",
+        "canonical_name": "St Joseph's Primary School",
+        "notes": "St Scholastica's College (Glebe, NSW)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "st scholastica's college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43513",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Joseph's Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Coraki"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43511",
+        "canonical_name": "St Mary's Primary School",
+        "notes": "Rosebank College (Five Dock, NSW)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "strathfield & rosebank college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43511",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Mary's Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Casino"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48017",
+        "canonical_name": "Graceview Adventist College",
+        "notes": "Stuartholme School (Toowong, QLD)",
+        "school_type": "Pri/Sec",
+        "sector": "Independent",
+        "state": "QLD"
+      },
+      "metadata_disagreements": [
+        "name"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "stuartholme",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48017",
+          "Campus Type": "School Single Entity",
+          "School Name": "Gold Coast Christian College",
+          "School Sector": "Independent",
+          "School Type": "Combined",
+          "State": "QLD",
+          "Suburb": "Reedy Creek"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48250",
+        "canonical_name": "Shenton College",
+        "notes": "Amalgamated with Hollywood High School in 2001 to form Shenton College",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "swanbourne high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48250",
+          "Campus Type": "School Single Entity",
+          "School Name": "Shenton College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "WA",
+          "Suburb": "Shenton Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45228",
+        "canonical_name": "Woorinen District Primary School",
+        "notes": "Traralgon High School amalgamated to form Traralgon College",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "taralgon high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45228",
+          "Campus Type": "School Single Entity",
+          "School Name": "Woorinen District Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Woorinen South"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "49753",
+        "canonical_name": "St Albert's Catholic School",
+        "notes": "Tenison Woods College (Mount Gambier, SA)",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "tennison woods college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "49753",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Albert's Catholic School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "SA",
+          "Suburb": "Loxton"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "50255",
+        "canonical_name": "Don College",
+        "notes": "Don College (Devonport, TAS)",
+        "school_type": "Sec",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "the don college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "50255",
+          "Campus Type": "School Single Entity",
+          "School Name": "Don College",
+          "School Sector": "Government",
+          "School Type": "Secondary",
+          "State": "TAS",
+          "Suburb": "Devonport"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "48805",
+        "canonical_name": "Mosman Park School For Deaf Children",
+        "notes": "Thornlie Christian College (Southern River, WA)",
+        "school_type": "Special",
+        "sector": "Government",
+        "state": "WA"
+      },
+      "metadata_disagreements": [
+        "school_type"
+      ],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "thornlie christian college",
+      "target_rows": [
+        {
+          "ACARA SML ID": "48805",
+          "Campus Type": "School Single Entity",
+          "School Name": "Mosman Park School For Deaf Children",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "WA",
+          "Suburb": "Mosman Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "43530",
+        "canonical_name": "St Peter's Primary School",
+        "notes": "Trinity Senior High amalgamated to form Kildare Catholic College",
+        "school_type": "Prim",
+        "sector": "Catholic",
+        "state": "NSW"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "trinity senior high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "43530",
+          "Campus Type": "School Single Entity",
+          "School Name": "St Peter's Primary School",
+          "School Sector": "Catholic",
+          "School Type": "Primary",
+          "State": "NSW",
+          "Suburb": "Port Macquarie"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40115",
+        "canonical_name": "Moonah Primary School",
+        "notes": "Ulverstone High School renamed to Ulverstone Secondary College",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "TAS"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "ulverstone high school",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40115",
+          "Campus Type": "School Single Entity",
+          "School Name": "Moonah Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "TAS",
+          "Suburb": "Derwent Park"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "40700",
+        "canonical_name": "University Senior College at Adelaide University - Jordan Campus",
+        "notes": "University Senior College (Adelaide, SA)",
+        "school_type": "Sec",
+        "sector": "Independent",
+        "state": "SA"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "university senior college, adelaide",
+      "target_rows": [
+        {
+          "ACARA SML ID": "40700",
+          "Campus Type": "School Head Campus",
+          "School Name": "University Senior College at Adelaide University - Jordan Campus",
+          "School Sector": "Independent",
+          "School Type": "Secondary",
+          "State": "SA",
+          "Suburb": "Adelaide University"
+        }
+      ]
+    },
+    {
+      "disposition": "research",
+      "legacy": {
+        "canonical_acara_id": "45241",
+        "canonical_name": "Nyah District Primary School",
+        "notes": "Correspondence School renamed to Virtual School Victoria",
+        "school_type": "Prim",
+        "sector": "Government",
+        "state": "VIC"
+      },
+      "metadata_disagreements": [],
+      "reason": "Legacy relationship needs evidence; target agreement alone is insufficient",
+      "recorded_name": "victorian school of correspondence",
+      "target_rows": [
+        {
+          "ACARA SML ID": "45241",
+          "Campus Type": "School Single Entity",
+          "School Name": "Nyah District Primary School",
+          "School Sector": "Government",
+          "School Type": "Primary",
+          "State": "VIC",
+          "Suburb": "Nyah West"
+        }
+      ]
+    }
+  ],
+  "audit_reference": {
+    "path": "data/raw/historical/acara/school-location-2025.csv",
+    "sha256": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1"
+  },
+  "mapped_aliases": 4,
+  "policy": "Migrate three supported education assertions and four sourced alias relationships; retain all 89 unsourced aliases as research. Explicit coverage changes are reported independently before cutover.",
+  "proposed_event_count": 96,
+  "research_aliases": 89,
+  "schema_version": 1,
+  "source_files": {
+    "historical_service_overrides.csv": "ec7249c820f00219106e0cf48ef95da59480d2e1d2d08621705a99e208904337",
+    "manual_member_education.csv": "d15900997513342f70e996d31a8a34669cdfb94d08491115e77d169f3662ecb7",
+    "school_aliases.json": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f"
+  }
+}

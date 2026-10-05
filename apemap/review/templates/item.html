@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ item.review_id or 'Add sourced evidence' }}{% endblock %}
+{% block content %}
+<h1>{{ entity_labels.get(item.entity_type, item.entity_type) }}</h1>
+{% if item.review_id %}<p><code>{{ item.review_id }}</code></p>{% else %}<p>Create a new sourced record.</p>{% endif %}
+{% if item.entity_type == 'member_education' and item.review_id.endswith(':missing') %}<p><a href="{{ url_for('new_item', entity_type='member_education', aph_id=item.review_id.split(':')[1]) }}">Add an education assertion for this member</a>. The missing-evidence case remains available for its own disposition.</p>{% endif %}
+{% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if item.get('conflicts') %}<section class="error" aria-label="Conflicting decisions"><h2>Conflicting active decisions</h2><p>Review every alternative and supersede all active event identifiers with one supported replacement. No alternative currently has authority.</p>{% for event in item.conflicts %}<details open><summary>{{ event.decision_id }} · {{ event.action }} · {{ event.reviewer }}</summary><pre>{{ event | json_text }}</pre></details>{% endfor %}</section>{% endif %}
+<div class="detail-grid">
+<div>
+<section><h2>Evidence and context</h2>
+  {% for link in evidence_links %}<p><a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a></p>{% endfor %}
+  {% for candidate in item.candidates %}<details open><summary>Candidate {{ candidate.candidate_id }}</summary><pre>{{ candidate | json_text }}</pre></details>{% else %}<p>No generated candidate for this record.</p>{% endfor %}
+  <details open><summary>Current database context</summary><pre>{{ item.context | json_text }}</pre></details>
+  <details open><summary>Current decision</summary><pre>{{ item.decision | json_text }}</pre></details>
+</section>
+<section><h2>Decision history</h2>
+  {% for event in item.history %}<details><summary>{{ event.get('created_at', event.get('reviewed_at', 'Recorded decision')) }} · {{ event.get('action', '') }} · {{ event.get('reviewer', '') }} · {{ event.get('decision_id', '') }}</summary><pre>{{ event | json_text }}</pre></details>{% else %}<p>No decisions have been recorded.</p>{% endfor %}
+</section>
+</div>
+<section><h2>Review decision</h2>
+<form method="post" action="{% if new_entity_type %}{{ url_for('preview_new', entity_type=new_entity_type) }}{% else %}{{ url_for('preview_item', review_id=item.review_id) }}{% endif %}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type == 'school' %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
+  {% if fields %}
+  <fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') == 'guided' %}checked{% endif %}>Use the fields below</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
+  <div class="guided-fields">{% for name, label, kind, choices in fields %}<div class="guided-field"><label>{{ label }}
+    {% if kind == 'select' %}<select name="field_{{ name }}"><option value="">Choose a value</option>{% for choice in choices %}<option value="{{ choice }}" {% if (form_values.get('field_' + name, payload.get(name)) if error else payload.get(name)) == choice %}selected{% endif %}>{{ choice | replace('_', ' ') }}</option>{% endfor %}</select>
+    {% else %}<input name="field_{{ name }}" type="{{ kind }}" {% if kind == 'number' %}step="any"{% endif %} value="{{ form_values.get('field_' + name, payload.get(name, '')) if error else payload.get(name, '') }}">{% endif %}
+  </label>
+  {% if name == 'institution_ref' and item.entity_type in ['school', 'member_education'] %}
+  <fieldset class="institution-lookup" data-institution-lookup data-lookup-url="{{ url_for('lookup_institutions') }}">
+    <legend>Find a local ACARA school</legend>
+    <label>School name<input type="search" name="lookup_query" data-lookup-query maxlength="200" autocomplete="off" value="{{ form_values.get('lookup_query', payload.get('recorded_name', payload.get('recorded_school_name', ''))) }}"></label>
+    <button type="button" data-lookup-search>Search local register</button>
+    <p data-lookup-status role="status" aria-live="polite">Search by school name, then choose a result to fill its reference. Your decision still needs validation and preview.</p>
+    <p>Snapshot status describes inclusion in the local 2025 location snapshot when available; unknown means that status snapshot is unavailable.</p>
+    <ul data-lookup-results class="institution-results" aria-label="Matching ACARA schools" hidden></ul>
+    <noscript>School lookup requires JavaScript. You can still enter an institution reference above.</noscript>
+  </fieldset>
+  {% endif %}</div>{% endfor %}</div>
+  {% if item.entity_type == 'member' %}<label class="choice"><input type="checkbox" name="clear_value" value="1" {% if form_values.get('clear_value') == '1' or payload.get('value', '') is none %}checked{% endif %}>Clear this member field (record a null value)</label>{% endif %}
+  {% else %}<input type="hidden" name="payload_mode" value="json">{% endif %}
+  <label>Complete JSON payload<textarea name="payload" rows="14" spellcheck="false">{{ form_values.get('payload', payload | json_text) if error else payload | json_text }}</textarea></label>
+  {% if item.entity_type == 'service' %}<p>Supply the complete intervals array for this member and parliament. An accepted service correction replaces all generated intervals for that member/term.</p>{% endif %}
+  <p>Institution references use <code>acara:ID</code> or <code>manual:school-slug</code>. Evidence links open in another tab; this interface never downloads them.</p>
+  <label>Evidence source URL<input name="source_url" type="url" value="{{ form_values.get('source_url', '') }}"></label>
+  <label>Reviewer (uses your Git identity if blank)<input name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
+  <label>Review notes<textarea name="notes" rows="4">{{ form_values.get('notes', '') }}</textarea></label>
+  {% if item.entity_type == 'member_education' %}<p>Accepted education notes are published with the assertion's evidence. Use public provenance explanations.</p>{% endif %}
+  <label>Superseded event identifiers (comma separated)<input name="supersedes" value="{{ form_values.get('supersedes', '') }}"></label>
+  <label>Replacement action (when superseding)<select name="replacement_action">{% for action in actions %}{% if action != 'supersede' and (action != 'map' or item.entity_type == 'school') %}<option value="{{ action }}" {% if form_values.get('replacement_action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
+  <button type="submit">Validate and preview</button>
+</form>
+</section>
+</div>
+{% if preview %}
+<section id="preview"><h2>Validated semantic preview</h2><p>Review the affected values before saving. This preview has not changed any file.</p>
+  <h3>Changes</h3><pre>{{ preview.changes | json_text }}</pre>
+  <h3>Validation</h3><pre>{{ preview.validation | json_text }}</pre>
+  <h3>Recorded decision</h3><pre>{{ preview.event | json_text }}</pre>
+  <form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="preview_token" value="{{ preview_token }}">
+    <button type="submit">Save this decision</button>
+  </form>
+  <p>The preview expires after 15 minutes. Changed evidence or decisions require another preview.</p>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if item.entity_type in ['school', 'member_education'] %}<script src="{{ url_for('static', filename='institution-lookup.js') }}" defer></script>{% endif %}{% endblock %}

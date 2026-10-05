@@ -322,7 +322,21 @@ SELECT * FROM get_parliament_education(47);
 
 ## 4. Review Artifacts & Provenance Files
 
-To ensure that secondary enrichment does not silently overwrite authoritative records, APEMAP produces structured review artifacts under `data/processed/` that store both automated suggestions and manual review decisions:
+The authoritative correction history is `data/reference/review/decisions.jsonl`.
+It defines school mappings, manual institutions, education assertions, member
+fields and complete member/parliament service groups. DuckDB projects it into
+`review_decision_events`, `review_effective_decisions`, resolved decision views
+and regeneratable candidate queues under `data/processed/review/`.
+
+Private `review_source_*` tables preserve source facts before corrections;
+`review_source_cohorts` records the requested terms, and `review_source_individuals`
+retains APH records for reviewing omitted memberships. `review_build_snapshot` and
+`review_build_input_manifests` retain the exact consumed ledger and source manifest
+bytes. These working tables are excluded from public release tables.
+
+The legacy-named CSVs below remain generated evidence exports. Their former manual
+annotation columns describe the supported explicit import format; regeneration
+does not preserve edits or treat those CSVs as correction authority.
 
 ### `data/processed/wikimedia_member_review.csv`
 Captures demographic discrepancies between APH records and Wikidata, missing supplemental data, or identifier conflicts.
@@ -342,7 +356,7 @@ Captures demographic discrepancies between APH records and Wikidata, missing sup
 - `historical_value`: Prior baseline or recorded value.
 - `historical_source`: Source of historical value (e.g. `members.wikidata_id`, `APH Parliamentary Handbook`).
 
-**Manual Decision Columns:**
+**Legacy Manual Annotation Columns (explicit imports only):**
 - `review_status`: Review decision. Allowed values: `pending`, `accepted`, `rejected`, `needs_research`.
 - `resolved_value`: Canonical resolved value decided by human reviewer.
 - `manual_source_url`: Reference URL supporting manual resolution.
@@ -363,11 +377,11 @@ Provides suggestions for unconfirmed or international secondary schools. Obvious
 - `institution_type`: Institutional classification (e.g. `independent boarding school`, `grammar school`).
 - `confidence`: Review confidence status (`suggested`).
 - `notes`: Additional provenance notes.
-- `historical_match_name`: Supporting match name from `data/reference/school_aliases.json` (if any).
+- `historical_match_name`: Supporting match name from `data/reference/review/decisions.jsonl` (if any).
 - `historical_acara_id`: Supporting ACARA ID from historical aliases (if any).
-- `historical_source`: Provenance of supporting evidence (e.g. `data/reference/school_aliases.json`).
+- `historical_source`: Provenance of supporting evidence (e.g. `data/reference/review/decisions.jsonl`).
 
-**Manual Decision Columns:**
+**Legacy Manual Annotation Columns (explicit imports only):**
 - `review_status`: Review decision. Allowed values: `pending`, `accepted`, `rejected`, `needs_research`.
 - `resolved_school_name`: Canonical resolved school name decided by reviewer.
 - `resolved_acara_id`: Canonical ACARA SML ID decided by reviewer (if domestic school).
@@ -396,7 +410,8 @@ data/
 │   ├── school-location-2022.csv
 │   └── school-profile-2022.csv
 ├── reference/                   # Curated reference files maintained in Git
-│   └── school_aliases.json      # Verified school mergers, aliases, and overrides
+│   └── review/
+│       └── decisions.jsonl       # Immutable decisions and manual institution registry
 ├── raw/                         # Raw cached responses from external APIs
 │   ├── aec/                     # Raw cached AEC boundary archives
 │   │   └── 2025/                # Extracted 2025 federal boundary Shapefile

@@ -179,6 +179,10 @@ data/external/acara_finances_*.parquet
 
 .vscode/
 .uv-cache/
+.review-locks/
+data/reference/review/*.lock
+data/reference/review/.*.tmp
+data/processed/review/
 .ruff_cache/
 
 notebooks/*/__marimo__/

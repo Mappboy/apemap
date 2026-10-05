@@ -10,6 +10,7 @@ This document describes the offline continuous integration (CI) architecture for
 2. **Pinned Input Verification**: All upstream source datasets required to build the database are tracked in `data/inputs-manifest.json` with SHA-256 hashes and file sizes. Preflight verification ensures zero tampering or input corruption before pipeline execution.
 3. **Automated Quality Gates**: Static code analysis, formatting, type checking, dependency auditing, and pre-commit checks run on every push and pull request.
 4. **Immutable Release Contract Verification**: Release artifacts are built and audited for schema compliance, coordinate bounds, and privacy enforcement before any publication.
+5. **Review Authority Validation**: The tracked decision ledger is validated separately from upstream source pins. Base-branch events retain their exact serialized bytes; ingestion and releases capture the consumed ledger revision.
 
 ---
 
@@ -44,6 +45,7 @@ GitHub Actions CI Pipeline
 ### Job 1: `quality` (Code Quality & Dependency Audits)
 Executes static analysis and formatting checks:
 - **Lockfile Integrity**: `uv lock --check` confirms `uv.lock` is synchronised with `pyproject.toml`.
+- **Review Ledger**: `uv run apemap review check` validates decisions; `review check --base <base-sha>` rejects changes to prior events while permitting independent appends.
 - **Linting & Formatting**: `uv run ruff check .` and `uv run ruff format --check .` enforce standard code styles.
 - **Type Checking**: `uv run ty check apemap/` validates type annotations.
 - **Dependency Hygiene**: `uv run deptry apemap` detects unused, missing, or misclassified dependencies.
@@ -89,10 +91,12 @@ To replicate CI checks locally before committing or opening a pull request:
 
 ```bash
 # 1. Synchronize environment
-uv sync --all-groups --frozen
+uv sync --all-groups --extra review-ui --frozen
 uv lock --check
 
 # 2. Quality and lint checks
+uv run apemap review check
+uv run apemap review check --base main
 uv run ruff check .
 uv run ruff format --check .
 uv run ty check apemap/

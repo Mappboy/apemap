@@ -74,18 +74,6 @@
       "size_bytes": 1239662,
       "source": "Reviewed APEMAP reference input; individual source URLs in records"
     },
-    "data/reference/historical_service_overrides.csv": {
-      "required": true,
-      "sha256": "ec7249c820f00219106e0cf48ef95da59480d2e1d2d08621705a99e208904337",
-      "size_bytes": 147,
-      "source": "Reviewed APEMAP reference input; individual source URLs in records"
-    },
-    "data/reference/manual_member_education.csv": {
-      "required": true,
-      "sha256": "d15900997513342f70e996d31a8a34669cdfb94d08491115e77d169f3662ecb7",
-      "size_bytes": 872,
-      "source": "Reviewed APEMAP reference input; individual source URLs in records"
-    },
     "data/reference/manual_school_funding.csv": {
       "required": true,
       "sha256": "ee17862bc12c8a8e782df21ffbe8f0bec8a54480be389a781092ec9c00b1fcd2",
@@ -110,12 +98,6 @@
       "size_bytes": 313,
       "source": "Reviewed APEMAP reference input; individual source URLs in records"
     },
-    "data/reference/school_aliases.json": {
-      "required": true,
-      "sha256": "0709e7568375d6311e3a3fb52c01d87d80d7a90e630eb93a6b0fa5e7e76bfa1f",
-      "size_bytes": 27091,
-      "source": "Reviewed APEMAP reference input; individual source URLs in records"
-    },
     "data/reference/tasmania_srp_allocations.csv": {
       "required": true,
       "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
@@ -124,5 +106,6 @@
     }
   },
   "licensing": "APH Commonwealth copyright; ACARA attribution and Data Access terms; AEC CC BY 4.0; project reference data CC BY 4.0",
-  "schema_version": "1.0"
+  "schema_version": "1.0",
+  "review_authority": "Mutable review ledger/registry is validated separately; consumed ledger and source fingerprints are captured in replay and release metadata."
 }
