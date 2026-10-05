@@ -46,4 +46,12 @@ pre { font: .9rem/1.5 ui-monospace, monospace; background: #e9eee7; padding: 1re
 .notice { border-left: .3rem solid #245937; padding: 1rem; background: #e3ebe0; }
 .skip { position: absolute; top: -10rem; padding: .8rem; background: white; }
 .skip:focus { top: 0; }
+.school-option { padding: 1rem 0; border-bottom: 1px solid #c9d2c7; }
+.school-option h3, .school-metadata { margin: .4rem 0; }
+.school-source { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin: .5rem 0; }
+.school-source a { flex: 1 1 260px; min-width: 0; }
+#school-draft, [data-school-preview] { max-width: 900px; }
+#school-draft input, #school-draft select { width: 100%; }
+#school-draft input[type="radio"] { width: auto; }
+button:disabled { opacity: .6; cursor: default; }
 @media (max-width: 800px) { header, main { padding: 1rem; } .detail-grid { grid-template-columns: 1fr; } }

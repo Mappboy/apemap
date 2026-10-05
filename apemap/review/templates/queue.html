@@ -12,15 +12,15 @@
   <label>School, member or identifier<input name="q" type="search" value="{{ filters.q }}"></label>
   <button type="submit">Filter</button><a href="{{ url_for('queue') }}">Clear filters</a>
 </form>
-<p>{{ total }} matching candidates · page {{ page }} of {{ pages }}</p>
+<p>{{ total }} matching {{ queue_label }} · page {{ page }} of {{ pages }}</p>
 <div class="table-wrap"><table>
-  <caption>Generated evidence candidates and their current review disposition</caption>
+  <caption>School mapping items and other evidence candidates with their current review disposition</caption>
   <thead><tr><th scope="col">Review item</th><th scope="col">Type</th><th scope="col">Parliaments</th><th scope="col">Status</th><th scope="col">Candidate evidence</th></tr></thead>
   <tbody>{% for row in rows %}<tr>
-    <th scope="row"><a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.review_id }}</a><small>{{ row.candidate_id }}</small></th>
+    <th scope="row"><a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.school.name if row.school is defined else row.review_id }}</a>{% if row.school is not defined %}<small>{{ row.candidate_id }}</small>{% endif %}</th>
     <td>{{ entity_labels.get(row.entity_type, row.entity_type) }}</td>
     <td>{{ (row.parliaments or []) | join(', ') }}</td><td>{{ row.status | replace('_', ' ') }}</td>
-    <td><details><summary>Inspect evidence</summary><pre>{{ row.get('evidence', row.get('payload', {})) | json_text }}</pre></details></td>
+    <td>{% if row.school is defined %}{{ row.school.targets | length }} possible targets · {{ row.school.leads | length }} unresolved evidence leads{% if row.school.saved_reference %}<small>Saved mapping: {{ row.school.saved_reference }}</small>{% endif %}{% else %}<details><summary>Inspect evidence</summary><pre>{{ row.get('evidence', row.get('payload', {})) | json_text }}</pre></details>{% endif %}</td>
   </tr>{% else %}<tr><td colspan="5">No candidates match these filters.</td></tr>{% endfor %}</tbody>
 </table></div>
 <nav aria-label="Queue pages">{% if previous_url %}<a href="{{ previous_url }}">Previous page</a>{% endif %}{% if next_url %}<a href="{{ next_url }}">Next page</a>{% endif %}</nav>

@@ -239,6 +239,37 @@ class ReviewService:
         values = [(str(path.resolve()), file_digest(path)) for path in paths]
         return hashlib.sha256(json.dumps(values).encode()).hexdigest()
 
+    def review_revision(self) -> str:
+        """Read the ledger revision used to bind a rendered school draft."""
+        return log_revision(self.log_path)
+
+    def school_decisions(self) -> dict[str, list[dict[str, Any]]]:
+        """Read all active school decisions once for grouped queue presentation."""
+        return {
+            key: [event.to_dict() for event in heads]
+            for key, heads in active_heads(self.events(allow_conflicts=True)).items()
+            if key.startswith("school:")
+        }
+
+    def resolve_institution(self, reference: str) -> dict[str, Any] | None:
+        """Describe an exact local reference without granting mapping authority."""
+        if reference.startswith("acara:"):
+            return next(
+                (
+                    dict(row)
+                    for _, row in self._institution_lookup_rows()
+                    if row["institution_ref"] == reference
+                ),
+                None,
+            )
+        if reference.startswith("manual:"):
+            heads = active_heads(self.events(allow_conflicts=True)).get(
+                f"institution:{reference}", []
+            )
+            if len(heads) == 1 and heads[0].effective_action == "accept":
+                return dict(heads[0].payload)
+        return None
+
     def check(self, events: list[ReviewEvent] | None = None) -> dict[str, Any]:
         selected = self.events() if events is None else events
         matcher = self.matcher()

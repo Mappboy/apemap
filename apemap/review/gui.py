@@ -16,6 +16,7 @@ from urllib.parse import urlsplit
 from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 from apemap.review.store import StaleReviewError
+from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -128,6 +129,12 @@ class ReviewServiceLike(Protocol):
     ) -> list[dict[str, Any]]: ...
 
     def show(self, review_id: str) -> dict[str, Any]: ...
+
+    def review_revision(self) -> str: ...
+
+    def school_decisions(self) -> dict[str, list[dict[str, Any]]]: ...
+
+    def resolve_institution(self, reference: str) -> dict[str, Any] | None: ...
 
     def lookup_institutions(
         self, query: str, *, limit: int = 20
@@ -274,6 +281,24 @@ def create_app(service: ReviewServiceLike) -> Flask:
     app.jinja_env.filters["json_text"] = json_text
     app.jinja_env.filters["source_link"] = source_link
 
+    def load_item(review_id: str) -> dict[str, Any]:
+        if not review_id.startswith("school:"):
+            return service.show(review_id)
+        revision = service.review_revision()
+        item = service.show(review_id)
+        if revision != service.review_revision():
+            raise StaleReviewError("Decisions changed while loading; reload the item")
+        return {**item, "form_revision": revision}
+
+    def form_state(item: dict[str, Any]) -> dict[str, Any]:
+        heads = item.get("conflicts") or (
+            [item["decision"]] if item.get("decision") else []
+        )
+        return {
+            "review_id": item["review_id"],
+            "heads": sorted(event["decision_id"] for event in heads),
+        }
+
     @app.context_processor
     def template_context() -> dict[str, Any]:
         return {
@@ -325,6 +350,57 @@ def create_app(service: ReviewServiceLike) -> Flask:
         values: Mapping[str, Any] = (
             request.form if draft_values is None else draft_values
         )
+        if item["entity_type"] == "school":
+            school = school_view(item, service.resolve_institution)
+            if not values:
+                decision = item.get("decision") or {}
+                action = decision.get("replacement_action") or decision.get("action")
+                values = {
+                    "action": action if action in {"research", "reject"} else "map",
+                    "payload_mode": "guided",
+                    "source_url": decision.get("source_url", ""),
+                    "notes": decision.get("notes", ""),
+                }
+                if not school.saved_reference:
+                    chosen.pop("institution_ref", None)
+                    chosen.pop("relationship_type", None)
+            elif (
+                values.get("school_workflow") and values.get("payload_mode") == "guided"
+            ):
+                chosen = dict(chosen)
+                for name in ("recorded_name", "institution_ref", "relationship_type"):
+                    chosen[name] = values.get("field_" + name, chosen.get(name, ""))
+            ref = str(chosen.get("institution_ref", ""))
+            selected = service.resolve_institution(ref) if ref else None
+            token = _sign_preview(
+                {
+                    "event": form_state(item),
+                    "revision": item.get("form_revision", service.review_revision()),
+                    "source_revision": "school-form",
+                },
+                signing_secret,
+            )
+            return render_template(
+                "school.html",
+                item=item,
+                school=school,
+                payload=chosen,
+                form_values=values,
+                form_token=token,
+                selected=selected,
+                preview=preview,
+                preview_token=_sign_preview(preview, signing_secret)
+                if preview
+                else None,
+                error=error,
+                relationships=RELATIONSHIPS,
+                evidence_links=_evidence_links(item),
+                preview_target=service.resolve_institution(
+                    str(preview["event"]["payload"].get("institution_ref", ""))
+                )
+                if preview
+                else None,
+            )
         if item.get("conflicts") and not values:
             values = {
                 "action": "supersede",
@@ -364,8 +440,40 @@ def create_app(service: ReviewServiceLike) -> Flask:
         if status and status not in STATUSES:
             abort(400, "Unknown status")
         search = request.args.get("q") or None
-        rows = service.candidates(entity_type, status, parliament, search)
-        totals = Counter(row.get("status", "pending") for row in service.candidates())
+        all_rows = group_school_rows(service.candidates())
+        decisions = service.school_decisions()
+        metadata_cache: dict[str, dict[str, Any] | None] = {}
+
+        def resolve(reference: str) -> dict[str, Any] | None:
+            if reference not in metadata_cache:
+                metadata_cache[reference] = service.resolve_institution(reference)
+            return metadata_cache[reference]
+
+        for row in all_rows:
+            if row["entity_type"] == "school":
+                heads = decisions.get(row["review_id"], [])
+                row["school"] = school_view(
+                    {
+                        **row,
+                        "decision": heads[0] if len(heads) == 1 else None,
+                        "conflicts": heads if len(heads) > 1 else [],
+                    },
+                    resolve,
+                )
+                row["status"] = row["school"].status
+        rows = [
+            row
+            for row in all_rows
+            if (not entity_type or row["entity_type"] == entity_type)
+            and (not status or row["status"] == status)
+            and (parliament is None or parliament in row["parliaments"])
+            and (
+                not search
+                or search.casefold()
+                in json.dumps(row, default=str, ensure_ascii=False).casefold()
+            )
+        ]
+        totals = Counter(row.get("status", "pending") for row in all_rows)
         pages = max(1, (len(rows) + PAGE_SIZE - 1) // PAGE_SIZE)
         page = min(page, pages)
         filters = {
@@ -390,6 +498,9 @@ def create_app(service: ReviewServiceLike) -> Flask:
             rows=rows[(page - 1) * PAGE_SIZE : page * PAGE_SIZE],
             totals=totals,
             total=len(rows),
+            queue_label="school mappings"
+            if entity_type == "school"
+            else "review entries",
             page=page,
             pages=pages,
             filters=filters,
@@ -418,7 +529,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
     @app.get("/items/<path:review_id>")
     def detail(review_id: str) -> str:
         try:
-            item = service.show(review_id)
+            item = load_item(review_id)
         except ValueError as err:
             abort(404, str(err))
         return item_page(item)
@@ -457,6 +568,82 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 for value in request.form.get("supersedes", "").split(",")
                 if value.strip()
             ]
+            school_workflow = (
+                item["entity_type"] == "school"
+                and request.form.get("school_workflow") == "1"
+            )
+            if school_workflow:
+                bound = _read_preview(
+                    request.form.get("form_token", ""), signing_secret
+                )
+                if (
+                    bound.get("source_revision") != "school-form"
+                    or bound.get("event", {}).get("review_id") != review_id
+                ):
+                    raise ValueError("Invalid school form; reload this item")
+                if bound["revision"] != item["form_revision"] or bound[
+                    "event"
+                ] != form_state(item):
+                    raise StaleReviewError(
+                        "Decisions changed while your form was open. Review the current decisions and preview again"
+                    )
+                draft = dict(request.form)
+                if request.form.get("choose_ref"):
+                    ref = request.form["choose_ref"]
+                    if service.resolve_institution(ref) is None:
+                        raise ValueError(
+                            "Institution reference is unavailable in the local register or active manual definitions"
+                        )
+                    payload["institution_ref"] = ref
+                    draft["field_institution_ref"] = ref
+                    draft["payload"] = json_text(payload)
+                    return item_page(item, payload=payload, draft_values=draft)
+                if request.form.get("use_source"):
+                    link = source_link(request.form["use_source"])
+                    if not link:
+                        raise ValueError("Choose an HTTP(S) evidence source")
+                    draft["source_url"] = link
+                    return item_page(item, payload=payload, draft_values=draft)
+                if "find_school" in request.form:
+                    query = request.form["find_school"] or request.form.get(
+                        "lookup_query", ""
+                    )
+                    draft["lookup_query"] = query
+                    item["lookup_results"] = service.lookup_institutions(
+                        query, limit=20
+                    )
+                    return item_page(item, payload=payload, draft_values=draft)
+                if request.form.get("payload_mode") == "json":
+                    action = request.form.get("advanced_action", action)
+                    if action not in ACTIONS:
+                        raise ValueError("Unknown review action")
+                if request.form.get("payload_mode") == "guided":
+                    if action not in {"map", "research", "reject"}:
+                        raise ValueError("Choose a school mapping disposition")
+                    supersedes = bound["event"]["heads"]
+                    if action in {"research", "reject"}:
+                        for key in (
+                            "institution_ref",
+                            "relationship_type",
+                            "candidate_id",
+                        ):
+                            payload.pop(key, None)
+                    if supersedes:
+                        replacement_action, action = action, "supersede"
+                    else:
+                        replacement_action = None
+                else:
+                    replacement_action = (
+                        request.form.get("replacement_action", "accept")
+                        if action == "supersede"
+                        else None
+                    )
+            else:
+                replacement_action = (
+                    request.form.get("replacement_action", "accept")
+                    if action == "supersede"
+                    else None
+                )
             preview = service.prepare(
                 review_id,
                 action,
@@ -465,23 +652,33 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 reviewer=request.form.get("reviewer", "").strip() or None,
                 notes=request.form.get("notes", "").strip(),
                 supersedes=supersedes or None,
-                replacement_action=request.form.get("replacement_action", "accept")
-                if action == "supersede"
-                else None,
+                replacement_action=replacement_action,
             )
+            if school_workflow and preview["revision"] != bound["revision"]:
+                raise StaleReviewError(
+                    "Decisions changed while previewing; review and preview again"
+                )
             # A discovered school for a missing-education case receives its own
             # immutable identity in the shared service before it is recorded.
             item = {**item, "review_id": preview["event"]["review_id"]}
             return item_page(item, payload=payload, preview=preview)
         except ValueError as err:
-            return item_page(item, payload=payload, error=str(err)), (
-                409 if isinstance(err, StaleReviewError) else 400
+            error = err
+            if item[
+                "entity_type"
+            ] == "school" and service.review_revision() != item.get("form_revision"):
+                item = load_item(review_id)
+                error = StaleReviewError(
+                    "Decisions changed. Nothing was saved; review the current decisions and preview again"
+                )
+            return item_page(item, payload=payload, error=str(error)), (
+                409 if isinstance(error, StaleReviewError) else 400
             )
 
     @app.post("/items/<path:review_id>/preview")
     def preview_item(review_id: str) -> Any:
         try:
-            item = service.show(review_id)
+            item = load_item(review_id)
         except ValueError as err:
             abort(404, str(err))
         return prepare_form(review_id, item)
@@ -528,6 +725,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
             preview = _read_preview(
                 request.form.get("preview_token", ""), signing_secret
             )
+            if preview.get("source_revision") == "school-form":
+                raise ValueError("A school draft must be previewed before saving")
             if preview.get("event", {}).get("review_id") != review_id:
                 raise ValueError("Preview belongs to a different review item")
             service.save(preview)
@@ -544,8 +743,27 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     "supersedes": ", ".join(event.get("supersedes", [])),
                     "replacement_action": event.get("replacement_action") or "accept",
                 }
+                if event.get("entity_type") == "school":
+                    draft.update(
+                        {
+                            "school_workflow": "1",
+                            "payload_mode": "guided",
+                            "action": event.get("replacement_action")
+                            or event.get("action", "map"),
+                            **{
+                                "field_" + key: str(
+                                    event.get("payload", {}).get(key, "")
+                                )
+                                for key in (
+                                    "recorded_name",
+                                    "institution_ref",
+                                    "relationship_type",
+                                )
+                            },
+                        }
+                    )
                 try:
-                    item = service.show(review_id)
+                    item = load_item(review_id)
                 except ValueError:
                     item = {
                         "review_id": review_id,

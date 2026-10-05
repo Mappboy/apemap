@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ school.name }}{% endblock %}
+{% macro metadata(target) %}
+<p class="school-metadata">{{ target.reference }} · {{ target.metadata.get('suburb') or 'Locality unknown' }} · {{ target.metadata.get('state') or target.metadata.get('country') or 'State unknown' }} · {{ target.metadata.get('sector') or 'Sector unknown' }} · {{ target.metadata.get('school_type') or 'Type unknown' }}</p>
+{% endmacro %}
+{% macro sources(links) %}
+{% for link in links %}<div class="school-source"><a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a><button name="use_source" value="{{ link }}" data-use-source="{{ link }}" formnovalidate>Use this source</button></div>{% endfor %}
+{% endmacro %}
+{% block content %}
+<a href="{{ url_for('queue', entity_type='school') }}">School mappings</a>
+<h1>{{ school.name }}</h1>
+<p>{{ school.status | replace('_', ' ') }}{% if school.parliaments %} · Parliaments {{ school.parliaments | join(', ') }}{% endif %}</p>
+{% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
+{% if school.saved_reference %}<p>Saved mapping: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }}. This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if error and item.decision %}<section aria-label="Current decision"><h2>Current decision</h2><p>{{ item.decision.replacement_action or item.decision.action }} · {{ item.decision.reviewer }} · {{ item.decision.reviewed_at }}</p><p>{{ item.decision.notes }}</p><p>{{ item.decision.payload.get('institution_ref', 'No selected target') }}</p></section>{% endif %}
+{% if item.get('conflicts') %}<section class="error"><h2>Conflicting active decisions</h2><p>No alternative currently has authority. Your guided decision replaces every active alternative after preview.</p>{% for event in item.conflicts %}<p>{{ event.action }} · {{ event.reviewer }} · {{ event.payload.get('institution_ref', 'No selected target') }}{% if event.notes %} · {{ event.notes }}{% endif %}</p>{% endfor %}</section>{% endif %}
+<form id="school-draft" data-school-draft method="post" action="{{ url_for('preview_item', review_id=item.review_id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<input type="hidden" name="school_workflow" value="1">
+<input type="hidden" name="form_token" value="{{ form_token }}">
+<input type="hidden" name="field_recorded_name" value="{{ payload.get('recorded_name', school.name) }}">
+<section><h2>Possible matches</h2>
+<p>Choose the institution that the recorded name refers to. A suggestion still needs relationship evidence.</p>
+{% for target in school.targets %}<div class="school-option"><h3>{{ target.name }}</h3>{{ metadata(target) }}{% if target.legacy %}<p>Earlier mapping lead—needs evidence</p>{% endif %}<button name="choose_ref" value="{{ target.reference }}" data-choose-school="{{ target.reference }}" data-school-name="{{ target.name }}" formnovalidate>Use this school</button>{{ sources(target.sources) }}</div>{% else %}<p>No confirmed institution references were suggested. Search the local register or use an existing manual institution.</p>{% endfor %}
+{% if school.leads %}<h3>Evidence leads</h3>{% for lead in school.leads %}<div class="school-option"><strong>{{ lead.name }}</strong>{% if lead.reference %}<p>{{ lead.reference }} is unavailable in the local register or active manual definitions.</p>{% else %}<p>Institution identity has not been confirmed.</p>{% endif %}<button name="find_school" value="{{ lead.name }}" data-find-school="{{ lead.name }}" formnovalidate>Find this school</button>{{ sources(lead.sources) }}</div>{% endfor %}{% endif %}
+<details data-school-search {% if item.get('lookup_results') is not none %}open{% endif %}><summary>Find another school</summary>
+<div data-school-lookup data-lookup-url="{{ url_for('lookup_institutions') }}">
+<label>School name<input type="search" name="lookup_query" maxlength="200" autocomplete="off" value="{{ form_values.get('lookup_query', school.name) }}" data-school-query></label>
+<button name="find_school" value="" data-school-search-button formnovalidate>Search local register</button>
+<p data-school-search-status role="status" aria-live="polite">Search by school name. Snapshot status indicates register presence, not closure or historical continuity.</p>
+<ul data-school-results class="institution-results">{% for result in item.get('lookup_results', []) %}<li><strong>{{ result.school_name }}</strong><p>{{ result.institution_ref }} · {{ result.get('suburb') or 'Locality unknown' }} · {{ result.get('state') or 'State unknown' }} · {{ result.get('sector') or 'Sector unknown' }} · {{ result.get('school_type') or 'Type unknown' }}</p><button name="choose_ref" value="{{ result.institution_ref }}" data-choose-school="{{ result.institution_ref }}" data-school-name="{{ result.school_name }}" formnovalidate>Use this school</button></li>{% else %}{% if item.get('lookup_results') is not none %}<li>No matching school was found in the local ACARA register.</li>{% endif %}{% endfor %}</ul>
+</div></details>
+<details {% if payload.get('institution_ref') %}open{% endif %}><summary>Use an existing institution reference</summary><label>Institution reference<input name="field_institution_ref" value="{{ payload.get('institution_ref', '') }}" placeholder="acara:123 or manual:school-slug"></label><p>For schools outside ACARA, <a href="{{ url_for('new_item', entity_type='manual_institution') }}" target="_blank" rel="noopener noreferrer">create a manual institution</a> in another tab, then enter its saved reference here.</p></details>
+<p class="notice" data-selected-school role="status" aria-live="polite">{% if payload.get('institution_ref') %}Selected: {{ selected.get('school_name') if selected else 'Unresolved reference' }} · {{ payload.institution_ref }}{% else %}No school selected{% endif %}</p>
+</section>
+<section><h2>Relationship and evidence</h2>
+<label>Decision<select name="action"><option value="map" {% if form_values.get('action', 'map') in ['accept', 'map', 'supersede'] %}selected{% endif %}>Map to selected school</option><option value="research" {% if form_values.get('action') == 'research' %}selected{% endif %}>Needs research</option><option value="reject" {% if form_values.get('action') == 'reject' %}selected{% endif %}>Reject this mapping claim</option></select></label>
+<p>Rejection applies to this review item, not to an individual suggestion. Research and rejection require a reason; they do not require a school target.</p>
+<label>Relationship<select name="field_relationship_type"><option value="">Choose a relationship</option>{% for key, label in relationships.items() %}<option value="{{ key }}" {% if payload.get('relationship_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+<p>“Successor institution” means a later institution, rather than assuming it is the school that existed when a member attended.</p>
+<label>Evidence source URL<input name="source_url" type="url" value="{{ form_values.get('source_url', '') }}"></label>
+<label>Reviewer (uses your Git identity if blank)<input name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
+<label>Review notes<textarea name="notes" rows="3">{{ form_values.get('notes', '') }}</textarea></label>
+</section>
+<details><summary>Source record</summary>{% for record in school.source_records %}<p>{{ record.get('school_name', school.name) }} · {{ record.get('school_type') or 'Type unknown' }} · {{ record.get('sector') or 'Sector unknown' }} · {{ record.get('institution_status') or 'Status unknown' }}</p>{% else %}<p>No unmatched source record.</p>{% endfor %}{% for member in item.context.get('members', []) %}<p>{{ member.display_name }}</p>{% endfor %}</details>
+<details><summary>Technical details</summary>
+<p><code>{{ item.review_id }}</code></p>
+<fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') != 'json' %}checked{% endif %}>Use the school chooser</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
+<label>Complete JSON payload<textarea name="payload" rows="12" spellcheck="false">{{ form_values.get('payload', payload | json_text) if error else payload | json_text }}</textarea></label>
+<label>Advanced action<select name="advanced_action">{% for action in actions %}<option value="{{ action }}" {% if form_values.get('advanced_action', form_values.get('action', 'supersede' if item.get('conflicts') else 'map')) == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endfor %}</select></label>
+<label>Superseded event identifiers (advanced JSON mode)<input name="supersedes" value="{{ form_values.get('supersedes', item.conflicts | map(attribute='decision_id') | join(', ') if item.get('conflicts') else '') }}"></label>
+<label>Replacement action<select name="replacement_action">{% for action in actions if action != 'supersede' %}<option value="{{ action }}" {% if form_values.get('replacement_action', 'map') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endfor %}</select></label>
+{% for candidate in item.candidates %}<details><summary>Candidate {{ candidate.candidate_id }}</summary><pre>{{ candidate | json_text }}</pre></details>{% endfor %}
+<details><summary>Current database context</summary><pre>{{ item.context | json_text }}</pre></details>
+<details><summary>Current decision</summary><pre>{{ item.decision | json_text }}</pre></details>
+<h3>Decision history</h3>{% for event in item.history %}<details><summary>{{ event.reviewed_at }} · {{ event.action }} · {{ event.reviewer }} · {{ event.decision_id }}</summary><pre>{{ event | json_text }}</pre></details>{% else %}<p>No decisions have been recorded.</p>{% endfor %}
+</details>
+<button type="submit">Preview mapping</button>
+</form>
+{% if preview %}<section id="preview" data-school-preview><h2>Validated semantic preview</h2>
+{% set event = preview.event %}{% set proposal = event.payload %}{% set outcome = event.replacement_action or event.action %}
+<p>This preview has not changed any file.</p>
+{% if outcome in ['accept', 'map'] %}<p><strong>{{ proposal.recorded_name }} → {{ preview_target.school_name if preview_target else proposal.institution_ref }}</strong></p><p>{{ proposal.institution_ref }} · {{ relationships.get(proposal.relationship_type, proposal.relationship_type) }}</p><p>Evidence: <a href="{{ event.source_url }}" target="_blank" rel="noopener noreferrer">{{ event.source_url }}</a></p>{% else %}<p>{{ outcome | replace('research', 'Needs research') | replace('reject', 'Reject this mapping claim') }} · {{ event.notes }}</p>{% endif %}
+{% if event.supersedes %}<p>Replaces {{ event.supersedes | length }} active decision(s):</p>{% for old in ([item.decision] if item.decision else item.get('conflicts', [])) %}<p>{{ old.action }} · {{ old.reviewer }} · {{ old.payload.get('institution_ref', 'No selected target') }}</p>{% endfor %}{% endif %}
+{% set canonical = preview.changes.get('canonical') %}
+{% if canonical is not none %}{% set education = canonical.get('after', {}).get('member_education', {}) %}<h3>Affected education assertions</h3><p>{{ education.get('updated_count', 0) }} updated · {{ education.get('added_count', 0) }} added · {{ education.get('removed_count', 0) }} removed</p><div class="table-wrap"><table><thead><tr><th>Recorded school</th><th>Institution</th><th>Relationship</th></tr></thead><tbody>{% for row in education.get('after', []) %}<tr><td>{{ row.get('school_name_as_recorded', '') }}</td><td>{{ row.get('institution_id', '') }}</td><td>{{ row.get('institution_resolution', '') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p>{{ preview.changes.get('canonical_unavailable', 'Canonical preview unavailable: run review build') }}</p>{% endif %}
+{% for message in preview.validation %}<p>{{ message }}</p>{% endfor %}
+<details><summary>Detailed changes and recorded decision</summary><pre>{{ preview.changes | json_text }}</pre><pre>{{ event | json_text }}</pre></details>
+<form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_token" value="{{ preview_token }}"><button type="submit" data-save-school>Save mapping</button></form>
+<p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence or decisions require another preview.</p>
+</section>{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='school-mapping.js') }}" defer></script>{% endblock %}

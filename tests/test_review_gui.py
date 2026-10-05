@@ -145,6 +145,26 @@ class FixtureService:
             if query.casefold() in row["school_name"].casefold()
         ][:limit]
 
+    def review_revision(self) -> str:
+        return self.revision
+
+    def school_decisions(self) -> dict[str, list[dict[str, Any]]]:
+        return {
+            event.review_id: [event.to_dict()]
+            for event in self.saved
+            if event.entity_type == "school"
+        }
+
+    def resolve_institution(self, reference: str) -> dict[str, Any] | None:
+        return next(
+            (
+                dict(row)
+                for row in self.institutions
+                if row["institution_ref"] == reference
+            ),
+            None,
+        )
+
     def prepare(
         self,
         review_id: str,
@@ -231,16 +251,24 @@ def test_queue_filters_pagination_and_escape_evidence(
 ) -> None:
     client, service = gui
     service.rows.extend(
-        {**service.rows[0], "candidate_id": f"candidate-{i}"} for i in range(50)
+        {
+            **service.rows[0],
+            "review_id": school_review_id(f"Fixture {i}"),
+            "payload": {"recorded_name": f"Fixture {i}"},
+            "candidate_id": f"candidate-{i}",
+        }
+        for i in range(50)
     )
     response = client.get("/?entity_type=school&status=pending&parliament=47&q=Fixture")
     html = response.get_data(as_text=True)
     assert response.status_code == 200
-    assert "51 matching candidates" in html
+    assert "51 matching school mappings" in html
     assert "page 1 of 2" in html and "Next page" in html
     assert html.count('<th scope="row">') == 50
     assert "<script>alert(1)</script>" not in html
-    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in client.get(
+        f"/items/{SCHOOL_ID}"
+    ).get_data(as_text=True)
     assert client.get("/?page=2").get_data(as_text=True).count('<th scope="row">') == 1
     assert "No candidates match" in client.get("/?parliament=48").get_data(as_text=True)
     assert client.get("/?page=abc").status_code == 400
@@ -314,7 +342,10 @@ def test_lookup_controls_only_render_for_school_and_education_and_use_local_scri
     gui: tuple[Any, FixtureService],
 ) -> None:
     client, service = gui
-    for path in (f"/items/{SCHOOL_ID}", "/new/member_education"):
+    school_html = client.get(f"/items/{SCHOOL_ID}").get_data(as_text=True)
+    assert "data-school-lookup" in school_html
+    assert 'src="/static/school-mapping.js" defer' in school_html
+    for path in ("/new/member_education",):
         response = client.get(path)
         html = response.get_data(as_text=True)
         assert "data-institution-lookup" in html
@@ -815,12 +846,14 @@ def test_real_merged_conflict_is_visible_and_repaired_by_superseding_all_heads(
     client = create_app(service).test_client()
     queue = client.get("/?status=conflict")
     assert queue.status_code == 200
-    assert "1 matching candidates" in queue.get_data(as_text=True)
+    assert "1 matching review entries" in queue.get_data(as_text=True)
     detail = client.get(f"/items/{SCHOOL_ID}")
     html = detail.get_data(as_text=True)
     assert detail.status_code == 200
     assert "Conflicting active decisions" in html
-    assert 'value="supersede" selected' in html
+    assert (
+        "Your guided decision replaces every active alternative after preview" in html
+    )
     assert 'value="head-a, head-b"' in html
     assert "No alternative currently has authority" in html
     response = client.post(
