@@ -165,6 +165,9 @@ class FixtureService:
             None,
         )
 
+    def institution_resolver(self) -> Any:
+        return self.resolve_institution
+
     def prepare(
         self,
         review_id: str,
@@ -222,6 +225,25 @@ def gui() -> tuple[Any, FixtureService]:
     app = create_app(service)
     app.config["TESTING"] = True
     return app.test_client(), service
+
+
+def test_queue_resolves_institutions_once_per_request(
+    gui: tuple[Any, FixtureService], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client, service = gui
+    original = service.institution_resolver
+    calls = 0
+
+    def counted() -> Any:
+        nonlocal calls
+        calls += 1
+        return original()
+
+    monkeypatch.setattr(service, "institution_resolver", counted)
+    assert client.get("/?entity_type=school").status_code == 200
+    assert calls == 1
+    assert client.get("/?entity_type=school").status_code == 200
+    assert calls == 2
 
 
 def form(client: Any, review_id: str = SCHOOL_ID, **overrides: Any) -> dict[str, Any]:
@@ -747,7 +769,9 @@ def test_real_service_manual_and_missing_education_preview_leave_database_unchan
     monkeypatch.setattr(
         service_module,
         "build_candidates",
-        lambda connection: build_candidates(connection, cache_dir=tmp_path / "cache"),
+        lambda connection, **kwargs: build_candidates(
+            connection, cache_dir=tmp_path / "cache", **kwargs
+        ),
     )
     log = tmp_path / "decisions.jsonl"
     service = ReviewService(log_path=log, db_path=db_path, external_dir=external)

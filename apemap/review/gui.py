@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import base64
+from dataclasses import asdict
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 import hashlib
 import hmac
 import json
@@ -13,7 +14,7 @@ import time
 from typing import Any, Protocol
 from urllib.parse import urlsplit
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, g, jsonify, redirect, render_template, request, url_for
 
 from apemap.review.store import StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
@@ -135,6 +136,8 @@ class ReviewServiceLike(Protocol):
     def school_decisions(self) -> dict[str, list[dict[str, Any]]]: ...
 
     def resolve_institution(self, reference: str) -> dict[str, Any] | None: ...
+
+    def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]: ...
 
     def lookup_institutions(
         self, query: str, *, limit: int = 20
@@ -281,14 +284,20 @@ def create_app(service: ReviewServiceLike) -> Flask:
     app.jinja_env.filters["json_text"] = json_text
     app.jinja_env.filters["source_link"] = source_link
 
+    def resolve_reference(reference: str) -> dict[str, Any] | None:
+        if "institution_resolver" not in g:
+            g.institution_resolver = service.institution_resolver()
+        return g.institution_resolver(reference)
+
     def load_item(review_id: str) -> dict[str, Any]:
         if not review_id.startswith("school:"):
             return service.show(review_id)
-        revision = service.review_revision()
-        item = service.show(review_id)
-        if revision != service.review_revision():
-            raise StaleReviewError("Decisions changed while loading; reload the item")
-        return {**item, "form_revision": revision}
+        for _ in range(2):
+            revision = service.review_revision()
+            item = service.show(review_id)
+            if revision == service.review_revision():
+                return {**item, "form_revision": revision}
+        raise StaleReviewError("Decisions keep changing while loading; retry this item")
 
     def form_state(item: dict[str, Any]) -> dict[str, Any]:
         heads = item.get("conflicts") or (
@@ -297,6 +306,20 @@ def create_app(service: ReviewServiceLike) -> Flask:
         return {
             "review_id": item["review_id"],
             "heads": sorted(event["decision_id"] for event in heads),
+            # The global revision is still used to lock the validated preview.
+            # An open form only goes stale when its own visible context changes.
+            "page_revision": hashlib.sha256(
+                json.dumps(
+                    {
+                        "heads": heads,
+                        "candidates": item.get("candidates", []),
+                        "context": item.get("context", {}),
+                        "school": asdict(school_view(item, resolve_reference)),
+                    },
+                    sort_keys=True,
+                    default=str,
+                ).encode()
+            ).hexdigest(),
         }
 
     @app.context_processor
@@ -351,7 +374,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
             request.form if draft_values is None else draft_values
         )
         if item["entity_type"] == "school":
-            school = school_view(item, service.resolve_institution)
+            school = school_view(item, resolve_reference)
             if not values:
                 decision = item.get("decision") or {}
                 action = decision.get("replacement_action") or decision.get("action")
@@ -371,7 +394,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 for name in ("recorded_name", "institution_ref", "relationship_type"):
                     chosen[name] = values.get("field_" + name, chosen.get(name, ""))
             ref = str(chosen.get("institution_ref", ""))
-            selected = service.resolve_institution(ref) if ref else None
+            selected = resolve_reference(ref) if ref else None
             token = _sign_preview(
                 {
                     "event": form_state(item),
@@ -395,7 +418,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 error=error,
                 relationships=RELATIONSHIPS,
                 evidence_links=_evidence_links(item),
-                preview_target=service.resolve_institution(
+                preview_target=resolve_reference(
                     str(preview["event"]["payload"].get("institution_ref", ""))
                 )
                 if preview
@@ -446,7 +469,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
 
         def resolve(reference: str) -> dict[str, Any] | None:
             if reference not in metadata_cache:
-                metadata_cache[reference] = service.resolve_institution(reference)
+                metadata_cache[reference] = resolve_reference(reference)
             return metadata_cache[reference]
 
         for row in all_rows:
@@ -556,8 +579,11 @@ def create_app(service: ReviewServiceLike) -> Flask:
             new_entity_type=entity_type,
         )
 
-    def prepare_form(review_id: str, item: dict[str, Any]) -> Any:
+    def prepare_form(
+        review_id: str, item: dict[str, Any], *, retried: bool = False
+    ) -> Any:
         payload: dict[str, Any] = {}
+        bound: dict[str, Any] | None = None
         try:
             action = request.form.get("action", "accept")
             if action not in ACTIONS:
@@ -581,16 +607,14 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     or bound.get("event", {}).get("review_id") != review_id
                 ):
                     raise ValueError("Invalid school form; reload this item")
-                if bound["revision"] != item["form_revision"] or bound[
-                    "event"
-                ] != form_state(item):
+                if bound["event"] != form_state(item):
                     raise StaleReviewError(
-                        "Decisions changed while your form was open. Review the current decisions and preview again"
+                        "Decisions changed or school context changed while your form was open. Your draft is retained; review the current page and preview again"
                     )
                 draft = dict(request.form)
                 if request.form.get("choose_ref"):
                     ref = request.form["choose_ref"]
-                    if service.resolve_institution(ref) is None:
+                    if resolve_reference(ref) is None:
                         raise ValueError(
                             "Institution reference is unavailable in the local register or active manual definitions"
                         )
@@ -654,16 +678,30 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 supersedes=supersedes or None,
                 replacement_action=replacement_action,
             )
-            if school_workflow and preview["revision"] != bound["revision"]:
+            if school_workflow and preview["revision"] != item["form_revision"]:
                 raise StaleReviewError(
                     "Decisions changed while previewing; review and preview again"
                 )
+            # Present current target metadata even if inputs moved just before
+            # preparation. Save still verifies the exact preview's source bytes.
+            g.pop("institution_resolver", None)
             # A discovered school for a missing-education case receives its own
             # immutable identity in the shared service before it is recorded.
             item = {**item, "review_id": preview["event"]["review_id"]}
             return item_page(item, payload=payload, preview=preview)
         except ValueError as err:
             error = err
+            if isinstance(err, StaleReviewError) and item["entity_type"] == "school":
+                g.pop("institution_resolver", None)
+                item = load_item(review_id)
+                if (
+                    not retried
+                    and bound is not None
+                    and bound.get("event") == form_state(item)
+                ):
+                    # Reload/retry a raced preview only if the reviewer's page
+                    # is unchanged. Changed heads never get silently replaced.
+                    return prepare_form(review_id, item, retried=True)
             if item[
                 "entity_type"
             ] == "school" and service.review_revision() != item.get("form_revision"):

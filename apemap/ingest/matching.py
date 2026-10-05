@@ -277,7 +277,17 @@ class SchoolMatcher:
             return
         if "Calendar Year" in frame.columns:
             frame = frame.sort_values("Calendar Year", ascending=False)
-        for _, row in frame.drop_duplicates([id_col, name_col]).iterrows():
+        fields = [
+            id_col,
+            name_col,
+            "School Sector",
+            "School Type",
+            "State",
+            "Suburb",
+            "Postcode",
+        ]
+        frame = frame[[key for key in fields if key in frame.columns]]
+        for row in frame.drop_duplicates([id_col, name_col]).to_dict("records"):
             aid, name = str(row[id_col]).strip(), str(row[name_col]).strip()
             if not aid or not name:
                 continue
@@ -350,7 +360,14 @@ class SchoolMatcher:
                             p_df = p_df.sort_values(
                                 "Calendar Year", ascending=False
                             ).drop_duplicates(id_col)
-                        for _, row in p_df.iterrows():
+                        p_df = p_df[
+                            [
+                                key
+                                for key in (id_col, "ICSEA", "Total Enrolments")
+                                if key in p_df.columns
+                            ]
+                        ]
+                        for row in p_df.to_dict("records"):
                             aid = str(row[id_col]).strip()
                             icsea_val = None
                             if (
@@ -466,7 +483,22 @@ class SchoolMatcher:
                         else "SchoolSector"
                     )
                     if id_col in loc_df.columns and name_col in loc_df.columns:
-                        for _, row in loc_df.iterrows():
+                        fields = [
+                            id_col,
+                            name_col,
+                            sec_col,
+                            "Latitude",
+                            "Longitude",
+                            "School Type",
+                            "Campus Type",
+                            "State",
+                            "Suburb",
+                            "Postcode",
+                        ]
+                        loc_df = loc_df[
+                            [key for key in fields if key in loc_df.columns]
+                        ]
+                        for row in loc_df.to_dict("records"):
                             aid = str(row[id_col]).strip()
                             s_name = str(row[name_col]).strip()
                             if not s_name:

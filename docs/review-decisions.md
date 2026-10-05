@@ -175,8 +175,14 @@ the local review database; an omitted mapping source URL is explicit in the prev
 effects when a review database is available. **Save mapping** appends a decision;
 it does not rebuild the database. The saved mapping is applied on the next source
 build. Guided decisions replace all active decisions for the same review item
-while retaining history. A changed ledger requires reviewing the current state
-and another preview. Changing a draft disables saving its earlier preview when
+while retaining history. An open school form compares its decisions, candidates,
+member context and visible institution metadata with the current page. Decisions
+for an unrelated item do not invalidate that form. If this school's context
+changes, the response refreshes the page with your draft retained and a fresh
+form token; review the changes and preview again. A preview that races an unrelated
+change retries once when that page context remains identical. Saving still checks
+the exact preview's global ledger and source revisions under the writer lock.
+Changing a draft disables saving its earlier preview when
 JavaScript is enabled; without JavaScript, the save button still saves only the
 exact displayed preview, so preview again after edits.
 
@@ -185,6 +191,15 @@ target. Rejection applies to the review item, not to one candidate. **Technical
 details** retains source JSON, history and an explicit advanced payload editor;
 advanced mode uses its own action and supersession controls. The chooser and
 explicit reference entry also work without JavaScript.
+
+The service caches the compiled ACARA register by content digest and builds one
+institution reference index per presentation request. Register changes invalidate
+the cache even when file size and modification time are unchanged. School detail
+pages generate only their own candidates; the complete queue/export behavior is
+unchanged. Preview performs one canonical replay for the previous decisions and
+one for the proposal. Source bytes are hashed afresh before and after preview,
+and before save validation and immediately before the atomic ledger replacement.
+These optimizations add no persistent index, database schema or data refresh.
 
 ```powershell
 uv run apemap review --db-path data/aped-review.duckdb serve --port 8765

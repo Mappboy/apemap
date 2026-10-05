@@ -6,6 +6,8 @@ import hashlib
 import json
 import subprocess
 from collections import Counter
+from collections.abc import Callable
+from copy import copy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -42,6 +44,15 @@ from apemap.review.model import (
 from apemap.review.store import StaleReviewError, append_events, log_revision
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
+REGISTER_FILES = (
+    "acara_school_results.json",
+    "school-location-2025.csv",
+    "school-location-2022.csv",
+    "school-profile-2025.csv",
+    "school-profile-2008-2025.csv",
+    "school-profile-2022.csv",
+    ".no-review-aliases.json",
+)
 
 
 def _register_text(value: Any) -> str | None:
@@ -99,39 +110,43 @@ class ReviewService:
         db_path: Path | None = None,
         external_dir: Path | None = None,
     ) -> None:
-        self.log_path = Path(log_path)
-        self.db_path = Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
-        self.external_dir = Path(external_dir or EXTERNAL_DIR)
-        self._lookup_revision: tuple[tuple[str, int, int], ...] | None = None
+        self.log_path = Path(log_path).resolve()
+        self.db_path = (
+            Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
+        ).resolve()
+        self.external_dir = Path(external_dir or EXTERNAL_DIR).resolve()
+        self._lookup_revision: tuple[tuple[str, str], ...] | None = None
         self._lookup_rows: list[tuple[tuple[str, ...], dict[str, Any]]] = []
+        self._lookup_refs: dict[str, dict[str, Any]] = {}
+        self._matcher_revision: tuple[tuple[str, str], ...] | None = None
+        self._matcher: SchoolMatcher | None = None
 
     def events(self, *, allow_conflicts: bool = False) -> list[ReviewEvent]:
         return load_events(self.log_path, allow_conflicts=allow_conflicts)
 
+    def _register_revision(self) -> tuple[tuple[str, str], ...]:
+        paths = [self.external_dir / name for name in REGISTER_FILES]
+        return tuple((str(path), file_digest(path)) for path in paths if path.is_file())
+
     def matcher(self) -> SchoolMatcher:
-        # Never accidentally reintroduce legacy alias authority.
-        return SchoolMatcher(
-            external_dir=self.external_dir,
-            aliases_file=self.external_dir / ".no-review-aliases.json",
-        )
+        # Cache compiled register data by content, not timestamps: same-size edits
+        # and restored modification times must not retain an obsolete register.
+        revision = self._register_revision()
+        if self._matcher is None or revision != self._matcher_revision:
+            self._matcher = SchoolMatcher(
+                external_dir=self.external_dir,
+                aliases_file=self.external_dir / ".no-review-aliases.json",
+            )
+            self._matcher_revision = revision
+        # Replay sets request-specific blocked keys. Never share that mutable
+        # state between previews, lookup, ingestion or concurrent requests.
+        matcher = copy(self._matcher)
+        matcher.review_blocked_keys = set()
+        return matcher
 
     def _institution_lookup_rows(self) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
         """Cache register metadata until a local source file changes."""
-        names = (
-            "acara_school_results.json",
-            "school-location-2025.csv",
-            "school-location-2022.csv",
-            "school-profile-2025.csv",
-            "school-profile-2008-2025.csv",
-            "school-profile-2022.csv",
-        )
-        revision = []
-        for name in names:
-            path = self.external_dir / name
-            if path.is_file():
-                stat = path.stat()
-                revision.append((name, stat.st_mtime_ns, stat.st_size))
-        source_revision = tuple(revision)
+        source_revision = self._register_revision()
         if source_revision != self._lookup_revision:
             matcher = self.matcher()
             current_ids = {aid.strip() for aid in matcher.current_ids}
@@ -180,6 +195,7 @@ class ReviewService:
                     )
                 )
             self._lookup_rows = rows
+            self._lookup_refs = {str(row["institution_ref"]): row for _, row in rows}
             self._lookup_revision = source_revision
         return self._lookup_rows
 
@@ -237,7 +253,9 @@ class ReviewService:
         aph_path = RAW_APH_DIR / "individuals.json"
         if aph_path.exists():
             paths.append(aph_path)
-        values = [(str(path.resolve()), file_digest(path)) for path in paths]
+        # These roots are resolved once, rather than resolving hundreds of cache
+        # file paths on every guard. Every file's bytes are still hashed afresh.
+        values = [(str(path.absolute()), file_digest(path)) for path in paths]
         return hashlib.sha256(json.dumps(values).encode()).hexdigest()
 
     def review_revision(self) -> str:
@@ -255,14 +273,9 @@ class ReviewService:
     def resolve_institution(self, reference: str) -> dict[str, Any] | None:
         """Describe an exact local reference without granting mapping authority."""
         if reference.startswith("acara:"):
-            return next(
-                (
-                    dict(row)
-                    for _, row in self._institution_lookup_rows()
-                    if row["institution_ref"] == reference
-                ),
-                None,
-            )
+            self._institution_lookup_rows()
+            row = self._lookup_refs.get(reference)
+            return dict(row) if row is not None else None
         if reference.startswith("manual:"):
             heads = active_heads(self.events(allow_conflicts=True)).get(
                 f"institution:{reference}", []
@@ -271,9 +284,41 @@ class ReviewService:
                 return dict(heads[0].payload)
         return None
 
+    def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
+        """Snapshot reference metadata once for a single presentation request."""
+        self._institution_lookup_rows()
+        references = dict(self._lookup_refs)
+        for heads in active_heads(self.events(allow_conflicts=True)).values():
+            if len(heads) == 1:
+                event = heads[0]
+                if (
+                    event.entity_type == "manual_institution"
+                    and event.effective_action == "accept"
+                ):
+                    references[event.payload["institution_ref"]] = event.payload
+
+        def resolve(reference: str) -> dict[str, Any] | None:
+            metadata = references.get(reference)
+            return dict(metadata) if metadata is not None else None
+
+        return resolve
+
     def check(self, events: list[ReviewEvent] | None = None) -> dict[str, Any]:
         selected = self.events() if events is None else events
         matcher = self.matcher()
+        result = self._check_references(selected, matcher)
+        # Projector also checks uniqueness against source QIDs, not just events.
+        if self.db_path.exists():
+            from apemap.review.integration import project_review_records
+
+            with get_connection(self.db_path, read_only=True) as conn:
+                project_review_records(conn, selected, matcher=matcher)
+        return result
+
+    def _check_references(
+        self, selected: list[ReviewEvent], matcher: SchoolMatcher
+    ) -> dict[str, Any]:
+        """Validate event/reference integrity without repeating canonical replay."""
         refs = [
             e
             for e in resolve_events(selected).values()
@@ -305,12 +350,6 @@ class ReviewService:
             acara_ids=set(matcher.acara_id_map),
             member_ids=member_ids if member_ids else None,
         )
-        # Projector also checks uniqueness against source QIDs, not just events.
-        if self.db_path.exists():
-            from apemap.review.integration import preview_review_events
-
-            with get_connection(self.db_path, read_only=True) as conn:
-                preview_review_events(conn, selected, matcher=matcher)
         return {
             "valid": True,
             "events": len(selected),
@@ -364,12 +403,24 @@ class ReviewService:
             if event.review_id == review_id
         ]
 
+    def _case_candidates(
+        self, review_id: str, events: list[ReviewEvent]
+    ) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        if self.db_path.exists():
+            with get_connection(self.db_path, read_only=True) as conn:
+                items = build_candidates(conn, review_id=review_id)
+        return [
+            item
+            for item in annotate_candidates(items, events)
+            if item["review_id"] == review_id
+        ]
+
     def show(self, review_id: str) -> dict[str, Any]:
         entity = entity_for_review_id(review_id)
-        candidates = [
-            item for item in self.candidates() if item["review_id"] == review_id
-        ]
-        heads = active_heads(self.events(allow_conflicts=True)).get(review_id, [])
+        events = self.events(allow_conflicts=True)
+        candidates = self._case_candidates(review_id, events)
+        heads = active_heads(events).get(review_id, [])
         decision = heads[0] if len(heads) == 1 else None
         context = dict(candidates[0]["payload"]) if candidates else {}
         if entity == "school":
@@ -382,7 +433,13 @@ class ReviewService:
             "entity_type": entity,
             "candidates": candidates,
             "decision": decision.to_dict() if decision else None,
-            "history": self.history(review_id),
+            "history": [
+                event.to_dict()
+                for event in sorted(
+                    events, key=lambda event: (event.recorded_at, event.decision_id)
+                )
+                if event.review_id == review_id
+            ],
             "conflicts": [event.to_dict() for event in heads] if len(heads) > 1 else [],
             "context": context,
         }
@@ -413,7 +470,11 @@ class ReviewService:
         }
 
     def semantic_diff(
-        self, before: list[ReviewEvent], after: list[ReviewEvent]
+        self,
+        before: list[ReviewEvent],
+        after: list[ReviewEvent],
+        *,
+        matcher: SchoolMatcher | None = None,
     ) -> dict[str, Any]:
         old_heads = active_heads(before)
         new = resolve_events(after)
@@ -466,7 +527,7 @@ class ReviewService:
             )
 
             with get_connection(self.db_path, read_only=True) as conn:
-                matcher = self.matcher()
+                matcher = matcher or self.matcher()
                 conflicts = [key for key, heads in old_heads.items() if len(heads) > 1]
                 old_records = project_review_records(
                     conn, [] if conflicts else before, matcher=matcher
@@ -508,9 +569,7 @@ class ReviewService:
         # Candidate identity is a convenience, never an acceptance of proposed facts.
         identity: dict[str, Any] = {}
         if not supersedes:
-            options = [
-                item for item in self.candidates() if item["review_id"] == review_id
-            ]
+            options = self._case_candidates(review_id, events)
             if options:
                 identity = options[0]["payload"]
         proposed = {**identity, **payload}
@@ -540,7 +599,11 @@ class ReviewService:
             supersedes=parents,
             replacement_action=replacement_action,
         )
-        validation_result = self.check(events + [event])
+        matcher = self.matcher()
+        validation_result = self._check_references(events + [event], matcher)
+        # The diff's after projection performs canonical integrity validation;
+        # check() would perform the same projection a second time.
+        changes = self.semantic_diff(events, events + [event], matcher=matcher)
         if (
             self.source_revision() != source_revision
             or log_revision(self.log_path) != revision
@@ -550,7 +613,7 @@ class ReviewService:
             "event": event.to_dict(),
             "revision": revision,
             "source_revision": source_revision,
-            "changes": self.semantic_diff(events, events + [event]),
+            "changes": changes,
             "validation": [
                 "Event, available source references and effective state validated",
                 "Canonical projection validated"
