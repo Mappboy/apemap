@@ -142,6 +142,39 @@ save a decision. Snapshot status describes register presence, not proof of closu
 or historical continuity. Supply the relationship or attendance evidence and
 preview the decision before saving it.
 
+### School mapping chooser
+
+School queues show one row per recorded-name review item, with possible-target
+and unresolved-evidence-lead counts. Filters search the whole item; opening it
+shows all of its evidence. Other review types retain candidate rows.
+
+On a school page, choose **Use this school**, or **Find another school** in the
+local ACARA register. Unmatched source records appear separately. Legacy targets
+are earlier mapping leads needing evidence; Wikipedia/Wikidata suggestions without
+confirmed institution references remain leads, never automatic ACARA matches.
+Only evidence with the same explicit reference is grouped under one target.
+
+Choose **Same school**, **Alternate name**, **Renamed school**, or **Successor
+institution**, then supply the supporting source URL. **Use this source** explicitly
+copies an evidence link; selecting a school preserves your source, reviewer and
+notes. For non-ACARA schools, enter an existing `manual:` reference, or open the
+manual-institution form in another tab and save its definition first.
+
+**Preview mapping** shows the relationship, replacements and canonical education
+effects when a review database is available. **Save mapping** appends a decision;
+it does not rebuild the database. The saved mapping is applied on the next source
+build. Guided decisions replace all active decisions for the same review item
+while retaining history. A changed ledger requires reviewing the current state
+and another preview. Changing a draft disables saving its earlier preview when
+JavaScript is enabled; without JavaScript, the save button still saves only the
+exact displayed preview, so preview again after edits.
+
+**Needs research** and **Reject this mapping claim** require a reason, not a
+target. Rejection applies to the review item, not to one candidate. **Technical
+details** retains source JSON, history and an explicit advanced payload editor;
+advanced mode uses its own action and supersession controls. The chooser and
+explicit reference entry also work without JavaScript.
+
 ```powershell
 uv run apemap review --db-path data/aped-review.duckdb serve --port 8765
 ```
