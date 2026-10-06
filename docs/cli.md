@@ -479,9 +479,9 @@ uv run apemap release build [OPTIONS]
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
-| `-o`, `--output-dir` | `PATH` | `data/processed/releases/v<version>` | Destination directory for release bundle. |
+| `-o`, `--output-dir` | `PATH` | `data/processed/release-v<version>` | Destination directory for release bundle; use an explicit fresh path. |
 | `-v`, `--version` | `TEXT` | `1.0.0` | Semantic release version string. |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Parliaments to include. |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Parliaments to include. |
 | `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances. |
 | `--strict` / `--no-strict` | `BOOL` | `True` | Halt with non-zero exit code if validation fails. |
 

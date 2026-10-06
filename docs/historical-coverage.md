@@ -52,8 +52,9 @@ as `historical_only`. Missing coordinates remain null; these schools contribute
 to coverage but cannot appear as map points. Ambiguous historical names go to
 review. Historical ingestion requires source URLs for curated aliases. Renames
 and successors retain `institution_resolution` and `resolution_source_url`.
-All 89 unsourced legacy aliases remain research decisions rather than accepted
-relationships. The reviewed migration report declares contemporary coverage
+The migration retained all 89 unsourced legacy aliases as research decisions
+rather than accepted relationships. Later reviewed supersessions in the ledger
+can resolve those items. The reviewed migration report declares contemporary coverage
 changes; historical review blocks prevent unrelated fuzzy assignments.
 
 Reviewed successors include Ogilvie High → Hobart City High and Nambour High →
@@ -80,10 +81,12 @@ Restore the pinned APH/AEC inputs and preinstall DuckDB spatial as described in
 
 ```bash
 uv run python -m apemap.historical --download \
-  --db-path data/aped-historical-v0.3.0.duckdb
+  --db-path data/aped-historical-acquisition-0.3.4.duckdb \
+  --output-dir data/processed/releases/0.3.4-acquisition --version 0.3.4
 ```
 
-This stages a fresh database and release under `data/processed/releases/0.3.0/`,
+The version and paths above are examples; choose an unused version and fresh paths.
+This stages a fresh database and release under the explicit output directory,
 preserving existing external inputs and processed artifacts. ACARA loads before
 APH, with finance/public funding afterwards. `data/historical-inputs-manifest.json`
 pins source files, converted CSVs, references and existing AEC/APH caches by hash
@@ -94,9 +97,9 @@ require fresh paths and identical inputs:
 
 ```bash
 uv run python -m apemap.historical \
-  --db-path data/aped-historical-replay.duckdb \
-  --output-dir data/processed/releases/0.3.0-replay
-uv run apemap release verify data/processed/releases/0.3.0 --strict-assertions
+  --db-path data/aped-historical-0.3.4-replay.duckdb \
+  --output-dir data/processed/releases/0.3.4-replay --version 0.3.4
+uv run apemap release verify data/processed/releases/0.3.4-replay --strict-assertions
 ```
 
 The fixed input-manifest timestamp controls ingestion/release timestamps. Identical
@@ -106,6 +109,13 @@ Public exports omit restricted private finance fields. Full bundles are versione
 release assets, avoiding duplicate annual tables and spatial binaries in Git.
 The checked-in historical report contains coverage, review queues, metadata,
 analytical summaries and seven maps.
+
+For saved decisions with inputs already present, skip acquisition and use
+[Decisions to a new release](decisions-to-release.md). The
+[0.3.3 delivery record](releases/0.3.3/README.md) records the latest reviewed
+historical draft. Original 0.3.0 artifacts remain historical evidence; replaying
+them exactly requires their recorded source revision and matching ledger, rather
+than today's working decisions.
 
 ## Website contract and follow-up
 

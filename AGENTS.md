@@ -13,8 +13,8 @@ files may add or override guidance within their own directories.
 ## Repository map
 
 - `apemap/`: reusable Python helpers and network-backed data collectors.
-- `app/`: the Dash application. It currently expects to be launched with
-  `app/` as the working directory and reads `../data/aped.gpkg`.
+- `app/`: preserved legacy Dash prototype. The maintained CLI, DuckDB pipeline,
+  and optional local review UI live in `apemap/`.
 - `data/`: databases, GeoPackages, QGIS projects, SQL views, and source or
   processed datasets. Some files are large binary research artifacts.
 - `notebooks/`: analysis and exploratory notebooks plus rendered HTML outputs.
@@ -123,10 +123,10 @@ files may add or override guidance within their own directories.
 - Install missing dependencies when required to build, test, type-check, lint,
   or run the requested workflow. Keep dependency scope minimal and explain
   non-obvious additions in the PR.
-- The current root `pyproject.toml`, `poetry.lock`, `requirements.txt`,
-  `.flake8`, `.pytest.ini`, and pre-commit configuration are legacy inputs.
-  When a task modernizes packaging, replace them deliberately rather than
-  layering conflicting active configurations.
+- Root `pyproject.toml` and `uv.lock` are the canonical Hatchling/uv package and
+  dependency configuration; `prek.toml` defines Git hooks. Legacy Poetry and
+  superseded tool configurations are preserved under `archive/legacy-packaging/`.
+  Do not reintroduce competing active dependency or tool configurations.
 
 ## Archiving legacy files
 
