@@ -50,8 +50,10 @@ are preserved in `archive/reference/2026-10-05/`.
 ACARA 2008–2025 profiles retain institutions absent from the 2025 location register
 as `historical_only`. Missing coordinates remain null; these schools contribute
 to coverage but cannot appear as map points. Ambiguous historical names go to
-review. Historical ingestion requires source URLs for curated aliases. Renames
-and successors retain `institution_resolution` and `resolution_source_url`.
+review. Reviewed relationship decisions drive corrections after source ingestion.
+Renames and successors retain `institution_resolution` and any supplied
+`resolution_source_url`; obvious school mappings may omit a relationship URL
+under the [review rules](review-decisions.md). Attendance evidence remains separate.
 The migration retained all 89 unsourced legacy aliases as research decisions
 rather than accepted relationships. Later reviewed supersessions in the ledger
 can resolve those items. The reviewed migration report declares contemporary coverage

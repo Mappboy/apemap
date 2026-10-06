@@ -4,6 +4,10 @@ This delivery incorporates the committed review decisions through source revisio
 `013a8df810ce22442801b4040b01297979a569e1`. It is an unpublished draft for review,
 prepared on 6 October 2026. Older 0.3.0 and 0.3.1 artifacts remain unchanged.
 
+Download the four assets from the
+[GitHub draft release](https://github.com/Mappboy/apemap/releases/tag/untagged-964ada47a749cc5cc26b)
+with repository access. Draft assets are unpublished and require authentication.
+
 The historical recipe covers parliaments 42–48, ACARA 2008–2025 profiles and 2024
 finance analysis. This uses cached sources and does not acquire Finance 2024 or
 refresh APH/ACARA. Source reporting years describe institutions in those years,
@@ -40,7 +44,8 @@ Its consumed ledger contains **163 events and 103 effective decisions**, hash
 Against the recorded 0.3.0 baseline, all 580 members, 1,754 service records and
 352 education assertion IDs remain. There are 66 changed institution assignments;
 The institution inventory has a net decrease of 18: 27 unmatched placeholders
-disappear and nine institution identities are added. Opening-day membership is
+disappear, seven source placeholders are regenerated and two manual institutions
+are added. Opening-day membership is
 unchanged in every parliament. Verified/provisional education coverage improves:
 
 | Parliament | Opening-day members | Matched members: baseline -> 0.3.3 | Unresolved school records: baseline -> 0.3.3 |
