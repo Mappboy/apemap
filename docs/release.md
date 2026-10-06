@@ -6,16 +6,17 @@ This document defines the release architecture, artifact layout, privacy auditin
 
 ## 1. Principles of Immutable Releases
 
-1. **Deterministic & Self-Contained**: Every release bundle contains all web layers, analytical metrics, canonical data tables, a signed inventory manifest (`manifest.json`), and cryptographic checksums (`SHA256SUMS`).
+1. **Deterministic & Self-Contained**: Every release bundle contains all web layers, analytical metrics, canonical data tables, a hash inventory manifest (`manifest.json`), and cryptographic checksums (`SHA256SUMS`). The manifest is not digitally signed.
 2. **Read-Back Verification**: Before publication, releases must pass automated read-back verification: file sizes and SHA-256 hashes must match, all files must be accounted for, and validation assertions must report clean passes.
 3. **Strict Privacy Enforcement**: Sensitive school financial profile fields (`financial_profile_2021`, `total_gross_income_per_student`, etc.) are strictly excluded from public distribution layers. Verification fails if any restricted column is detected in public CSV or Parquet files.
-4. **Publication Discipline**: Releases are only published on push to the `main` branch (either via `data-v*` / `data-*` tags or manual workflow dispatch on `main`). Arbitrary feature branch pushes cannot trigger a release.
+4. **Publication Discipline**: Publication is triggered by `data-v*` / `data-*` tags whose commits are contained in `main`, or manual workflow dispatch on `main` (with legacy `master` support). An ordinary branch push does not publish a release.
 
 ---
 
 ## 2. Release Directory Layout
 
-Each release bundle is structured as follows:
+The main directories are shown below. The manifest defines the exact inventory;
+the historical recipe also includes review queues and `analysis_metrics.json`.
 
 ```text
 release-v<version>/
@@ -25,6 +26,8 @@ release-v<version>/
 │   ├── demographics.json          # Chamber and parliament demographic breakdowns
 │   ├── education_sectors.json     # Primary & secondary schooling sector distributions
 │   ├── party_sectors.json         # Cross-tabulation of political party by school sector
+│   ├── chamber_sectors.json       # Chamber sector comparisons
+│   ├── parliament_coverage.json   # Distinct people, assertions and institution coverage
 │   ├── shared_schools.json        # Schools attended by multiple parliamentarians
 │   ├── cross_parliament.json      # Inter-parliament cohort continuity and trends
 │   ├── school_finance.json        # Macro financial distributions (summary only)
@@ -34,13 +37,15 @@ release-v<version>/
 │   ├── assertions.json            # Database validation check assertions and status
 │   ├── members.json               # Member education profiles grouped by parliament
 │   ├── schools.geojson            # GeoJSON Point features for represented schools
-│   └── results-summary.json       # Headline metrics and cohort attendance rates
+│   ├── results-summary.json       # Headline metrics and cohort attendance rates
+│   └── parliament_<number>_combined.geojson # One school-point layer per selected term
 └── data/                          # Canonical public research datasets (CSV & Parquet)
     ├── members.csv / .parquet
     ├── parliament_service.csv / .parquet
     ├── institutions.csv / .parquet
     ├── member_education.csv / .parquet
     ├── school_snapshots.csv / .parquet
+    ├── electoral_boundaries.csv / .parquet
     ├── education_sector_benchmarks.csv / .parquet
     ├── school_finance_benchmarks.csv / .parquet
     └── school_public_funding.csv / .parquet
@@ -58,6 +63,11 @@ revision when reproducing a release.
 
 The `apemap release` command group provides tools for building, verifying, and comparing release bundles.
 
+For saved decision updates, first follow [Decisions to a new release](decisions-to-release.md).
+`release build` exports an existing database; it does not ingest sources or apply
+new ledger entries. Use the historical rebuild for the longitudinal dataset, then
+verify and package the resulting bundle.
+
 ### 3.1. Build a Release (`apemap release build`)
 
 Builds the entire release bundle from a canonical DuckDB database:
@@ -68,7 +78,7 @@ uv run apemap release build [OPTIONS]
 
 #### Options:
 - `--db-path`: Path to DuckDB database (default: `data/aped.duckdb`).
-- `-o`, `--output-dir`: Output directory for release (default: `data/processed/releases/v<version>`).
+- `-o`, `--output-dir`: Output directory for release (default: `data/processed/release-v<version>`). Prefer an explicit fresh path under `data/processed/releases/`.
 - `-v`, `--version`: Semantic release version string (e.g. `1.0.0`).
 - `-p`, `--parliament`: Parliaments to include (default: all supported terms, currently `42,43,44,45,46,47,48`).
 - `--finance-year`: Calendar year for school finance analysis (default: `2021`).
@@ -126,8 +136,9 @@ uv run apemap release diff data/processed/releases/v1.0.0 data/processed/release
 
 ### Unpublished frontend candidates
 
-The [v0.3.1 candidate handoff](releases/0.3.1-candidate/README.md) describes the
-historical replay and consumption order. Package a strictly verified local bundle
+The [v0.3.3 reviewed release](releases/0.3.3/README.md) records the current decision
+snapshot and delivery checks. The [v0.3.1 candidate handoff](releases/0.3.1-candidate/README.md)
+retains its original historical replay and consumption record. Package a strictly verified local bundle
 without publishing or tagging:
 
 ```text
@@ -140,6 +151,14 @@ separate output directory for each candidate. `SHA256SUMS.dist` checks the archi
 the bundled `SHA256SUMS` checks individual payloads.
 
 Dataset releases are published automatically via GitHub Actions ([`.github/workflows/release.yml`](../.github/workflows/release.yml)).
+
+The current workflow rebuilds the **standard** pinned pipeline with 2021 finance
+analysis; it does not upload a local candidate or run the historical longitudinal
+recipe. Historical 0.3.3 is delivered as an unpublished draft. Public publication
+requires merging the reviewed sources and reviewing a workflow that reproduces
+the historical inputs and 2024 finance analysis. Do not dispatch the standard
+workflow expecting it to upload those historical bytes. See the
+[publication checklist](review-update-publish.md#10-publish-the-approved-dataset).
 
 ### Guardrails:
 - **Main Branch Only**: Release jobs verify that the target commit is contained within `main`. If a release tag is pushed on a feature branch, the workflow immediately fails.
