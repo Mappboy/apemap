@@ -21,6 +21,7 @@
 <p>Represented state/territory describes parliamentary service; it does not establish where the member attended school.</p>
 </section>
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% include "retry.html" %}
 {% if error and item.decision %}<section aria-label="Current decision"><h2>Current decision</h2><p>{{ item.decision.replacement_action or item.decision.action }} · {{ item.decision.reviewer }} · {{ item.decision.reviewed_at }}</p><p>{{ item.decision.notes }}</p><p>{{ item.decision.payload.get('institution_ref', 'No selected target') }}</p></section>{% endif %}
 {% if item.get('conflicts') %}<section class="error"><h2>Conflicting active decisions</h2><p>No alternative currently has authority. Your guided decision replaces every active alternative after preview.</p>{% for event in item.conflicts %}<p>{{ event.action }} · {{ event.reviewer }} · {{ event.payload.get('institution_ref', 'No selected target') }}{% if event.notes %} · {{ event.notes }}{% endif %}</p>{% endfor %}</section>{% endif %}
 <form id="school-draft" data-school-draft method="post" action="{{ url_for('preview_item', review_id=item.review_id) }}">
@@ -76,8 +77,9 @@
 {% if canonical is not none %}{% set education = canonical.get('after', {}).get('member_education', {}) %}<h3>Affected education assertions</h3><p>{{ education.get('updated_count', 0) }} updated · {{ education.get('added_count', 0) }} added · {{ education.get('removed_count', 0) }} removed</p><div class="table-wrap"><table><thead><tr><th>Recorded school</th><th>Institution</th><th>Relationship</th></tr></thead><tbody>{% for row in education.get('after', []) %}<tr><td>{{ row.get('school_name_as_recorded', '') }}</td><td>{{ row.get('institution_id', '') }}</td><td>{{ row.get('institution_resolution', '') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p>{{ preview.changes.get('canonical_unavailable', 'Canonical preview unavailable: run review build') }}</p>{% endif %}
 {% for message in preview.validation %}<p>{{ message }}</p>{% endfor %}
 <details><summary>Detailed changes and recorded decision</summary><pre>{{ preview.changes | json_text }}</pre><pre>{{ event | json_text }}</pre></details>
+<p>Dataset-wide totals describe the time of preview. Other school reviews may change those totals before saving.</p>
 <form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_token" value="{{ preview_token }}"><button type="submit" data-save-school>Save mapping</button></form>
-<p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence or decisions require another preview.</p>
+<p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence, this school's decisions or mapping effects require another preview.</p>
 </section>{% endif %}
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='school-mapping.js') }}" defer></script>{% endblock %}

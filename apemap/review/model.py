@@ -469,7 +469,7 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def parse_events(data: bytes) -> list[ReviewEvent]:
+def parse_events(data: bytes, *, allow_conflicts: bool = False) -> list[ReviewEvent]:
     try:
         lines = data.decode("utf-8").splitlines()
     except UnicodeDecodeError as exc:
@@ -481,7 +481,7 @@ def parse_events(data: bytes) -> list[ReviewEvent]:
             result.append(ReviewEvent.from_dict(value))
         except (ValueError, TypeError) as exc:
             raise ValueError(f"Decision log line {number}: {exc}") from exc
-    resolve_events(result)
+    resolve_events(result, allow_conflicts=allow_conflicts)
     return result
 
 
@@ -491,18 +491,4 @@ def load_events(
     path = Path(path)
     if not path.exists():
         return []
-    if not allow_conflicts:
-        return parse_events(path.read_bytes())
-    # Conflict repair still validates every event and the graph, without choosing a winner.
-    result = []
-    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-        try:
-            result.append(
-                ReviewEvent.from_dict(
-                    json.loads(line, object_pairs_hook=_unique_object)
-                )
-            )
-        except (ValueError, TypeError) as exc:
-            raise ValueError(f"Decision log line {number}: {exc}") from exc
-    resolve_events(result, allow_conflicts=True)
-    return result
+    return parse_events(path.read_bytes(), allow_conflicts=allow_conflicts)

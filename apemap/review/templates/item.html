@@ -6,6 +6,7 @@
 {% if item.entity_type == 'member_education' and item.review_id.endswith(':missing') %}<p><a href="{{ url_for('new_item', entity_type='member_education', aph_id=item.review_id.split(':')[1]) }}">Add an education assertion for this member</a>. The missing-evidence case remains available for its own disposition.</p>{% endif %}
 {% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% include "retry.html" %}
 {% if item.get('conflicts') %}<section class="error" aria-label="Conflicting decisions"><h2>Conflicting active decisions</h2><p>Review every alternative and supersede all active event identifiers with one supported replacement. No alternative currently has authority.</p>{% for event in item.conflicts %}<details open><summary>{{ event.decision_id }} · {{ event.action }} · {{ event.reviewer }}</summary><pre>{{ event | json_text }}</pre></details>{% endfor %}</section>{% endif %}
 <div class="detail-grid">
 <div>
