@@ -10,6 +10,14 @@
   "baseline_source_commit": "19dcd581081d87cbe32eaa4ed3c0a9906cb5d5c6",
   "baseline_version": "0.3.0",
   "dataset_version": "0.3.3",
+  "draft_release": {
+    "url": "https://github.com/Mappboy/apemap/releases/tag/untagged-964ada47a749cc5cc26b",
+    "tag_name": "preview-review-v0.3.3",
+    "target_commit": "013a8df810ce22442801b4040b01297979a569e1",
+    "archive_asset_id": 613998797,
+    "github_archive_digest": "sha256:af5432b39bd6a428b9476fce935b19d202c0c66cad036e5f0f87fc68d098cba8",
+    "all_four_assets_uploaded": true
+  },
   "education_comparison": {
     "added_ids": [],
     "changed_fields": {
