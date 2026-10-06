@@ -185,8 +185,16 @@ member context and visible institution metadata with the current page. Decisions
 for an unrelated item do not invalidate that form. If this school's context
 changes, the response refreshes the page with your draft retained and a fresh
 form token; review the changes and preview again. A preview that races an unrelated
-change retries once when that page context remains identical. Saving still checks
-the exact preview's global ledger and source revisions under the writer lock.
+change retries once when that page context remains identical. Saving checks source
+revisions under the writer lock. If other decisions have been appended since a
+school preview, saving also verifies that the prior ledger bytes are unchanged,
+this school's active decisions and selected manual definition are unchanged, and
+the exact proposed event still produces the same decision and canonical row
+effects. Independent school previews can therefore both save without repeating
+the preview. Shared targets or attendance corrections that change those effects
+require another preview. Dataset-wide totals describe the time of preview and
+may change through independent reviews. Other decision types and older previews
+retain strict global revision checks.
 Changing a draft disables saving its earlier preview when
 JavaScript is enabled; without JavaScript, the save button still saves only the
 exact displayed preview, so preview again after edits.
@@ -206,6 +214,23 @@ one for the proposal. Source bytes are hashed afresh before and after preview,
 and before save validation and immediately before the atomic ledger replacement.
 These optimizations add no persistent index, database schema or data refresh.
 
+The local server uses one Waitress process with four request worker threads by
+default. Several browser tabs or clients can load schools, search the register
+and preview decisions concurrently. Register caches publish complete snapshots;
+each request has its own database connection and mutable replay state. Writes
+remain serialized by the same cross-process ledger lock used by the CLI. A save
+is successful only after the complete ledger has been flushed, synced and
+atomically replaced. There is no staging database or later flush step.
+
+A changed school, target, source or mapping effect returns a conflict with the
+draft retained for another preview. If a writer is busy, the page retains the
+exact signed preview and offers **Retry saving this decision**. File errors also
+retain the draft and retry token; inspect the current history before retrying an
+unconfirmed save. Retries keep the original 15-minute expiry and run the same
+validation. Duplicate submissions cannot append the same decision twice. Restart
+the server after upgrading; previews from the previous server must be recreated.
+Rebuild the review database separately when ready to apply saved decisions.
+
 ```powershell
-uv run apemap review --db-path data/aped-review.duckdb serve --port 8765
+uv run apemap review --db-path data/aped-review.duckdb serve --port 8765 --workers 4
 ```

@@ -15,7 +15,7 @@ import portalocker
 from apemap.review.model import (
     DEFAULT_LOG_PATH,
     ReviewEvent,
-    load_events,
+    parse_events,
     validate_events,
 )
 
@@ -67,20 +67,29 @@ def append_events(
     expected_revision: str,
     validator: Callable[[list[ReviewEvent]], Any] = validate_events,
     source_check: Callable[[], None] | None = None,
+    revision_mismatch_check: Callable[[bytes, list[ReviewEvent]], None] | None = None,
 ) -> None:
-    """Commit an all-or-nothing batch; no existing event is reserialized."""
+    """Commit a complete batch without reserializing prior events.
+
+    Revision mismatches are rejected unless the caller supplies a guard that
+    validates the locked ledger snapshot. Source and full-state validation still
+    run before any replacement, including when the guard permits a mismatch.
+    """
     path = path.resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
     lock_path = path.with_suffix(path.suffix + ".lock")
     with _decision_lock(lock_path):
         previous = path.read_bytes() if path.exists() else b""
-        if hashlib.sha256(previous).hexdigest() != expected_revision:
+        changed = hashlib.sha256(previous).hexdigest() != expected_revision
+        if changed and revision_mismatch_check is None:
             raise StaleReviewError("Decision log changed; refresh and preview again")
         if source_check is not None:
             source_check()
         if previous and not previous.endswith(b"\n"):
             raise ValueError("Decision log must end with a newline before appending")
-        existing = load_events(path, allow_conflicts=True)
+        existing = parse_events(previous, allow_conflicts=True)
+        if changed and revision_mismatch_check is not None:
+            revision_mismatch_check(previous, existing)
         validator(existing + events)
         if not events:
             if source_check is not None:

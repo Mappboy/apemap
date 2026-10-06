@@ -135,6 +135,30 @@ def test_source_changed_during_validation_prevents_commit(tmp_path: Path) -> Non
     assert not path.exists() and not list(tmp_path.glob("*.tmp"))
 
 
+def test_revision_mismatch_guard_runs_under_lock_and_can_reject(tmp_path: Path) -> None:
+    path = tmp_path / "decisions.jsonl"
+    original_revision = log_revision(path)
+    first = school_event("first")
+    append_events(path, [first], expected_revision=original_revision)
+    baseline = path.read_bytes()
+
+    def reject(raw: bytes, events: list[Any]) -> None:
+        assert raw == baseline and events == [first]
+        with path.with_suffix(".jsonl.lock").open("a") as stream:
+            with pytest.raises(portalocker.exceptions.LockException):
+                portalocker.lock(stream, portalocker.LOCK_EX | portalocker.LOCK_NB)
+        raise StaleReviewError("Changed dependencies")
+
+    with pytest.raises(StaleReviewError, match="dependencies"):
+        append_events(
+            path,
+            [school_event("second")],
+            expected_revision=original_revision,
+            revision_mismatch_check=reject,
+        )
+    assert path.read_bytes() == baseline
+
+
 def test_busy_writer_reports_retry_without_writing(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     with patch(

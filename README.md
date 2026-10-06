@@ -90,7 +90,9 @@ For detailed instructions on using local cached data versus live network refresh
 
 Review corrections with `uv run apemap review --help`. Generated CSVs are queue
 views; decisions live in `data/reference/review/decisions.jsonl`. Install
-`uv sync --extra review-ui` for the optional local reviewer. See
+`uv sync --extra review-ui` for the optional local reviewer, which supports
+concurrent school reviews through four local request workers. Decisions save
+immediately to the ledger. See
 [Review decisions](docs/review-decisions.md) for evidence, imports and replay.
 After saving decisions, follow [Decisions to a new release](docs/decisions-to-release.md)
 to rebuild from pinned sources, verify the consumed ledger, package the public

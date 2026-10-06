@@ -15,8 +15,9 @@ from typing import Any, Protocol
 from urllib.parse import urlsplit
 
 from flask import Flask, abort, g, jsonify, redirect, render_template, request, url_for
+from waitress import serve as waitress_serve
 
-from apemap.review.store import StaleReviewError
+from apemap.review.store import ReviewBusyError, StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
 
 PAGE_SIZE = 50
@@ -197,8 +198,10 @@ def _evidence_links(value: Any) -> list[str]:
 
 def _sign_preview(preview: dict[str, Any], secret: bytes) -> str:
     # Canonical display diffs may contain large source snapshots. Only the exact
-    # proposed event and its two optimistic-lock revisions are needed to save.
+    # proposed event, revisions and optional school guard are needed to save.
     commit = {key: preview[key] for key in ("event", "revision", "source_revision")}
+    if "school_guard" in preview:
+        commit["school_guard"] = preview["school_guard"]
     data = json.dumps(
         {"issued_at": int(time.time()), "preview": commit},
         sort_keys=True,
@@ -368,6 +371,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
         error: str | None = None,
         new_entity_type: str | None = None,
         draft_values: Mapping[str, Any] | None = None,
+        retry_preview: dict[str, Any] | None = None,
+        retry_token: str | None = None,
     ) -> str:
         chosen = _initial_payload(item) if payload is None else payload
         values: Mapping[str, Any] = (
@@ -416,6 +421,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 if preview
                 else None,
                 error=error,
+                retry_preview=retry_preview,
+                retry_token=retry_token,
                 relationships=RELATIONSHIPS,
                 evidence_links=_evidence_links(item),
                 preview_target=resolve_reference(
@@ -441,6 +448,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
             preview_token=_sign_preview(preview, signing_secret) if preview else None,
             evidence_links=_evidence_links(item),
             error=error,
+            retry_preview=retry_preview,
+            retry_token=retry_token,
             new_entity_type=new_entity_type,
             form_values=values,
         )
@@ -768,8 +777,9 @@ def create_app(service: ReviewServiceLike) -> Flask:
             if preview.get("event", {}).get("review_id") != review_id:
                 raise ValueError("Preview belongs to a different review item")
             service.save(preview)
-        except ValueError as err:
-            if isinstance(err, StaleReviewError):
+        except (OSError, ValueError) as err:
+            if isinstance(err, (StaleReviewError, OSError)):
+                retryable = isinstance(err, (ReviewBusyError, OSError))
                 event = preview["event"] if preview else {}
                 draft = {
                     "payload_mode": "json",
@@ -802,7 +812,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     )
                 try:
                     item = load_item(review_id)
-                except ValueError:
+                except (ValueError, OSError):
                     item = {
                         "review_id": review_id,
                         "entity_type": event.get("entity_type", "school"),
@@ -811,22 +821,43 @@ def create_app(service: ReviewServiceLike) -> Flask:
                         "history": [],
                         "context": {},
                     }
-                return item_page(
+                if isinstance(err, ReviewBusyError):
+                    message = "Another writer is busy. Nothing was saved. Retry this preview after it finishes."
+                elif isinstance(err, OSError):
+                    message = "The save could not be confirmed because of a file error. Check the current history before retrying this preview. Your draft is retained."
+                else:
+                    message = f"{err}. Nothing was saved. Review the current evidence and preview again."
+                response = item_page(
                     item,
                     payload=event.get("payload"),
-                    error=f"{err}. Nothing was saved. Review the current evidence and preview again.",
+                    error=message,
                     draft_values=draft,
-                ), 409
+                    retry_preview=preview if retryable else None,
+                    retry_token=request.form.get("preview_token")
+                    if retryable
+                    else None,
+                )
+                return (
+                    (response, 503, {"Retry-After": "1"})
+                    if retryable
+                    else (response, 409)
+                )
             return render_template("error.html", message=str(err)), 400
         return redirect(url_for("detail", review_id=review_id, saved="1"), code=303)
 
     return app
 
 
-def serve(service: ReviewServiceLike, port: int = 8765) -> None:
-    """Run only on loopback, with no debugger, reloader or background workers."""
+def serve(service: ReviewServiceLike, port: int = 8765, workers: int = 4) -> None:
+    """Run a single loopback process with a bounded pool of request threads."""
     if not 1 <= port <= 65535:
         raise ValueError("Port must be between 1 and 65535")
-    create_app(service).run(
-        host="127.0.0.1", port=port, debug=False, use_reloader=False, threaded=False
+    if workers < 1:
+        raise ValueError("Workers must be a positive integer")
+    waitress_serve(
+        create_app(service),
+        host="127.0.0.1",
+        port=port,
+        threads=workers,
+        max_request_body_size=256 * 1024,
     )

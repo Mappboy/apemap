@@ -10,6 +10,7 @@ from collections.abc import Callable
 from copy import copy
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import RLock
 from typing import Any
 from uuid import uuid4
 
@@ -38,6 +39,7 @@ from apemap.review.model import (
     education_review_id,
     entity_for_review_id,
     load_events,
+    parse_events,
     resolve_events,
     validate_events,
 )
@@ -103,6 +105,44 @@ def file_digest(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _value_revision(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            value, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode()
+    ).hexdigest()
+
+
+def _school_state(events: list[ReviewEvent], event: ReviewEvent) -> dict[str, Any]:
+    """Bind the school and its selected manual definition to immutable heads."""
+    heads = active_heads(events)
+    reference = str(event.payload.get("institution_ref", ""))
+    return {
+        "heads": sorted(head.decision_id for head in heads.get(event.review_id, [])),
+        "manual_definition": sorted(
+            head.decision_id for head in heads.get(f"institution:{reference}", [])
+        )
+        if reference.startswith("manual:")
+        else [],
+    }
+
+
+def _effect_revision(changes: dict[str, Any]) -> str:
+    """Compare actual decision/row effects, excluding dataset-wide totals."""
+    canonical = changes.get("canonical")
+    effects = None
+    if canonical is not None:
+        effects = {
+            "baseline": canonical["baseline"],
+            "before": canonical["before"],
+            "after": {
+                table: {side: change[side] for side in ("before", "after")}
+                for table, change in canonical["after"].items()
+            },
+        }
+    return _value_revision({"decisions": changes["decisions"], "canonical": effects})
+
+
 class ReviewService:
     def __init__(
         self,
@@ -115,9 +155,9 @@ class ReviewService:
             Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
         ).resolve()
         self.external_dir = Path(external_dir or EXTERNAL_DIR).resolve()
+        self._register_lock = RLock()
         self._lookup_revision: tuple[tuple[str, str], ...] | None = None
         self._lookup_rows: list[tuple[tuple[str, ...], dict[str, Any]]] = []
-        self._lookup_refs: dict[str, dict[str, Any]] = {}
         self._matcher_revision: tuple[tuple[str, str], ...] | None = None
         self._matcher: SchoolMatcher | None = None
 
@@ -131,21 +171,29 @@ class ReviewService:
     def matcher(self) -> SchoolMatcher:
         # Cache compiled register data by content, not timestamps: same-size edits
         # and restored modification times must not retain an obsolete register.
-        revision = self._register_revision()
-        if self._matcher is None or revision != self._matcher_revision:
-            self._matcher = SchoolMatcher(
-                external_dir=self.external_dir,
-                aliases_file=self.external_dir / ".no-review-aliases.json",
-            )
-            self._matcher_revision = revision
+        with self._register_lock:
+            revision = self._register_revision()
+            if self._matcher is None or revision != self._matcher_revision:
+                self._matcher = SchoolMatcher(
+                    external_dir=self.external_dir,
+                    aliases_file=self.external_dir / ".no-review-aliases.json",
+                )
+                self._matcher_revision = revision
+            matcher = copy(self._matcher)
         # Replay sets request-specific blocked keys. Never share that mutable
         # state between previews, lookup, ingestion or concurrent requests.
-        matcher = copy(self._matcher)
         matcher.review_blocked_keys = set()
         return matcher
 
     def _institution_lookup_rows(self) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
         """Cache register metadata until a local source file changes."""
+        with self._register_lock:
+            return self._build_institution_lookup_rows()
+
+    def _build_institution_lookup_rows(
+        self,
+    ) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
+        """Build and publish a complete snapshot while holding the cache lock."""
         source_revision = self._register_revision()
         if source_revision != self._lookup_revision:
             matcher = self.matcher()
@@ -195,7 +243,6 @@ class ReviewService:
                     )
                 )
             self._lookup_rows = rows
-            self._lookup_refs = {str(row["institution_ref"]): row for _, row in rows}
             self._lookup_revision = source_revision
         return self._lookup_rows
 
@@ -273,8 +320,14 @@ class ReviewService:
     def resolve_institution(self, reference: str) -> dict[str, Any] | None:
         """Describe an exact local reference without granting mapping authority."""
         if reference.startswith("acara:"):
-            self._institution_lookup_rows()
-            row = self._lookup_refs.get(reference)
+            row = next(
+                (
+                    row
+                    for _, row in self._institution_lookup_rows()
+                    if row["institution_ref"] == reference
+                ),
+                None,
+            )
             return dict(row) if row is not None else None
         if reference.startswith("manual:"):
             heads = active_heads(self.events(allow_conflicts=True)).get(
@@ -286,8 +339,10 @@ class ReviewService:
 
     def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
         """Snapshot reference metadata once for a single presentation request."""
-        self._institution_lookup_rows()
-        references = dict(self._lookup_refs)
+        references = {
+            str(row["institution_ref"]): row
+            for _, row in self._institution_lookup_rows()
+        }
         for heads in active_heads(self.events(allow_conflicts=True)).values():
             if len(heads) == 1:
                 event = heads[0]
@@ -562,9 +617,10 @@ class ReviewService:
         supersedes: list[str] | None = None,
         replacement_action: str | None = None,
     ) -> dict[str, Any]:
-        revision = log_revision(self.log_path)
+        raw_log = self.log_path.read_bytes() if self.log_path.exists() else b""
+        revision = hashlib.sha256(raw_log).hexdigest()
         source_revision = self.source_revision()
-        events = self.events(allow_conflicts=bool(supersedes))
+        events = parse_events(raw_log, allow_conflicts=bool(supersedes))
         entity = entity_for_review_id(review_id)
         # Candidate identity is a convenience, never an acceptance of proposed facts.
         identity: dict[str, Any] = {}
@@ -609,7 +665,7 @@ class ReviewService:
             or log_revision(self.log_path) != revision
         ):
             raise StaleReviewError("Review inputs changed while previewing; retry")
-        return {
+        preview = {
             "event": event.to_dict(),
             "revision": revision,
             "source_revision": source_revision,
@@ -622,6 +678,14 @@ class ReviewService:
                 *validation_result["warnings"],
             ],
         }
+        if entity == "school":
+            preview["school_guard"] = {
+                "version": 1,
+                "log_size": len(raw_log),
+                "state": _school_state(events, event),
+                "effects": _effect_revision(changes),
+            }
+        return preview
 
     def save(self, preview: dict[str, Any]) -> ReviewEvent:
         event = ReviewEvent.from_dict(preview["event"])
@@ -630,12 +694,40 @@ class ReviewService:
             if preview.get("source_revision") != self.source_revision():
                 raise StaleReviewError("Source/candidate data changed; preview again")
 
+        def check_independent_append(raw: bytes, current: list[ReviewEvent]) -> None:
+            guard = preview["school_guard"]
+            size = guard.get("log_size")
+            if (
+                guard.get("version") != 1
+                or type(size) is not int
+                or not 0 <= size <= len(raw)
+                or hashlib.sha256(raw[:size]).hexdigest() != preview["revision"]
+            ):
+                raise StaleReviewError("Decision history changed; preview again")
+            if _school_state(current, event) != guard.get("state"):
+                raise StaleReviewError(
+                    "School or target definition changed; preview again"
+                )
+            # Recompute the exact signed event, never prepare a replacement event.
+            try:
+                changes = self.semantic_diff(current, current + [event])
+            except ValueError as exc:
+                raise StaleReviewError(
+                    "Mapping validation changed; preview again"
+                ) from exc
+            if _effect_revision(changes) != guard.get("effects"):
+                raise StaleReviewError("Mapping effects changed; preview again")
+
         append_events(
             self.log_path,
             [event],
             expected_revision=preview["revision"],
             validator=lambda events: self.check(events),
             source_check=check_sources,
+            revision_mismatch_check=check_independent_append
+            if event.entity_type == "school"
+            and isinstance(preview.get("school_guard"), dict)
+            else None,
         )
         return event
 
