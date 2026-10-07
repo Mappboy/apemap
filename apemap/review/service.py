@@ -7,7 +7,7 @@ import json
 import subprocess
 from collections import Counter
 from collections.abc import Callable
-from copy import copy
+from copy import copy, deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from threading import RLock
@@ -38,7 +38,6 @@ from apemap.review.model import (
     active_heads,
     education_review_id,
     entity_for_review_id,
-    load_events,
     parse_events,
     resolve_events,
     validate_events,
@@ -100,7 +99,9 @@ def default_reviewer() -> str:
 def file_digest(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
-        while block := stream.read(1024 * 1024):
+        # Most evidence files are small. A megabyte allocation per read adds
+        # substantial overhead across hundreds of files on local Windows runs.
+        while block := stream.read(64 * 1024):
             digest.update(block)
     return digest.hexdigest()
 
@@ -156,13 +157,27 @@ class ReviewService:
         ).resolve()
         self.external_dir = Path(external_dir or EXTERNAL_DIR).resolve()
         self._register_lock = RLock()
+        self._events_lock = RLock()
+        self._events_cache: dict[bool, tuple[str, list[ReviewEvent]]] = {}
         self._lookup_revision: tuple[tuple[str, str], ...] | None = None
         self._lookup_rows: list[tuple[tuple[str, ...], dict[str, Any]]] = []
         self._matcher_revision: tuple[tuple[str, str], ...] | None = None
         self._matcher: SchoolMatcher | None = None
 
     def events(self, *, allow_conflicts: bool = False) -> list[ReviewEvent]:
-        return load_events(self.log_path, allow_conflicts=allow_conflicts)
+        raw = self.log_path.read_bytes() if self.log_path.exists() else b""
+        revision = hashlib.sha256(raw).hexdigest()
+        with self._events_lock:
+            cached = self._events_cache.get(allow_conflicts)
+            if cached is None or cached[0] != revision:
+                cached = (revision, parse_events(raw, allow_conflicts=allow_conflicts))
+                self._events_cache[allow_conflicts] = cached
+        # Event payloads and supersession lists remain private to each caller.
+        return deepcopy(cached[1])
+
+    def queue_revision(self) -> tuple[str, str, tuple[tuple[str, str], ...]]:
+        """Content-bound key for disposable GUI queue presentation only."""
+        return self.source_revision(), self.review_revision(), self._register_revision()
 
     def _register_revision(self) -> tuple[tuple[str, str], ...]:
         paths = [self.external_dir / name for name in REGISTER_FILES]
@@ -171,32 +186,37 @@ class ReviewService:
     def matcher(self) -> SchoolMatcher:
         # Cache compiled register data by content, not timestamps: same-size edits
         # and restored modification times must not retain an obsolete register.
+        revision = self._register_revision()
         with self._register_lock:
-            revision = self._register_revision()
-            if self._matcher is None or revision != self._matcher_revision:
-                self._matcher = SchoolMatcher(
-                    external_dir=self.external_dir,
-                    aliases_file=self.external_dir / ".no-review-aliases.json",
-                )
-                self._matcher_revision = revision
-            matcher = copy(self._matcher)
+            matcher = copy(self._matcher_snapshot(revision))
         # Replay sets request-specific blocked keys. Never share that mutable
         # state between previews, lookup, ingestion or concurrent requests.
         matcher.review_blocked_keys = set()
         return matcher
 
+    def _matcher_snapshot(self, revision: tuple[tuple[str, str], ...]) -> SchoolMatcher:
+        """Construct under the register lock, using the caller's content key."""
+        if self._matcher is None or revision != self._matcher_revision:
+            matcher = SchoolMatcher(
+                external_dir=self.external_dir,
+                aliases_file=self.external_dir / ".no-review-aliases.json",
+            )
+            self._matcher, self._matcher_revision = matcher, revision
+        return self._matcher
+
     def _institution_lookup_rows(self) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
         """Cache register metadata until a local source file changes."""
+        source_revision = self._register_revision()
         with self._register_lock:
-            return self._build_institution_lookup_rows()
+            return self._build_institution_lookup_rows(source_revision)
 
     def _build_institution_lookup_rows(
         self,
+        source_revision: tuple[tuple[str, str], ...],
     ) -> list[tuple[tuple[str, ...], dict[str, Any]]]:
         """Build and publish a complete snapshot while holding the cache lock."""
-        source_revision = self._register_revision()
         if source_revision != self._lookup_revision:
-            matcher = self.matcher()
+            matcher = self._matcher_snapshot(source_revision)
             current_ids = {aid.strip() for aid in matcher.current_ids}
             has_current_register = (
                 self.external_dir / "school-location-2025.csv"

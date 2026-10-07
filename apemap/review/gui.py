@@ -11,6 +11,8 @@ import hmac
 import json
 import secrets
 import time
+from pathlib import Path
+from threading import Lock
 from typing import Any, Protocol
 from urllib.parse import urlsplit
 
@@ -284,6 +286,19 @@ def create_app(service: ReviewServiceLike) -> Flask:
     )
     csrf = secrets.token_urlsafe(32)
     signing_secret = secrets.token_bytes(32)
+    queue_lock = Lock()
+    queue_cache: tuple[Any, list[dict[str, Any]]] | None = None
+    asset_versions = {
+        path.name: hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+        for path in Path(app.static_folder or "").glob("*")
+        if path.is_file()
+    }
+
+    @app.url_defaults
+    def version_assets(endpoint: str, values: dict[str, Any]) -> None:
+        if endpoint == "static" and values.get("filename") in asset_versions:
+            values.setdefault("v", asset_versions[values["filename"]])
+
     app.jinja_env.filters["json_text"] = json_text
     app.jinja_env.filters["source_link"] = source_link
 
@@ -360,7 +375,10 @@ def create_app(service: ReviewServiceLike) -> Flask:
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Cache-Control"] = "no-store"
+        if request.endpoint == "static":
+            response.headers["Cache-Control"] = "private, max-age=3600"
+        else:
+            response.headers["Cache-Control"] = "no-store"
         return response
 
     def item_page(
@@ -454,24 +472,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
             form_values=values,
         )
 
-    @app.get("/")
-    def queue() -> str:
-        entity_type = request.args.get("entity_type") or None
-        status = request.args.get("status") or None
-        try:
-            parliament = (
-                int(request.args["parliament"])
-                if request.args.get("parliament")
-                else None
-            )
-            page = max(1, int(request.args.get("page", "1")))
-        except ValueError:
-            abort(400, "Parliament and page must be integers")
-        if entity_type and entity_type not in ENTITY_LABELS:
-            abort(400, "Unknown review type")
-        if status and status not in STATUSES:
-            abort(400, "Unknown status")
-        search = request.args.get("q") or None
+    def build_queue_rows() -> list[dict[str, Any]]:
         all_rows = group_school_rows(service.candidates())
         decisions = service.school_decisions()
         metadata_cache: dict[str, dict[str, Any] | None] = {}
@@ -493,6 +494,43 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     resolve,
                 )
                 row["status"] = row["school"].status
+        return all_rows
+
+    def queue_rows() -> list[dict[str, Any]]:
+        nonlocal queue_cache
+        revision_reader = getattr(service, "queue_revision", None)
+        if revision_reader is None:
+            return build_queue_rows()
+        # Hash outside the queue lock. Lookup, details, previews and saves never
+        # take this lock or consume this presentation cache.
+        revision = revision_reader()
+        with queue_lock:
+            if queue_cache is not None and queue_cache[0] == revision:
+                return queue_cache[1]
+            rows = build_queue_rows()
+            if revision_reader() == revision:
+                queue_cache = (revision, rows)
+            return rows
+
+    @app.get("/")
+    def queue() -> str:
+        entity_type = request.args.get("entity_type") or None
+        status = request.args.get("status") or None
+        try:
+            parliament = (
+                int(request.args["parliament"])
+                if request.args.get("parliament")
+                else None
+            )
+            page = max(1, int(request.args.get("page", "1")))
+        except ValueError:
+            abort(400, "Parliament and page must be integers")
+        if entity_type and entity_type not in ENTITY_LABELS:
+            abort(400, "Unknown review type")
+        if status and status not in STATUSES:
+            abort(400, "Unknown status")
+        search = request.args.get("q") or None
+        all_rows = queue_rows()
         rows = [
             row
             for row in all_rows
