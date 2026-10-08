@@ -21,6 +21,7 @@ from apemap.constants import (
     PARLIAMENT_METADATA,
     REFERENCE_DIR,
 )
+from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 
 DEFAULT_LOG_PATH = REFERENCE_DIR / "review" / "decisions.jsonl"
 ENTITY_TYPES = ("school", "member", "member_education", "service", "manual_institution")
@@ -231,6 +232,7 @@ def validate_event(event: ReviewEvent) -> None:
                 "successor",
             ):
                 raise ValueError("School mapping requires a relationship_type")
+            _validate_school_context(payload)
     elif event.entity_type == "member":
         aph_id = _text(payload.get("aph_id"), "aph_id")
         member_field = payload.get("field")
@@ -325,6 +327,78 @@ def validate_event(event: ReviewEvent) -> None:
                 evidence_url(payload.get("location_source_url"))
     if expected_id != event.review_id:
         raise ValueError(f"Payload identity requires review_id {expected_id}")
+
+
+def _validate_school_context(payload: dict[str, Any]) -> None:
+    """Validate independent school-wide historical evidence on successors."""
+    supplied = {name for name in SCHOOL_CONTEXT_FIELDS if payload.get(name) is not None}
+    if not supplied:
+        return
+    if payload.get("relationship_type") != "successor":
+        raise ValueError("Historical school context requires a successor relationship")
+    if payload.get("historical_scope_confirmed") is not True:
+        raise ValueError(
+            "Confirm historical evidence covers all attendance records and verified aliases"
+        )
+    reference = payload.get("attended_institution_ref")
+    if reference is not None:
+        institution_reference(reference)
+        if reference == payload["institution_ref"]:
+            raise ValueError(
+                "Original institution reference must differ from its successor"
+            )
+        evidence_url(payload.get("attended_identity_source_url"))
+    elif payload.get("attended_identity_source_url") is not None:
+        raise ValueError("Original identity evidence requires attended_institution_ref")
+    coordinates = (
+        payload.get("historical_latitude"),
+        payload.get("historical_longitude"),
+    )
+    if (coordinates[0] is None) != (coordinates[1] is None):
+        raise ValueError("Supply both historical coordinates or neither")
+    if coordinates[0] is not None:
+        for name, bound in (("historical_latitude", 90), ("historical_longitude", 180)):
+            value = payload[name]
+            if (
+                type(value) not in (int, float)
+                or not math.isfinite(value)
+                or abs(value) > bound
+            ):
+                raise ValueError(f"Invalid {name}")
+        evidence_url(payload.get("historical_location_source_url"))
+    elif payload.get("historical_location_source_url") is not None:
+        raise ValueError("Historical location evidence requires coordinates")
+    for name, choices, source in (
+        (
+            "campus_continuity",
+            ("same_campus", "different_campus"),
+            "campus_continuity_source_url",
+        ),
+        (
+            "historical_broad_sector",
+            ("Government", "Non-government"),
+            "historical_broad_sector_source_url",
+        ),
+        (
+            "historical_detailed_sector",
+            ("Catholic", "Independent"),
+            "historical_detailed_sector_source_url",
+        ),
+    ):
+        value = payload.get(name)
+        if value is not None:
+            if value not in choices:
+                raise ValueError(f"Invalid {name}")
+            evidence_url(payload.get(source))
+        elif payload.get(source) is not None:
+            raise ValueError(f"{source} requires {name}")
+    if (
+        payload.get("historical_detailed_sector") is not None
+        and payload.get("historical_broad_sector") == "Government"
+    ):
+        raise ValueError(
+            "Catholic/Independent historical detail contradicts Government broad sector"
+        )
 
 
 def validate_intervals(intervals: Any, parliament: int) -> None:
@@ -422,18 +496,19 @@ def validate_events(
     for event in effective.values():
         if event.effective_action not in ("accept", "map"):
             continue
-        ref = event.payload.get("institution_ref")
-        if (
-            ref
-            and ref.startswith("acara:")
-            and acara_ids is not None
-            and ref.split(":", 1)[1] not in acara_ids
-        ):
-            raise ValueError(f"{event.review_id}: ACARA ID does not exist: {ref}")
-        if ref and ref.startswith("manual:") and ref not in registry:
-            raise ValueError(
-                f"{event.review_id}: Missing active manual institution {ref}"
-            )
+        for field_name in ("institution_ref", "attended_institution_ref"):
+            ref = event.payload.get(field_name)
+            if (
+                ref
+                and ref.startswith("acara:")
+                and acara_ids is not None
+                and ref.split(":", 1)[1] not in acara_ids
+            ):
+                raise ValueError(f"{event.review_id}: ACARA ID does not exist: {ref}")
+            if ref and ref.startswith("manual:") and ref not in registry:
+                raise ValueError(
+                    f"{event.review_id}: Missing active manual institution {ref}"
+                )
         aph_id = event.payload.get("aph_id")
         if (
             aph_id

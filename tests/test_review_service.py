@@ -364,6 +364,100 @@ def test_reference_validation_with_real_pinned_register(
         review_service.check([invalid])
 
 
+def test_cli_and_guided_ui_preserve_identical_successor_evidence_payloads(
+    review_service: ReviewService, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pytest.importorskip("flask")
+    pytest.importorskip("waitress")
+    from apemap.review.gui import create_app
+    from tests.test_review_gui import Inputs
+
+    payload = {
+        "recorded_name": "Test High School",
+        "institution_ref": "acara:2",
+        "relationship_type": "successor",
+        "attended_institution_ref": "acara:1",
+        "attended_identity_source_url": "https://example.org/identity",
+        "historical_scope_confirmed": True,
+        "historical_latitude": -40.5,
+        "historical_longitude": 145.5,
+        "historical_location_source_url": "https://example.org/location",
+        "historical_broad_sector": "Government",
+        "historical_broad_sector_source_url": "https://example.org/sector",
+        "campus_continuity": "different_campus",
+        "campus_continuity_source_url": "https://example.org/campus",
+    }
+    path = tmp_path / "successor.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    review_id = school_review_id("Test High School")
+    result = CliRunner().invoke(
+        app,
+        [
+            "review",
+            "--log-path",
+            str(review_service.log_path),
+            "--db-path",
+            str(review_service.db_path),
+            "--external-dir",
+            str(review_service.external_dir),
+            "accept",
+            review_id,
+            "--payload",
+            str(path),
+            "--source",
+            "https://example.org/relationship",
+            "--reviewer",
+            "Researcher",
+            "--dry-run",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    cli_event = json.loads(result.output)["event"]
+    captured: list[dict[str, Any]] = []
+    original_prepare = review_service.prepare
+
+    def capture(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        preview = original_prepare(*args, **kwargs)
+        captured.append(preview["event"])
+        return preview
+
+    monkeypatch.setattr(review_service, "prepare", capture)
+    client = create_app(review_service).test_client()
+    hidden = Inputs(client.get(f"/items/{review_id}").get_data(as_text=True)).values
+    fields = {
+        "field_" + name: "1" if value is True else str(value)
+        for name, value in payload.items()
+    }
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data={
+            "csrf_token": hidden["csrf_token"],
+            "form_token": hidden["form_token"],
+            "school_workflow": "1",
+            "payload_mode": "guided",
+            "payload": "{}",
+            "action": "map",
+            "source_url": "https://example.org/relationship",
+            "reviewer": "Researcher",
+            **fields,
+        },
+    )
+    assert response.status_code == 200
+    assert cli_event["payload"] == payload
+    assert all(
+        str(value) in response.get_data(as_text=True)
+        for value in (
+            "acara:1",
+            "https://example.org/location",
+            "https://example.org/sector",
+        )
+    )
+    gui_event = captured[-1]
+    assert gui_event["payload"] == cli_event["payload"]
+    assert gui_event["source_url"] == cli_event["source_url"]
+    assert not review_service.log_path.exists()
+
+
 def test_semantic_diff_ignores_event_only_change(review_service: ReviewService) -> None:
     a = school_event(
         payload={

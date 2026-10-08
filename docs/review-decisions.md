@@ -40,6 +40,36 @@ School relationships identify the name as recorded, an `acara:ID` or `manual:ID`
 target and whether the relationship is direct, an alias, a rename or a successor. Manual
 schools may be overseas, closed, or outside ACARA; they do not receive an invented
 Australian identifier or map point. Their coordinates need location evidence.
+Successor mappings can also name an optional `attended_institution_ref` identifying
+the original school, with its independent `attended_identity_source_url`. Use an
+existing historical ACARA reference or an accepted manual definition, different
+from the successor. Original references group verified name aliases; without one,
+the frozen recorded-name review identity remains provisional. Registry metadata
+alone does not verify historical location or sector.
+
+Historical successor payloads and guided forms accept paired
+`historical_latitude`/`historical_longitude` with
+`historical_location_source_url`; `campus_continuity` (`same_campus` or
+`different_campus`) with `campus_continuity_source_url`;
+`historical_broad_sector` (`Government` or `Non-government`) with
+`historical_broad_sector_source_url`; and independently
+`historical_detailed_sector` (`Catholic` or `Independent`) with
+`historical_detailed_sector_source_url`. Government broad evidence also establishes
+Government detail. Catholic/Independent evidence also establishes Non-government
+broad sector and must not contradict explicit Government evidence.
+Every supplied historical field requires `historical_scope_confirmed: true`:
+evidence covers all associated attendance records and verified aliases of the
+original school displayed in the preview. Mixed-era histories remain unresolved;
+there are no date ranges or per-person exceptions in this model.
+
+Consistent reviewed facts apply school-wide across verified aliases. Contradictory
+location or sector facts suppress the affected dimension and produce review
+diagnostics; missing facts do not override reviewed evidence. Historical sector
+facts take precedence over successor assumptions, with discrepancies flagged.
+Without historical evidence, successor broad sector remains an explicit working
+assumption; Catholic/Independent detail remains unknown. Successor coordinates
+can be displayed as context, but attendance geography requires verified original
+coordinates or reviewed same-campus continuity.
 The optional `institution_status` preserves a sourced `current`, `historical_only`,
 `closed` or `merged` status; otherwise a definition keeps its `manual` status.
 Coverage recognizes explicit foreign countries as well as the legacy overseas marker.
@@ -89,6 +119,16 @@ School imports require an explicit ACARA target or a manual institution name and
 country; coordinates require a separate `address_source_url`.
 
 ## Migration and pins
+
+Schema initialization adds nullable successor-context fields to both canonical
+education assertions and preserved `review_source_member_education` rows. Source
+imports and copies insert by column name, so older fixtures remain readable. It
+backfills missing recorded-school IDs with the frozen Python `school_review_id`
+normalizer; existing IDs survive subsequent initialization and replay. Read-only
+previews of older databases supply the same missing fields and IDs in memory,
+without changing source files or the database. Replay clears superseded
+historical evidence before applying the current decision, while retaining the
+recorded-school identity. Blank recorded names remain unresolved.
 
 Exact old aliases, manual education and service overrides are preserved in
 `archive/reference/2026-10-05/`. The migration imports three education assertions

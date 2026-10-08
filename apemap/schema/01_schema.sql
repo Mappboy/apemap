@@ -80,7 +80,22 @@ CREATE TABLE IF NOT EXISTS member_education (
     school_name_as_recorded VARCHAR,
     institution_resolution VARCHAR,
     resolution_source_url VARCHAR,
-    evidence_origin VARCHAR
+    evidence_origin VARCHAR,
+    -- Explicit reviewed original identity and school-wide historical evidence.
+    -- Registry metadata for either reference does not verify historical facts.
+    recorded_school_id VARCHAR,
+    attended_institution_id VARCHAR,
+    attended_identity_source_url VARCHAR,
+    historical_scope_confirmed BOOLEAN,
+    historical_latitude DOUBLE,
+    historical_longitude DOUBLE,
+    historical_location_source_url VARCHAR,
+    campus_continuity VARCHAR,
+    campus_continuity_source_url VARCHAR,
+    historical_broad_sector VARCHAR,
+    historical_broad_sector_source_url VARCHAR,
+    historical_detailed_sector VARCHAR,
+    historical_detailed_sector_source_url VARCHAR
 );
 
 -- 5. School Snapshots: Annual school metrics (enrolments, ICSEA, socio-educational profile)

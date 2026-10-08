@@ -52,6 +52,77 @@ def test_stable_ids_ignore_source_order_and_punctuation() -> None:
 
 
 @pytest.mark.parametrize(
+    "extra,match",
+    [
+        (
+            {
+                "historical_scope_confirmed": False,
+                "historical_broad_sector": "Government",
+            },
+            "Confirm historical evidence",
+        ),
+        ({"historical_latitude": -30}, "both historical coordinates"),
+        ({"historical_latitude": -30, "historical_longitude": 140}, "source_url"),
+        (
+            {
+                "historical_latitude": True,
+                "historical_longitude": 140,
+                "historical_location_source_url": "https://example.org/history",
+            },
+            "Invalid historical_latitude",
+        ),
+        (
+            {
+                "attended_institution_ref": "acara:123",
+                "attended_identity_source_url": "https://example.org/history",
+            },
+            "must differ",
+        ),
+        ({"attended_institution_ref": "acara:456"}, "source_url"),
+        ({"campus_continuity": "same_campus"}, "source_url"),
+        (
+            {
+                "historical_broad_sector": "Government",
+                "historical_broad_sector_source_url": "https://example.org/broad",
+                "historical_detailed_sector": "Catholic",
+                "historical_detailed_sector_source_url": "https://example.org/detail",
+            },
+            "contradicts Government",
+        ),
+    ],
+)
+def test_successor_context_requires_independent_sourced_scope(
+    extra: dict[str, Any], match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        school_event(
+            payload={
+                "recorded_name": "Saint Mary's",
+                "institution_ref": "acara:123",
+                "relationship_type": "successor",
+                "historical_scope_confirmed": True,
+                **extra,
+            }
+        )
+
+
+def test_original_reference_is_validated_separately_from_successor() -> None:
+    event = school_event(
+        payload={
+            "recorded_name": "Saint Mary's",
+            "institution_ref": "acara:123",
+            "relationship_type": "successor",
+            "historical_scope_confirmed": True,
+            "attended_institution_ref": "acara:456",
+            "attended_identity_source_url": "https://example.org/history",
+        }
+    )
+    with pytest.raises(ValueError, match="ACARA ID does not exist: acara:456"):
+        validate_events([event], acara_ids={"123"})
+    validate_events([event], acara_ids={"123", "456"})
+
+
+@pytest.mark.parametrize(
     "data",
     [
         b"not json\n",

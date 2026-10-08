@@ -16,6 +16,7 @@ import duckdb
 import pandas as pd
 
 from apemap.constants import PARLIAMENT_METADATA
+from apemap.education_context import CONTEXT_COLUMNS
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -100,6 +101,30 @@ def get_connection(
         return duckdb.connect(str(resolved_path), read_only=True)
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     return duckdb.connect(str(resolved_path))
+
+
+def backfill_recorded_school_ids(conn: DuckDBPyConnection) -> None:
+    """Persist frozen Python identities for imported and pre-upgrade assertions."""
+    from apemap.review.model import school_review_id
+
+    tables = {
+        row[0]
+        for row in conn.execute(
+            "SELECT table_name FROM information_schema.tables"
+        ).fetchall()
+    }
+    for table in ("member_education", "review_source_member_education"):
+        if table not in tables:
+            continue
+        rows = conn.execute(
+            f"SELECT education_id, school_name_as_recorded FROM {table} "
+            "WHERE recorded_school_id IS NULL AND NULLIF(TRIM(school_name_as_recorded), '') IS NOT NULL"
+        ).fetchall()
+        if rows:
+            conn.executemany(
+                f"UPDATE {table} SET recorded_school_id = ? WHERE education_id = ?",
+                [(school_review_id(name), education_id) for education_id, name in rows],
+            )
 
 
 @contextmanager
@@ -215,12 +240,22 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             ("institution_resolution", "VARCHAR"),
             ("resolution_source_url", "VARCHAR"),
             ("evidence_origin", "VARCHAR"),
+            *CONTEXT_COLUMNS,
         ],
     }.items():
         for column, sql_type in columns:
             conn.execute(
                 f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {sql_type}"
             )
+    source_exists = conn.execute(
+        "SELECT count(*) FROM information_schema.tables WHERE table_name = 'review_source_member_education'"
+    ).fetchone()
+    if source_exists and source_exists[0]:
+        for column, sql_type in CONTEXT_COLUMNS:
+            conn.execute(
+                f"ALTER TABLE review_source_member_education ADD COLUMN IF NOT EXISTS {column} {sql_type}"
+            )
+    backfill_recorded_school_ids(conn)
     for info in PARLIAMENT_METADATA.values():
         conn.execute(
             """INSERT OR REPLACE INTO parliament_metadata
@@ -314,6 +349,7 @@ def load_parquet_sources(
         else:
             counts[table] = 0
 
+    backfill_recorded_school_ids(conn)
     return counts
 
 

@@ -40,6 +40,7 @@ from apemap.review.model import (
     entity_for_review_id,
     parse_events,
     resolve_events,
+    school_review_id,
     validate_events,
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
@@ -117,14 +118,47 @@ def _value_revision(value: Any) -> str:
 def _school_state(events: list[ReviewEvent], event: ReviewEvent) -> dict[str, Any]:
     """Bind the school and its selected manual definition to immutable heads."""
     heads = active_heads(events)
-    reference = str(event.payload.get("institution_ref", ""))
+    references = {
+        str(event.payload.get(name, ""))
+        for name in ("institution_ref", "attended_institution_ref")
+    }
+    original = event.payload.get("attended_institution_ref")
+    aliases = [
+        head
+        for alternatives in heads.values()
+        for head in alternatives
+        if original
+        and head.entity_type == "school"
+        and (
+            head.payload.get("attended_institution_ref") == original
+            or (
+                head.payload.get("institution_ref") == original
+                and head.payload.get("relationship_type") != "successor"
+            )
+        )
+    ]
+    school_ids = {event.review_id, *(head.review_id for head in aliases)}
     return {
         "heads": sorted(head.decision_id for head in heads.get(event.review_id, [])),
         "manual_definition": sorted(
-            head.decision_id for head in heads.get(f"institution:{reference}", [])
-        )
-        if reference.startswith("manual:")
-        else [],
+            head.decision_id
+            for reference in references
+            if reference.startswith("manual:")
+            for head in heads.get(f"institution:{reference}", [])
+        ),
+        "verified_aliases": sorted(head.decision_id for head in aliases),
+        "attendance_decisions": sorted(
+            head.decision_id
+            for alternatives in heads.values()
+            for head in alternatives
+            if event.payload.get("historical_scope_confirmed")
+            and head.entity_type == "member_education"
+            and (
+                school_review_id(str(head.payload.get("recorded_school_name", "")))
+                in school_ids
+                or (original and head.payload.get("institution_ref") == original)
+            )
+        ),
     }
 
 
@@ -396,7 +430,10 @@ class ReviewService:
             e
             for e in resolve_events(selected).values()
             if e.effective_action in ("accept", "map")
-            and str(e.payload.get("institution_ref", "")).startswith("acara:")
+            and any(
+                str(e.payload.get(name, "")).startswith("acara:")
+                for name in ("institution_ref", "attended_institution_ref")
+            )
         ]
         if refs and not matcher.acara_id_map:
             raise ValueError(
@@ -498,9 +535,35 @@ class ReviewService:
         context = dict(candidates[0]["payload"]) if candidates else {}
         if entity == "school":
             context["members"] = []
+            original = (
+                decision.payload.get("attended_institution_ref") if decision else None
+            )
+            aliases = [
+                event
+                for event in resolve_events(events, allow_conflicts=True).values()
+                if original
+                and event.entity_type == "school"
+                and event.effective_action in {"map", "accept"}
+                and event.payload.get("attended_institution_ref") == original
+            ]
+            context["verified_aliases"] = [
+                {
+                    "review_id": alias.review_id,
+                    "recorded_name": alias.payload["recorded_name"],
+                }
+                for alias in sorted(aliases, key=lambda event: event.review_id)
+            ]
             if self.db_path.exists():
                 with get_connection(self.db_path, read_only=True) as conn:
                     context["members"] = school_member_context(conn, review_id)
+                    context["alias_members"] = [
+                        {
+                            "recorded_name": alias.payload["recorded_name"],
+                            "members": school_member_context(conn, alias.review_id),
+                        }
+                        for alias in aliases
+                        if alias.review_id != review_id
+                    ]
         return {
             "review_id": review_id,
             "entity_type": entity,
@@ -540,6 +603,164 @@ class ReviewService:
                 )
             ],
             "revision": log_revision(self.log_path),
+        }
+
+    def _historical_scope(
+        self, events: list[ReviewEvent], event: ReviewEvent
+    ) -> dict[str, Any]:
+        """Display every linked name and attendance before school-wide acceptance."""
+        payload = event.payload
+        reference = payload.get("attended_institution_ref")
+        related = [
+            head
+            for head in resolve_events(events).values()
+            if head.entity_type == "school"
+            and head.effective_action in {"map", "accept"}
+            and (
+                head.review_id == event.review_id
+                or (
+                    reference
+                    and (
+                        head.payload.get("attended_institution_ref") == reference
+                        or (
+                            head.payload.get("institution_ref") == reference
+                            and head.payload.get("relationship_type") != "successor"
+                        )
+                    )
+                )
+            )
+        ]
+        cases = {head.review_id: str(head.payload["recorded_name"]) for head in related}
+        cases[event.review_id] = str(payload["recorded_name"])
+        attendance = [
+            head
+            for head in resolve_events(events).values()
+            if head.entity_type == "member_education"
+            and head.effective_action == "accept"
+            and (
+                school_review_id(str(head.payload["recorded_school_name"])) in cases
+                or (reference and head.payload.get("institution_ref") == reference)
+            )
+        ]
+        for head in attendance:
+            name = str(head.payload["recorded_school_name"])
+            cases[school_review_id(name)] = name
+        members: dict[str, list[dict[str, Any]]] = {}
+        member_names: dict[str, str] = {}
+        if self.db_path.exists():
+            with get_connection(self.db_path, read_only=True) as conn:
+                if reference:
+                    canonical_ref = reference.replace("acara:", "acara-", 1)
+                    tables = {
+                        row[0]
+                        for row in conn.execute(
+                            "SELECT table_name FROM information_schema.tables"
+                        ).fetchall()
+                    }
+                    table = (
+                        "review_source_member_education"
+                        if "review_source_member_education" in tables
+                        else "member_education"
+                    )
+                    for (name,) in conn.execute(
+                        f"SELECT DISTINCT school_name_as_recorded FROM {table} WHERE institution_id = ? AND school_name_as_recorded IS NOT NULL",
+                        [canonical_ref],
+                    ).fetchall():
+                        cases[school_review_id(name)] = name
+                members = {key: school_member_context(conn, key) for key in cases}
+                member_names = dict(
+                    conn.execute(
+                        "SELECT aph_id, display_name FROM members WHERE aph_id IS NOT NULL"
+                    ).fetchall()
+                )
+        for head in attendance:
+            key = school_review_id(str(head.payload["recorded_school_name"]))
+            aph_id = str(head.payload["aph_id"])
+            case_members = members.setdefault(key, [])
+            if not any(member.get("aph_id") == aph_id for member in case_members):
+                case_members.append(
+                    {
+                        "aph_id": aph_id,
+                        "display_name": member_names.get(aph_id, aph_id),
+                        "education": [head.payload],
+                        "source_url": head.source_url,
+                    }
+                )
+        diagnostics: list[str] = []
+        scoped = [
+            head.payload
+            for head in related
+            if head.payload.get("historical_scope_confirmed")
+        ]
+        broad_facts = {
+            item.get("historical_broad_sector")
+            or ("Non-government" if item.get("historical_detailed_sector") else None)
+            for item in scoped
+        } - {None}
+        if len(broad_facts) > 1:
+            diagnostics.append(
+                "Conflicting reviewed broad sector; the affected dimension remains unresolved and needs review."
+            )
+        for field, label in (
+            ("historical_broad_sector", "broad sector"),
+            ("historical_detailed_sector", "detailed sector"),
+            ("campus_continuity", "campus continuity"),
+        ):
+            if len({item[field] for item in scoped if item.get(field) is not None}) > 1:
+                diagnostics.append(
+                    f"Conflicting reviewed {label}; the affected dimension remains unresolved and needs review."
+                )
+        if (
+            len(
+                {
+                    (item["historical_longitude"], item["historical_latitude"])
+                    for item in scoped
+                    if item.get("historical_longitude") is not None
+                }
+            )
+            > 1
+        ):
+            diagnostics.append(
+                "Conflicting reviewed original coordinates; attendance location remains unresolved and needs review."
+            )
+        resolve = self.institution_resolver()
+        target_broads = set()
+        for head in related:
+            target = resolve(str(head.payload.get("institution_ref", ""))) or {}
+            sector = target.get("sector")
+            broad = (
+                "Government"
+                if sector == "Government"
+                else "Non-government"
+                if sector in {"Catholic", "Independent"}
+                else None
+            )
+            if broad:
+                target_broads.add(broad)
+            historical = head.payload.get("historical_broad_sector") or (
+                "Non-government"
+                if head.payload.get("historical_detailed_sector")
+                else None
+            )
+            if historical and broad and historical != broad:
+                diagnostics.append(
+                    "Verified historical broad sector differs from the successor; the historical value takes precedence."
+                )
+        if len(target_broads) > 1 and not broad_facts:
+            diagnostics.append(
+                "Successor broad-sector assumptions disagree; sector remains unresolved and needs review."
+            )
+        return {
+            "scope": "All attendance records and verified aliases of the original school",
+            "cases": [
+                {
+                    "review_id": key,
+                    "recorded_name": name,
+                    "members": members.get(key, []),
+                }
+                for key, name in sorted(cases.items())
+            ],
+            "diagnostics": sorted(set(diagnostics)),
         }
 
     def semantic_diff(
@@ -697,6 +918,10 @@ class ReviewService:
             ],
         }
         if entity == "school":
+            if event.payload.get("relationship_type") == "successor":
+                preview["historical_context"] = self._historical_scope(
+                    events + [event], event
+                )
             preview["school_guard"] = {
                 "version": 1,
                 "log_size": len(raw_log),

@@ -113,6 +113,14 @@ def validate_database(
             """,
         ),
         (
+            "member_education.attended_institution_id -> institutions",
+            """
+            SELECT count(*) FROM member_education e
+            LEFT JOIN institutions i ON e.attended_institution_id = i.institution_id
+            WHERE e.attended_institution_id IS NOT NULL AND i.institution_id IS NULL
+            """,
+        ),
+        (
             "school_finances -> institutions",
             """
             SELECT count(*) FROM school_finances f
@@ -181,6 +189,38 @@ def validate_database(
             SELECT count(*) FROM member_education
             WHERE attended_status NOT IN ({", ".join(f"'{s}'" for s in ATTENDED_STATUSES)})
             """,
+        ),
+        (
+            "member_education historical evidence scope and identity",
+            """SELECT count(*) FROM member_education WHERE
+                (attended_institution_id IS NOT NULL AND
+                    (attended_identity_source_url IS NULL OR attended_institution_id = institution_id))
+                OR (attended_institution_id IS NULL AND attended_identity_source_url IS NOT NULL)
+                OR ((attended_institution_id IS NOT NULL OR historical_latitude IS NOT NULL
+                    OR campus_continuity IS NOT NULL OR historical_broad_sector IS NOT NULL
+                    OR historical_detailed_sector IS NOT NULL)
+                    AND (historical_scope_confirmed IS DISTINCT FROM TRUE OR institution_resolution IS DISTINCT FROM 'successor'))""",
+        ),
+        (
+            "member_education historical coordinates",
+            """SELECT count(*) FROM member_education WHERE
+                (historical_latitude IS NULL) <> (historical_longitude IS NULL)
+                OR (historical_latitude IS NULL AND historical_location_source_url IS NOT NULL)
+                OR (historical_latitude IS NOT NULL AND
+                    (NOT isfinite(historical_latitude) OR NOT isfinite(historical_longitude)
+                    OR abs(historical_latitude) > 90 OR abs(historical_longitude) > 180
+                    OR historical_location_source_url IS NULL))""",
+        ),
+        (
+            "member_education historical sector and campus evidence",
+            """SELECT count(*) FROM member_education WHERE
+                (campus_continuity IS NOT NULL AND (campus_continuity NOT IN ('same_campus', 'different_campus') OR campus_continuity_source_url IS NULL))
+                OR (campus_continuity IS NULL AND campus_continuity_source_url IS NOT NULL)
+                OR (historical_broad_sector IS NOT NULL AND (historical_broad_sector NOT IN ('Government', 'Non-government') OR historical_broad_sector_source_url IS NULL))
+                OR (historical_broad_sector IS NULL AND historical_broad_sector_source_url IS NOT NULL)
+                OR (historical_detailed_sector IS NOT NULL AND (historical_detailed_sector NOT IN ('Catholic', 'Independent')
+                    OR historical_detailed_sector_source_url IS NULL OR historical_broad_sector = 'Government'))
+                OR (historical_detailed_sector IS NULL AND historical_detailed_sector_source_url IS NOT NULL)""",
         ),
     ]
 
