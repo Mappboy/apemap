@@ -53,6 +53,52 @@ files may add or override guidance within their own directories.
   requires it. If authentication, permissions, or missing remotes prevent the
   PR, leave the branch and commits ready and report the exact blocker.
 
+## Semantic versioning and agent coordination
+
+- At the start of each job, read `[project].version` in `pyproject.toml`, the
+  root `apemap` entry in `uv.lock`, and relevant Git tags and release records.
+  `pyproject.toml` is the canonical package version; branch names, documentation
+  examples, and historical dataset versions are not version authorities.
+- Use Semantic Versioning (`MAJOR.MINOR.PATCH`). Bump PATCH for compatible bug
+  fixes, MINOR for compatible new functionality, and MAJOR for incompatible
+  public API, CLI, or supported data-contract changes after version 1.0.0.
+  While the package is at 0.x, bump MINOR for new functionality or incompatible
+  changes and PATCH for compatible fixes; describe any incompatibility in the PR.
+  Reset lower components to zero when bumping a higher component.
+- Agents must assess the version impact of each coherent job and perform the
+  required bump before its final verified commit and PR handoff. Documentation,
+  tests, and internal refactors that do not change observable behavior normally
+  need no package bump; state that decision in the PR. Dependency changes use the
+  same behavior and compatibility criteria rather than forcing a bump by default.
+- Coordinate one target version for a release or shared branch. Read the current
+  version again before editing it; a coordinating agent owns the bump, and other
+  agents use that agreed version instead of independently incrementing it for
+  every task, checkpoint, or commit. If the intended version is already set for
+  the job, retain it unless the final scope requires a larger bump. The current
+  0.3.3 review work already targets package version `0.3.3`; reuse that target
+  until it is released or explicitly superseded.
+- Update package metadata with `uv version <target-version>` and regenerate the
+  lockfile with `uv lock`. Commit `pyproject.toml` and `uv.lock` together whenever
+  both change. Before handoff, run `uv lock --check` and verify that the root
+  package versions match; explain any pre-existing mismatch that is repaired.
+- Dataset releases have their own versions, supplied explicitly to
+  `apemap release build --version <target-version>` and export commands that
+  accept `--data-release-version`. Reviewed data corrections require a new
+  dataset PATCH release; additive dataset functionality requires MINOR, and
+  breaking schema or contract changes require MAJOR (MINOR while at 0.x).
+  A data-only correction does not require a package bump. Record the selected
+  dataset version in its new manifest and release notes, and use the same version
+  for build, verification, handoff, and the existing `data-v<version>` tag workflow.
+- Never reuse a published version for changed contents or rewrite historical
+  manifests, checksums, dataset directories, tags, or documentation examples to
+  make them match the current package version. Use an unused version for each
+  new release. Use SemVer prereleases such as `0.3.3-rc.1` for dataset candidates;
+  Python package prereleases use the equivalent PEP 440 form (`0.3.3rc1`).
+  Version preparation and a draft PR do not authorize release publication;
+  publish only through the documented workflow when requested.
+- In every PR, state the previous and target versions, the reason for the bump
+  (or no bump), package versus dataset effects, and version validation results.
+
 ## Python environment and dependencies
 
 - Use `uv` for Python versions, environments, dependency resolution, locking,
