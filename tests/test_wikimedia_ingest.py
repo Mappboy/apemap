@@ -512,6 +512,7 @@ def test_lookup_institution_with_redirect_and_coords(
 
 @pytest.mark.integration
 def test_run_wikimedia_enrichment_end_to_end(
+    empty_review_log: Path,
     tmp_path: Path,
     test_db: tuple[Path, duckdb.DuckDBPyConnection],
     mock_session: MagicMock,
@@ -636,6 +637,7 @@ def test_run_wikimedia_enrichment_end_to_end(
     mock_session.get.side_effect = mock_get
 
     results = run_wikimedia_enrichment(
+        decision_log_path=empty_review_log,
         parliaments=[47],
         refresh=False,
         enrich_members=True,

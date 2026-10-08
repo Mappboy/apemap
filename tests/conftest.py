@@ -15,16 +15,22 @@ from tests.db_fixtures import DatabaseFactory, build_template, copy_database
 
 @pytest.fixture(autouse=True)
 def isolate_ingestion_review_log(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    empty_review_log: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Default ingestion to private authority; explicit review fixtures still replay.
 
     Reading and snapshot capture must use the same path throughout ingestion,
     even when a developer saves decisions while the test suite is running.
     """
-    monkeypatch.setattr(
-        "apemap.review.integration.DEFAULT_LOG_PATH", tmp_path / "decisions.jsonl"
-    )
+    monkeypatch.setattr("apemap.review.integration.DEFAULT_LOG_PATH", empty_review_log)
+
+
+@pytest.fixture
+def empty_review_log(tmp_path: Path) -> Path:
+    """Give fixture pipelines an explicit, private empty review authority."""
+    path = tmp_path / "empty-review.jsonl"
+    path.write_bytes(b"")
+    return path
 
 
 @pytest.fixture(autouse=True)

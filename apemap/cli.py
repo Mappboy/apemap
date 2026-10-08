@@ -374,6 +374,13 @@ def ingest_aph(
             help="Directory to save generated CSV/JSON reports and Parquet exports.",
         ),
     ] = None,
+    decision_log: Annotated[
+        Path | None,
+        typer.Option(
+            "--decision-log",
+            help="Explicit review ledger; defaults to the working review log.",
+        ),
+    ] = None,
 ) -> None:
     """Ingest parliamentarian demographics and secondary education records from APH."""
     parl_list = parse_parliament_args(parliament)
@@ -391,6 +398,7 @@ def ingest_aph(
         console.print("[dim]Using local disk cache if available.[/dim]")
 
     results = run_aph_ingestion(
+        decision_log_path=decision_log,
         parliaments=parl_list,
         refresh=refresh,
         db_path=effective_db_path,
@@ -502,6 +510,13 @@ def ingest_acara(
             help="Reporting calendar year for school finances (defaults to 2021).",
         ),
     ] = 2021,
+    decision_log: Annotated[
+        Path | None,
+        typer.Option(
+            "--decision-log",
+            help="Explicit review ledger; defaults to the working review log.",
+        ),
+    ] = None,
 ) -> None:
     """Ingest official 2025 ACARA datasets and isolate or ingest annual school finances."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -515,6 +530,7 @@ def ingest_acara(
         "[bold green]Processing ACARA datasets and updating finances..."
     ):
         results = run_acara_ingestion(
+            decision_log_path=decision_log,
             download_latest=download,
             use_longitudinal=longitudinal,
             db_path=effective_db_path,
@@ -680,6 +696,13 @@ def ingest_wikimedia(
             help="Timeout in seconds for Wikimedia HTTP requests.",
         ),
     ] = DEFAULT_WIKIMEDIA_TIMEOUT,
+    decision_log: Annotated[
+        Path | None,
+        typer.Option(
+            "--decision-log",
+            help="Explicit review ledger; defaults to the working review log.",
+        ),
+    ] = None,
 ) -> None:
     """Enrich canonical members and review unmatched schools using Wikipedia and Wikidata."""
     parl_list = parse_parliament_args(parliament)
@@ -699,6 +722,7 @@ def ingest_wikimedia(
         console.print("[dim]Using local disk cache if available.[/dim]")
 
     results = run_wikimedia_enrichment(
+        decision_log_path=decision_log,
         parliaments=parl_list,
         refresh=refresh,
         enrich_members=members,
@@ -1524,6 +1548,13 @@ def run_all_cmd(
             help="Path to inputs-manifest.json for offline input verification.",
         ),
     ] = None,
+    decision_log: Annotated[
+        Path | None,
+        typer.Option(
+            "--decision-log",
+            help="Explicit review ledger; defaults to the working review log.",
+        ),
+    ] = None,
 ) -> None:
     """Execute end-to-end pipeline deterministically from raw inputs to exported artifacts."""
     effective_db_path = db_path or (DATA_DIR / "aped.duckdb")
@@ -1573,6 +1604,7 @@ def run_all_cmd(
     # Step 2: ACARA Ingestion
     console.print("\n[bold]2. Running ACARA Ingestion...[/bold]")
     run_acara_ingestion(
+        decision_log_path=decision_log,
         download_latest=download,
         use_longitudinal=longitudinal,
         db_path=effective_db_path,
@@ -1598,6 +1630,7 @@ def run_all_cmd(
     # Step 3: APH Ingestion
     console.print("\n[bold]3. Running APH Ingestion...[/bold]")
     run_aph_ingestion(
+        decision_log_path=decision_log,
         parliaments=parl_list,
         refresh=refresh,
         db_path=effective_db_path,
@@ -1609,6 +1642,7 @@ def run_all_cmd(
     if enrich_wikimedia:
         console.print("\n[bold]3b. Running Wikimedia Enrichment...[/bold]")
         run_wikimedia_enrichment(
+            decision_log_path=decision_log,
             parliaments=parl_list,
             refresh=refresh,
             db_path=effective_db_path,

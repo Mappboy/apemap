@@ -176,6 +176,13 @@ use deterministic files in `tests/fixtures/`; Jupyter's local kernel sockets are
 allowed. Spatial checks require an installed DuckDB spatial extension. Provision
 that extension before running tests in an environment without network access.
 
+Fixture ingestion must pass `decision_log_path=empty_review_log` (the shared
+private empty-ledger fixture), or an explicit temporary/pinned review log when
+testing decisions. CLI fixtures use `--decision-log`. An autouse fallback also
+redirects ingestion defaults to the private ledger; it is a guard for orchestration
+paths, not a replacement for declaring review state in fixture setup. Tests that
+exercise review validation deliberately select their own nonempty ledger.
+
 Notebook execution tests read a small temporary on-disk DuckDB fixture and verify
 its bytes are unchanged. Static notebook mutation checks remain in the fast
 suite. Missing optional notebook dependencies retain pytest's visible skip

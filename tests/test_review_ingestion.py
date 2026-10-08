@@ -29,6 +29,8 @@ from apemap.review.model import (
     education_review_id,
     member_review_id,
     service_review_id,
+    school_review_id,
+    validate_events,
 )
 from tests.test_historical_coverage import historical_member
 
@@ -58,6 +60,60 @@ def event(
     }
     values.update(changes)
     return ReviewEvent.from_dict(values)
+
+
+@pytest.mark.parametrize("nonempty_working_log", [False, True])
+def test_fixture_ingestion_never_reads_working_review_authority(
+    tmp_path: Path,
+    empty_review_log: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    nonempty_working_log: bool,
+) -> None:
+    """An unrelated valid working mapping cannot affect a small pipeline fixture."""
+    from apemap.review import integration
+
+    working = tmp_path / "working-decisions.jsonl"
+    mapping = event(
+        "working-mapping",
+        school_review_id("Historic High School"),
+        "school",
+        {
+            "recorded_name": "Historic High School",
+            "institution_ref": "acara:999999",
+            "relationship_type": "direct",
+        },
+        action="map",
+    )
+    write_log(working, [mapping] if nonempty_working_log else [])
+    # The reference exists in the working register, but not in the pipeline fixture.
+    validate_events([mapping], acara_ids={"999999"})
+    assert integration.read_review_events(working) == (
+        [mapping] if nonempty_working_log else []
+    )
+    monkeypatch.setattr(integration, "DEFAULT_LOG_PATH", working)
+    loaded_paths: list[Path] = []
+    original_load = integration.load_events
+
+    def tracked_load(path: Path) -> list[ReviewEvent]:
+        loaded_paths.append(path)
+        return original_load(path)
+
+    monkeypatch.setattr(integration, "load_events", tracked_load)
+    with get_connection() as conn:
+        run_aph_ingestion(
+            [42],
+            conn=conn,
+            raw_individuals=[historical_member()],
+            external_dir=tmp_path / "fixture-register",
+            output_dir=tmp_path / "output",
+            decision_log_path=empty_review_log,
+        )
+        assert loaded_paths == [empty_review_log]
+        assert conn.execute("SELECT count(*) FROM members").fetchone() == (1,)
+        assert conn.execute("SELECT acara_id FROM institutions").fetchall() == [(None,)]
+        snapshot = review_snapshot_metadata(conn)
+        assert snapshot["event_count"] == 0
+        assert snapshot["decision_log_sha256"] == hashlib.sha256(b"").hexdigest()
 
 
 def test_aph_review_supersession_restores_updated_source(tmp_path: Path) -> None:

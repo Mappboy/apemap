@@ -316,12 +316,15 @@ def test_load_snapshots_null_and_missing_handling(tmp_path: Path) -> None:
 
 
 @pytest.mark.integration
-def test_run_acara_ingestion_offline(mock_external_dir: Path, tmp_path: Path) -> None:
+def test_run_acara_ingestion_offline(
+    empty_review_log: Path, mock_external_dir: Path, tmp_path: Path
+) -> None:
     """Verify complete ingestion pipeline synchronizes institutions and snapshots into DuckDB."""
     db_file = tmp_path / "test.duckdb"
     out_dir = tmp_path / "processed"
 
     summary = run_acara_ingestion(
+        decision_log_path=empty_review_log,
         download_latest=False,
         use_longitudinal=True,
         db_path=db_file,
@@ -397,7 +400,7 @@ def test_cli_ingest_acara_no_download(mock_external_dir: Path, tmp_path: Path) -
 
 @pytest.mark.integration
 def test_run_acara_ingestion_caller_owned_connection(
-    mock_external_dir: Path, tmp_path: Path
+    empty_review_log: Path, mock_external_dir: Path, tmp_path: Path
 ) -> None:
     """Verify caller-provided DuckDB connection remains open and owned by caller."""
     db_file = tmp_path / "acara_caller.duckdb"
@@ -405,6 +408,7 @@ def test_run_acara_ingestion_caller_owned_connection(
     out_dir = tmp_path / "processed_acara_caller"
 
     summary = run_acara_ingestion(
+        decision_log_path=empty_review_log,
         download_latest=False,
         use_longitudinal=True,
         conn=conn,
