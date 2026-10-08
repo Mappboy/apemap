@@ -14,6 +14,20 @@ from tests.db_fixtures import DatabaseFactory, build_template, copy_database
 
 
 @pytest.fixture(autouse=True)
+def isolate_ingestion_review_log(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Default ingestion to private authority; explicit review fixtures still replay.
+
+    Reading and snapshot capture must use the same path throughout ingestion,
+    even when a developer saves decisions while the test suite is running.
+    """
+    monkeypatch.setattr(
+        "apemap.review.integration.DEFAULT_LOG_PATH", tmp_path / "decisions.jsonl"
+    )
+
+
+@pytest.fixture(autouse=True)
 def block_http_requests(monkeypatch: pytest.MonkeyPatch) -> None:
     """Fail immediately when a test misses a mock for a live HTTP client."""
 
