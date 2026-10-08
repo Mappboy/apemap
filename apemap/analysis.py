@@ -20,10 +20,9 @@ from typing import Any
 import duckdb
 
 from apemap.constants import EXTERNAL_DIR, PARLIAMENT_METADATA, PROCESSED_DIR
+from apemap.contracts import ANALYSIS_SCHEMA_VERSION
 
 logger = logging.getLogger(__name__)
-
-ANALYSIS_SCHEMA_VERSION = "1.0"
 
 
 def parse_date_safe(val: date | str | None) -> date | None:
@@ -197,10 +196,11 @@ def classify_person_education(
     else:
         gov_non_gov = "other"
 
-    if len(sectors) > 1:
+    classified_sectors = sectors & {"Government", "Catholic", "Independent"}
+    if len(classified_sectors) > 1:
         standard = "Combined/Multiple"
     else:
-        standard = next(iter(sectors))
+        standard = next(iter(classified_sectors), "Other")
 
     return (standard, gov_non_gov)
 
@@ -289,204 +289,324 @@ def get_opening_day_members(
     return [dict(zip(cols, row)) for row in rows]
 
 
-def compute_sector_summary(
+def get_opening_day_education_context(
     conn: duckdb.DuckDBPyConnection, parliament: int
-) -> dict[str, Any]:
-    """Return mutually-exclusive person counts and separate attendance counts."""
-    all_mps = {
-        row[0]
-        for row in conn.execute(
-            """
-            SELECT DISTINCT member_id
-            FROM parliament_service
-            WHERE parliament_number = ?
-              AND is_opening_day_member = TRUE
-            """,
-            [parliament],
-        ).fetchall()
-    }
-    edu_rows = conn.execute(
-        """
-        SELECT e.member_id, i.sector, i.institution_id
-        FROM member_education e
-        JOIN institutions i ON e.institution_id = i.institution_id
-        JOIN (
-            SELECT DISTINCT member_id
-            FROM parliament_service
-            WHERE parliament_number = ?
-              AND is_opening_day_member = TRUE
-        ) s ON e.member_id = s.member_id
-        WHERE e.level = 'secondary'
-        ORDER BY e.member_id, e.education_id
-        """,
+) -> list[dict[str, Any]]:
+    """Load one row per attendance assertion, independent of profiles/service joins."""
+    cursor = conn.execute(
+        """SELECT c.*, i.state AS resolved_state FROM v_education_attendance_context c
+        JOIN institutions i ON c.resolved_institution_id=i.institution_id
+        WHERE c.level = 'secondary' AND EXISTS (
+            SELECT 1 FROM parliament_service ps WHERE ps.member_id = c.member_id
+            AND ps.parliament_number = ? AND ps.is_opening_day_member)
+        ORDER BY c.education_id""",
         [parliament],
-    ).fetchall()
+    )
+    columns = [column[0] for column in cursor.description]
+    return [dict(zip(columns, row, strict=True)) for row in cursor.fetchall()]
 
-    known_sectors = ("Government", "Catholic", "Independent", "Other")
-    mp_sectors: dict[str, set[str]] = {}
-    attendance_instances = {sector: 0 for sector in known_sectors}
-    unique_schools: dict[str, str] = {}  # institution_id -> sector
 
-    for member_id, sector, inst_id in edu_rows:
-        sector_name = sector if sector in known_sectors[:3] else "Other"
-        mp_sectors.setdefault(member_id, set()).add(sector_name)
-        attendance_instances[sector_name] += 1
-        if inst_id:
-            unique_schools[inst_id] = sector_name
-
-    unique_counts = {
-        "Government": 0,
-        "Catholic": 0,
-        "Independent": 0,
-        "Combined/Multiple": 0,
-        "Other": 0,
-        "No School Recorded": 0,
+def classify_attendance_person(
+    rows: list[dict[str, Any]], *, exclude_successor_assumptions: bool = False
+) -> dict[str, Any]:
+    """Classify only available school values; retain uncertainty separately."""
+    broad: set[str] = set()
+    detailed: set[str] = set()
+    missing_broad = False
+    missing_detailed = False
+    assumed = False
+    for row in rows:
+        is_assumed = row["sector_basis"] == "successor_assumption"
+        assumed |= is_assumed
+        broad_value = (
+            None
+            if exclude_successor_assumptions and is_assumed
+            else row["broad_sector"]
+        )
+        if broad_value in ("Government", "Non-government"):
+            broad.add(broad_value)
+        else:
+            missing_broad = True
+        if row["detailed_sector"] in ("Government", "Catholic", "Independent"):
+            detailed.add(row["detailed_sector"])
+        else:
+            missing_detailed = True
+    if not rows:
+        detailed_category, headline = "No School Recorded", "no_school_recorded"
+    else:
+        detailed_category = (
+            "Combined/Multiple" if len(detailed) > 1 else next(iter(detailed), "Other")
+        )
+        headline = (
+            "mixed"
+            if len(broad) > 1
+            else "government_only"
+            if broad == {"Government"}
+            else "non_government_only"
+            if broad == {"Non-government"}
+            else "other"
+        )
+    detailed_label = {
+        "Combined/Multiple": "Multiple sectors",
+        "Other": "Sector unavailable",
+        "No School Recorded": "No school recorded",
+    }.get(detailed_category, detailed_category)
+    headline_label = {
+        "government_only": "Government only",
+        "non_government_only": "Non-government only",
+        "mixed": "Government and non-government",
+        "other": "Sector unavailable",
+        "no_school_recorded": "No school recorded",
+    }[headline]
+    if missing_detailed and detailed:
+        detailed_label += " among classified schools"
+    if missing_broad and broad:
+        headline_label = {
+            "government_only": "Government",
+            "non_government_only": "Non-government",
+            "mixed": "Government and non-government",
+        }[headline] + " among classified schools"
+    return {
+        "education_classification": detailed_category,
+        "government_non_government": headline,
+        "education_classification_label": detailed_label,
+        "government_non_government_label": headline_label,
+        "incomplete_sector_evidence": missing_broad or missing_detailed,
+        "incomplete_broad_sector_evidence": missing_broad,
+        "incomplete_detailed_sector_evidence": missing_detailed,
+        "successor_assumption_affected": assumed,
+        "has_broad_sector_evidence": bool(broad),
+        "has_detailed_sector_evidence": bool(detailed),
     }
 
-    gov_non_gov_counts = {
-        "government_only": 0,
-        "non_government_only": 0,
-        "mixed": 0,
-        "other": 0,
-        "no_school_recorded": 0,
+
+def _sector_counts(
+    member_ids: set[str],
+    rows: list[dict[str, Any]],
+    *,
+    exclude_assumptions: bool = False,
+) -> dict[str, Any]:
+    """Keep people, assertions, and original schools as separate fixed grains."""
+    by_member: dict[str, list[dict[str, Any]]] = {}
+    schools: dict[str, list[dict[str, Any]]] = {}
+    attendance = dict.fromkeys(("Government", "Catholic", "Independent", "Other"), 0)
+    attendance_broad = dict.fromkeys(("government", "non_government", "other"), 0)
+    for row in rows:
+        by_member.setdefault(row["member_id"], []).append(row)
+        schools.setdefault(_attended_school_key(row), []).append(row)
+        attendance[row["detailed_sector"] or "Other"] += 1
+        broad = (
+            None
+            if exclude_assumptions and row["sector_basis"] == "successor_assumption"
+            else row["broad_sector"]
+        )
+        attendance_broad[
+            {"Government": "government", "Non-government": "non_government"}.get(
+                broad, "other"
+            )
+        ] += 1
+    classifications = {
+        member_id: classify_attendance_person(
+            by_member.get(member_id, []),
+            exclude_successor_assumptions=exclude_assumptions,
+        )
+        for member_id in sorted(member_ids)
     }
-
-    for member_id in all_mps:
-        sectors = mp_sectors.get(member_id, set())
-        std_cat, gng_cat = classify_person_education(sectors)
-        unique_counts[std_cat] += 1
-        gov_non_gov_counts[gng_cat] += 1
-
-    known_count = len(all_mps) - unique_counts["No School Recorded"]
-    unique_percentages = {
-        sector: unique_counts[sector] / known_count * 100 if known_count else 0.0
-        for sector in (
+    detailed_counts = dict.fromkeys(
+        (
             "Government",
             "Catholic",
             "Independent",
             "Combined/Multiple",
             "Other",
+            "No School Recorded",
+        ),
+        0,
+    )
+    broad_counts = dict.fromkeys(
+        (
+            "government_only",
+            "non_government_only",
+            "mixed",
+            "other",
+            "no_school_recorded",
+        ),
+        0,
+    )
+    for classification in classifications.values():
+        detailed_counts[classification["education_classification"]] += 1
+        broad_counts[classification["government_non_government"]] += 1
+    known = len(member_ids) - detailed_counts["No School Recorded"]
+    school_sectors = dict.fromkeys(attendance, 0)
+    school_broad = dict.fromkeys(attendance_broad, 0)
+    school_identities = dict.fromkeys(
+        (
+            "original_verified",
+            "original_reference",
+            "recorded_name_provisional",
+            "unresolved",
+        ),
+        0,
+    )
+    for school_rows in schools.values():
+        basis = next(
+            (
+                candidate
+                for candidate in school_identities
+                if any(row["identity_basis"] == candidate for row in school_rows)
+            ),
+            "unresolved",
         )
+        school_identities[basis] += 1
+        broad, detailed = _school_sector_values(
+            school_rows, exclude_assumptions=exclude_assumptions
+        )
+        school_sectors[detailed or "Other"] += 1
+        school_broad[
+            {"Government": "government", "Non-government": "non_government"}.get(
+                broad, "other"
+            )
+        ] += 1
+    return {
+        "total_parliamentarians": len(member_ids),
+        "known_school_denominator": known,
+        "unique_parliamentarians_by_sector": detailed_counts,
+        "government_non_government": broad_counts,
+        "percentage_of_known_parliamentarians": {
+            key: round(value / known * 100, 2) if known else 0.0
+            for key, value in detailed_counts.items()
+            if key != "No School Recorded"
+        },
+        "government_non_government_percentages": {
+            key: round(value / known * 100, 2) if known else 0.0
+            for key, value in broad_counts.items()
+            if key != "no_school_recorded"
+        },
+        "attendance_instances_by_sector": attendance,
+        "attendance_instances_government_non_government": attendance_broad,
+        "total_attendance_instances": len(rows),
+        "unique_schools_by_sector": school_sectors,
+        "unique_schools_government_non_government": school_broad,
+        "total_unique_schools": len(schools),
+        "school_identity_counts": school_identities,
+        "broad_sector_evidence_denominator": sum(
+            c["has_broad_sector_evidence"] for c in classifications.values()
+        ),
+        "detailed_sector_evidence_denominator": sum(
+            c["has_detailed_sector_evidence"] for c in classifications.values()
+        ),
+        "members_with_incomplete_sector_evidence": sum(
+            c["incomplete_sector_evidence"] for c in classifications.values()
+        ),
+        "members_with_incomplete_broad_sector_evidence": sum(
+            c["incomplete_broad_sector_evidence"] for c in classifications.values()
+        ),
+        "members_with_incomplete_detailed_sector_evidence": sum(
+            c["incomplete_detailed_sector_evidence"] for c in classifications.values()
+        ),
     }
 
-    gov_non_gov_percentages = {
-        cat: round(gov_non_gov_counts[cat] / known_count * 100, 2)
-        if known_count
-        else 0.0
-        for cat in ("government_only", "non_government_only", "mixed", "other")
+
+def _successor_sensitivity(
+    member_ids: set[str], rows: list[dict[str, Any]], baseline: dict[str, Any]
+) -> dict[str, Any]:
+    strict = _sector_counts(member_ids, rows, exclude_assumptions=True)
+    assumed = [row for row in rows if row["sector_basis"] == "successor_assumption"]
+    return {
+        "policy": "Remove assumed school sector values; retain all people, assertions and recorded-school denominators.",
+        "affected_members": len({row["member_id"] for row in assumed}),
+        "affected_assertions": len(assumed),
+        "affected_schools": len({_attended_school_key(row) for row in assumed}),
+        "baseline": baseline,
+        "without_successor_assumptions": strict,
+        "difference_percentage_points": {
+            field: {
+                key: round(strict[field][key] - value, 2)
+                for key, value in baseline[field].items()
+            }
+            for field in (
+                "percentage_of_known_parliamentarians",
+                "government_non_government_percentages",
+            )
+        },
     }
 
-    # Denominator 2: Attendance instances
-    attendance_count = sum(attendance_instances.values())
-    attendance_percentages = {
-        sector: count / attendance_count * 100 if attendance_count else 0.0
-        for sector, count in attendance_instances.items()
-    }
-    attendance_gov_non_gov = {
-        "government": attendance_instances["Government"],
-        "non_government": attendance_instances["Catholic"]
-        + attendance_instances["Independent"],
-        "other": attendance_instances["Other"],
-    }
-    attendance_gov_non_gov_percentages = {
-        "government": round(
-            attendance_gov_non_gov["government"] / attendance_count * 100, 2
-        )
-        if attendance_count
-        else 0.0,
-        "non_government": round(
-            attendance_gov_non_gov["non_government"] / attendance_count * 100, 2
-        )
-        if attendance_count
-        else 0.0,
-        "other": round(attendance_gov_non_gov["other"] / attendance_count * 100, 2)
-        if attendance_count
-        else 0.0,
-    }
 
-    # Denominator 3: Unique schools
-    total_unique_schools = len(unique_schools)
-    unique_schools_by_sector = {
-        "Government": sum(1 for s in unique_schools.values() if s == "Government"),
-        "Catholic": sum(1 for s in unique_schools.values() if s == "Catholic"),
-        "Independent": sum(1 for s in unique_schools.values() if s == "Independent"),
-        "Other": sum(1 for s in unique_schools.values() if s == "Other"),
+def compute_sector_summary(
+    conn: duckdb.DuckDBPyConnection, parliament: int
+) -> dict[str, Any]:
+    """Count people and assertions separately from original attended schools."""
+    member_ids = {
+        row[0]
+        for row in conn.execute(
+            "SELECT DISTINCT member_id FROM parliament_service WHERE parliament_number=? AND is_opening_day_member",
+            [parliament],
+        ).fetchall()
     }
-    unique_schools_by_sector_percentages = {
-        sector: round(count / total_unique_schools * 100, 2)
-        if total_unique_schools
-        else 0.0
-        for sector, count in unique_schools_by_sector.items()
-    }
-    unique_schools_gov_non_gov = {
-        "government": unique_schools_by_sector["Government"],
-        "non_government": unique_schools_by_sector["Catholic"]
-        + unique_schools_by_sector["Independent"],
-        "other": unique_schools_by_sector["Other"],
-    }
-    unique_schools_gov_non_gov_percentages = {
-        "government": round(
-            unique_schools_gov_non_gov["government"] / total_unique_schools * 100, 2
-        )
-        if total_unique_schools
-        else 0.0,
-        "non_government": round(
-            unique_schools_gov_non_gov["non_government"] / total_unique_schools * 100, 2
-        )
-        if total_unique_schools
-        else 0.0,
-        "other": round(
-            unique_schools_gov_non_gov["other"] / total_unique_schools * 100, 2
-        )
-        if total_unique_schools
-        else 0.0,
-    }
+    rows = get_opening_day_education_context(conn, parliament)
+    counts = _sector_counts(member_ids, rows)
+    known = counts["known_school_denominator"]
+    attendance_count = counts["total_attendance_instances"]
+    school_count = counts["total_unique_schools"]
 
-    detailed_sector = {
-        "government": unique_counts["Government"],
-        "catholic": unique_counts["Catholic"],
-        "independent": unique_counts["Independent"],
-        "combined_multiple": unique_counts["Combined/Multiple"],
-        "other": unique_counts["Other"],
-        "no_school_recorded": unique_counts["No School Recorded"],
-    }
-
-    benchmark_comparison = compute_sector_benchmarks(conn, parliament)
+    def percentages(values: dict[str, int], denominator: int) -> dict[str, float]:
+        return {
+            key: round(value / denominator * 100, 2) if denominator else 0.0
+            for key, value in values.items()
+        }
 
     return {
         "parliament_number": parliament,
         "cohort": "opening_day",
-        "total_parliamentarians": len(all_mps),
-        "parliamentarians_with_known_schools": known_count,
-        "parliamentarians_without_known_schools": unique_counts["No School Recorded"],
-        "known_school_denominator": known_count,
-        "known_school_percentage_denominator": known_count,
-        "government_non_government": {
-            "government_only": gov_non_gov_counts["government_only"],
-            "non_government_only": gov_non_gov_counts["non_government_only"],
-            "mixed": gov_non_gov_counts["mixed"],
-            "other": gov_non_gov_counts["other"],
-            "no_school_recorded": gov_non_gov_counts["no_school_recorded"],
+        **{
+            key: value
+            for key, value in counts.items()
+            if not key.startswith("unique_schools") and key != "total_unique_schools"
         },
-        "government_non_government_percentages": gov_non_gov_percentages,
-        "detailed_sector": detailed_sector,
-        "unique_parliamentarians_by_sector": unique_counts,
-        "percentage_of_known_parliamentarians": unique_percentages,
-        "total_attendance_instances": attendance_count,
+        "parliamentarians_with_known_schools": known,
+        "parliamentarians_without_known_schools": counts[
+            "unique_parliamentarians_by_sector"
+        ]["No School Recorded"],
+        "known_school_percentage_denominator": known,
+        "detailed_sector": dict(
+            zip(
+                (
+                    "government",
+                    "catholic",
+                    "independent",
+                    "combined_multiple",
+                    "other",
+                    "no_school_recorded",
+                ),
+                counts["unique_parliamentarians_by_sector"].values(),
+                strict=True,
+            )
+        ),
         "attendance_instance_percentage_denominator": attendance_count,
-        "attendance_instances_by_sector": attendance_instances,
-        "percentage_of_attendance_instances": attendance_percentages,
-        "attendance_instances_government_non_government": attendance_gov_non_gov,
-        "percentage_of_attendance_instances_government_non_government": attendance_gov_non_gov_percentages,
+        "percentage_of_attendance_instances": percentages(
+            counts["attendance_instances_by_sector"], attendance_count
+        ),
+        "percentage_of_attendance_instances_government_non_government": percentages(
+            counts["attendance_instances_government_non_government"], attendance_count
+        ),
         "unique_schools": {
-            "total_unique_schools": total_unique_schools,
-            "denominator": total_unique_schools,
-            "by_sector": unique_schools_by_sector,
-            "percentages_by_sector": unique_schools_by_sector_percentages,
-            "government_non_government": unique_schools_gov_non_gov,
-            "percentages_government_non_government": unique_schools_gov_non_gov_percentages,
+            "total_unique_schools": school_count,
+            "denominator": school_count,
+            "identity_grain": "original attended school",
+            "identity_counts": counts["school_identity_counts"],
+            "by_sector": counts["unique_schools_by_sector"],
+            "percentages_by_sector": percentages(
+                counts["unique_schools_by_sector"], school_count
+            ),
+            "government_non_government": counts[
+                "unique_schools_government_non_government"
+            ],
+            "percentages_government_non_government": percentages(
+                counts["unique_schools_government_non_government"], school_count
+            ),
         },
-        "benchmark_comparison": benchmark_comparison,
+        "benchmark_comparison": compute_sector_benchmarks(conn, parliament),
+        "successor_sensitivity": _successor_sensitivity(member_ids, rows, counts),
     }
 
 
@@ -504,53 +624,18 @@ def compute_sector_benchmarks(
     - benchmark_year (int)
     - benchmark_source (str)
     """
-    all_mps = {
+    member_ids = {
         row[0]
         for row in conn.execute(
-            """
-            SELECT DISTINCT member_id
-            FROM parliament_service
-            WHERE parliament_number = ?
-              AND is_opening_day_member = TRUE
-            """,
+            "SELECT DISTINCT member_id FROM parliament_service WHERE parliament_number=? AND is_opening_day_member",
             [parliament],
         ).fetchall()
     }
-    edu_rows = conn.execute(
-        """
-        SELECT e.member_id, i.sector
-        FROM member_education e
-        JOIN institutions i ON e.institution_id = i.institution_id
-        JOIN (
-            SELECT DISTINCT member_id
-            FROM parliament_service
-            WHERE parliament_number = ?
-              AND is_opening_day_member = TRUE
-        ) s ON e.member_id = s.member_id
-        WHERE e.level = 'secondary'
-        ORDER BY e.member_id, e.education_id
-        """,
-        [parliament],
-    ).fetchall()
-
-    known_sectors = ("Government", "Catholic", "Independent")
-    mp_sectors: dict[str, set[str]] = {}
-    for member_id, sector in edu_rows:
-        sector_name = sector if sector in known_sectors else "Other"
-        mp_sectors.setdefault(member_id, set()).add(sector_name)
-
-    unique_counts: dict[str, int] = {s: 0 for s in known_sectors}
-    no_school = 0
-    for member_id in all_mps:
-        sectors = mp_sectors.get(member_id, set())
-        if not sectors:
-            no_school += 1
-        elif len(sectors) == 1:
-            sec = next(iter(sectors))
-            if sec in unique_counts:
-                unique_counts[sec] += 1
-
-    known_count = len(all_mps) - no_school
+    counts = _sector_counts(
+        member_ids, get_opening_day_education_context(conn, parliament)
+    )
+    unique_counts = counts["unique_parliamentarians_by_sector"]
+    known_count = counts["known_school_denominator"]
 
     # Check if education_sector_benchmarks table exists and has rows
     try:
@@ -584,124 +669,83 @@ def compute_sector_benchmarks(
     return result
 
 
+def _attended_school_key(row: dict[str, Any]) -> str:
+    """Keep missing original identities as separate unresolved assertion rows."""
+    return row["attended_school_id"] or f"unresolved:{row['education_id']}"
+
+
+def _school_sector_values(
+    rows: list[dict[str, Any]], *, exclude_assumptions: bool = False
+) -> tuple[str | None, str | None]:
+    """Reconcile school values explicitly, without depending on assertion order."""
+    broad = {
+        row["broad_sector"]
+        for row in rows
+        if row["broad_sector"] in ("Government", "Non-government")
+        and not (exclude_assumptions and row["sector_basis"] == "successor_assumption")
+    }
+    detailed = {
+        row["detailed_sector"]
+        for row in rows
+        if row["detailed_sector"] in ("Government", "Catholic", "Independent")
+    }
+    implied_broad = {
+        "Government" if sector == "Government" else "Non-government"
+        for sector in detailed
+    }
+    if len(broad | implied_broad) > 1:
+        return None, None
+    return (
+        next(iter(broad)) if len(broad) == 1 else None,
+        next(iter(detailed)) if len(detailed) == 1 else None,
+    )
+
+
+def _classify_opening_members(
+    conn: duckdb.DuckDBPyConnection, parliament: int
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    members = get_opening_day_members(conn, parliament)
+    rows = get_opening_day_education_context(conn, parliament)
+    by_member: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        by_member.setdefault(row["member_id"], []).append(row)
+    for member in members:
+        member.update(
+            classify_attendance_person(by_member.get(member["member_id"], []))
+        )
+    return members, rows
+
+
 def compute_party_sector_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute education sector breakdown grouped by political party for opening-day members.
-
-    Args:
-        conn: Active DuckDB connection.
-        parliament: Parliament number (e.g. 47).
-
-    Returns:
-        Dictionary containing overall and per-party education sector counts and percentages.
-    """
-    members = get_opening_day_members(conn, parliament)
-    total_parliamentarians = len(members)
-
-    edu_rows = conn.execute(
-        """
-        SELECT e.member_id, i.sector
-        FROM member_education e
-        JOIN institutions i ON e.institution_id = i.institution_id
-        JOIN (
-            SELECT DISTINCT member_id
-            FROM parliament_service
-            WHERE parliament_number = ?
-              AND is_opening_day_member = TRUE
-        ) s ON e.member_id = s.member_id
-        WHERE e.level = 'secondary'
-        ORDER BY e.member_id, e.education_id
-        """,
-        [parliament],
-    ).fetchall()
-
-    known_sectors = ("Government", "Catholic", "Independent", "Other")
-    mp_sectors: dict[str, set[str]] = {}
-    for member_id, sector in edu_rows:
-        sector_name = sector if sector in known_sectors[:3] else "Other"
-        mp_sectors.setdefault(member_id, set()).add(sector_name)
-
-    parties_data: dict[str, dict[str, Any]] = {}
+    """Classify original attendance sectors once per opening-day person and party."""
+    members, rows = _classify_opening_members(conn, parliament)
     for member in members:
-        member_id = member["member_id"]
-        party = member.get("party_abbrev") or member.get("party") or "Unknown"
-        party_name = member.get("party") or party
-        sectors = mp_sectors.get(member_id, set())
-        std_cat, gng_cat = classify_person_education(sectors)
-
-        if party not in parties_data:
-            parties_data[party] = {
-                "party": party,
-                "party_name": party_name,
-                "total_parliamentarians": 0,
-                "known_school_denominator": 0,
-                "parliamentarians_without_known_schools": 0,
-                "unique_parliamentarians_by_sector": {
-                    "Government": 0,
-                    "Catholic": 0,
-                    "Independent": 0,
-                    "Combined/Multiple": 0,
-                    "Other": 0,
-                    "No School Recorded": 0,
-                },
-                "percentage_of_known_parliamentarians": {},
-                "government_non_government": {
-                    "government_only": 0,
-                    "non_government_only": 0,
-                    "mixed": 0,
-                    "other": 0,
-                    "no_school_recorded": 0,
-                },
-                "government_non_government_percentages": {},
-            }
-
-        pdata = parties_data[party]
-        pdata["total_parliamentarians"] += 1
-        pdata["unique_parliamentarians_by_sector"][std_cat] += 1
-        pdata["government_non_government"][gng_cat] += 1
-        if std_cat == "No School Recorded":
-            pdata["parliamentarians_without_known_schools"] += 1
-        else:
-            pdata["known_school_denominator"] += 1
-
-    for pdata in parties_data.values():
-        known = pdata["known_school_denominator"]
-        for sector in (
-            "Government",
-            "Catholic",
-            "Independent",
-            "Combined/Multiple",
-            "Other",
-        ):
-            pdata["percentage_of_known_parliamentarians"][sector] = (
-                round(
-                    pdata["unique_parliamentarians_by_sector"][sector] / known * 100,
-                    2,
-                )
-                if known
-                else 0.0
-            )
-        for cat in ("government_only", "non_government_only", "mixed", "other"):
-            pdata["government_non_government_percentages"][cat] = (
-                round(pdata["government_non_government"][cat] / known * 100, 2)
-                if known
-                else 0.0
-            )
-
-    sorted_parties = dict(
+        member["analysis_party"] = (
+            member.get("party_abbrev") or member.get("party") or "Unknown"
+        )
+    summary = summarize_classified_members(members, parliament, "analysis_party")
+    parties = summary.pop("chambers")
+    for key, group in parties.items():
+        party_members = [
+            member for member in members if member["analysis_party"] == key
+        ]
+        group["party"] = key
+        group["party_name"] = party_members[0].get("party") or key
+        member_ids = {member["member_id"] for member in party_members}
+        party_rows = [row for row in rows if row["member_id"] in member_ids]
+        counts = _sector_counts(member_ids, party_rows)
+        group["successor_sensitivity"] = _successor_sensitivity(
+            member_ids, party_rows, counts
+        )
+    summary["parties"] = dict(
         sorted(
-            parties_data.items(),
+            parties.items(),
             key=lambda item: (-item[1]["total_parliamentarians"], item[0]),
         )
     )
-
-    return {
-        "parliament_number": parliament,
-        "cohort": "opening_day",
-        "total_parliamentarians": total_parliamentarians,
-        "parties": sorted_parties,
-    }
+    return summary
 
 
 def summarize_classified_members(
@@ -721,6 +765,11 @@ def summarize_classified_members(
                 "total_parliamentarians": 0,
                 "known_school_denominator": 0,
                 "parliamentarians_without_known_schools": 0,
+                "members_with_incomplete_sector_evidence": 0,
+                "members_with_incomplete_broad_sector_evidence": 0,
+                "members_with_incomplete_detailed_sector_evidence": 0,
+                "broad_sector_evidence_denominator": 0,
+                "detailed_sector_evidence_denominator": 0,
                 "unique_parliamentarians_by_sector": dict.fromkeys(
                     (
                         "Government",
@@ -749,6 +798,14 @@ def summarize_classified_members(
         group["total_parliamentarians"] += 1
         group["unique_parliamentarians_by_sector"][detailed] += 1
         group["government_non_government"][headline] += 1
+        for dimension in ("sector", "broad_sector", "detailed_sector"):
+            group[f"members_with_incomplete_{dimension}_evidence"] += bool(
+                member.get(f"incomplete_{dimension}_evidence")
+            )
+        for dimension in ("broad", "detailed"):
+            group[f"{dimension}_sector_evidence_denominator"] += bool(
+                member.get(f"has_{dimension}_sector_evidence")
+            )
         if detailed == "No School Recorded":
             group["parliamentarians_without_known_schools"] += 1
         else:
@@ -776,152 +833,123 @@ def summarize_classified_members(
 def compute_chamber_sector_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int
 ) -> dict[str, Any]:
-    """Compute chamber sectors using the canonical opening-day person rule."""
-    members = get_opening_day_members(conn, parliament)
-    sectors: dict[str, set[str]] = {}
-    for member_id, sector in conn.execute(
-        """SELECT e.member_id, i.sector FROM member_education e
-        JOIN institutions i ON e.institution_id = i.institution_id
-        WHERE e.level = 'secondary' AND EXISTS (
-            SELECT 1 FROM parliament_service ps WHERE ps.member_id = e.member_id
-            AND ps.parliament_number = ? AND ps.is_opening_day_member = TRUE)""",
-        [parliament],
-    ).fetchall():
-        sectors.setdefault(member_id, set()).add(
-            sector if sector in ("Government", "Catholic", "Independent") else "Other"
+    """Compute chamber sectors from the same original-attendance evidence."""
+    members, rows = _classify_opening_members(conn, parliament)
+    summary = summarize_classified_members(members, parliament)
+    for key, group in summary["chambers"].items():
+        member_ids = {
+            member["member_id"]
+            for member in members
+            if (member.get("chamber") or "Unknown") == key
+        }
+        chamber_rows = [row for row in rows if row["member_id"] in member_ids]
+        group["successor_sensitivity"] = _successor_sensitivity(
+            member_ids, chamber_rows, _sector_counts(member_ids, chamber_rows)
         )
-    for member in members:
-        detailed, headline = classify_person_education(
-            sectors.get(member["member_id"], set())
-        )
-        member["education_classification"] = detailed
-        member["government_non_government"] = headline
-    return summarize_classified_members(members, parliament)
+    return summary
 
 
 def compute_shared_school_summary(
-    conn: duckdb.DuckDBPyConnection,
-    parliament: int,
-    min_members: int = 2,
+    conn: duckdb.DuckDBPyConnection, parliament: int, min_members: int = 2
 ) -> dict[str, Any]:
-    """Identify secondary schools attended by multiple parliamentarians in the opening-day cohort.
-
-    Args:
-        conn: Active DuckDB connection.
-        parliament: Parliament number (e.g. 47).
-        min_members: Minimum number of members to qualify as shared (defaults to 2).
-
-    Returns:
-        Dictionary containing schools attended by at least min_members parliamentarians.
-    """
-    meta = PARLIAMENT_METADATA.get(parliament)
-    if meta is None:
-        supported = ", ".join(str(p) for p in sorted(PARLIAMENT_METADATA))
-        raise ValueError(
-            f"Unsupported parliament number {parliament}; supported values are: {supported}."
+    """Count alumni at original schools; sharing a successor does not imply attendance."""
+    members = {
+        member["member_id"]: member
+        for member in get_opening_day_members(conn, parliament)
+    }
+    schools: dict[str, dict[str, Any]] = {}
+    for row in get_opening_day_education_context(conn, parliament):
+        key = _attended_school_key(row)
+        school = schools.setdefault(
+            key,
+            {
+                "institution_id": key,
+                "attended_school_id": row["attended_school_id"],
+                "school_name": row["attended_school_name"]
+                or row["school_name_as_recorded"]
+                or (
+                    "Original school unknown"
+                    if row["is_successor"]
+                    else row["resolved_institution_name"]
+                ),
+                "sector": row["detailed_sector"] or "Other",
+                "government_non_government": row["broad_sector"] or "Other",
+                "sector_basis": row["sector_basis"],
+                "state": row["resolved_state"]
+                if not row["is_successor"]
+                or row["location_basis"] == "successor_verified_same_campus"
+                else None,
+                "members": {},
+                "resolved_institution_ids": set(),
+                "contexts": [],
+            },
         )
-
-    ref_date = meta["opening_date"]
-    query = """
-    WITH ranked_service AS (
-        SELECT
-            s.member_id,
-            s.chamber,
-            s.party,
-            s.party_abbrev,
-            ROW_NUMBER() OVER (
-                PARTITION BY s.member_id
-                ORDER BY COALESCE(s.service_start, CAST(? AS DATE)), s.service_id
-            ) AS rank
-        FROM parliament_service s
-        WHERE s.parliament_number = ?
-          AND s.is_opening_day_member = TRUE
-    )
-    SELECT
-        i.institution_id,
-        i.school_name,
-        i.sector,
-        i.state,
-        m.member_id,
-        m.display_name,
-        s.party,
-        s.party_abbrev,
-        s.chamber
-    FROM member_education e
-    JOIN institutions i ON e.institution_id = i.institution_id
-    JOIN members m ON e.member_id = m.member_id
-    JOIN ranked_service s ON m.member_id = s.member_id AND s.rank = 1
-    WHERE e.level = 'secondary'
-    ORDER BY i.institution_id, m.display_name
-    """
-    rows = conn.execute(query, [ref_date, parliament]).fetchall()
-
-    schools_map: dict[str, dict[str, Any]] = {}
-    for (
-        inst_id,
-        school_name,
-        sector,
-        state,
-        member_id,
-        display_name,
-        party,
-        party_abbrev,
-        chamber,
-    ) in rows:
-        if inst_id not in schools_map:
-            schools_map[inst_id] = {
-                "institution_id": inst_id,
-                "school_name": school_name,
-                "sector": sector,
-                "state": state,
-                "member_ids": set(),
-                "members": [],
-                "parties": {},
-            }
-        s_data = schools_map[inst_id]
-        if member_id not in s_data["member_ids"]:
-            s_data["member_ids"].add(member_id)
-            abbrev = party_abbrev or party or "Unknown"
-            s_data["members"].append(
+        school["resolved_institution_ids"].add(row["resolved_institution_id"])
+        school["contexts"].append(row)
+        school["members"][row["member_id"]] = members[row["member_id"]]
+    output: list[dict[str, Any]] = []
+    for school in schools.values():
+        contexts = school.pop("contexts")
+        broad, detailed = _school_sector_values(contexts)
+        school["sector"] = detailed or "Other"
+        school["government_non_government"] = broad or "Other"
+        school["sector_basis"] = next(
+            (
+                basis
+                for basis in (
+                    "historical_verified",
+                    "original_reference",
+                    "successor_assumption",
+                )
+                if broad is not None
+                and any(
+                    row["sector_basis"] == basis and row["broad_sector"] == broad
+                    for row in contexts
+                )
+            ),
+            "unresolved",
+        )
+        school_members = list(school.pop("members").values())
+        if len(school_members) < min_members:
+            continue
+        parties: dict[str, int] = {}
+        alumni: list[dict[str, Any]] = []
+        for member in school_members:
+            abbrev = member.get("party_abbrev") or member.get("party") or "Unknown"
+            parties[abbrev] = parties.get(abbrev, 0) + 1
+            alumni.append(
                 {
-                    "member_id": member_id,
-                    "display_name": display_name,
-                    "party": party,
+                    "member_id": member["member_id"],
+                    "display_name": member["display_name"],
+                    "party": member["party"],
                     "party_abbrev": abbrev,
-                    "chamber": chamber,
+                    "chamber": member["chamber"],
                 }
             )
-            s_data["parties"][abbrev] = s_data["parties"].get(abbrev, 0) + 1
-
-    shared_schools: list[dict[str, Any]] = []
-    for s_data in schools_map.values():
-        count = len(s_data["member_ids"])
-        if count >= min_members:
-            shared_schools.append(
-                {
-                    "institution_id": s_data["institution_id"],
-                    "school_name": s_data["school_name"],
-                    "sector": s_data["sector"],
-                    "state": s_data["state"],
-                    "member_count": count,
-                    "is_bipartisan": len(s_data["parties"]) > 1,
-                    "parties": dict(
-                        sorted(s_data["parties"].items(), key=lambda x: (-x[1], x[0]))
-                    ),
-                    "members": sorted(
-                        s_data["members"], key=lambda m: m["display_name"] or ""
-                    ),
-                }
-            )
-
-    shared_schools.sort(key=lambda s: (-s["member_count"], s["school_name"] or ""))
-
+        school["resolved_institution_ids"] = sorted(school["resolved_institution_ids"])
+        output.append(
+            {
+                **school,
+                "member_count": len(alumni),
+                "is_bipartisan": len(parties) > 1,
+                "parties": dict(
+                    sorted(parties.items(), key=lambda item: (-item[1], item[0]))
+                ),
+                "members": sorted(
+                    alumni, key=lambda member: member["display_name"] or ""
+                ),
+            }
+        )
     return {
         "parliament_number": parliament,
         "cohort": "opening_day",
+        "identity_grain": "original attended school",
         "min_members_threshold": min_members,
-        "total_shared_schools": len(shared_schools),
-        "schools": shared_schools,
+        "total_shared_schools": len(output),
+        "schools": sorted(
+            output,
+            key=lambda school: (-school["member_count"], school["school_name"] or ""),
+        ),
     }
 
 
@@ -958,6 +986,7 @@ def compute_cross_parliament_summary(
             "sector_percentages": sectors["percentage_of_known_parliamentarians"],
             "gov_non_gov_percentages": sectors["government_non_government_percentages"],
             "unique_schools_count": sectors["unique_schools"]["total_unique_schools"],
+            "successor_sensitivity": sectors["successor_sensitivity"],
         }
 
     trends: dict[str, Any] = {}
@@ -1091,6 +1120,14 @@ def compute_funding_summary(
         "source_attribution": "Source: Australian Curriculum, Assessment and Reporting Authority (ACARA) My School",
         "licence": "ACARA My School Terms of Use (July 2020)",
         "total_schools_in_scope": total_scope,
+        "finance_reporting_institution_count": total_scope,
+        "finance_grain": "distinct resolved reporting institution and year",
+        "represented_attended_schools": len(
+            {
+                _attended_school_key(row)
+                for row in get_opening_day_education_context(conn, parliament)
+            }
+        ),
         "total_schools_with_finance_data": len(schools_with_finance_data),
         "overall_gross_income_sample_size": overall_gross["n"],
         "overall_gross_income_missing_count": overall_gross["missing"],
@@ -1203,6 +1240,16 @@ def export_analysis_report(
         {
             "metadata": metadata,
             "parliaments": {key: value["sectors"] for key, value in report.items()},
+        },
+    )
+    _write_json(
+        analysis_dir / "successor_sensitivity.json",
+        {
+            "metadata": metadata,
+            "parliaments": {
+                key: value["sectors"]["successor_sensitivity"]
+                for key, value in report.items()
+            },
         },
     )
     _write_json(

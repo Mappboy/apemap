@@ -250,11 +250,19 @@ Public debate often reduces school attendance to a binary comparison between pub
 
 ### Member-Level Sector Classification
 Each parliamentarian is classified into one mutually exclusive category based on the sectors of all secondary schools they attended:
-- **`government_only`**: The parliamentarian attended only Government (public) secondary institutions.
-- **`non_government_only`**: The parliamentarian attended only Non-government secondary institutions (Catholic and/or Independent). For example, a student who attended both a Catholic systemic school and an Independent grammar school remains classified as `non_government_only`.
+- **`government_only`**: Available broad evidence classifies Government secondary schools.
+- **`non_government_only`**: Available broad evidence classifies Non-government secondary schools. A person with both Catholic and Independent evidence remains in this broad category.
 - **`mixed`**: The parliamentarian attended at least one Government secondary school **and** at least one Non-government (Catholic or Independent) secondary school.
 - **`other`**: The parliamentarian attended only unclassified or non-standard educational institutions.
 - **`no_school_recorded`**: The parliamentarian has no recorded secondary school attendance in the Parliamentary Handbook or official biographies.
+
+Unavailable school values do not create a second known sector. A person with
+Government evidence and another unclassified school remains `government_only`
+with incomplete evidence, displayed as “Government among classified schools”.
+Broad and detailed completeness flags are independent. See the
+[successor context contract](successor-context.md) for historical evidence,
+assumptions and sensitivity; map display coordinates are distinct from eligible
+attendance geography.
 
 ### Three Explicit Denominators
 Because a single parliamentarian can attend multiple schools, and multiple parliamentarians can attend the same school, percentages must be explicitly anchored to clear denominators:
@@ -265,8 +273,8 @@ Because a single parliamentarian can attend multiple schools, and multiple parli
    $$\text{Denominator}_2 = \sum \text{Member-to-School Attendance Records}$$
    Counts every instance of a member attending a school. A parliamentarian who attended two schools contributes two instances to this denominator. Useful for examining institutional representation without forcing single-choice member pigeonholing.
 3. **Represented Unique Schools Denominator (`total_unique_schools`)**:
-   $$\text{Denominator}_3 = \text{Count of Distinct Physical Institutions Attended}$$
-   Measures institutional diversity and concentration by evaluating the unique set of schools attended by the parliamentary cohort.
+   $$\text{Denominator}_3 = \text{Count of Distinct Original School Identities Attended}$$
+   Measures institutional diversity using original references or frozen provisional recorded-name identities. Identity subtotals distinguish these references from verified originals and unresolved assertion rows; the total is not a verified count of physical facilities.
 
 ---
 

@@ -13,7 +13,8 @@ if TYPE_CHECKING:
     import duckdb
 
 from apemap.analysis import (
-    classify_person_education,
+    classify_attendance_person,
+    get_opening_day_education_context,
     export_analysis_report,
 )
 from apemap.constants import (
@@ -23,6 +24,7 @@ from apemap.constants import (
     supported_parliaments,
 )
 from apemap.coverage import export_parliament_coverage
+from apemap.contracts import WEB_SCHEMA_VERSION
 from apemap.db import (
     ensure_spatial,
     get_connection,
@@ -35,6 +37,7 @@ from apemap.export import (
     export_results_summary,
     export_web_schools_geojson,
     validate_source_snapshot_dates,
+    web_school_records,
 )
 from apemap.validate import validate_database
 
@@ -181,7 +184,9 @@ def build_release(
 
         # 3d. web/members.json
         members_path = web_dir / "members.json"
-        _export_web_members(active_conn, members_path, target_parls)
+        _export_web_members(
+            active_conn, members_path, target_parls, finance_reporting_year
+        )
 
         # 3e. web/metadata.json
         commit_sha = source_commit if source_commit is not None else _get_git_commit()
@@ -195,7 +200,7 @@ def build_release(
             gen_timestamp = datetime.now(timezone.utc).isoformat()
 
         web_metadata = {
-            "web_schema_version": "1.0.0",
+            "web_schema_version": WEB_SCHEMA_VERSION,
             "release_version": version,
             "source_commit": commit_sha,
             "generated_at": gen_timestamp,
@@ -249,6 +254,7 @@ def build_release(
 
         manifest_data = {
             "release_schema_version": RELEASE_SCHEMA_VERSION,
+            "web_schema_version": WEB_SCHEMA_VERSION,
             "data_release_version": version,
             "source_commit": commit_sha,
             "generated_at": gen_timestamp,
@@ -298,37 +304,30 @@ def _export_web_members(
     conn: duckdb.DuckDBPyConnection,
     output_path: Path,
     parliaments: list[int],
+    finance_reporting_year: int = 2024,
 ) -> None:
     """Export opening-day members list and their secondary education summary to JSON."""
-    edu_query = """
-    SELECT
-        e.member_id,
-        i.institution_id,
-        i.school_name,
-        i.sector,
-        i.state
-    FROM member_education e
-    JOIN institutions i ON e.institution_id = i.institution_id
-    WHERE e.level = 'secondary'
-    ORDER BY e.member_id, e.education_id
-    """
-    edu_rows = conn.execute(edu_query).fetchall()
+    schools = web_school_records(conn, parliaments, finance_reporting_year)
     member_schools: dict[str, list[dict[str, Any]]] = {}
-    member_sectors: dict[str, set[str]] = {}
-
-    for mid, inst_id, sname, sector, state in edu_rows:
-        member_schools.setdefault(mid, []).append(
-            {
-                "institution_id": inst_id,
-                "school_name": sname,
-                "sector": sector,
-                "state": state,
-            }
-        )
-        sec_name = (
-            sector if sector in ("Government", "Catholic", "Independent") else "Other"
-        )
-        member_sectors.setdefault(mid, set()).add(sec_name)
+    for school in schools.values():
+        context = {
+            key: value
+            for key, value in school.items()
+            if key
+            not in (
+                "members",
+                "member_count",
+                "education_assertions",
+                "parliaments",
+                "provider_contexts",
+            )
+        }
+        context["sector"] = school["school_sector"]
+        for evidence in school["education_assertions"]:
+            member_schools.setdefault(evidence["member_id"], []).append(
+                {**context, **evidence, "sector": evidence["school_sector"]}
+            )
+    contexts = {p: get_opening_day_education_context(conn, p) for p in parliaments}
 
     members_query = """
     WITH ranked_service AS (
@@ -384,8 +383,9 @@ def _export_web_members(
         electorate,
         state,
     ) in rows:
-        secs = member_sectors.get(mid, set())
-        std_cat, gng_cat = classify_person_education(secs)
+        classification = classify_attendance_person(
+            [context for context in contexts[p_num] if context["member_id"] == mid]
+        )
         p_key = str(p_num)
 
         members_by_parl.setdefault(p_key, []).append(
@@ -402,14 +402,18 @@ def _export_web_members(
                 "party_abbrev": party_abbrev or party,
                 "electorate": electorate,
                 "state_or_territory": state,
-                "education_classification": std_cat,
-                "government_non_government": gng_cat,
+                **classification,
                 "schools": member_schools.get(mid, []),
             }
         )
 
     output_path.write_text(
-        json.dumps({"parliaments": members_by_parl}, indent=2, sort_keys=True) + "\n",
+        json.dumps(
+            {"web_schema_version": WEB_SCHEMA_VERSION, "parliaments": members_by_parl},
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
         encoding="utf-8",
     )
 

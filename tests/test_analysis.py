@@ -10,16 +10,21 @@ from pathlib import Path
 
 from apemap.analysis import (
     classify_person_education,
+    classify_attendance_person,
     compute_age_at_date,
     compute_cross_parliament_summary,
+    compute_chamber_sector_summary,
     compute_funding_summary,
     compute_party_sector_summary,
     compute_sector_summary,
     compute_shared_school_summary,
     export_analysis_report,
     get_opening_day_members,
+    _school_sector_values,
 )
 from apemap.db import get_connection, init_schema
+from apemap.coverage import compute_parliament_coverage
+from apemap.review.model import school_review_id
 
 
 def create_analysis_fixture(db_path: Path) -> Path:
@@ -100,6 +105,364 @@ def create_analysis_fixture(db_path: Path) -> Path:
     )
     conn.close()
     return db_path
+
+
+def successor_analysis_fixture(db_path: Path) -> Path:
+    """Two different predecessors share finance and unverified display coordinates."""
+    create_analysis_fixture(db_path)
+    with get_connection(db_path) as conn:
+        conn.execute(
+            "UPDATE institutions SET longitude=150, latitude=-35 WHERE institution_id='school-gov'"
+        )
+        for education_id, name in (
+            ("education-gov", "First Predecessor"),
+            ("education-both-gov", "Second Predecessor"),
+        ):
+            conn.execute(
+                """UPDATE member_education SET school_name_as_recorded=?,
+                recorded_school_id=?, institution_resolution='successor',
+                resolution_source_url='https://example.org/history'
+                WHERE education_id=?""",
+                [name, school_review_id(name), education_id],
+            )
+    return db_path
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("known_broad", "known_detail", "headline", "detail", "label"),
+    [
+        (
+            "Government",
+            "Government",
+            "government_only",
+            "Government",
+            "Government among classified schools",
+        ),
+        (
+            "Non-government",
+            "Catholic",
+            "non_government_only",
+            "Catholic",
+            "Non-government among classified schools",
+        ),
+        (None, None, "other", "Other", "Sector unavailable"),
+    ],
+)
+def test_missing_sector_is_completeness_not_an_extra_category(
+    known_broad: str | None,
+    known_detail: str | None,
+    headline: str,
+    detail: str,
+    label: str,
+) -> None:
+    rows = [
+        {
+            "broad_sector": known_broad,
+            "detailed_sector": known_detail,
+            "sector_basis": "original_reference",
+        },
+        {"broad_sector": None, "detailed_sector": None, "sector_basis": "unresolved"},
+    ]
+    result = classify_attendance_person(rows)
+    assert result["government_non_government"] == headline
+    assert result["education_classification"] == detail
+    assert result["government_non_government_label"] == label
+    assert result["incomplete_broad_sector_evidence"]
+    assert result["incomplete_detailed_sector_evidence"]
+    assert (
+        classify_attendance_person([])["education_classification"]
+        == "No School Recorded"
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("values", "expected"),
+    [
+        ([("Government", "Government"), ("Non-government", None)], (None, None)),
+        (
+            [("Non-government", "Catholic"), (None, None)],
+            ("Non-government", "Catholic"),
+        ),
+        (
+            [("Non-government", "Catholic"), ("Non-government", "Independent")],
+            ("Non-government", None),
+        ),
+    ],
+)
+def test_school_reducer_never_chooses_an_assertion_order_winner(
+    values: list[tuple[str | None, str | None]], expected: tuple[str | None, str | None]
+) -> None:
+    rows = [
+        {
+            "broad_sector": broad,
+            "detailed_sector": detailed,
+            "sector_basis": "original_reference",
+        }
+        for broad, detailed in values
+    ]
+    assert _school_sector_values(rows) == expected
+    assert _school_sector_values(list(reversed(rows))) == expected
+
+
+@pytest.mark.unit
+def test_strict_classification_retains_other_verified_schools() -> None:
+    rows = [
+        {
+            "broad_sector": "Government",
+            "detailed_sector": "Government",
+            "sector_basis": "original_reference",
+        },
+        {
+            "broad_sector": "Non-government",
+            "detailed_sector": None,
+            "sector_basis": "successor_assumption",
+        },
+    ]
+    baseline = classify_attendance_person(rows)
+    strict = classify_attendance_person(rows, exclude_successor_assumptions=True)
+    assert baseline["government_non_government"] == "mixed"
+    assert baseline["education_classification"] == "Government"
+    assert strict["government_non_government"] == "government_only"
+    assert (
+        strict["government_non_government_label"]
+        == "Government among classified schools"
+    )
+    assert strict["education_classification"] == "Government"
+    assert strict["incomplete_broad_sector_evidence"]
+    assert strict["successor_assumption_affected"]
+
+
+@pytest.mark.unit
+def test_successor_sensitivity_keeps_people_and_recorded_denominators(
+    tmp_path: Path,
+) -> None:
+    with get_connection(
+        successor_analysis_fixture(tmp_path / "successor.duckdb")
+    ) as conn:
+        summary = compute_sector_summary(conn, 47)
+        sensitivity = summary["successor_sensitivity"]
+        baseline = sensitivity["baseline"]
+        strict = sensitivity["without_successor_assumptions"]
+        for key in (
+            "total_parliamentarians",
+            "known_school_denominator",
+            "total_attendance_instances",
+            "total_unique_schools",
+        ):
+            assert baseline[key] == strict[key]
+        assert baseline["total_parliamentarians"] == 5
+        assert baseline["known_school_denominator"] == 4
+        assert baseline["total_attendance_instances"] == 5
+        assert baseline["total_unique_schools"] == 4
+        assert summary["unique_schools"]["identity_counts"] == {
+            "original_verified": 0,
+            "original_reference": 2,
+            "recorded_name_provisional": 2,
+            "unresolved": 0,
+        }
+        assert baseline["broad_sector_evidence_denominator"] == 4
+        assert baseline["detailed_sector_evidence_denominator"] == 3
+        assert strict["broad_sector_evidence_denominator"] == 3
+        assert baseline["government_non_government"]["mixed"] == 1
+        assert strict["government_non_government"]["mixed"] == 0
+        assert baseline["government_non_government"]["government_only"] == 1
+        assert strict["government_non_government"]["other"] == 1
+        assert (
+            baseline["unique_parliamentarians_by_sector"]
+            == strict["unique_parliamentarians_by_sector"]
+        )
+        assert baseline["unique_parliamentarians_by_sector"]["Independent"] == 2
+        assert baseline["unique_parliamentarians_by_sector"]["Other"] == 1
+        assert sensitivity["affected_members"] == 2
+        assert sensitivity["affected_assertions"] == 2
+        assert sensitivity["affected_schools"] == 2
+        assert (
+            sensitivity["difference_percentage_points"][
+                "government_non_government_percentages"
+            ]["mixed"]
+            == -25.0
+        )
+        assert strict["members_with_incomplete_broad_sector_evidence"] == 2
+        for grouped in (
+            compute_party_sector_summary(conn, 47)["parties"]["TST"],
+            compute_chamber_sector_summary(conn, 47)["chambers"]["representatives"],
+        ):
+            assert (
+                grouped["government_non_government"]
+                == baseline["government_non_government"]
+            )
+            assert (
+                grouped["successor_sensitivity"]["without_successor_assumptions"][
+                    "government_non_government"
+                ]
+                == strict["government_non_government"]
+            )
+
+
+@pytest.mark.unit
+def test_predecessor_school_counts_and_finance_use_different_grains(
+    tmp_path: Path,
+) -> None:
+    with get_connection(successor_analysis_fixture(tmp_path / "grains.duckdb")) as conn:
+        shared = compute_shared_school_summary(conn, 47)
+        assert shared["total_shared_schools"] == 1
+        assert shared["schools"][0]["institution_id"] == "school-ind"
+        assert shared["schools"][0]["member_count"] == 2
+        finance = compute_funding_summary(conn, 47)
+        assert finance["represented_attended_schools"] == 4
+        assert finance["finance_reporting_institution_count"] == 3
+        assert finance["overall_gross_income"] == {
+            "mean": 150.0,
+            "median": 150.0,
+            "n": 2,
+            "missing": 1,
+        }
+        coverage = compute_parliament_coverage(conn, [47], finance_year=2021)[0]
+        assert coverage["represented_schools"] == 4
+        assert coverage["finance_reporting_institutions"] == 3
+        assert coverage["displayed_mapped_schools"] == 2
+        assert coverage["schools_with_verified_attendance_geography"] == 0
+        assert coverage["schools_eligible_attendance_geography"] == 0
+        conn.execute(
+            "UPDATE institutions SET longitude=151, latitude=-34 WHERE institution_id='school-cath'"
+        )
+        reference_coverage = compute_parliament_coverage(conn, [47], finance_year=2021)[
+            0
+        ]
+        assert reference_coverage["schools_eligible_attendance_geography"] == 1
+        assert reference_coverage["schools_with_verified_attendance_geography"] == 0
+        conn.execute(
+            """UPDATE member_education SET historical_scope_confirmed=TRUE,
+            historical_longitude=149, historical_latitude=-36,
+            historical_location_source_url='https://example.org/original-location'
+            WHERE education_id='education-gov'"""
+        )
+        historical_coverage = compute_parliament_coverage(
+            conn, [47], finance_year=2021
+        )[0]
+        assert historical_coverage["displayed_mapped_schools"] == 3
+        assert historical_coverage["schools_eligible_attendance_geography"] == 2
+        assert historical_coverage["schools_with_verified_attendance_geography"] == 1
+
+
+@pytest.mark.unit
+def test_verified_original_unifies_aliases_and_sector_evidence(tmp_path: Path) -> None:
+    with get_connection(
+        successor_analysis_fixture(tmp_path / "aliases.duckdb")
+    ) as conn:
+        conn.execute(
+            "INSERT INTO institutions(institution_id,school_name,sector) VALUES ('manual:original','Original School','Other')"
+        )
+        conn.execute("""UPDATE member_education SET attended_institution_id='manual:original',
+            attended_identity_source_url='https://example.org/identity', historical_scope_confirmed=TRUE
+            WHERE institution_resolution='successor'""")
+        conn.execute("""UPDATE member_education SET historical_broad_sector='Government',
+            historical_broad_sector_source_url='https://example.org/sector'
+            WHERE education_id='education-gov'""")
+        summary = compute_sector_summary(conn, 47)
+        assert summary["unique_schools"]["total_unique_schools"] == 3
+        assert summary["unique_schools"]["by_sector"]["Government"] == 1
+        assert summary["unique_schools"]["identity_counts"]["original_verified"] == 1
+        assert summary["successor_sensitivity"]["affected_members"] == 0
+        shared = compute_shared_school_summary(conn, 47)
+        original = next(
+            s for s in shared["schools"] if s["institution_id"] == "manual:original"
+        )
+        assert original["school_name"] == "Original School"
+        assert original["member_count"] == 2
+        assert original["sector"] == "Government"
+        conn.execute("""UPDATE member_education SET historical_broad_sector='Non-government',
+            historical_broad_sector_source_url='https://example.org/conflicting-sector'
+            WHERE education_id='education-both-gov'""")
+        conflict = compute_sector_summary(conn, 47)
+        assert conflict["unique_schools"]["by_sector"]["Government"] == 0
+        assert conflict["successor_sensitivity"]["affected_members"] == 0
+        assert conflict["government_non_government"]["mixed"] == 0
+
+
+@pytest.mark.unit
+def test_unresolved_original_identity_does_not_merge_null_assertions(
+    tmp_path: Path,
+) -> None:
+    with get_connection(
+        successor_analysis_fixture(tmp_path / "unresolved.duckdb")
+    ) as conn:
+        conn.execute(
+            "UPDATE member_education SET recorded_school_id=NULL WHERE institution_resolution='successor'"
+        )
+        summary = compute_sector_summary(conn, 47)
+        assert summary["unique_schools"]["total_unique_schools"] == 4
+        assert summary["unique_schools"]["identity_counts"]["unresolved"] == 2
+        assert (
+            summary["unique_schools"]["identity_counts"]["recorded_name_provisional"]
+            == 0
+        )
+        shared = compute_shared_school_summary(conn, 47)
+        assert shared["total_shared_schools"] == 1
+        assert shared["schools"][0]["attended_school_id"] == "school-ind"
+
+
+@pytest.mark.unit
+def test_shared_school_never_uses_successor_as_an_unknown_original_name(
+    tmp_path: Path,
+) -> None:
+    with get_connection(
+        successor_analysis_fixture(tmp_path / "unknown-name.duckdb")
+    ) as conn:
+        conn.execute(
+            "UPDATE member_education SET school_name_as_recorded=NULL WHERE education_id='education-gov'"
+        )
+        shared = compute_shared_school_summary(conn, 47, min_members=1)
+        original = next(
+            school
+            for school in shared["schools"]
+            if school["attended_school_id"] == school_review_id("First Predecessor")
+        )
+        assert original["school_name"] == "Original school unknown"
+        assert original["resolved_institution_ids"] == ["school-gov"]
+
+
+@pytest.mark.unit
+def test_coverage_display_count_matches_web_when_successor_points_conflict(
+    tmp_path: Path,
+) -> None:
+    from apemap.export import web_school_records
+
+    with get_connection(
+        successor_analysis_fixture(tmp_path / "display-conflict.duckdb")
+    ) as conn:
+        conn.execute("""INSERT INTO institutions(institution_id,school_name,sector,longitude,latitude)
+            VALUES ('manual:original','Original School','Other',NULL,NULL),
+                   ('other-successor','Other Successor','Government',151,-36)""")
+        conn.execute("""UPDATE member_education SET attended_institution_id='manual:original',
+            attended_identity_source_url='https://example.org/original-identity',
+            historical_scope_confirmed=TRUE WHERE education_id='education-gov'""")
+        conn.execute(
+            """INSERT INTO member_education(education_id,member_id,institution_id,
+            level,attended_status,source_url,retrieved_at,confidence,
+            school_name_as_recorded,recorded_school_id,institution_resolution,
+            resolution_source_url,attended_institution_id,attended_identity_source_url,historical_scope_confirmed)
+            VALUES ('other-alias','m-gov','other-successor','secondary','attended_unspecified',
+            'https://example.org/attendance','2025-01-01','verified',
+            'Original Alias',?,'successor','https://example.org/relationship',
+            'manual:original','https://example.org/alias-identity',TRUE)""",
+            [school_review_id("Original Alias")],
+        )
+        records = web_school_records(conn, [47], finance_reporting_year=2021)
+        conflicted = records["manual:original"]
+        assert conflicted["longitude"] is None
+        assert conflicted["latitude"] is None
+        assert conflicted["location_conflict"]
+        mapped = sum(
+            record["longitude"] is not None and record["latitude"] is not None
+            for record in records.values()
+        )
+        assert mapped == 1
+        coverage = compute_parliament_coverage(conn, [47], finance_year=2021)[0]
+        assert coverage["displayed_mapped_schools"] == mapped
+        assert coverage["represented_schools"] == len(records)
 
 
 @pytest.mark.unit
@@ -224,6 +587,7 @@ def test_analysis_exports_are_schema_versioned_and_deterministic(
         "metadata.json",
         "demographics.json",
         "education_sectors.json",
+        "successor_sensitivity.json",
         "school_finance.json",
         "parliament_comparison.json",
         "party_sectors.json",
@@ -236,7 +600,7 @@ def test_analysis_exports_are_schema_versioned_and_deterministic(
         assert first == second
 
     metadata = json.loads((output_one / "analysis" / "metadata.json").read_text())
-    assert metadata["schema_version"] == "1.0"
+    assert metadata["schema_version"] == "2.0.0"
     assert metadata["parliament_numbers"] == [47]
     assert metadata["finance_reporting_year"] == 2021
     assert "ACARA" in metadata["finance_source_attribution"]
@@ -395,8 +759,12 @@ def test_classify_person_education() -> None:
     )
     assert classify_person_education({"Other"}) == ("Other", "other")
     assert classify_person_education({"Government", "Other"}) == (
-        "Combined/Multiple",
+        "Government",
         "government_only",
+    )
+    assert classify_person_education({"Catholic", "Other"}) == (
+        "Catholic",
+        "non_government_only",
     )
 
 
@@ -520,7 +888,7 @@ def test_compute_cross_parliament_summary(tmp_path: Path) -> None:
     cross = compute_cross_parliament_summary(conn, [47, 48])
     conn.close()
 
-    assert cross["schema_version"] == "1.0"
+    assert cross["schema_version"] == "2.0.0"
     assert cross["parliaments"] == [47, 48]
     assert "47" in cross["by_parliament"]
     assert "48" in cross["by_parliament"]

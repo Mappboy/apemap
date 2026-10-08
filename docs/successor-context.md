@@ -84,12 +84,16 @@ Verified historical classification takes precedence. Where it is unavailable,
 the successor's Government/non-government classification can be used as an
 explicit `successor_assumption`. Catholic/Independent is independently reviewed;
 an assumed non-government classification cannot establish either detailed sector.
-Historical Government establishes the detailed Government category. Contradictions
+Historical Government establishes the detailed Government category. Independently
+reviewed Catholic or Independent evidence establishes Non-government using the
+same historical source. Contradictions
 are exposed for review; unresolved conflicting evidence cannot fall back to a
 successor assumption.
 
 Count distinct attended-school identities, identifying provisional recorded-name
-identities separately. Count distinct people in member totals and shared-school
+identities separately. Missing identities retain separate unresolved assertion
+keys and an explicit unresolved count; they do not become verified institutions.
+Count distinct people in member totals and shared-school
 associations. Sharing a successor does not establish shared original attendance.
 Financial samples instead count reporting institutions: two predecessors sharing
 one successor finance record contribute two attended schools and one finance sample.

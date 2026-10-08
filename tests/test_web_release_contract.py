@@ -177,7 +177,7 @@ def test_export_results_summary(
     assert summary_file.name == "results-summary.json"
 
     data = json.loads(summary_file.read_text(encoding="utf-8"))
-    assert data["web_schema_version"] == "1.0.0"
+    assert data["web_schema_version"] == "2.0.0"
     assert data["cohort"] == "opening_day"
     assert "47" in data["parliaments"]
 
@@ -530,7 +530,7 @@ def test_export_web_release_manifest(
     assert manifest_path.exists()
     manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
 
-    assert manifest_data["web_schema_version"] == "1.0.0"
+    assert manifest_data["web_schema_version"] == "2.0.0"
     assert manifest_data["data_release_version"] == "1.0.0"
     assert manifest_data["parliaments"] == [47]
     assert "sample1.json" in manifest_data["files"]

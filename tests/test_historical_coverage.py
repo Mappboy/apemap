@@ -181,7 +181,11 @@ def test_all_layers_and_latest_profile_grain(tmp_path: Path) -> None:
             output_dir=tmp_path / "out",
         )
         assert result["service_count"] >= 7
-        conn.execute("UPDATE institutions SET longitude=145, latitude=-37")
+        conn.execute(
+            """UPDATE member_education SET historical_scope_confirmed=TRUE,
+            historical_longitude=145, historical_latitude=-37,
+            historical_location_source_url='https://example.org/original-location'"""
+        )
         iid = conn.execute("SELECT institution_id FROM institutions").fetchone()
         assert iid
         conn.execute(

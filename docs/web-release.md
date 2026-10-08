@@ -26,6 +26,18 @@ separate steps. Plain `apemap export` retains the existing canonical output set.
 
 ## Cohort and row grain
 
+New exports declare web schema **2.0.0**. This is a breaking join migration: a
+school feature's `institution_id` is its attended-school key (also exposed as
+`attended_school_id`), while `resolved_institution_id` identifies the current
+institution supplying profile and finance context. Two predecessors sharing a
+successor remain distinct schools, even when their display points coincide.
+Canonical `member_education.institution_id` retains the resolved reference.
+Existing 1.0.0 release files, manifests and hashes remain unchanged and can still
+be verified. Consumers must pin a new release and migrate joins together.
+
+The [successor context policy](successor-context.md) defines the evidence rules,
+independent uncertainty flags and conservative sector interpretation.
+
 All website attendance outputs use `is_opening_day_member = TRUE` for the selected
 parliaments. Later service records are excluded. Missing secondary education still
 contributes to the summary's total member count, but produces no attendance row.
@@ -33,7 +45,7 @@ contributes to the summary's total member count, but produces no attendance row.
 | File | Row or feature grain | Profile selection |
 | :--- | :--- | :--- |
 | `results-summary.json` | One result object per selected parliament | Source years of the latest profile per represented school, including unmapped schools |
-| `schools.geojson` | One feature per represented school with coordinates | Latest available annual profile per school; missing profile fields are null |
+| `schools.geojson` | One feature per distinct attended school with display coordinates | Latest available annual profile from `profile_institution_id`; missing fields are null |
 | `downloads/parliament-education.csv` | One row per `(education_id, service_id)` in the opening-day cohort | Latest available profile per school; a missing profile retains the attendance row |
 | `downloads/school-profiles.parquet` | One row per `(institution_id, snapshot_year)` across the canonical profile table | All years, including schools outside the selected cohort |
 | `manifest.json` | One release manifest | Version, commit, generation time, recorded source dates, file paths, sizes and SHA-256 hashes |
@@ -47,6 +59,32 @@ The canonical `v_member_secondary_education` view retains all annual profile row
 for research compatibility. The web CSV deliberately selects the latest profile.
 
 ## Member context in the school explorer
+
+`members.json` retains every attendance assertion, including schools without map
+coordinates. Its school records carry the same context fields and actual profile
+year as the mapped records; a missing map point does not discard attendance or
+the provider's profile. Deduplicate school lists by `institution_id`, people by
+`member_id`, and service entries by `service_id`.
+
+Successor records expose attended and resolved names, `display_school_name`
+(`Original → Successor*`), `identity_basis`, `location_basis`, broad and detailed
+sector values with their separate bases, evidence URLs, and profile/finance
+provider IDs and bases. `location_institution_id` identifies the point's provider
+when known. Original verified coordinates take priority; their locality fields
+are unavailable when no original institution reference supplies locality metadata.
+Explicit `resolved_state`, `resolved_suburb` and `resolved_postcode` remain current
+reference context, independently of historical attendance geography.
+
+`successor_unverified` means the display point is a successor campus, with
+`attendance_location_eligible=false` and null attendance coordinates. Draw this
+point hollow and display `location_warning`; it contributes no attendance
+geography. Location evidence does not change attendance confidence, sector
+verification or finance status. When an attended identity has several reporting
+counterparts, `provider_contexts` lists each actual provider and year. Each
+`education_assertion` keeps its own complete context; ambiguous aggregate provider
+IDs and values are null with `multiple_providers` bases. Independently verified
+original coordinates still take priority. Conflicting points at the same evidence
+strength suppress the aggregate point while retaining all searchable assertions.
 
 `member_count` counts distinct people at a school across the selected parliaments.
 Each entry in `members` contains `member_id`, `name`, sorted `parliaments`, and
@@ -76,6 +114,13 @@ that set contains one year; it is null for mixed or missing years. A school's
 `profile_year` in GeoJSON and the CSV's `snapshot_year` identify the actual selected
 profile. Profile values describe that year's student population, rather than the
 school at the time a parliamentarian attended.
+
+For successors, `profile_basis` and `finance_basis` are `successor_context`;
+`profile_institution_id` and `finance_institution_id` identify the provider.
+`finance_year`, status, method and source remain separate from `profile_year` and
+attendance dates. Sector summaries export `successor_sensitivity`, comparing the
+baseline with classification excluding broad successor assumptions on identical
+people and recorded-school denominators.
 
 `source_years.abs_benchmark_year` comes from the benchmark results actually included
 in the summary. It is null when the selected ABS comparison is unavailable.

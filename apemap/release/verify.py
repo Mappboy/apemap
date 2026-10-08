@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from apemap.export import _file_sha256
+from apemap.contracts import WEB_SCHEMA_VERSION
 from apemap.release.build import RESTRICTED_FINANCE_COLUMNS
 
 logger = logging.getLogger(__name__)
@@ -181,9 +182,18 @@ def verify_release(
                     f"{geojson_path.name} type is '{gj_data.get('type')}', expected 'FeatureCollection'"
                 )
             features = gj_data.get("features", [])
-            if not features:
+            if not features and gj_data.get("web_schema_version") != WEB_SCHEMA_VERSION:
                 errors.append(f"{geojson_path.name} features list is empty")
             for idx, feat in enumerate(features):
+                if gj_data.get("web_schema_version") == WEB_SCHEMA_VERSION:
+                    from apemap.explorer_contract import audit_school_context
+
+                    errors.extend(
+                        audit_school_context(
+                            feat.get("properties", {}),
+                            f"{geojson_path.name} feature {idx}",
+                        )
+                    )
                 geom = feat.get("geometry")
                 if not geom or geom.get("type") != "Point":
                     errors.append(
@@ -256,6 +266,18 @@ def verify_release(
                 )
         except Exception as e:
             errors.append(f"Failed reading web/assertions.json: {e}")
+
+    metadata_path = root / "web/metadata.json"
+    if metadata_path.exists():
+        try:
+            web_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            if web_metadata.get("web_schema_version") == WEB_SCHEMA_VERSION:
+                from apemap.explorer_contract import audit_explorer_contract
+
+                checks_run += 1
+                errors.extend(audit_explorer_contract(root)["errors"])
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            errors.append(f"Cannot reconcile v2 web semantics: {exc}")
 
     return {
         "valid": len(errors) == 0,
