@@ -1,0 +1,13 @@
+{% if retry_token %}
+<section data-school-preview aria-label="Retry saved preview">
+  <h2>Decision awaiting retry</h2>
+  <p>Retry saves the exact decision below. If you edit the draft, preview it again before saving.</p>
+  <pre>{{ retry_preview.event | json_text }}</pre>
+  <form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="preview_token" value="{{ retry_token }}">
+    <button type="submit" data-save-school>Retry saving this decision</button>
+  </form>
+  <p data-preview-status role="status" aria-live="polite">The original preview still expires after 15 minutes.</p>
+</section>
+{% endif %}

@@ -435,7 +435,13 @@ def import_cmd(
 
 
 @review_app.command("serve")
-def serve_cmd(ctx: typer.Context, port: int = 8765) -> None:
+def serve_cmd(
+    ctx: typer.Context,
+    port: int = 8765,
+    workers: Annotated[
+        int, typer.Option(min=1, help="Local request worker threads.")
+    ] = 4,
+) -> None:
     """Serve the optional local GUI on loopback only."""
     if not 1 <= port <= 65535:
         raise typer.BadParameter("Port must be between 1 and 65535")
@@ -444,4 +450,4 @@ def serve_cmd(ctx: typer.Context, port: int = 8765) -> None:
     except ImportError as exc:
         typer.echo("Install the optional GUI: uv sync --extra review-ui", err=True)
         raise typer.Exit(1) from exc
-    serve(_service(ctx), port=port)
+    serve(_service(ctx), port=port, workers=workers)

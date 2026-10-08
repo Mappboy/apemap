@@ -9,6 +9,7 @@ from typing import Any
 import pytest
 
 pytest.importorskip("flask")
+pytest.importorskip("waitress")
 
 from apemap.review.gui import create_app, PREVIEW_TTL
 from apemap.review.model import ReviewEvent, active_heads, school_review_id

@@ -11,6 +11,7 @@ from typing import Any
 import pytest
 
 pytest.importorskip("flask", reason="Install the review-ui extra for GUI tests")
+pytest.importorskip("waitress", reason="Install the review-ui extra for GUI tests")
 
 from apemap.review.gui import (
     PREVIEW_TTL,
@@ -710,19 +711,23 @@ def test_loopback_serve_and_evidence_url_schemes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     seen: dict[str, Any] = {}
-    from flask import Flask
-
-    monkeypatch.setattr(Flask, "run", lambda self, **kwargs: seen.update(kwargs))
+    monkeypatch.setattr(
+        "apemap.review.gui.waitress_serve",
+        lambda application, **kwargs: seen.update(kwargs),
+    )
     serve(FixtureService(), 8766)
     assert seen == {
         "host": "127.0.0.1",
         "port": 8766,
-        "debug": False,
-        "use_reloader": False,
-        "threaded": False,
+        "threads": 4,
+        "max_request_body_size": 256 * 1024,
     }
     with pytest.raises(ValueError, match="Port"):
         serve(FixtureService(), 70000)
+    with pytest.raises(ValueError, match="Workers"):
+        serve(FixtureService(), workers=0)
+    serve(FixtureService(), workers=2)
+    assert seen["threads"] == 2
     for value in (
         None,
         "javascript:alert(1)",
