@@ -53,6 +53,7 @@ from apemap.release import (
     verify_release,
 )
 from apemap.review.cli import review_app
+from apemap.release.recipe_cli import recipe_app
 from apemap.validate import validate_database
 
 
@@ -140,6 +141,7 @@ release_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(release_app, name="release")
+release_app.add_typer(recipe_app, name="recipe")
 
 
 @release_app.command(name="build")

@@ -536,3 +536,36 @@ historical campus and broad/detailed sector evidence. Use `accept --payload`
 with a JSON file or the guided school form; preview the school-wide scope before
 saving. See [Original schools and reviewed successors](successor-context.md)
 for fields, verification rules and the effect on exports and analysis.
+
+
+## Pinned historical release recipes
+
+`uv run apemap release recipe --help` lists the shared local/Actions release path.
+Every build requires an explicit recipe, unused dataset version, fresh database
+and output directory:
+
+```bash
+uv run apemap release recipe build --recipe data/release-recipes/historical.json --version 0.4.0-rc.1 --db-path data/aped-new-candidate.duckdb --output-dir data/processed/releases/new-candidate
+```
+
+- `recipe pin --template <recipe> --output <fresh-recipe>` freezes current source
+  manifest and review hashes and package version, preserving analytical choices.
+- `recipe inputs-bundle --recipe <recipe> --archive <fresh.tar.gz>` packages verified
+  raw inputs deterministically without publishing them.
+- `recipe inputs-restore --recipe <recipe> --archive <local-bundle>` provisions offline;
+  use `--archive-url <https-url>` instead for online setup. Every archived file must
+  match the pinned manifest inventory, size and SHA-256.
+- `recipe compare <first-release> <second-release>` strictly verifies both bundles
+  and requires identical effective metadata and artifact hashes at the same source
+  commit and dataset version.
+
+The historical-v1 recipe supports ACARA location 2025, profiles 2008–2025, latest
+available profiles, finance analysis 2024, pinned legacy finance 2021 and ABS/AEC 2025. All fields
+are required; unsupported years fail instead of falling back. The build manifest
+and web metadata record its effective configuration and copied review revision.
+See [Decisions to a new release](decisions-to-release.md) for review and publication.
+
+Ingestion commands `ingest aph`, `ingest acara`, `ingest wikimedia` and `run-all`
+accept `--decision-log <path>` for explicit review authority. Omitting it retains
+production's working-ledger default; fixture tests pass a private empty or pinned
+ledger explicitly.

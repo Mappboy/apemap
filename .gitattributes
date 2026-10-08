@@ -5,6 +5,7 @@ data/reference/review/*.jsonl text eol=lf merge=union
 data/reference/review/*.json text eol=lf
 # Captured recipe manifest digests are reproducible across checkout hosts.
 data/*inputs-manifest.json text eol=lf
+data/release-recipes/*.json text eol=lf
 # Tracked ACARA inputs are also byte-pinned by the inputs manifest.
 data/external/school-location-2022.csv text eol=lf
 data/external/school-profile-2022.csv text eol=lf

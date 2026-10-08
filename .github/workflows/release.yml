@@ -11,18 +11,23 @@ on:
         description: 'Semantic version for dataset release (e.g. 1.0.0)'
         required: true
         type: string
-        default: '1.0.0'
-      parliaments:
-        description: 'Comma-separated parliaments to include'
-        required: false
+      recipe:
+        description: 'Reviewed recipe path committed on the release revision'
+        required: true
         type: string
-        default: ''
+        default: 'data/release-recipes/historical.json'
+      inputs_archive_url:
+        description: 'HTTPS bundle of the exact historical raw inputs (verified against recipe pins)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 env:
   APEMAP_OFFLINE: "1"
+  RECIPE_PATH: ${{ github.event.inputs.recipe || vars.APEMAP_RELEASE_RECIPE || 'data/release-recipes/historical.json' }}
+  INPUT_ARCHIVE_URL: ${{ github.event.inputs.inputs_archive_url || vars.APEMAP_HISTORICAL_INPUTS_URL }}
 
 jobs:
   release:
@@ -52,17 +57,22 @@ jobs:
                 exit 1
               fi
             else
-              echo "Warning: Neither origin/main nor origin/master remote branch found; verifying against local HEAD."
+              echo "Error: Neither origin/main nor origin/master remote branch found."
+              exit 1
             fi
           fi
 
       - name: Determine release version and tag name
         id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_VERSION: ${{ github.event.inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VER="${{ github.event.inputs.version }}"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            VER="$REQUESTED_VERSION"
           else
-            RAW_TAG="${{ github.ref_name }}"
+            RAW_TAG="$REF_NAME"
             VER=$(echo "$RAW_TAG" | sed -E 's/^data-v?//')
           fi
           echo "RELEASE_VERSION=$VER" >> $GITHUB_ENV
@@ -82,54 +92,40 @@ jobs:
       - name: Restore pinned raw inputs
         env:
           APEMAP_OFFLINE: "0"
-        run: uv run apemap inputs restore
+        run: |
+          if [ -z "$INPUT_ARCHIVE_URL" ]; then
+            echo "Set inputs_archive_url or APEMAP_HISTORICAL_INPUTS_URL to the approved historical input bundle."
+            exit 1
+          fi
+          uv run apemap release recipe inputs-restore --recipe "$RECIPE_PATH" --archive-url "$INPUT_ARCHIVE_URL"
 
       - name: Preinstall DuckDB spatial extension
         run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
 
-      - name: Validate authoritative review decisions
-        run: uv run apemap review check
-
-      - name: Verify inputs manifest
-        run: uv run apemap inputs verify
-
       - name: Run pipeline and build release bundle
-        env:
-          PARLIAMENT_SELECTION: ${{ github.event.inputs.parliaments }}
         run: |
-          PARLS="$PARLIAMENT_SELECTION"
-          if [ -z "$PARLS" ]; then
-            PARLS="$(uv run python -c 'from apemap.constants import supported_parliaments; print(",".join(map(str, supported_parliaments())))')"
-          fi
-          mkdir -p /tmp/build_db /tmp/build_out /tmp/release_bundle
-          uv run apemap run-all \
-            --offline \
-            --inputs-manifest data/inputs-manifest.json \
-            --db-path /tmp/build_db/aped.duckdb \
-            --output-dir /tmp/build_out \
-            --parliament "$PARLS" \
-            --strict
-          uv run apemap release build \
+          mkdir -p /tmp/build_db
+          uv run apemap release recipe build \
+            --recipe "$RECIPE_PATH" \
             --db-path /tmp/build_db/aped.duckdb \
             --output-dir /tmp/release_bundle \
-            --version "$RELEASE_VERSION" \
-            --parliament "$PARLS" \
-            --strict
+            --version "$RELEASE_VERSION"
+
+      - name: Check deterministic recipe replay
+        run: |
+          uv run apemap release recipe build \
+            --recipe "$RECIPE_PATH" \
+            --db-path /tmp/build_db/replay.duckdb \
+            --output-dir /tmp/release_replay \
+            --version "$RELEASE_VERSION"
+          uv run apemap release recipe compare /tmp/release_bundle /tmp/release_replay
 
       - name: Verify release bundle integrity and privacy
         run: |
           uv run apemap release verify /tmp/release_bundle --strict-assertions
 
       - name: Package release artifacts
-        run: |
-          mkdir -p dist
-          TAR_NAME="apemap-release-v${RELEASE_VERSION}.tar.gz"
-          tar -czvf "dist/${TAR_NAME}" -C /tmp/release_bundle .
-          cp /tmp/release_bundle/manifest.json dist/
-          cp /tmp/release_bundle/SHA256SUMS dist/
-          cd dist
-          sha256sum "$TAR_NAME" >> SHA256SUMS.dist
-          cd ..
+        run: uv run python -m apemap.release.package /tmp/release_bundle --output-dir dist
 
       - name: Publish GitHub Release
         env:

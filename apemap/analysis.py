@@ -1185,7 +1185,9 @@ def _analysis_metadata(
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     """Write stable, newline-terminated JSON for reviewable Git diffs."""
     path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        newline="\n",
+        encoding="utf-8",
     )
 
 

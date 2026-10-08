@@ -227,31 +227,26 @@ manual edit of DuckDB, derived JSON/GeoJSON or a generated queue is authoritativ
    The command above selects the historical register. For a standard-only build,
    omit `--external-dir` to use `data/external/`. Commit the reviewed decisions
    before building so `source_commit` identifies the consumed ledger revision.
-4. Choose the build recipe that matches the intended release. Use a fresh
-   database and output directory, outside the baseline paths.
-
-   **Standard pinned pipeline** (the recipe used by GitHub release Actions):
-
-   ```powershell
-   $CandidateDb = 'data/aped-candidate-0.3.2.duckdb'
-   $CandidateDir = 'data/processed/reviews/2026-10-04/candidate'
-   $FinanceYear = 2021
-   uv run apemap run-all --offline --inputs-manifest data/inputs-manifest.json --db-path $CandidateDb --output-dir $CandidateDir --parliament $Parliaments --finance-year $FinanceYear --strict
-   ```
-
-   **Historical longitudinal recipe** (2008–2025 profiles and 2024 finance
-   analysis), after historical inputs have been provisioned and verified:
+4. Pin the reviewed historical recipe and build into fresh paths. Local and
+   Actions builds use this same configuration; standard `run-all` remains a
+   development pipeline.
 
    ```powershell
-   $CandidateDb = 'data/aped-historical-candidate-0.3.2.duckdb'
+   $Recipe = "data/release-recipes/reviewed-$Version.json"
+   $CandidateDb = "data/aped-historical-candidate-$Version.duckdb"
    $FinanceYear = 2024
-   uv run python -m apemap.historical --db-path $CandidateDb --output-dir $ReleaseDir --manifest-path data/historical-inputs-manifest.json --version $Version
+   uv run apemap release recipe pin --template data/release-recipes/historical.json --output $Recipe
+   git add $Recipe
+   git commit -m "Pin reviewed historical release recipe"
+   uv run apemap release recipe build --recipe $Recipe --db-path $CandidateDb --output-dir $ReleaseDir --version $Version
    ```
 
-   This historical command already builds and verifies the release. Use
-   [Historical Coverage](historical-coverage.md) for first-time acquisition.
-   Running with `--download` is an intentional refresh and rewrites its input
-   manifest; do not use it as a shortcut for applying review decisions.
+   Stop on any nonzero exit code. This command builds and strictly verifies the
+   release from pinned historical inputs and a copied review revision. It records
+   source/profile/finance years and pins the historical 2021 finance GeoPackage explicitly.
+   See [Decisions to a new release](decisions-to-release.md) for input provisioning
+   and recipe comparison. Acquisition with `--download` remains a deliberate
+   upstream refresh; it is not needed to replay decisions.
 
 ## 7. Validate the candidate and compare it with the baseline
 
@@ -264,7 +259,7 @@ uv run ruff format --check .
 uv run ty check
 ```
 
-Both rebuild recipes already initialize the schema and transform their data.
+Recipe builds already initialize the schema and transform their data.
 Do not modify a database after building its immutable release without inspecting
 the effects and regenerating that release at a fresh path.
 
@@ -376,17 +371,20 @@ commits must be contained in the accepted release branch. The workflow restores
 the pinned inputs, rebuilds offline, verifies the public bundle, packages it and
 creates a **public, non-draft GitHub Release**.
 
-Before triggering it, confirm the merged commit contains all reviewed inputs and
-pins. **Actions uses `data/inputs-manifest.json`, the standard `run-all` recipe
-and the default 2021 finance year. It does not upload your local bundle or run
-`apemap.historical`.** If publishing the historical recipe or a different finance
-year, first implement and review the workflow changes needed to reproduce that
-candidate. Manual dispatch currently exposes only version and parliaments.
+Before triggering it, confirm the merged commit contains the approved recipe,
+source manifest and ledger pins. Actions invokes `release recipe build`, preserving
+its historical parliaments, ACARA vintages and finance year. Historical ACARA is
+absent from the standard input asset: bundle the pinned raw files with `release
+recipe inputs-bundle` and have a maintainer upload them to an approved immutable
+asset location. Pass that HTTPS URL to dispatch as `inputs_archive_url`. For tag
+runs set `APEMAP_HISTORICAL_INPUTS_URL` and `APEMAP_RELEASE_RECIPE` repository
+variables to the approved asset URL and recipe path. The workflow rejects missing
+or mismatched sources and checks deterministic replay before publication.
 
 Once the correct recipe is approved, choose one trigger. For manual dispatch:
 
 ```powershell
-gh workflow run release.yml --ref main -f "version=$Version" -f "parliaments=$Parliaments"
+gh workflow run release.yml --ref main -f "version=$Version" -f "recipe=$Recipe" -f "inputs_archive_url=$InputsArchiveUrl"
 gh run list --workflow release.yml --limit 5
 ```
 

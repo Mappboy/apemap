@@ -86,6 +86,7 @@ def build_release(
     source_commit: str | None = None,
     generated_at: str | None = None,
     source_snapshot_dates: dict[str, str | None] | None = None,
+    release_recipe: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Execute complete release build for public analysis, web, and data artifacts.
 
@@ -154,6 +155,7 @@ def build_release(
         }
         assertions_path.write_text(
             json.dumps(assertions_data, indent=2, sort_keys=True) + "\n",
+            newline="\n",
             encoding="utf-8",
         )
 
@@ -215,8 +217,11 @@ def build_release(
             "attribution": "APEMAP — Australian Parliamentarians Education Map",
             "review_snapshot": review_snapshot,
         }
+        if release_recipe is not None:
+            web_metadata["release_recipe"] = release_recipe
         (web_dir / "metadata.json").write_text(
             json.dumps(web_metadata, indent=2, sort_keys=True) + "\n",
+            newline="\n",
             encoding="utf-8",
         )
 
@@ -276,15 +281,20 @@ def build_release(
             "licensing": "Creative Commons Attribution 4.0 International / ACARA / APH",
             "attribution": "APEMAP — Australian Parliamentarians Education Map",
         }
+        if release_recipe is not None:
+            manifest_data["release_recipe"] = release_recipe
 
         manifest_path = out_dir / "manifest.json"
         manifest_path.write_text(
             json.dumps(manifest_data, indent=2, sort_keys=True) + "\n",
+            newline="\n",
             encoding="utf-8",
         )
 
         sha256sums_path = out_dir / "SHA256SUMS"
-        sha256sums_path.write_text("".join(sha256sums_lines), encoding="utf-8")
+        sha256sums_path.write_text(
+            "".join(sha256sums_lines), newline="\n", encoding="utf-8"
+        )
 
         return {
             "version": version,
@@ -414,6 +424,7 @@ def _export_web_members(
             sort_keys=True,
         )
         + "\n",
+        newline="\n",
         encoding="utf-8",
     )
 
@@ -447,7 +458,12 @@ def _export_public_data_tables(
     ORDER BY institution_id, snapshot_year
     """
     snap_df = conn.execute(snap_query).df()
-    snap_df.to_csv(data_dir / "school_snapshots.csv", index=False, encoding="utf-8")
+    snap_df.to_csv(
+        data_dir / "school_snapshots.csv",
+        index=False,
+        encoding="utf-8",
+        lineterminator="\n",
+    )
     conn.execute(
         f"COPY ({snap_query}) TO ? (FORMAT PARQUET)",
         [str(data_dir / "school_snapshots.parquet")],
@@ -482,7 +498,12 @@ def _export_public_data_tables(
 
         q = f"SELECT * FROM {tbl_name} ORDER BY {order_cols}"
         tbl_df = conn.execute(q).df()
-        tbl_df.to_csv(data_dir / f"{tbl_name}.csv", index=False, encoding="utf-8")
+        tbl_df.to_csv(
+            data_dir / f"{tbl_name}.csv",
+            index=False,
+            encoding="utf-8",
+            lineterminator="\n",
+        )
         conn.execute(
             f"COPY ({q}) TO ? (FORMAT PARQUET)",
             [str(data_dir / f"{tbl_name}.parquet")],

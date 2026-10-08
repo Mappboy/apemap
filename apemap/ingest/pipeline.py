@@ -658,7 +658,7 @@ def run_aph_ingestion(
         # Write coverage metrics JSON
         metrics_json_path = out_dir / "coverage_metrics.json"
         metrics_json_path.write_text(
-            json.dumps(coverage_metrics, indent=2), encoding="utf-8"
+            json.dumps(coverage_metrics, indent=2), newline="\n", encoding="utf-8"
         )
 
         parquet_paths: dict[str, Path] = {}

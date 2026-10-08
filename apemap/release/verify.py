@@ -83,6 +83,37 @@ def verify_release(
     manifest_files = manifest_data.get("files", {})
     version = manifest_data.get("data_release_version")
 
+    recipe = manifest_data.get("release_recipe")
+    if recipe is not None:
+        checks_run += 1
+        try:
+            web_recipe = json.loads(
+                (root / "web/metadata.json").read_text(encoding="utf-8")
+            ).get("release_recipe")
+            if not isinstance(recipe, dict) or web_recipe != recipe:
+                errors.append("Web and release recipe metadata disagree")
+            else:
+                for field in (
+                    "data_release_version",
+                    "source_commit",
+                    "generated_at",
+                    "parliaments",
+                    "web_schema_version",
+                ):
+                    if recipe.get(field) != manifest_data.get(field):
+                        errors.append(f"Release recipe {field} disagrees with manifest")
+                snapshot = manifest_data.get("review_snapshot", {})
+                if recipe.get("decision_log_sha256") != snapshot.get(
+                    "decision_log_sha256"
+                ):
+                    errors.append("Release recipe review revision was not consumed")
+                if recipe.get("input_manifest_sha256") != snapshot.get(
+                    "source_manifest_sha256"
+                ):
+                    errors.append("Release recipe source manifest was not consumed")
+        except (OSError, ValueError) as exc:
+            errors.append(f"Cannot read release recipe metadata: {exc}")
+
     # Historical releases declare centrally configured terms and one public layer each.
     if "supported_parliaments" in manifest_data:
         checks_run += 1

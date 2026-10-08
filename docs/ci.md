@@ -16,7 +16,7 @@ This document describes the offline continuous integration (CI) architecture for
 
 ## 2. CI Jobs Overview
 
-Both CI data jobs and the release workflow provision inputs before preflight:
+CI data jobs provision standard inputs before preflight:
 
 ```bash
 APEMAP_OFFLINE=0 uv run apemap inputs restore
@@ -31,6 +31,15 @@ before copying into ignored `data/raw/`. It never overwrites tracked inputs.
 Scoped `.gitattributes` rules force manifested CSV/JSON inputs to LF on Windows
 and Unix; hashes and sizes describe those checkout bytes. Spatial installation
 belongs to setup because offline preflight only loads an existing extension.
+
+Publication in `release.yml` uses `apemap release recipe inputs-restore` and
+`apemap release recipe build` with the same committed historical recipe used
+locally. It requires an approved historical input-bundle URL: the standard asset
+above does not include longitudinal ACARA. Every restored raw file is checked
+against the recipe's pinned manifest before copying. The workflow repeats the
+build, compares metadata and artifact hashes, strictly verifies privacy/integrity,
+and uses the deterministic Python packager. See
+[the release path](decisions-to-release.md) for pinning/provisioning and trigger inputs.
 
 The CI workflow is configured in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) and comprises four specialized jobs:
 

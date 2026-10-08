@@ -65,7 +65,7 @@ The `apemap release` command group provides tools for building, verifying, and c
 
 For saved decision updates, first follow [Decisions to a new release](decisions-to-release.md).
 `release build` exports an existing database; it does not ingest sources or apply
-new ledger entries. Use the historical rebuild for the longitudinal dataset, then
+new ledger entries. Use `release recipe build` for the longitudinal dataset, then
 verify and package the resulting bundle.
 
 ### 3.1. Build a Release (`apemap release build`)
@@ -152,12 +152,27 @@ the bundled `SHA256SUMS` checks individual payloads.
 
 Dataset releases are published automatically via GitHub Actions ([`.github/workflows/release.yml`](../.github/workflows/release.yml)).
 
-The current workflow rebuilds the **standard** pinned pipeline with 2021 finance
-analysis; it does not upload a local candidate or run the historical longitudinal
-recipe. Historical 0.3.3 is delivered as an unpublished draft. Public publication
-requires merging the reviewed sources and reviewing a workflow that reproduces
-the historical inputs and 2024 finance analysis. Do not dispatch the standard
-workflow expecting it to upload those historical bytes. See the
+Local and Actions releases use the same committed historical recipe through
+`apemap release recipe build --recipe <recipe.json> --version <unused-version>
+--db-path <fresh-db> --output-dir <fresh-release>`. The effective recipe records
+parliaments/cohort, source and ledger SHA-256 pins, ACARA/profile years, latest-profile
+selection, finance/ABS/AEC years, package/dataset versions and web/analysis contracts
+in both the release manifest and web metadata. The build copies the pinned ledger
+for both ingestion stages, verifies sources offline and explicitly pins the tracked 2021 finance
+GeoPackage; public exports exclude restricted finance fields. The source manifest timestamp fixes generated timestamps.
+
+Workflow dispatch requires the committed recipe path and an approved historical
+input archive URL. Tag runs use `APEMAP_RELEASE_RECIPE` (defaulting to the checked-in
+historical recipe) and `APEMAP_HISTORICAL_INPUTS_URL` repository variables. Historical
+ACARA is absent from the standard input asset; provision a bundle with `release
+recipe inputs-bundle` and have it uploaded separately before publication. Restore
+verifies exact inventory, sizes and each file's pinned hash before copying raw
+files. Missing inputs, changed review pins and unsupported source years fail.
+
+Actions builds the recipe twice and runs `release recipe compare` before strict
+privacy verification and deterministic packaging. The comparison requires identical
+metadata and payload hashes at the same commit/version. Existing releases retain
+their original metadata and bytes. See the
 [publication checklist](review-update-publish.md#10-publish-the-approved-dataset).
 
 ### Guardrails:

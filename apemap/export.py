@@ -299,7 +299,9 @@ def export_spatial_geojson(
         }
 
         geojson_path = out_dir / f"parliament_{p}_combined.geojson"
-        geojson_path.write_text(json.dumps(geojson_data, indent=2), encoding="utf-8")
+        geojson_path.write_text(
+            json.dumps(geojson_data, indent=2), newline="\n", encoding="utf-8"
+        )
         exported[p] = geojson_path
         logger.info(
             "Exported Parliament %d GeoJSON layer to %s (%d features)",
@@ -458,7 +460,9 @@ def export_results_summary(
 
     target_path = out_dir / "results-summary.json"
     target_path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        newline="\n",
+        encoding="utf-8",
     )
     logger.info("Exported results summary to %s", target_path)
     return target_path
@@ -909,6 +913,7 @@ def export_web_schools_geojson(
             indent=2,
         )
         + "\n",
+        newline="\n",
         encoding="utf-8",
     )
     return target
@@ -952,7 +957,7 @@ def export_research_downloads(
         """,
         [target_parls],
     ).df()
-    edu_df.to_csv(csv_path, index=False, encoding="utf-8")
+    edu_df.to_csv(csv_path, index=False, encoding="utf-8", lineterminator="\n")
 
     # 2. school-profiles.parquet
     parquet_path = downloads_dir / "school-profiles.parquet"
@@ -1058,7 +1063,9 @@ def export_web_release_manifest(
 
     manifest_path = out_dir / "manifest.json"
     manifest_path.write_text(
-        json.dumps(manifest_data, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(manifest_data, indent=2, sort_keys=True) + "\n",
+        newline="\n",
+        encoding="utf-8",
     )
     logger.info("Exported release manifest to %s", manifest_path)
     return manifest_path
