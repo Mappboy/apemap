@@ -9,6 +9,11 @@ from __future__ import annotations
 from apemap.constants import supported_parliaments
 from apemap.constants import PARLIAMENT_METADATA, TEMPORAL_WARNING, select_parliaments
 from apemap.coverage import export_parliament_coverage
+from apemap.contracts import (
+    WEB_SCHEMA_VERSION,
+    SUCCESSOR_FOOTNOTE,
+    SUCCESSOR_LOCATION_WARNING,
+)
 
 from collections.abc import Mapping
 from datetime import date, datetime, timezone
@@ -30,6 +35,7 @@ from apemap.analysis import (
 )
 from apemap.constants import PROCESSED_DIR, PROJECT_ROOT
 from apemap.db import export_to_parquet
+from apemap.education_context import resolve_school_display_locations
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +88,7 @@ def export_spatial_geojson(
 
     exported: dict[int, Path] = {}
 
-    query = """
+    query = f"""
     SELECT
         education_id,
         service_id,
@@ -101,15 +107,15 @@ def export_spatial_geojson(
         is_current_member,
         institution_id,
         acara_id,
-        school_name,
+        attended_school_name AS school_name,
         school_type,
         school_sector,
         campus_type,
         school_state,
         school_suburb,
         school_postcode,
-        longitude,
-        latitude,
+        display_longitude AS longitude,
+        display_latitude AS latitude,
         years_attended,
         graduation_year,
         attended_status,
@@ -123,11 +129,13 @@ def export_spatial_geojson(
         institution_resolution,
         resolution_source_url,
         snapshot_year,
-        historical_2021_net_recurrent_income_per_student
+        historical_2021_net_recurrent_income_per_student,
+        {", ".join(CONTEXT_COLUMNS)},
+        {", ".join(HISTORICAL_EVIDENCE_COLUMNS)}
     FROM v_member_secondary_education
     WHERE parliament_number = ?
-      AND longitude IS NOT NULL
-      AND latitude IS NOT NULL
+      AND display_longitude IS NOT NULL
+      AND display_latitude IS NOT NULL
       AND (? = 'all_service' OR is_opening_day_member)
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY education_id, service_id ORDER BY snapshot_year DESC NULLS LAST
@@ -179,7 +187,7 @@ def export_spatial_geojson(
                 "state_or_territory": row["state_or_territory"],
                 "is_opening_day_member": bool(row["is_opening_day_member"]),
                 "is_current_member": bool(row["is_current_member"]),
-                "institution_id": row["institution_id"],
+                "institution_id": row["attended_school_id"] or row["education_id"],
                 "acara_id": row["acara_id"],
                 "school_name": row["school_name"],
                 "school_type": row["school_type"],
@@ -205,7 +213,10 @@ def export_spatial_geojson(
                 else None,
             }
 
-            # Retrieve finance estimate or observed value for 2024
+            props.update({key: row[key] for key in CONTEXT_COLUMNS})
+            props.update({key: row[key] for key in HISTORICAL_EVIDENCE_COLUMNS})
+            # Finance context is independent of the attendance location.
+            # Retrieve finance estimate or observed value for the requested year
             inst_id = str(row["institution_id"])
             if inst_id not in finance_cache:
                 finance_cache[inst_id] = compute_school_finance_estimate(
@@ -386,33 +397,21 @@ def export_results_summary(
     for p in target_parls:
         sec = compute_sector_summary(conn, p)
 
-        # Unique school counts and mapped coordinates
-        schools_query = """
-        SELECT
-            i.institution_id,
-            i.sector,
-            i.longitude,
-            i.latitude,
-            profiles.profile_year
-        FROM member_education me
-        JOIN institutions i ON me.institution_id = i.institution_id
-        JOIN parliament_service ps ON me.member_id = ps.member_id
-        LEFT JOIN (
-            SELECT institution_id, MAX(snapshot_year) AS profile_year
-            FROM school_snapshots GROUP BY institution_id
-        ) profiles ON i.institution_id = profiles.institution_id
-        WHERE me.level = 'secondary'
-          AND ps.parliament_number = ?
-          AND ps.is_opening_day_member = TRUE
-        GROUP BY i.institution_id, i.sector, i.longitude, i.latitude, profiles.profile_year
-        """
-        school_rows = conn.execute(schools_query, [p]).fetchall()
-        total_schools = len(school_rows)
+        schools = web_school_records(conn, [p])
+        total_schools = len(schools)
         mapped_count = sum(
-            1 for r in school_rows if r[2] is not None and r[3] is not None
+            school["longitude"] is not None and school["latitude"] is not None
+            for school in schools.values()
         )
         unmapped_count = total_schools - mapped_count
-        profile_years = sorted({r[4] for r in school_rows if r[4] is not None})
+        profile_years = sorted(
+            {
+                provider["profile_year"]
+                for school in schools.values()
+                for provider in school["provider_contexts"]
+                if provider["profile_year"] is not None
+            }
+        )
         benchmark_years = {
             row["benchmark_year"] for row in sec["benchmark_comparison"].values()
         }
@@ -438,6 +437,7 @@ def export_results_summary(
             ],
             "mapped_schools_count": mapped_count,
             "unmapped_schools_count": unmapped_count,
+            "successor_sensitivity": sec.get("successor_sensitivity", {}),
             "source_years": {
                 "abs_benchmark_year": next(iter(benchmark_years))
                 if len(benchmark_years) == 1
@@ -448,7 +448,7 @@ def export_results_summary(
         }
 
     payload = {
-        "web_schema_version": "1.0.0",
+        "web_schema_version": WEB_SCHEMA_VERSION,
         "cohort": "opening_day",
         "supported_parliaments": supported_parliaments(),
         "parliament_metadata": {str(p): PARLIAMENT_METADATA[p] for p in target_parls},
@@ -464,6 +464,411 @@ def export_results_summary(
     return target_path
 
 
+PROFILE_COLUMNS = (
+    "total_enrolments",
+    "girls_enrolments",
+    "boys_enrolments",
+    "fte_enrolments",
+    "icsea",
+    "icsea_percentile",
+    "sea_bottom_quarter_pct",
+    "sea_lower_middle_quarter_pct",
+    "sea_upper_middle_quarter_pct",
+    "sea_top_quarter_pct",
+    "indigenous_enrolments_pct",
+    "lbote_pct",
+    "year_range",
+    "remoteness_category",
+)
+CONTEXT_COLUMNS = (
+    "attended_school_id",
+    "attended_school_name",
+    "identity_basis",
+    "attended_institution_id",
+    "resolved_institution_id",
+    "resolved_institution_name",
+    "is_successor",
+    "location_basis",
+    "location_source_url",
+    "attendance_longitude",
+    "attendance_latitude",
+    "attendance_location_eligible",
+    "broad_sector",
+    "detailed_sector",
+    "sector_basis",
+    "detailed_sector_basis",
+    "sector_source_url",
+    "detailed_sector_source_url",
+    "sector_conflict",
+    "location_conflict",
+    "campus_continuity_conflict",
+    "continuity_discrepancy",
+    "profile_institution_id",
+    "profile_basis",
+    "finance_institution_id",
+    "finance_basis",
+)
+HISTORICAL_EVIDENCE_COLUMNS = (
+    "recorded_school_id",
+    "attended_identity_source_url",
+    "historical_scope_confirmed",
+    "historical_latitude",
+    "historical_longitude",
+    "historical_location_source_url",
+    "campus_continuity",
+    "campus_continuity_source_url",
+    "historical_broad_sector",
+    "historical_broad_sector_source_url",
+    "historical_detailed_sector",
+    "historical_detailed_sector_source_url",
+)
+EVIDENCE_COLUMNS = (
+    *HISTORICAL_EVIDENCE_COLUMNS,
+    "education_id",
+    "member_id",
+    "school_name_as_recorded",
+    "source_url",
+    "retrieved_at",
+    "confidence",
+    "attended_status",
+    "institution_resolution",
+    "resolution_source_url",
+)
+
+
+def web_education_context_rows(
+    conn: duckdb.DuckDBPyConnection, parliaments: list[int]
+) -> list[dict[str, Any]]:
+    """Read assertions with opening-day service and independent reviewed context."""
+    cursor = conn.execute(
+        """SELECT c.*, i.acara_id AS resolved_acara_id,
+            i.state AS resolved_state, i.suburb AS resolved_suburb,
+            i.postcode AS resolved_postcode, i.school_type AS resolved_school_type,
+            i.campus_type AS resolved_campus_type,
+            original.state AS original_state, original.suburb AS original_suburb,
+            original.postcode AS original_postcode, original.school_type AS original_school_type,
+            original.campus_type AS original_campus_type,
+            m.display_name AS member_name, ps.service_id, ps.parliament_number,
+            ps.party, ps.party_abbrev, ps.chamber
+        FROM v_education_attendance_context c
+        JOIN institutions i ON c.resolved_institution_id = i.institution_id
+        LEFT JOIN institutions original ON c.attended_institution_id = original.institution_id
+        JOIN members m ON c.member_id = m.member_id
+        JOIN parliament_service ps ON c.member_id = ps.member_id
+        WHERE c.level = 'secondary'
+          AND ps.parliament_number IN (SELECT UNNEST(?)) AND ps.is_opening_day_member
+        ORDER BY c.attended_school_id, c.education_id, ps.parliament_number, ps.service_id""",
+        [parliaments],
+    )
+    names = [column[0] for column in cursor.description]
+    return [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+
+
+def merge_school_contexts(
+    school: dict[str, Any], contexts: list[dict[str, Any]]
+) -> None:
+    """Retain assertion providers and suppress ambiguous aggregate dimensions."""
+    provider_keys = (
+        "resolved_institution_id",
+        "resolved_institution_name",
+        "profile_institution_id",
+        "profile_basis",
+        "profile_year",
+        "finance_institution_id",
+        "finance_basis",
+        "finance_year",
+        "finance_status",
+    )
+    providers: list[dict[str, Any]] = []
+    for context in contexts:
+        provider = {key: context[key] for key in provider_keys}
+        if provider not in providers:
+            providers.append(provider)
+    providers.sort(
+        key=lambda provider: (
+            provider["resolved_institution_id"] or "",
+            provider["profile_basis"],
+            provider["profile_year"] or -1,
+            provider["finance_basis"],
+            provider["finance_year"] or -1,
+            provider["finance_status"] or "",
+        )
+    )
+    school["provider_contexts"] = providers
+    identity_rank = {
+        "original_verified": 4,
+        "original_reference": 3,
+        "recorded_name_provisional": 2,
+        "unresolved": 0,
+    }
+    identity = max(
+        contexts,
+        key=lambda context: (
+            identity_rank[context["identity_basis"]],
+            context["school_name"],
+        ),
+    )
+    for key in ("identity_basis", "attended_school_name", "school_name"):
+        school[key] = identity[key]
+    original_ids = {
+        context["attended_institution_id"]
+        for context in contexts
+        if context["attended_institution_id"] is not None
+    }
+    school["attended_institution_id"] = (
+        next(iter(original_ids)) if len(original_ids) == 1 else None
+    )
+    school["is_successor"] = any(context["is_successor"] for context in contexts)
+    for flag in (
+        "sector_conflict",
+        "location_conflict",
+        "campus_continuity_conflict",
+        "continuity_discrepancy",
+    ):
+        school[flag] = any(context[flag] for context in contexts)
+    if len({context["resolved_institution_id"] for context in contexts}) > 1:
+        for key in (
+            *PROFILE_COLUMNS,
+            "resolved_institution_id",
+            "acara_id",
+            "profile_institution_id",
+            "finance_institution_id",
+            "finance_value",
+            "finance_metric",
+            "finance_status",
+            "finance_method",
+            "finance_source",
+            "profile_year",
+            "finance_year",
+            "resolved_state",
+            "resolved_suburb",
+            "resolved_postcode",
+        ):
+            school[key] = None
+        school["resolved_institution_name"] = " / ".join(
+            sorted({context["resolved_institution_name"] for context in contexts})
+        )
+        school["profile_basis"] = school["finance_basis"] = "multiple_providers"
+    for value_key, basis_key, source_key in (
+        ("broad_sector", "sector_basis", "sector_source_url"),
+        ("detailed_sector", "detailed_sector_basis", "detailed_sector_source_url"),
+    ):
+        known = [context for context in contexts if context[value_key] is not None]
+        values = {context[value_key] for context in known}
+        if len(values) > 1:
+            school[value_key], school[basis_key], school[source_key] = (
+                None,
+                "unresolved",
+                None,
+            )
+            school["sector_conflict"] = True
+        elif known:
+            rank = {
+                "historical_verified": 3,
+                "original_reference": 2,
+                "successor_assumption": 1,
+            }
+            chosen = max(known, key=lambda context: rank.get(context[basis_key], 0))
+            for key in (value_key, basis_key, source_key):
+                school[key] = chosen[key]
+    school["school_sector"] = school["detailed_sector"] or "Other"
+    school["government_non_government"] = school["broad_sector"] or "Other"
+    candidates, location_conflict = resolve_school_display_locations(contexts)
+    location_keys = (
+        "location_basis",
+        "longitude",
+        "latitude",
+        "attendance_longitude",
+        "attendance_latitude",
+        "attendance_location_eligible",
+        "location_source_url",
+        "location_institution_id",
+        "location_institution_name",
+        "state",
+        "suburb",
+        "postcode",
+        "location_warning",
+    )
+    if location_conflict:
+        for key in location_keys:
+            school[key] = None
+        school["location_basis"] = "unresolved"
+        school["attendance_location_eligible"] = False
+        school["location_conflict"] = True
+    else:
+        for key in location_keys:
+            values = {context[key] for context in candidates}
+            school[key] = next(iter(values)) if len(values) == 1 else None
+        school["location_source_url"] = min(
+            (
+                context["location_source_url"]
+                for context in candidates
+                if context["location_source_url"]
+            ),
+            default=None,
+        )
+    school["display_school_name"] = (
+        f"{school['school_name']} → {school['resolved_institution_name']}*"
+        if school["is_successor"]
+        else school["school_name"]
+    )
+    school["successor_footnote"] = (
+        SUCCESSOR_FOOTNOTE if school["is_successor"] else None
+    )
+
+
+def web_school_records(
+    conn: duckdb.DuckDBPyConnection,
+    parliaments: list[int],
+    finance_reporting_year: int = 2024,
+) -> dict[str, dict[str, Any]]:
+    """Build complete attended-school records; coordinates only govern map display."""
+    cursor = conn.execute(
+        """SELECT * FROM school_snapshots QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY institution_id ORDER BY snapshot_year DESC) = 1"""
+    )
+    names = [column[0] for column in cursor.description]
+    snapshots = {
+        row[0]: dict(zip(names, row, strict=True)) for row in cursor.fetchall()
+    }
+    peer_metrics = backtest_finance_benchmarks(conn).get("peer_group_metrics", {})
+    finance: dict[str, dict[str, Any]] = {}
+    schools: dict[str, dict[str, Any]] = {}
+    contexts_by_school: dict[str, list[dict[str, Any]]] = {}
+    assertion_ids: dict[str, set[str]] = {}
+    members: dict[str, dict[str, dict[str, Any]]] = {}
+    for row in web_education_context_rows(conn, parliaments):
+        # A legacy assertion lacking a portable original ID is still searchable,
+        # but must not merge with other unresolved assertions.
+        iid = row["attended_school_id"] or row["education_id"]
+        profile_id, finance_id = (
+            row["profile_institution_id"],
+            row["finance_institution_id"],
+        )
+        if finance_id not in finance:
+            finance[finance_id] = compute_school_finance_estimate(
+                conn,
+                finance_id,
+                target_year=finance_reporting_year,
+                peer_group_metrics=peer_metrics,
+            )
+        fin = finance[finance_id]
+        snap = snapshots.get(profile_id, {})
+        school = {key: row[key] for key in CONTEXT_COLUMNS}
+        school.update({key: snap.get(key) for key in PROFILE_COLUMNS})
+        original_location = row["location_basis"] == "original_verified" or (
+            row["is_successor"] and row["location_basis"] == "unresolved"
+        )
+        locality = "original" if original_location else "resolved"
+        attended_name = (
+            row["attended_school_name"]
+            or row["school_name_as_recorded"]
+            or ("Original school unknown" if row["is_successor"] else "Unknown school")
+        )
+        school.update(
+            {
+                "institution_id": iid,
+                "acara_id": row["resolved_acara_id"],
+                "school_name": attended_name,
+                "display_school_name": (
+                    f"{attended_name} → {row['resolved_institution_name']}*"
+                    if row["is_successor"]
+                    else row["attended_school_name"]
+                    or row["school_name_as_recorded"]
+                    or "Unknown school"
+                ),
+                "school_sector": row["detailed_sector"] or "Other",
+                "government_non_government": row["broad_sector"] or "Other",
+                "school_type": row[f"{locality}_school_type"],
+                "campus_type": row[f"{locality}_campus_type"],
+                "state": row[f"{locality}_state"],
+                "suburb": row[f"{locality}_suburb"],
+                "postcode": row[f"{locality}_postcode"],
+                "resolved_state": row["resolved_state"],
+                "resolved_suburb": row["resolved_suburb"],
+                "resolved_postcode": row["resolved_postcode"],
+                "location_institution_id": row["attended_institution_id"]
+                if original_location
+                else row["resolved_institution_id"],
+                "location_institution_name": row["attended_school_name"]
+                if original_location
+                else row["resolved_institution_name"],
+                "longitude": row["display_longitude"],
+                "latitude": row["display_latitude"],
+                "profile_year": snap.get("snapshot_year"),
+                "finance_year": fin.get("reporting_year"),
+                "finance_metric": fin.get("metric"),
+                "finance_value": fin.get("value"),
+                "finance_status": fin.get("status"),
+                "finance_method": fin.get("method"),
+                "finance_source": fin.get("source"),
+                "temporal_warning": TEMPORAL_WARNING,
+                "successor_footnote": SUCCESSOR_FOOTNOTE
+                if row["is_successor"]
+                else None,
+                "location_warning": SUCCESSOR_LOCATION_WARNING
+                if row["location_basis"] == "successor_unverified"
+                else None,
+                "education_assertions": [],
+                "parliaments": [],
+            }
+        )
+        incoming = school
+        incoming.pop("education_assertions")
+        incoming.pop("parliaments")
+        if iid not in schools:
+            schools[iid] = {**incoming, "education_assertions": [], "parliaments": []}
+            assertion_ids[iid], members[iid] = set(), {}
+        if incoming not in contexts_by_school.setdefault(iid, []):
+            contexts_by_school[iid].append(incoming)
+        school = schools[iid]
+        if row["education_id"] not in assertion_ids[iid]:
+            evidence = {**incoming, **{key: row[key] for key in EVIDENCE_COLUMNS}}
+            if evidence["retrieved_at"] is not None:
+                evidence["retrieved_at"] = evidence["retrieved_at"].isoformat()
+            school["education_assertions"].append(evidence)
+            assertion_ids[iid].add(row["education_id"])
+        pnum = row["parliament_number"]
+        if pnum not in school["parliaments"]:
+            school["parliaments"].append(pnum)
+        person = members[iid].setdefault(
+            row["member_id"],
+            {
+                "member_id": row["member_id"],
+                "name": row["member_name"],
+                "parliaments": [],
+                "services": [],
+            },
+        )
+        if pnum not in person["parliaments"]:
+            person["parliaments"].append(pnum)
+        if not any(
+            service["service_id"] == row["service_id"] for service in person["services"]
+        ):
+            person["services"].append(
+                {
+                    key: row[key]
+                    for key in (
+                        "service_id",
+                        "parliament_number",
+                        "party",
+                        "party_abbrev",
+                        "chamber",
+                    )
+                }
+            )
+    for iid, school in schools.items():
+        merge_school_contexts(school, contexts_by_school[iid])
+        school["parliaments"].sort()
+        school["members"] = sorted(
+            members[iid].values(), key=lambda m: (m["name"], m["member_id"])
+        )
+        school["member_count"] = len(school["members"])
+        for person in school["members"]:
+            person["parliaments"].sort()
+    return schools
+
+
 def export_web_schools_geojson(
     conn: duckdb.DuckDBPyConnection,
     output_dir: Path | str | None = None,
@@ -471,269 +876,42 @@ def export_web_schools_geojson(
     *,
     finance_reporting_year: int = 2024,
 ) -> Path:
-    """Export deduplicated school-level GeoJSON with attendance context for explorer.
-
-    Produces one GeoJSON Feature per unique educational institution.
-
-    Args:
-        conn: DuckDB database connection.
-        output_dir: Destination directory.
-        parliaments: Target parliament numbers.
-
-    Returns:
-        Path to generated schools.geojson.
-    """
+    """Export one mapped feature per distinct attended school, retaining context."""
     out_dir = Path(output_dir or PROCESSED_DIR).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    target_parls = _web_parliaments(parliaments)
-
-    schools_query = """
-    SELECT DISTINCT
-        i.institution_id,
-        i.acara_id,
-        i.school_name,
-        i.sector AS school_sector,
-        CASE
-            WHEN i.sector = 'Government' THEN 'Government'
-            WHEN i.sector IN ('Catholic', 'Independent') THEN 'Non-government'
-            ELSE 'Other'
-        END AS government_non_government,
-        i.school_type,
-        i.campus_type,
-        i.state,
-        i.suburb,
-        i.postcode,
-        i.longitude,
-        i.latitude
-    FROM member_education me
-    JOIN institutions i ON me.institution_id = i.institution_id
-    JOIN parliament_service ps ON me.member_id = ps.member_id
-    WHERE me.level = 'secondary'
-      AND ps.parliament_number IN (SELECT UNNEST(?))
-      AND ps.is_opening_day_member = TRUE
-      AND i.longitude IS NOT NULL
-      AND i.latitude IS NOT NULL
-    ORDER BY i.school_name, i.institution_id
-    """
-    school_rows = conn.execute(schools_query, [target_parls]).fetchall()
-    peer_metrics = backtest_finance_benchmarks(conn).get("peer_group_metrics", {})
-
-    # Load latest snapshot metrics per institution
-    snapshots_by_inst: dict[str, dict[str, Any]] = {}
-    snap_rows = conn.execute(
-        """
-        SELECT
-            institution_id,
-            snapshot_year,
-            total_enrolments,
-            girls_enrolments,
-            boys_enrolments,
-            fte_enrolments,
-            icsea,
-            icsea_percentile,
-            sea_bottom_quarter_pct,
-            sea_lower_middle_quarter_pct,
-            sea_upper_middle_quarter_pct,
-            sea_top_quarter_pct,
-            indigenous_enrolments_pct,
-            lbote_pct,
-            year_range,
-            remoteness_category
-        FROM school_snapshots
-        QUALIFY ROW_NUMBER() OVER (
-            PARTITION BY institution_id ORDER BY snapshot_year DESC
-        ) = 1
-        ORDER BY institution_id
-        """
-    ).fetchall()
-    for s in snap_rows:
-        iid = s[0]
-        if iid not in snapshots_by_inst:
-            snapshots_by_inst[iid] = {
-                "profile_year": s[1],
-                "total_enrolments": s[2],
-                "girls_enrolments": s[3],
-                "boys_enrolments": s[4],
-                "fte_enrolments": s[5],
-                "icsea": s[6],
-                "icsea_percentile": s[7],
-                "sea_bottom_quarter_pct": s[8],
-                "sea_lower_middle_quarter_pct": s[9],
-                "sea_upper_middle_quarter_pct": s[10],
-                "sea_top_quarter_pct": s[11],
-                "indigenous_enrolments_pct": s[12],
-                "lbote_pct": s[13],
-                "year_range": s[14],
-                "remoteness_category": s[15],
-            }
-
-    # Load parliamentarian attendances for these schools
-    att_query = """
-    SELECT DISTINCT
-        me.institution_id,
-        m.member_id,
-        m.display_name,
-        ps.party,
-        ps.party_abbrev,
-        ps.chamber,
-        ps.parliament_number,
-        ps.service_id
-    FROM member_education me
-    JOIN members m ON me.member_id = m.member_id
-    JOIN parliament_service ps ON m.member_id = ps.member_id
-    WHERE me.level = 'secondary'
-      AND ps.parliament_number IN (SELECT UNNEST(?))
-      AND ps.is_opening_day_member = TRUE
-    ORDER BY me.institution_id, m.display_name, m.member_id, ps.parliament_number, ps.service_id
-    """
-    members_by_inst: dict[str, dict[str, dict[str, Any]]] = {}
-    parliaments_by_inst: dict[str, set[int]] = {}
-    assertions_by_inst: dict[str, list[dict[str, Any]]] = {}
-    evidence_columns = [
-        "institution_id",
-        "education_id",
-        "member_id",
-        "school_name_as_recorded",
-        "source_url",
-        "retrieved_at",
-        "confidence",
-        "attended_status",
-        "institution_resolution",
-        "resolution_source_url",
-    ]
-    evidence_rows = conn.execute(
-        """SELECT DISTINCT me.institution_id, me.education_id, me.member_id,
-        me.school_name_as_recorded, me.source_url, me.retrieved_at, me.confidence,
-        me.attended_status, me.institution_resolution, me.resolution_source_url
-        FROM member_education me WHERE me.level='secondary' AND EXISTS (
-            SELECT 1 FROM parliament_service ps WHERE ps.member_id=me.member_id
-            AND ps.parliament_number IN (SELECT UNNEST(?)) AND ps.is_opening_day_member)
-        ORDER BY me.institution_id, me.education_id""",
-        [target_parls],
-    ).fetchall()
-    for evidence_row in evidence_rows:
-        evidence = dict(zip(evidence_columns, evidence_row, strict=True))
-        if evidence["retrieved_at"]:
-            evidence["retrieved_at"] = evidence["retrieved_at"].isoformat()
-        iid = evidence.pop("institution_id")
-        assertions_by_inst.setdefault(iid, []).append(evidence)
-
-    for row in conn.execute(att_query, [target_parls]).fetchall():
-        iid, mid, name, party, abbrev, chamber, pnum, service_id = row
-        parliaments_by_inst.setdefault(iid, set()).add(pnum)
-        inst_mems = members_by_inst.setdefault(iid, {})
-        if mid not in inst_mems:
-            inst_mems[mid] = {
-                "member_id": mid,
-                "name": name,
-                "parliaments": [],
-                "services": [],
-            }
-        member = inst_mems[mid]
-        if pnum not in member["parliaments"]:
-            member["parliaments"].append(pnum)
-        member["services"].append(
-            {
-                "service_id": service_id,
-                "parliament_number": pnum,
-                "party": party,
-                "party_abbrev": abbrev,
-                "chamber": chamber,
-            }
-        )
-
-    features: list[dict[str, Any]] = []
-    for s in school_rows:
-        iid = s[0]
-        aid = s[1]
-        name = s[2]
-        sector = s[3]
-        gov_non_gov = s[4]
-        stype = s[5]
-        campus = s[6]
-        state = s[7]
-        suburb = s[8]
-        postcode = s[9]
-        lon = float(s[10])
-        lat = float(s[11])
-
-        snap = snapshots_by_inst.get(iid, {})
-        mems = list(members_by_inst.get(iid, {}).values())
-        parls = sorted(parliaments_by_inst.get(iid, set()))
-
-        fin_est = compute_school_finance_estimate(
-            conn,
-            iid,
-            target_year=finance_reporting_year,
-            peer_group_metrics=peer_metrics,
-        )
-
-        props: dict[str, Any] = {
-            "institution_id": iid,
-            "acara_id": aid,
-            "school_name": name,
-            "school_sector": sector,
-            "government_non_government": gov_non_gov,
-            "school_type": stype,
-            "campus_type": campus,
-            "year_range": snap.get("year_range"),
-            "state": state,
-            "suburb": suburb,
-            "postcode": postcode,
-            "remoteness_category": snap.get("remoteness_category"),
-            "longitude": lon,
-            "latitude": lat,
-            "profile_year": snap.get("profile_year"),
-            "total_enrolments": snap.get("total_enrolments"),
-            "girls_enrolments": snap.get("girls_enrolments"),
-            "boys_enrolments": snap.get("boys_enrolments"),
-            "fte_enrolments": snap.get("fte_enrolments"),
-            "icsea": snap.get("icsea"),
-            "icsea_percentile": snap.get("icsea_percentile"),
-            "sea_bottom_quarter_pct": snap.get("sea_bottom_quarter_pct"),
-            "sea_lower_middle_quarter_pct": snap.get("sea_lower_middle_quarter_pct"),
-            "sea_upper_middle_quarter_pct": snap.get("sea_upper_middle_quarter_pct"),
-            "sea_top_quarter_pct": snap.get("sea_top_quarter_pct"),
-            "indigenous_enrolments_pct": snap.get("indigenous_enrolments_pct"),
-            "lbote_pct": snap.get("lbote_pct"),
-            "member_count": len(mems),
-            "members": mems,
-            "education_assertions": assertions_by_inst.get(iid, []),
-            "parliaments": parls,
-            "finance_year": fin_est.get("reporting_year"),
-            "finance_metric": fin_est.get("metric"),
-            "finance_value": fin_est.get("value"),
-            "finance_status": fin_est.get("status"),
-            "finance_method": fin_est.get("method"),
-            "finance_source": fin_est.get("source"),
-            "temporal_warning": TEMPORAL_WARNING,
+    schools = web_school_records(
+        conn, _web_parliaments(parliaments), finance_reporting_year
+    )
+    features = [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [school["longitude"], school["latitude"]],
+            },
+            "properties": school,
         }
-
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [lon, lat],
-                },
-                "properties": props,
-            }
+        for school in sorted(
+            schools.values(),
+            key=lambda school: (school["school_name"], school["institution_id"]),
         )
-
-    geojson_data = {
-        "type": "FeatureCollection",
-        "name": "schools",
-        "crs": {
-            "type": "name",
-            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
-        },
-        "features": features,
-    }
-
-    target_path = out_dir / "schools.geojson"
-    target_path.write_text(json.dumps(geojson_data, indent=2) + "\n", encoding="utf-8")
-    logger.info("Exported %d school features to %s", len(features), target_path)
-    return target_path
+        if school["longitude"] is not None and school["latitude"] is not None
+    ]
+    target = out_dir / "schools.geojson"
+    target.write_text(
+        json.dumps(
+            {
+                "web_schema_version": WEB_SCHEMA_VERSION,
+                "type": "FeatureCollection",
+                "name": "schools",
+                "features": features,
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return target
 
 
 def export_research_downloads(
@@ -857,7 +1035,7 @@ def export_web_release_manifest(
         gen_timestamp = datetime.now(timezone.utc).isoformat()
 
     manifest_data = {
-        "web_schema_version": "1.0.0",
+        "web_schema_version": WEB_SCHEMA_VERSION,
         "data_release_version": data_release_version,
         "source_commit": commit_sha,
         "generated_at": gen_timestamp,

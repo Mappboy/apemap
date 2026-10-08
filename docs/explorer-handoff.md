@@ -6,16 +6,23 @@ Cloudflare/R2 and mobile runtime performance checks in cpoole-dev.
 
 ## Join and filter rules
 
+Schema 2.0.0 changes school joins to attended identity; migrate the pinned release
+and its joins together. The [successor context policy](successor-context.md)
+specifies the evidence and interpretation rules. `institution_id` in web records
+is the school-list key, with `attended_school_id` its explicit identity and
+`resolved_institution_id` the profile/finance counterpart. Preserve separate
+predecessors sharing a successor or point; never deduplicate by coordinates.
+
 - Read selected terms from `web/metadata.json`. Default to its highest available
   parliament; opening-day service is the common chart/list/map cohort.
 - `web/members.json` has one person per parliament. Its `schools` can contain
   several attendance assertions; deduplicate by institution ID for list display.
   Members without recorded schooling have an empty schools array and stay visible
   when no school-sector filter is active.
-- Union those member-school records for the complete school list. Enrich mapped
-  IDs from `web/schools.geojson`; retain unmapped IDs with name, sector and state.
-  Retrieve additional unmapped profiles from research tables at build time only
-  if needed. Do not infer a profile from another school’s coordinates/name.
+- Union those member-school records for the complete school list, including their
+  actual profile context and independent evidence flags. Enrich mapped IDs from
+  `web/schools.geojson`; retain unmapped IDs and their attendance records. Profile
+  and finance providers are explicit; never infer them from coordinates or names.
 - Party and chamber belong to a parliament service. When using GeoJSON arrays,
   require parliament, party and chamber to match the **same service entry**. Do
   not match party from one term and chamber from another. The reference uses the
@@ -90,6 +97,18 @@ production frontend work; these measurements justify retaining the simpler point
 format for the APEMAP handoff.
 
 ## Accessibility and failure states
+
+Use `display_school_name` (`Original → Successor*`) in list labels, selected
+details and the HTML fallback; display the shared `successor_footnote`. Search
+attended, recorded and resolved names. Draw `location_basis=successor_unverified`
+as a hollow point and show `location_warning` beside the result and in details.
+The successor campus is display context and has null attendance coordinates;
+it is ineligible for attendance geography. Original verified points take priority.
+Show sector, detailed-sector, location, profile and finance bases independently,
+with evidence links and actual reporting years. The reference omits finance
+values while retaining provider/year/status context. Production map, route and
+deployment changes belong in cpoole-dev; this repository supplies the migrated
+contract and offline reference without changing the deployed data pin.
 
 Mobile starts with search/list. Maps activate explicitly; never load MapLibre into
 the static editorial experience. Keep keyboard controls, focus movement to selected

@@ -54,6 +54,18 @@
 <label>Review notes<textarea name="notes" rows="3">{{ form_values.get('notes', '') }}</textarea></label>
 </section>
 <details><summary>Source record</summary>{% for record in school.source_records %}<p>{{ record.get('school_name', school.name) }} · {{ record.get('school_type') or 'Type unknown' }} · {{ record.get('sector') or 'Sector unknown' }} · {{ record.get('institution_status') or 'Status unknown' }}</p>{% else %}<p>No unmatched source record.</p>{% endfor %}</details>
+<section aria-label="Original school historical context"><h2>Original institution and historical facts</h2>
+<p>Optional for successor mappings. An original reference verifies school identity; it does not verify attendance-era location or sector. Use a historical ACARA reference or a sourced manual institution with a different identity from the successor.</p>
+{% if original_selected %}<p>Original reference: {{ original_selected.school_name }} · {{ original_selected.get('institution_ref', payload.get('attended_institution_ref')) }}. Register metadata is reference context.</p>{% endif %}
+{% for name, label, kind, options in context_fields %}
+{% if kind == 'checkbox' %}<label class="choice"><input type="checkbox" name="field_{{ name }}" value="1" {% if payload.get(name) in [true, '1', 'True'] %}checked{% endif %}>{{ label }}</label>
+{% elif kind == 'select' %}<label>{{ label }}<select name="field_{{ name }}"><option value="">Unknown / no historical evidence</option>{% for option in options %}<option value="{{ option }}" {% if payload.get(name) == option %}selected{% endif %}>{{ option | replace('_', ' ') }}</option>{% endfor %}</select></label>
+{% else %}<label>{{ label }}<input name="field_{{ name }}" type="{{ kind }}" {% if kind == 'number' %}step="any"{% endif %} value="{{ payload.get(name, '') if payload.get(name) is not none else '' }}"></label>{% endif %}
+{% endfor %}
+<p>Historical coordinates require their own location source. Same-campus continuity requires separate evidence. Government/non-government continuity and Catholic/Independent continuity are separate questions; leave details unknown when unsupported.</p>
+<p>Confirm evidence covers the complete school's associated attendance records and verified name aliases shown in the preview. Mixed-era or conflicting histories remain unresolved; this version does not support date ranges or per-person exceptions.</p>
+{% if item.context.get('verified_aliases') %}<p>Verified aliases:</p>{% for alias in item.context.verified_aliases %}<p><a href="{{ url_for('detail', review_id=alias.review_id) }}">{{ alias.recorded_name }}</a></p>{% endfor %}{% endif %}
+</section>
 <details><summary>Technical details</summary>
 <p><code>{{ item.review_id }}</code></p>
 <fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') != 'json' %}checked{% endif %}>Use the school chooser</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
@@ -77,6 +89,7 @@
 {% if canonical is not none %}{% set education = canonical.get('after', {}).get('member_education', {}) %}<h3>Affected education assertions</h3><p>{{ education.get('updated_count', 0) }} updated · {{ education.get('added_count', 0) }} added · {{ education.get('removed_count', 0) }} removed</p><div class="table-wrap"><table><thead><tr><th>Recorded school</th><th>Institution</th><th>Relationship</th></tr></thead><tbody>{% for row in education.get('after', []) %}<tr><td>{{ row.get('school_name_as_recorded', '') }}</td><td>{{ row.get('institution_id', '') }}</td><td>{{ row.get('institution_resolution', '') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p>{{ preview.changes.get('canonical_unavailable', 'Canonical preview unavailable: run review build') }}</p>{% endif %}
 {% for message in preview.validation %}<p>{{ message }}</p>{% endfor %}
 <details><summary>Detailed changes and recorded decision</summary><pre>{{ preview.changes | json_text }}</pre><pre>{{ event | json_text }}</pre></details>
+{% if preview.get('historical_context') %}<section aria-label="Historical evidence scope"><h3>School-wide evidence scope</h3><p>{{ preview.historical_context.scope }}</p>{% for case in preview.historical_context.cases %}<p><a href="{{ url_for('detail', review_id=case.review_id) }}">{{ case.recorded_name }}</a>{% for member in case.members %} · {{ member.display_name }}{% endfor %}</p>{% endfor %}{% for message in preview.historical_context.diagnostics %}<p class="notice" role="status">{{ message }}</p>{% endfor %}</section>{% endif %}
 <p>Dataset-wide totals describe the time of preview. Other school reviews may change those totals before saving.</p>
 <form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_token" value="{{ preview_token }}"><button type="submit" data-save-school>Save mapping</button></form>
 <p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence, this school's decisions or mapping effects require another preview.</p>

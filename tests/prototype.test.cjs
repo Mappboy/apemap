@@ -30,3 +30,24 @@ test('URL state roundtrips and invalid options reset',()=>{
   const invalid=api.parseState(payload,'#parliament=999&sector=Mixed&party=missing&chamber=invalid');
   assert.equal(invalid.parliament,48);assert.equal(invalid.sector,'');assert.equal(invalid.party,'');assert.equal(invalid.chamber,'');
 });
+
+test('successor names, original names and recorded aliases find distinct attended schools',()=>{
+  const shared={resolved_institution_id:'current',resolved_institution_name:'Current College',is_successor:true};
+  const contextual={
+    a:{...shared,institution_id:'a',school_name:'Original A',attended_school_name:'Original A',display_school_name:'Original A → Current College*',school_sector:'Other',coordinates:[141,-40],location_basis:'original_verified'},
+    b:{...shared,institution_id:'b',school_name:'Original B',attended_school_name:'Original B',display_school_name:'Original B → Current College*',school_sector:'Other',coordinates:[150,-35],location_basis:'successor_unverified'},
+    missing:{institution_id:'missing',school_name:'Missing location',coordinates:null,school_sector:'Other'}
+  };
+  const member=person('Attendee','TST','senate',['a','a','b','missing']);
+  member.schools[0].school_name_as_recorded='Old alias spelling';
+  const fixture={parliaments:[47],schools:contextual,members:{47:[member]}};
+  const state=api.parseState(fixture,'#parliament=47&q=current');
+  assert.deepEqual(Array.from(api.select(fixture,state).schools,s=>s.institution_id),['a','b']);
+  assert.equal(api.select(fixture,{...state,q:'old alias'}).schools[0].institution_id,'a');
+  assert.equal(api.select(fixture,{...state,q:'missing'}).schools[0].coordinates,null);
+  assert.equal(api.select(fixture,{...state,q:''}).schools[0].members.length,1);
+  assert.equal(api.schoolTitle(contextual.b),'Original B → Current College*');
+  assert.equal(api.markerStyle(contextual.a).fill,'#2f7142');
+  assert.equal(api.markerStyle(contextual.b).fill,'none');
+  assert.equal(api.markerStyle({...contextual.b,location_basis:'successor_verified_same_campus'}).fill,'#2f7142');
+});

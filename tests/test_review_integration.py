@@ -7,6 +7,8 @@ from datetime import date
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 from typing import TYPE_CHECKING, Any
 
 import duckdb
@@ -37,6 +39,25 @@ from apemap.review.store import StaleReviewError, encode_event
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
+
+
+def test_review_projection_imports_before_ingestion_pipeline() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import apemap.review.integration; "
+            "from apemap.ingest import run_aph_ingestion; "
+            "from apemap.ingest.pipeline import run_aph_ingestion as pipeline; "
+            "assert run_aph_ingestion is pipeline",
+        ],
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
 
 
 def event(
@@ -290,6 +311,69 @@ def test_compact_projection_ignores_unchanged_typed_values(
         impact["member_education"]["after"][0]["resolution_source_url"]
         == mapping.source_url
     )
+
+
+def test_read_only_legacy_projection_does_not_hash_blank_recorded_names(
+    seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
+) -> None:
+    conn, matcher = seeded_review
+    conn.execute(
+        "UPDATE review_source_member_education SET school_name_as_recorded = '   ', recorded_school_id = NULL"
+    )
+    projected = project_review_records(conn, [], matcher)
+    assert projected["member_education"][0]["recorded_school_id"] is None
+
+
+def test_original_context_replay_is_idempotent_and_supersession_clears_facts(
+    seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
+) -> None:
+    conn, matcher = seeded_review
+    mapping = event(
+        "school",
+        {
+            "recorded_name": "First High School",
+            "institution_ref": "acara:2",
+            "relationship_type": "successor",
+            "attended_institution_ref": "acara:1",
+            "attended_identity_source_url": "https://example.org/identity",
+            "historical_scope_confirmed": True,
+            "historical_latitude": -41,
+            "historical_longitude": 145,
+            "historical_location_source_url": "https://example.org/campus",
+            "historical_broad_sector": "Government",
+            "historical_broad_sector_source_url": "https://example.org/sector",
+        },
+    )
+    expected = project_review_records(conn, [mapping], matcher)
+    for _ in range(2):
+        conn.execute("BEGIN")
+        apply_review_events(conn, events=[mapping], matcher=matcher)
+        conn.execute("COMMIT")
+        assert project_review_records(conn, [mapping], matcher) == expected
+        assert conn.execute(
+            "SELECT attended_school_id, attendance_longitude, broad_sector FROM v_education_attendance_context"
+        ).fetchone() == ("acara-1", 145, "Government")
+    replacement = replace(
+        mapping,
+        decision_id="clear",
+        action="supersede",
+        replacement_action="map",
+        supersedes=[mapping.decision_id],
+        payload={
+            "recorded_name": "First High School",
+            "institution_ref": "acara:2",
+            "relationship_type": "successor",
+        },
+    )
+    conn.execute("BEGIN")
+    apply_review_events(conn, events=[mapping, replacement], matcher=matcher)
+    conn.execute("COMMIT")
+    assert conn.execute(
+        "SELECT attended_institution_id, historical_latitude, historical_broad_sector, historical_scope_confirmed FROM member_education"
+    ).fetchone() == (None, None, None, None)
+    assert conn.execute(
+        "SELECT recorded_school_id FROM member_education"
+    ).fetchone() == (school_review_id("First High School"),)
 
 
 def test_consumed_ledger_and_input_manifest_are_archived_exactly(

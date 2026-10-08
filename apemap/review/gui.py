@@ -21,6 +21,7 @@ from waitress import serve as waitress_serve
 
 from apemap.review.store import ReviewBusyError, StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
+from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -59,6 +60,53 @@ FIELDS: dict[str, tuple[tuple[str, str, str, tuple[str, ...]], ...]] = {
             "Relationship",
             "select",
             ("direct", "alias", "rename", "successor"),
+        ),
+        (
+            "attended_institution_ref",
+            "Original institution reference (optional)",
+            "text",
+            (),
+        ),
+        ("attended_identity_source_url", "Original identity evidence URL", "url", ()),
+        ("historical_latitude", "Original latitude", "number", ()),
+        ("historical_longitude", "Original longitude", "number", ()),
+        ("historical_location_source_url", "Original location evidence URL", "url", ()),
+        (
+            "campus_continuity",
+            "Campus continuity",
+            "select",
+            ("same_campus", "different_campus"),
+        ),
+        ("campus_continuity_source_url", "Campus continuity evidence URL", "url", ()),
+        (
+            "historical_broad_sector",
+            "Historical broad sector",
+            "select",
+            ("Government", "Non-government"),
+        ),
+        (
+            "historical_broad_sector_source_url",
+            "Historical broad sector evidence URL",
+            "url",
+            (),
+        ),
+        (
+            "historical_detailed_sector",
+            "Historical detailed sector",
+            "select",
+            ("Catholic", "Independent"),
+        ),
+        (
+            "historical_detailed_sector_source_url",
+            "Historical detailed sector evidence URL",
+            "url",
+            (),
+        ),
+        (
+            "historical_scope_confirmed",
+            "Evidence covers all attendance records and verified aliases",
+            "checkbox",
+            (),
         ),
     ),
     "member": (
@@ -265,6 +313,8 @@ def _payload_from_form(entity_type: str) -> dict[str, Any]:
             value = request.form.get(f"field_{name}", "").strip()
             if not value:
                 payload.pop(name, None)
+            elif kind == "checkbox":
+                payload[name] = value == "1"
             elif kind == "number":
                 try:
                     payload[name] = float(value)
@@ -414,7 +464,12 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 values.get("school_workflow") and values.get("payload_mode") == "guided"
             ):
                 chosen = dict(chosen)
-                for name in ("recorded_name", "institution_ref", "relationship_type"):
+                for name in (
+                    "recorded_name",
+                    "institution_ref",
+                    "relationship_type",
+                    *SCHOOL_CONTEXT_FIELDS,
+                ):
                     chosen[name] = values.get("field_" + name, chosen.get(name, ""))
             ref = str(chosen.get("institution_ref", ""))
             selected = resolve_reference(ref) if ref else None
@@ -442,6 +497,12 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 retry_preview=retry_preview,
                 retry_token=retry_token,
                 relationships=RELATIONSHIPS,
+                context_fields=FIELDS["school"][3:],
+                original_selected=resolve_reference(
+                    str(chosen.get("attended_institution_ref", ""))
+                )
+                if chosen.get("attended_institution_ref")
+                else None,
                 evidence_links=_evidence_links(item),
                 preview_target=resolve_reference(
                     str(preview["event"]["payload"].get("institution_ref", ""))
@@ -697,6 +758,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                             "institution_ref",
                             "relationship_type",
                             "candidate_id",
+                            *SCHOOL_CONTEXT_FIELDS,
                         ):
                             payload.pop(key, None)
                     if supersedes:
@@ -844,6 +906,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                                     "recorded_name",
                                     "institution_ref",
                                     "relationship_type",
+                                    *SCHOOL_CONTEXT_FIELDS,
                                 )
                             },
                         }

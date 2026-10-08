@@ -2,6 +2,11 @@
 
 APEMAP provides deterministic analytical calculations through the `apemap.analysis` module, reproducible Jupyter notebooks, and portable output artifacts.
 
+Analysis schema `2.0.0` separates original attendance from successor context.
+The [successor context contract](successor-context.md) defines evidence, identity,
+location display and fixed-denominator sensitivity rules. Existing published
+datasets keep their recorded schema and contents.
+
 ---
 
 ## 1. Supported Deterministic Analytics
@@ -17,16 +22,17 @@ Calculates age and demographic metrics benchmarked strictly to the official open
 - **Party Representation**: Distribution by party abbreviation (`ALP`, `LP`, `NP`, `GRN`, `IND`, etc.).
 
 ### B. Secondary School Sector Distribution
-Accurately categorizes secondary education attendance into Government, Catholic, and Independent sectors:
-- **Unique Parliamentarians by Sector**: Counts unique members who attended at least one school in a given sector. (Note: members who attended both public and private schools are attributed proportionally or reflected across categories).
+Classifies available attendance evidence independently at broad and detailed levels:
+- **Unique Parliamentarians by Sector**: Counts each member once in a mutually exclusive category. Multiple known detailed sectors produce `Combined/Multiple`; unavailable values produce completeness flags rather than an additional known sector.
 - **Attendance Instances by Sector**: Counts total secondary school enrolments, accounting for members who attended multiple institutions.
-- **Percentage of Known Cohort**: Proportions computed against parliamentarians with verified secondary school records, explicitly separating unmatched or overseas schooling.
+- **Percentage of Recorded Cohort**: Uses people with any recorded secondary school as the fixed denominator, including records whose sectors remain unavailable. Separate broad and detailed evidence denominators identify how many people have usable classifications.
+- **Successor Sensitivity**: Compares the baseline with assumed school-sector values removed. People, assertions and recorded-school denominators remain fixed; available values from other schools remain usable. The comparison appears in each sector summary and `analysis/successor_sensitivity.json`.
 
 ### C. Institutional Funding Metrics (2021 Baseline)
-Summarizes ACARA 2021 financial metrics for schools attended by parliamentarians:
+Summarizes ACARA 2021 financial metrics at the distinct resolved reporting-institution grain:
 - **Gross Income per Student**: Average total gross income per student across attended schools by sector.
 - **Net Recurrent Income per Student**: Average net recurrent income per student.
-- **Reporting Sample Size**: Explicit $N$ counts indicating how many attended schools reported financial data to ACARA in 2021.
+- **Reporting Sample Size**: Explicit $N$ counts indicating distinct reporting institutions with financial data in 2021. Two predecessors linked to one successor contribute two attended schools and one finance reporting institution; the repeated context does not count as missing finance.
 
 ---
 
@@ -34,7 +40,7 @@ Summarizes ACARA 2021 financial metrics for schools attended by parliamentarians
 
 When executing `apemap analyze` or `apemap export`, artifacts are generated in `data/processed/`:
 
-### 1. `analysis_report.json`
+### 1. `analysis_metrics.json` and `analysis/*.json`
 A consolidated JSON payload containing demographic, sector, and financial aggregates for all specified parliaments. Ideal for web dashboards, static charts, or programmatic consumption.
 
 ### 2. `coverage_metrics.json`
@@ -95,5 +101,5 @@ uv run pytest tests/test_notebook_execution.py
 
 Earlier versions of APEMAP generated static charts in `images/` (e.g. `school_sector_breakdown.png`, `gender_vs_party.png`, `high_school_46.png`).
 These static charts and early exploratory notebooks have been archived under `archive/notebooks/2026-09-22/`.
-For current, reproducible findings, rely on the numbered notebooks or `data/processed/analysis_report.json`.
+For current, reproducible findings, rely on the numbered notebooks or `data/processed/analysis_metrics.json`.
 Interactive visualizations are published at [cpoole.dev](https://cpoole.dev).

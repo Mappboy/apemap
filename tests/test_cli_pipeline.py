@@ -526,9 +526,8 @@ def test_validate_database_detects_foreign_key_orphan(
         )
         """
     )
-    # Re-apply views
-    schema_dir = Path(__file__).resolve().parent.parent / "apemap" / "schema"
-    conn.execute((schema_dir / "02_views.sql").read_text(encoding="utf-8"))
+    # Apply the nullable schema upgrades before recreating dependent views.
+    init_schema(conn)
 
     report = validate_database(conn, [47])
     assert report.passed is False
@@ -693,6 +692,7 @@ def test_cli_export_command_and_reproducibility(
         str(Path("analysis") / "metadata.json"),
         str(Path("analysis") / "demographics.json"),
         str(Path("analysis") / "education_sectors.json"),
+        str(Path("analysis") / "successor_sensitivity.json"),
         str(Path("analysis") / "party_sectors.json"),
         str(Path("analysis") / "chamber_sectors.json"),
         str(Path("analysis") / "shared_schools.json"),

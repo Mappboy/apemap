@@ -2,6 +2,12 @@
 
 The `apemap` Python package provides programmatic access to APEMAP's data ingestion, institutional matching, database initialization, analytical aggregations, and export pipelines.
 
+Package 0.4.0 adds the one-row-per-assertion `v_education_attendance_context`
+projection and web/analysis contracts `2.0.0`. The original school, resolved
+institution and independently reviewed location/sector bases are described in
+[Original schools and reviewed successors](successor-context.md). Existing
+matching IDs and the root Python API remain supported.
+
 ---
 
 ## 1. Supported Public API

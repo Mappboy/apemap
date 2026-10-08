@@ -8,6 +8,13 @@ retain `country` and `institution_status`; education retains
 `evidence_origin`. Nullable upgrades preserve older records and Parquet sources.
 See [historical coverage](historical-coverage.md) for service and successor rules.
 
+The [successor context contract](successor-context.md) adds nullable original
+identity and independently sourced historical evidence to `member_education`.
+`v_education_attendance_context` resolves one row per assertion before any annual
+profile or service joins. Analyses group schools by `attended_school_id`; finance
+and profiles retain their resolved reporting-institution identities. A missing
+original identity remains an explicitly unresolved assertion row.
+
 This document describes APEMAP's canonical relational data model implemented in DuckDB, its analytical views and table macros, and the repository data directory layout.
 
 ---

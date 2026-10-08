@@ -47,6 +47,14 @@ are preserved in `archive/reference/2026-10-05/`.
 
 ## Historical institutions and financial interpretation
 
+The [successor context contract](successor-context.md) defines schema `2.0.0`
+consumer behavior. Original school identities stay separate from successor
+reporting institutions. Hollow successor display points may appear on maps while
+attendance-location eligibility remains false. Coverage distinguishes displayed
+points, eligible attendance geography and independently reviewed historical
+geography; current registry coordinates do not become verified historical facts.
+The implementation fixtures do not rebuild or alter existing dataset releases.
+
 ACARA 2008–2025 profiles retain institutions absent from the 2025 location register
 as `historical_only`. Missing coordinates remain null; these schools contribute
 to coverage but cannot appear as map points. Ambiguous historical names go to
@@ -138,11 +146,17 @@ supplies and validates that contract; frontend changes belong in its repository.
 Coverage separates distinct people, assertions and institutions.
 `members_with_secondary_school` counts people with verified or provisional
 assertions; unresolved assertions appear separately. Finance coverage counts
-schools, not attendance relationships. This evidence pass does not claim every
+distinct resolved reporting institutions, separately from original attended-school
+identities. Multiple predecessors sharing a successor do not inflate finance
+samples. Identity counts distinguish verified original references, registry
+references, provisional recorded-name identities and unresolved assertion rows.
+This evidence pass does not claim every
 member's education has been researched.
 
-The sector summaries retain their existing denominator of people with any
+The sector summaries retain their denominator of people with any
 recorded school name, including unconfirmed institution matches in `Other`.
 Their `known_school_denominator` can exceed the coverage report's count of people
 with verified/provisional resolution. A biography's recorded attendance and a
-resolved institutional identity are separate evidence questions.
+resolved institutional identity are separate evidence questions. Broad and
+detailed sector evidence have separate completeness counts; sensitivity removes
+assumed school values while preserving every recorded-school denominator.

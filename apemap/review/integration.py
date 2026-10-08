@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from apemap.constants import PARLIAMENT_METADATA, current_parliament
+from apemap.education_context import CONTEXT_FIELDS
 from apemap.ingest.aph import parse_individual
 from apemap.ingest.matching import (
     SchoolMatcher,
@@ -31,6 +32,7 @@ from apemap.review.model import (
     resolve_events,
     school_digest,
     school_key,
+    school_review_id,
     validate_events,
 )
 from apemap.review.store import StaleReviewError
@@ -84,6 +86,17 @@ def _records(conn: DuckDBPyConnection, *, source: bool = False) -> Records:
         cursor = conn.execute(f"SELECT * FROM {name} ORDER BY {KEYS[table]}")
         columns = [column[0] for column in cursor.description]
         result[table] = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        if table == "member_education":
+            for row in result[table]:
+                for name in CONTEXT_FIELDS:
+                    row.setdefault(name, None)
+                recorded = row.get("school_name_as_recorded")
+                if (
+                    isinstance(recorded, str)
+                    and recorded.strip()
+                    and not row.get("recorded_school_id")
+                ):
+                    row["recorded_school_id"] = school_review_id(str(recorded))
     return result
 
 
@@ -91,6 +104,9 @@ def capture_review_sources(
     conn: DuckDBPyConnection, *, parliaments: list[int] | None = None
 ) -> None:
     """Replace derived source baselines after source ingestion, before overlays."""
+    from apemap.db import backfill_recorded_school_ids
+
+    backfill_recorded_school_ids(conn)
     conn.execute(
         "CREATE TABLE IF NOT EXISTS review_source_cohorts (parliament_number INTEGER PRIMARY KEY)"
     )
@@ -110,7 +126,7 @@ def capture_review_sources(
             f"CREATE TABLE IF NOT EXISTS review_source_{table} AS SELECT * FROM {table} WHERE FALSE"
         )
         conn.execute(f"DELETE FROM review_source_{table}")
-        conn.execute(f"INSERT INTO review_source_{table} SELECT * FROM {table}")
+        conn.execute(f"INSERT INTO review_source_{table} BY NAME SELECT * FROM {table}")
 
 
 def _source_cohorts(conn: DuckDBPyConnection) -> set[int]:
@@ -253,6 +269,8 @@ def _individual_source_facts(
                 "institution_resolution": resolution,
                 "resolution_source_url": alias.get("source_url"),
                 "evidence_origin": "aph",
+                **dict.fromkeys(CONTEXT_FIELDS),
+                "recorded_school_id": school_review_id(recorded),
             }
         )
     facts["institutions"] = list(institutions.values())
@@ -570,6 +588,29 @@ def _matched_institution(match: MatchedInstitution) -> dict[str, Any]:
     }
 
 
+def _apply_school_context(
+    row: dict[str, Any],
+    decision: ReviewEvent | None,
+    institutions: dict[str, dict[str, Any]],
+    definitions: dict[str, ReviewEvent],
+    matcher: SchoolMatcher,
+) -> None:
+    """Replace all reviewed context, so later decisions cannot retain stale facts."""
+    recorded_id = row.get("recorded_school_id")
+    row.update(dict.fromkeys(CONTEXT_FIELDS))
+    row["recorded_school_id"] = recorded_id
+    if decision is None or decision.payload["relationship_type"] != "successor":
+        return
+    payload = decision.payload
+    for field_name in CONTEXT_FIELDS:
+        if field_name not in {"recorded_school_id", "attended_institution_id"}:
+            row[field_name] = payload.get(field_name)
+    if payload.get("attended_institution_ref"):
+        row["attended_institution_id"], _ = _institution(
+            payload["attended_institution_ref"], institutions, definitions, matcher
+        )
+
+
 def _project(
     base: Records,
     events: list[ReviewEvent],
@@ -620,6 +661,7 @@ def _project(
                 institution_resolution=decision.payload["relationship_type"],
                 resolution_source_url=decision.source_url,
             )
+            _apply_school_context(row, decision, institutions, definitions, matcher)
         elif normalize_school_key(str(raw_name)) in matcher.review_blocked_keys:
             match = matcher.match(str(raw_name))
             if match.acara_id is None:
@@ -632,6 +674,7 @@ def _project(
                     institution_resolution="unresolved",
                     resolution_source_url=None,
                 )
+                _apply_school_context(row, None, institutions, definitions, matcher)
     for event in effective:
         payload = event.payload
         if (
@@ -731,7 +774,16 @@ def _project(
                     else ("direct" if reference else "unresolved"),
                     "resolution_source_url": school.source_url if school else None,
                     "evidence_origin": "manual",
+                    **dict.fromkeys(CONTEXT_FIELDS),
+                    "recorded_school_id": school_review_id(recorded),
                 }
+            )
+            _apply_school_context(
+                result["member_education"][-1],
+                school,
+                institutions,
+                definitions,
+                matcher,
             )
         elif event.entity_type == "service":
             assert member is not None

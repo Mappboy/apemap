@@ -223,6 +223,90 @@ def test_guided_mapping_replaces_earlier_event_after_read_only_preview(
     assert "Saved mapping:" in updated and 'value="alias" selected' in updated
 
 
+def test_guided_successor_original_and_historical_fields_are_scoped_and_clearable(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    client, service = real_school
+    before = service.log_path.read_bytes()
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview",
+        data=guided(
+            client,
+            field_relationship_type="successor",
+            field_attended_institution_ref="acara:123",
+            field_attended_identity_source_url="https://example.org/identity",
+            field_historical_scope_confirmed="1",
+            field_historical_latitude="-30",
+            field_historical_longitude="140",
+            field_historical_location_source_url="https://example.org/location",
+            field_historical_broad_sector="Government",
+            field_historical_broad_sector_source_url="https://example.org/sector",
+        ),
+    )
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "School-wide evidence scope" in html
+    assert "Verified historical broad sector differs" in html
+    assert service.log_path.read_bytes() == before
+    values = Inputs(html).values
+    assert (
+        client.post(
+            f"/items/{REVIEW_ID}/save",
+            data={
+                "csrf_token": values["csrf_token"],
+                "preview_token": values["preview_token"],
+            },
+        ).status_code
+        == 303
+    )
+    head = active_heads(service.events())[REVIEW_ID][0]
+    assert head.payload["historical_scope_confirmed"] is True
+    assert head.payload["historical_latitude"] == -30
+    assert head.payload["attended_institution_ref"] == "acara:123"
+    after = service.log_path.read_bytes()
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview",
+        data=guided(client, field_relationship_type="successor"),
+    )
+    values = Inputs(response.get_data(as_text=True)).values
+    assert (
+        client.post(
+            f"/items/{REVIEW_ID}/save",
+            data={
+                "csrf_token": values["csrf_token"],
+                "preview_token": values["preview_token"],
+            },
+        ).status_code
+        == 303
+    )
+    assert service.log_path.read_bytes().startswith(after)
+    assert (
+        "attended_institution_ref"
+        not in active_heads(service.events())[REVIEW_ID][0].payload
+    )
+
+
+def test_incomplete_historical_location_retains_guided_draft(
+    real_school: tuple[Any, ReviewService],
+) -> None:
+    client, service = real_school
+    before = service.log_path.read_bytes()
+    response = client.post(
+        f"/items/{REVIEW_ID}/preview",
+        data=guided(
+            client,
+            field_relationship_type="successor",
+            field_historical_scope_confirmed="1",
+            field_historical_latitude="-30",
+            field_historical_location_source_url="https://example.org/location",
+        ),
+    )
+    assert response.status_code == 400
+    assert "Supply both historical coordinates" in response.get_data(as_text=True)
+    assert 'name="field_historical_latitude"' in response.get_data(as_text=True)
+    assert service.log_path.read_bytes() == before
+
+
 @pytest.mark.parametrize("action", ["research", "reject"])
 def test_research_rejection_remove_target_but_retain_provenance(
     real_school: tuple[Any, ReviewService], action: str

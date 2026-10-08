@@ -24,6 +24,7 @@ from apemap.constants import (
     RAW_APH_DIR,
 )
 from apemap.db import (
+    backfill_recorded_school_ids,
     export_to_parquet,
     get_connection,
     init_schema,
@@ -534,6 +535,7 @@ def run_aph_ingestion(
                     """
                 )
 
+        backfill_recorded_school_ids(conn)
         capture_raw_individual_inventory(
             conn, raw_individuals, retrieved_at=retrieval_time
         )

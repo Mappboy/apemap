@@ -4,6 +4,8 @@
   const sectors = ['Government', 'Catholic', 'Independent', 'Other'];
   const normal = value => String(value || '').normalize('NFKC').toLocaleLowerCase('en-AU').trim();
   const schoolSector = school => sectors.includes(school.school_sector) ? school.school_sector : 'Other';
+  const schoolTitle = school => school.display_school_name || school.school_name;
+  const markerStyle = school => school.location_basis === 'successor_unverified' ? {fill:'none',stroke:'#2f7142'} : {fill:'#2f7142',stroke:'white'};
   function parseState(payload, hash) {
     const params = new URLSearchParams(hash.replace(/^#/, ''));
     const parliament = payload.parliaments.includes(Number(params.get('parliament'))) ? Number(params.get('parliament')) : Math.max(...payload.parliaments);
@@ -29,22 +31,23 @@
       for (const relation of member.schools) {
         const school = payload.schools[relation.institution_id];
         if (!school || (state.sector && schoolSector(school) !== state.sector)) continue;
-        if (query && !memberMatch && !normal(school.school_name).includes(query)) continue;
+        if (query && !memberMatch && ![school.school_name,school.attended_school_name,school.resolved_institution_name,relation.school_name_as_recorded].some(name=>normal(name).includes(query))) continue;
         matched = true;
         if (!schools.has(school.institution_id)) schools.set(school.institution_id, {...school, members:new Map()});
         schools.get(school.institution_id).members.set(member.member_id, member);
       }
       if (matched || (!state.sector && !member.schools.length && (!query || memberMatch))) people.push(member);
     }
-    return {schools:[...schools.values()].map(s => ({...s,members:[...s.members.values()]})).sort((a,b) => a.school_name.localeCompare(b.school_name,'en-AU')), members:people};
+    return {schools:[...schools.values()].map(s => ({...s,members:[...s.members.values()]})).sort((a,b) => schoolTitle(a).localeCompare(schoolTitle(b),'en-AU')), members:people};
   }
-  globalThis.ApemapExplorer = {parseState, encodeState, select};
+  globalThis.ApemapExplorer = {parseState, encodeState, select, schoolTitle, markerStyle};
   if (typeof document === 'undefined') return;
   const payload = JSON.parse(document.getElementById('explorer-data').textContent);
   const form = document.getElementById('filters');
   let state = parseState(payload, location.hash);
   let failed = false;
   const el = (tag, text, parent) => {const node=document.createElement(tag); if(text!==undefined) node.textContent=text; if(parent) parent.append(node); return node;};
+  const evidenceLink = (label,url,parent) => {if(!url)return;try{const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))return;const link=el('a',label,el('p',undefined,parent));link.href=parsed.href;}catch{return;}};
   function optionList(name, values) {
     const field=form.elements.namedItem(name); field.replaceChildren();
     const all=el('option','All '+name,field); all.value='';
@@ -58,7 +61,7 @@
     const ns='http://www.w3.org/2000/svg';const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 500 280');svg.setAttribute('role','img');svg.setAttribute('aria-label','Matching school coordinates. Select schools through the adjacent list.');
     const lons=points.map(s=>s.coordinates[0]), lats=points.map(s=>s.coordinates[1]);
     const west=Math.min(...lons)-1,east=Math.max(...lons)+1,south=Math.min(...lats)-1,north=Math.max(...lats)+1;
-    for(const school of points) {const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',String(12+(school.coordinates[0]-west)/(east-west)*476));circle.setAttribute('cy',String(12+(north-school.coordinates[1])/(north-south)*256));circle.setAttribute('r',school.institution_id===state.school?'6':'3');svg.append(circle);}
+    for(const school of points) {const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',String(12+(school.coordinates[0]-west)/(east-west)*476));circle.setAttribute('cy',String(12+(north-school.coordinates[1])/(north-south)*256));circle.setAttribute('r',school.institution_id===state.school?'6':'3');const style=markerStyle(school);circle.style.fill=style.fill;circle.style.stroke=style.stroke;circle.setAttribute('data-location-basis',school.location_basis||'original_reference');svg.append(circle);}
     host.append(svg);el('p',`${points.length} mapped of ${schools.length} matching schools. Bounds: ${west.toFixed(1)}–${east.toFixed(1)}° longitude, ${south.toFixed(1)}–${north.toFixed(1)}° latitude.`,host);
   }
   function render(writeHash=true) {
@@ -72,15 +75,19 @@
     document.getElementById('result-count').textContent=`${results.schools.length} schools · ${results.members.length} matching people · ${results.schools.filter(s=>!s.coordinates).length} schools without coordinates.`;
     const list=document.getElementById('school-list');list.replaceChildren();
     if(!results.schools.length)el('p','No schools match. Clear filters or change the search.',list);
-    for(const school of results.schools) {const button=el('button',school.school_name,list);button.type='button';button.className='school-button';button.setAttribute('aria-pressed',String(state.school===school.institution_id));el('small',`${schoolSector(school)} · ${school.state||'State unavailable'} · ${school.members.length} people${school.coordinates?'':' · Coordinates unavailable'}`,button);button.addEventListener('click',()=>{state.school=school.institution_id;render();document.getElementById('school-detail').focus();});}
+    for(const school of results.schools) {const button=el('button',schoolTitle(school),list);button.type='button';button.className='school-button';button.setAttribute('aria-pressed',String(state.school===school.institution_id));el('small',`${schoolSector(school)} · ${school.state||'State unavailable'} · ${school.members.length} people${school.coordinates?'':' · Coordinates unavailable'}${school.location_warning?' · '+school.location_warning:''}`,button);button.addEventListener('click',()=>{state.school=school.institution_id;render();document.getElementById('school-detail').focus();});}
     const people=document.getElementById('member-list');people.replaceChildren();
-    for(const member of results.members) {const row=el('p',`${member.display_name} · ${member.party_abbrev||member.party||'Unknown'} · ${member.chamber} · ${member.education_classification}`,people);row.className='member-row';}
+    for(const member of results.members) {const row=el('p',`${member.display_name} · ${member.party_abbrev||member.party||'Unknown'} · ${member.chamber} · ${member.education_classification_label||member.education_classification}${member.incomplete_sector_evidence?' · Incomplete sector evidence':''}`,people);row.className='member-row';}
     const detail=document.getElementById('school-detail');detail.replaceChildren();detail.tabIndex=-1;
     const selected=results.schools.find(s=>s.institution_id===state.school);
     if(!selected)el('p','Select a school from the list.',detail);
-    else {el('h4',selected.school_name,detail);el('p',`${schoolSector(selected)} · ${selected.state||'State unavailable'} · ${selected.coordinates?'Mapped':'Coordinates unavailable'}`,detail);el('p','Attendance does not equate to graduation.',detail);for(const member of selected.members)el('p',`${member.display_name} · ${member.party_abbrev||member.party} · ${member.chamber}`,detail);
+    else {el('h4',schoolTitle(selected),detail);el('p',`${schoolSector(selected)} · ${selected.state||'State unavailable'} · ${selected.coordinates?'Mapped':'Coordinates unavailable'}`,detail);if(selected.is_successor)el('p',payload.successor_footnote,detail);if(selected.location_warning)el('p',selected.location_warning,detail);el('p','Attendance does not equate to graduation.',detail);for(const member of selected.members)el('p',`${member.display_name} · ${member.party_abbrev||member.party} · ${member.chamber}`,detail);
+      for(const [label,key] of [['Broad sector','broad_sector'],['Broad sector basis','sector_basis'],['Detailed sector','detailed_sector'],['Detailed sector basis','detailed_sector_basis'],['Location basis','location_basis'],['Attendance location eligible','attendance_location_eligible'],['Campus continuity conflict','campus_continuity_conflict'],['Continuity discrepancy','continuity_discrepancy'],['Profile provider','profile_institution_id'],['Profile basis','profile_basis'],['Finance provider','finance_institution_id'],['Finance basis','finance_basis'],['Finance reporting year','finance_year'],['Finance status','finance_status']])el('p',`${label}: ${selected[key]??'Unavailable'}${selected.is_successor&&selected[key]!=null&&key!=='profile_basis'&&key!=='finance_basis'&&['profile_institution_id','finance_institution_id','finance_year','finance_status'].includes(key)?'*':''}`,detail);
+      for(const provider of selected.provider_contexts||[]){const star=provider.profile_basis==='successor_context'?'*':'';el('p',`Reporting provider: ${provider.resolved_institution_name}${star}; profile year: ${provider.profile_year??'Unavailable'}${star}; finance year: ${provider.finance_year??'Unavailable'}${star}.`,detail);}
+      for(const [label,key] of [['Original identity evidence','attended_identity_source_url'],['Location evidence','location_source_url'],['Broad sector evidence','sector_source_url'],['Detailed sector evidence','detailed_sector_source_url']])evidenceLink(label,selected[key],detail);
+      const memberIds=new Set(selected.members.map(member=>member.member_id));for(const evidence of selected.education_assertions||[]){if(!memberIds.has(evidence.member_id))continue;el('p',`Recorded school name: ${evidence.school_name_as_recorded||'Unavailable'}.`,detail);el('p',`Attendance: ${evidence.attended_status||'Unavailable'}; confidence: ${evidence.confidence||'Unavailable'}.`,detail);evidenceLink('Original identity evidence',evidence.attended_identity_source_url,detail);for(const [label,key] of [['Original location evidence','historical_location_source_url'],['Campus continuity evidence','campus_continuity_source_url'],['Historical broad sector evidence','historical_broad_sector_source_url'],['Historical detailed sector evidence','historical_detailed_sector_source_url']])evidenceLink(label,evidence[key],detail);evidenceLink('Attendance evidence',evidence.source_url,detail);evidenceLink('Relationship evidence',evidence.resolution_source_url,detail);}
       if(!selected.profile_year)el('p','Profile fields are unavailable in this explorer payload. Consult the research downloads for unmapped institutions.',detail);
-      else {el('p',`School profile year ${selected.profile_year}; describes that year, not attendance-era conditions.`,detail);for(const [label,key] of [['ICSEA (context, not quality)','icsea'],['ICSEA percentile','icsea_percentile'],['Total enrolments','total_enrolments'],['SEA bottom quarter %','sea_bottom_quarter_pct'],['SEA lower-middle quarter %','sea_lower_middle_quarter_pct'],['SEA upper-middle quarter %','sea_upper_middle_quarter_pct'],['SEA top quarter %','sea_top_quarter_pct'],['Indigenous enrolment %','indigenous_enrolments_pct'],['LBOTE %','lbote_pct'],['Remoteness','remoteness_category']])el('p',`${label}: ${selected[key]??'Unavailable'}`,detail);}}
+      else {el('p',`School profile year ${selected.profile_year}${selected.is_successor?'*':''}; describes that year, not attendance-era conditions.`,detail);for(const [label,key] of [['ICSEA (context, not quality)','icsea'],['ICSEA percentile','icsea_percentile'],['Total enrolments','total_enrolments'],['SEA bottom quarter %','sea_bottom_quarter_pct'],['SEA lower-middle quarter %','sea_lower_middle_quarter_pct'],['SEA upper-middle quarter %','sea_upper_middle_quarter_pct'],['SEA top quarter %','sea_top_quarter_pct'],['Indigenous enrolment %','indigenous_enrolments_pct'],['LBOTE %','lbote_pct'],['Remoteness','remoteness_category']])el('p',`${label}: ${selected[key]??'Unavailable'}${selected.is_successor&&selected[key]!=null?'*':''}`,detail);}}
     if(document.getElementById('locator').open)drawLocator(results.schools);
     if(writeHash)history.replaceState(null,'',encodeState(state));
   }

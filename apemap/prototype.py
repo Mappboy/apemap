@@ -11,14 +11,21 @@ from html import escape
 import json
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from apemap.analysis import summarize_classified_members
+from apemap.contracts import (
+    SUCCESSOR_FOOTNOTE,
+    SUCCESSOR_LOCATION_WARNING,
+    WEB_SCHEMA_VERSION,
+)
 from apemap.release.verify import verify_release
+from apemap.export import EVIDENCE_COLUMNS, merge_school_contexts
 
 ASSETS = Path(__file__).with_name("prototype_assets")
 HEADLINE = {
-    "government_only": "Government only",
-    "non_government_only": "Non-government only",
+    "government_only": "Government among classified schools",
+    "non_government_only": "Non-government among classified schools",
     "mixed": "Mixed Government + Non-government",
     "other": "Other / unresolved sector",
 }
@@ -120,31 +127,174 @@ def explorer_payload(root: Path, metadata: dict[str, Any]) -> dict[str, Any]:
     members = read_json(root, "web/members.json")["parliaments"]
     features = read_json(root, "web/schools.geojson")["features"]
     schools: dict[str, dict[str, Any]] = {}
+    relation_contexts: dict[str, list[dict[str, Any]]] = {}
+    # Member assertions contain unmapped institutions and their actual profile
+    # context. Preserve that complete source rather than deriving it from points.
+    omitted = {
+        "finance_value",
+        "finance_metric",
+        "education_id",
+        "member_id",
+        "retrieved_at",
+    }
     for people in members.values():
         for member in people:
-            for school in member["schools"]:
-                iid = school["institution_id"]
-                schools.setdefault(
+            for relation in member["schools"]:
+                iid = relation["institution_id"]
+                relation_contexts.setdefault(iid, []).append(relation)
+                school = schools.setdefault(
                     iid,
                     {
-                        "institution_id": iid,
-                        "school_name": school["school_name"],
-                        "school_sector": school["sector"] or "Other",
-                        "state": school["state"],
+                        **{
+                            key: value
+                            for key, value in relation.items()
+                            if key not in omitted
+                        },
+                        "school_sector": relation.get(
+                            "school_sector", relation.get("sector")
+                        )
+                        or "Other",
                         "coordinates": None,
+                        "education_assertions": [],
                     },
                 )
+                evidence = {key: relation.get(key) for key in EVIDENCE_COLUMNS}
+                if (
+                    evidence["education_id"]
+                    and evidence not in school["education_assertions"]
+                ):
+                    school["education_assertions"].append(evidence)
+    if metadata.get("web_schema_version") == WEB_SCHEMA_VERSION:
+        for iid, school in schools.items():
+            merge_school_contexts(school, relation_contexts[iid])
     for feature in features:
         props = feature["properties"]
         iid = props["institution_id"]
         if iid in schools:
-            schools[iid].update({key: props.get(key) for key in PROFILE_FIELDS})
+            schools[iid].update(
+                {
+                    key: value
+                    for key, value in props.items()
+                    if key not in omitted | {"members", "member_count", "parliaments"}
+                }
+            )
             schools[iid]["coordinates"] = feature["geometry"]["coordinates"]
-    return {
-        "parliaments": metadata["parliaments"],
-        "members": members,
-        "schools": dict(sorted(schools.items())),
+    # The member payload also carries finance values in v2; this reference only
+    # exposes provider, reporting year and status as source context.
+    members = {
+        p: [
+            {
+                **member,
+                "schools": [
+                    {
+                        key: value
+                        for key, value in relation.items()
+                        if key not in {"finance_value", "finance_metric"}
+                    }
+                    for relation in member["schools"]
+                ],
+            }
+            for member in people
+        ]
+        for p, people in members.items()
     }
+    return _without_finance_values(
+        {
+            "parliaments": metadata["parliaments"],
+            "members": members,
+            "schools": dict(sorted(schools.items())),
+            "successor_footnote": SUCCESSOR_FOOTNOTE,
+            "successor_location_warning": SUCCESSOR_LOCATION_WARNING,
+        }
+    )
+
+
+def _without_finance_values(value: Any) -> Any:
+    """Strip values recursively from assertions and alternate provider context."""
+    if isinstance(value, dict):
+        return {
+            key: _without_finance_values(item)
+            for key, item in value.items()
+            if key not in {"finance_value", "finance_metric"}
+        }
+    if isinstance(value, list):
+        return [_without_finance_values(item) for item in value]
+    return value
+
+
+def school_title(school: dict[str, Any]) -> str:
+    """Return the explicit original-to-successor title with a shared footnote."""
+    return school.get("display_school_name") or school["school_name"]
+
+
+def school_evidence_html(school: dict[str, Any]) -> str:
+    """Render independently labelled flags and safe evidence links without JS."""
+    facts = [
+        ("Broad sector", school.get("broad_sector")),
+        ("Broad sector basis", school.get("sector_basis")),
+        ("Detailed sector", school.get("detailed_sector")),
+        ("Detailed sector basis", school.get("detailed_sector_basis")),
+        ("Location basis", school.get("location_basis")),
+        ("Attendance location eligible", school.get("attendance_location_eligible")),
+        ("Campus continuity conflict", school.get("campus_continuity_conflict")),
+        ("Continuity discrepancy", school.get("continuity_discrepancy")),
+        ("Profile provider", school.get("profile_institution_id")),
+        ("Profile basis", school.get("profile_basis")),
+        ("Profile year", school.get("profile_year")),
+        ("Finance provider", school.get("finance_institution_id")),
+        ("Finance basis", school.get("finance_basis")),
+        ("Finance year", school.get("finance_year")),
+        ("Finance status", school.get("finance_status")),
+    ]
+    html = "<details><summary>" + escape(school_title(school)) + "</summary>"
+    if school.get("is_successor"):
+        html += f"<p>{escape(SUCCESSOR_FOOTNOTE)}</p>"
+    html += "".join(
+        f"<p>{label}: {escape(str(value)) + ('*' if school.get('is_successor') and label.startswith(('Profile', 'Finance')) else '') if value is not None else 'Unavailable'}</p>"
+        for label, value in facts
+    )
+    for provider in school.get("provider_contexts", []):
+        marker = "*" if provider["profile_basis"] == "successor_context" else ""
+        html += f"<p>Reporting provider: {escape(provider['resolved_institution_name'])}{marker}; profile year: {provider['profile_year'] or 'Unavailable'}{marker}; finance year: {provider['finance_year'] or 'Unavailable'}{marker}.</p>"
+    if school.get("location_warning"):
+        html += f"<p>{escape(school['location_warning'])}</p>"
+    links = [
+        ("Original identity evidence", school.get("attended_identity_source_url")),
+        ("Location evidence", school.get("location_source_url")),
+        ("Broad sector evidence", school.get("sector_source_url")),
+        ("Detailed sector evidence", school.get("detailed_sector_source_url")),
+    ]
+    for evidence in school.get("education_assertions", []):
+        html += f"<p>Recorded school name: {escape(str(evidence.get('school_name_as_recorded') or 'Unavailable'))}.</p>"
+        html += f"<p>Attendance: {escape(str(evidence.get('attended_status') or 'Unavailable'))}; confidence: {escape(str(evidence.get('confidence') or 'Unavailable'))}.</p>"
+        links += [
+            (
+                "Original identity evidence",
+                evidence.get("attended_identity_source_url"),
+            ),
+            (
+                "Original location evidence",
+                evidence.get("historical_location_source_url"),
+            ),
+            (
+                "Campus continuity evidence",
+                evidence.get("campus_continuity_source_url"),
+            ),
+            (
+                "Historical broad sector evidence",
+                evidence.get("historical_broad_sector_source_url"),
+            ),
+            (
+                "Historical detailed sector evidence",
+                evidence.get("historical_detailed_sector_source_url"),
+            ),
+            ("Attendance evidence", evidence.get("source_url")),
+            ("Relationship evidence", evidence.get("resolution_source_url")),
+        ]
+    for label, url in dict.fromkeys(links):
+        if url and urlsplit(url).scheme in ("http", "https"):
+            html += f'<p><a href="{escape(url, quote=True)}">{label}</a></p>'
+    return html + "</details>"
 
 
 def render_editorial(root: Path, metadata: dict[str, Any]) -> str:
@@ -157,6 +307,7 @@ def render_editorial(root: Path, metadata: dict[str, Any]) -> str:
     demographics = read_json(root, "analysis/demographics.json")["parliaments"]
     parties = read_json(root, "analysis/party_sectors.json")["parliaments"]
     shared = read_json(root, "analysis/shared_schools.json")["parliaments"]
+    school_context = explorer_payload(root, metadata)["schools"]
     members = read_json(root, "web/members.json")["parliaments"]
     chamber_path = root / "analysis/chamber_sectors.json"
     chambers = (
@@ -265,6 +416,31 @@ def render_editorial(root: Path, metadata: dict[str, Any]) -> str:
             + "</details>"
         )
         benchmark = summary["abs_sector_benchmark"]
+        sensitivity = summary.get("successor_sensitivity")
+        if sensitivity:
+            baseline = sensitivity["baseline"]
+            strict = sensitivity["without_successor_assumptions"]
+            chunks.append(
+                "<h3>How much depends on successor sector assumptions?</h3>"
+                f"<p>Both classifications retain {baseline['total_parliamentarians']} people "
+                f"and recorded-school n={baseline['known_school_denominator']}. "
+                f"Successor assumptions affect {sensitivity['affected_members']} people, "
+                f"{sensitivity['affected_assertions']} assertions and "
+                f"{sensitivity['affected_schools']} attended schools. Removing assumptions "
+                "keeps their attendance and moves unavailable sector values into uncertainty.</p>"
+                + table(
+                    ["Classification", "Baseline people", "Without assumptions"],
+                    [
+                        [
+                            label,
+                            baseline["government_non_government"][key],
+                            strict["government_non_government"][key],
+                        ]
+                        for key, label in HEADLINE.items()
+                    ],
+                    "Successor sensitivity on the same people and recorded-school denominator",
+                )
+            )
         chunks.append(
             "<h3>Compare with today’s students</h3><p>The student population is a separate comparison, not the school environment at attendance. Mixed and Other people remain in the parliamentary denominator.</p>"
         )
@@ -340,8 +516,15 @@ def render_editorial(root: Path, metadata: dict[str, Any]) -> str:
         )
         for school in shared[p]["schools"][:10]:
             names = ", ".join(m["display_name"] for m in school["members"])
+            context = school_context.get(school["institution_id"], school)
             chunks.append(
-                f"<li><details><summary>{escape(school['school_name'])} · {school['member_count']} people</summary><p>{escape(names)}</p><p>{escape(str(school['sector']))} · {escape(str(school['state']))}</p></details></li>"
+                f"<li><details><summary>{escape(school_title(context))} · {school['member_count']} people</summary><p>{escape(names)}</p><p>{escape(str(school['sector']))} · {escape(str(school['state']))}</p>"
+                + (
+                    f"<p>{escape(SUCCESSOR_FOOTNOTE)}</p>"
+                    if context.get("is_successor")
+                    else ""
+                )
+                + "</details></li>"
             )
         chunks.append(
             f"</ol><p>Latest profile years represented: {escape(', '.join(map(str, summary['source_years']['profile_years'])) or 'Unavailable')}.</p></details>"
@@ -371,10 +554,11 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
         ["School", "Sector", "State", "Location"],
         [
             [
-                s["school_name"],
+                school_title(s),
                 s["school_sector"],
                 s["state"] or "Unavailable",
-                "Mapped" if s["coordinates"] else "Coordinates unavailable",
+                s.get("location_warning")
+                or ("Mapped" if s["coordinates"] else "Coordinates unavailable"),
             ]
             for s in sorted(
                 payload["schools"].values(), key=lambda s: s["school_name"] or ""
@@ -382,17 +566,36 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
         ],
         "All represented schools across the release; use browser Find without JavaScript",
     )
+    fallback += f"<p>{escape(SUCCESSOR_FOOTNOTE)}</p>"
+    fallback += "".join(
+        school_evidence_html(school) for school in payload["schools"].values()
+    )
     fallback += (
         "<details><summary>Complete opening-day member table</summary>"
         + table(
-            ["Parliament", "Member", "Party / chamber", "Recorded schooling"],
+            [
+                "Parliament",
+                "Member",
+                "Party / chamber",
+                "Recorded schooling",
+                "Sector context",
+            ],
             [
                 [
                     p,
                     m["display_name"],
                     f"{m['party_abbrev']} / {m['chamber']}",
-                    ", ".join(sorted({s["school_name"] for s in m["schools"]}))
+                    ", ".join(sorted({school_title(s) for s in m["schools"]}))
                     or "No School Recorded",
+                    (
+                        m.get("education_classification_label")
+                        or m["education_classification"]
+                    )
+                    + (
+                        "; incomplete sector evidence"
+                        if m.get("incomplete_sector_evidence")
+                        else ""
+                    ),
                 ]
                 for p, people in payload["members"].items()
                 for m in people
@@ -415,9 +618,10 @@ def build_prototype(release_dir: Path, output_dir: Path) -> Path:
 {render_editorial(root, metadata)}
 <section id="explorer"><h2>Explore schools and members</h2><p>Filters apply only here. Sector filters describe schools, not Mixed person classifications. Unmapped schools and members without recorded schooling remain accessible.</p>
 <form id="filters" hidden><div class="controls"><label>Parliament<select name="parliament">{options}</select></label><label>School sector<select name="sector"><option value="">All sectors</option><option>Government</option><option>Catholic</option><option>Independent</option><option>Other</option></select></label><label>Party<select name="party"></select></label><label>Chamber<select name="chamber"></select></label><label class="search">School or member search<input name="q" type="search" autocomplete="off"></label></div><button type="reset">Clear filters</button></form>
-<div id="interactive" hidden><p id="result-count" role="status" aria-live="polite"></p><div class="explorer-grid"><div><h3>Schools</h3><div id="school-list"></div><details><summary>Matching members, including missing schooling</summary><div id="member-list"></div></details></div><aside><h3>Selected school</h3><div id="school-detail">Select a school from the list.</div><details id="locator"><summary>Show geographic locator</summary><p>Coordinates only; no basemap. Overseas locations remain included. National analytical totals never come from map points.</p><div id="locator-content"></div><button id="locator-failure" type="button">Preview map unavailable</button></details></aside></div></div>
+<p id="successor-footnote">{escape(SUCCESSOR_FOOTNOTE)}</p>
+<div id="interactive" hidden><p id="result-count" role="status" aria-live="polite"></p><div class="explorer-grid"><div><h3>Schools</h3><div id="school-list"></div><details><summary>Matching members, including missing schooling</summary><div id="member-list"></div></details></div><aside><h3>Selected school</h3><div id="school-detail">Select a school from the list.</div><details id="locator"><summary>Show geographic locator</summary><p>Coordinates only; no basemap. Overseas locations remain included. National analytical totals never come from map points. Hollow points mean: {escape(SUCCESSOR_LOCATION_WARNING)}</p><div id="locator-content"></div><button id="locator-failure" type="button">Preview map unavailable</button></details></aside></div></div>
 <details id="static-schools" open><summary>Complete school table · usable without JavaScript</summary>{fallback}</details></section>
-<section id="methodology"><h2>Methodology, sources and handoff</h2><p>School assertions count attendance evidence, not graduation. Combined/Multiple means several detailed sectors; Mixed means Government and Non-government attendance. Other includes unclassified sectors. No School Recorded is shown separately.</p><p>ICSEA describes socio-educational context, not school quality. SEA quarters, Indigenous enrolment and LBOTE are percentages; absent fields remain unavailable.</p><p>{escape(metadata["temporal_warning"])}</p><p>No Finance 2024 observations or finance charts are introduced by this reference. Profile fields come from the verified release.</p><p>Sources: Parliament of Australia, ACARA, ABS and AEC. Retain each source’s attribution and terms. Release generation time is not an upstream retrieval date.</p><p>Research downloads, source snapshot dates and hashes are listed in the supplied release manifest. This offline reference does not publish or host those downloads. Production routes and map hosting belong in cpoole-dev.</p></section></main>
+<section id="methodology"><h2>Methodology, sources and handoff</h2><p>School assertions count attendance evidence, not graduation. Combined/Multiple means several classified detailed sectors; Mixed means classified Government and Non-government attendance. Other includes unavailable sectors. Incomplete sector evidence is reported separately. No School Recorded is shown separately.</p><p>ICSEA describes socio-educational context, not school quality. SEA quarters, Indigenous enrolment and LBOTE are percentages; absent fields remain unavailable.</p><p>{escape(metadata["temporal_warning"])}</p><p>Finance values and charts are omitted from this reference; provider, year and status remain source context. Profile fields come from the verified release.</p><p>Sources: Parliament of Australia, ACARA, ABS and AEC. Retain each source’s attribution and terms. Release generation time is not an upstream retrieval date.</p><p>Research downloads, source snapshot dates and hashes are listed in the supplied release manifest. This offline reference does not publish or host those downloads. Production routes and map hosting belong in cpoole-dev.</p></section></main>
 <script id="explorer-data" type="application/json">{script_data}</script><script>{(ASSETS / "explorer.js").read_text(encoding="utf-8")}</script></body></html>"""
     out.mkdir(parents=True, exist_ok=True)
     target = out / "prototype.html"

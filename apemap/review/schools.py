@@ -41,6 +41,8 @@ class SchoolView:
     source_records: list[dict[str, Any]]
     saved_reference: str
     saved_relationship: str
+    original_reference: str = ""
+    original_metadata: dict[str, Any] = field(default_factory=dict)
 
 
 def evidence_links(value: Any) -> list[str]:
@@ -166,6 +168,12 @@ def school_view(
         source_records=records,
         saved_reference=payload.get("institution_ref", "") if accepted else "",
         saved_relationship=payload.get("relationship_type", "") if accepted else "",
+        original_reference=payload.get("attended_institution_ref", "")
+        if accepted
+        else "",
+        original_metadata=(resolve(payload["attended_institution_ref"]) or {})
+        if accepted and payload.get("attended_institution_ref")
+        else {},
     )
 
 

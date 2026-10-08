@@ -9,8 +9,14 @@ from typing import Any
 
 import duckdb
 
-from apemap.analysis import compute_school_finance_estimate, backtest_finance_benchmarks
+from apemap.analysis import (
+    compute_school_finance_estimate,
+    backtest_finance_benchmarks,
+    get_opening_day_education_context,
+)
 from apemap.constants import PARLIAMENT_METADATA, TEMPORAL_WARNING, select_parliaments
+from apemap.contracts import ANALYSIS_SCHEMA_VERSION
+from apemap.education_context import resolve_school_display_locations
 
 
 def _is_overseas_country(country: str | None) -> bool:
@@ -35,61 +41,150 @@ def compute_parliament_coverage(
                 AND ps.parliament_number=? AND ps.is_opening_day_member) ORDER BY m.member_id""",
             [p],
         ).fetchall()
-        assertions = conn.execute(
-            """SELECT DISTINCT me.education_id, me.member_id, me.institution_id, me.confidence,
-                i.acara_id, i.country, i.institution_status, me.institution_resolution
-            FROM member_education me JOIN institutions i USING (institution_id)
-            WHERE me.level='secondary' AND EXISTS (SELECT 1 FROM parliament_service ps
-                WHERE ps.member_id=me.member_id AND ps.parliament_number=? AND ps.is_opening_day_member)
-            ORDER BY me.education_id""",
-            [p],
-        ).fetchall()
-        institutions = {r[2] for r in assertions}
+        assertions = get_opening_day_education_context(conn, p)
+
+        def school_key(row: dict[str, Any]) -> str:
+            return row["attended_school_id"] or f"unresolved:{row['education_id']}"
+
+        schools = {school_key(row) for row in assertions}
+        school_contexts: dict[str, list[dict[str, Any]]] = {}
+        for row in assertions:
+            school_contexts.setdefault(school_key(row), []).append(row)
+        displayed_schools = 0
+        for contexts in school_contexts.values():
+            selected, conflicting = resolve_school_display_locations(
+                contexts,
+                longitude_key="display_longitude",
+                latitude_key="display_latitude",
+            )
+            if (
+                not conflicting
+                and selected
+                and selected[0]["display_longitude"] is not None
+                and selected[0]["display_latitude"] is not None
+            ):
+                displayed_schools += 1
+        institutions = {row["resolved_institution_id"] for row in assertions}
+        metadata = {
+            row[0]: {"acara_id": row[1], "country": row[2], "status": row[3]}
+            for row in conn.execute(
+                "SELECT institution_id, acara_id, country, institution_status FROM institutions"
+            ).fetchall()
+        }
+
+        def original_metadata(row: dict[str, Any]) -> dict[str, Any]:
+            original_id = row.get("attended_institution_id") or (
+                row["resolved_institution_id"] if not row["is_successor"] else None
+            )
+            return metadata.get(original_id, {})
+
         for iid in institutions:
             if iid not in estimates:
                 estimates[iid] = compute_school_finance_estimate(
                     conn, iid, target_year=finance_year, peer_group_metrics=peer_metrics
                 )
         funded = {
-            r[0]
-            for r in conn.execute(
+            row[0]
+            for row in conn.execute(
                 "SELECT DISTINCT institution_id FROM school_public_funding WHERE reporting_year=?",
                 [finance_year],
             ).fetchall()
         }
-        known_people = {r[1] for r in assertions if r[3] in ("verified", "provisional")}
+        known_people = {
+            row["member_id"]
+            for row in assertions
+            if row["confidence"] in ("verified", "provisional")
+        }
         output.append(
             {
                 "parliament": p,
                 "opening_date": PARLIAMENT_METADATA[p]["opening_date"],
                 "cohort": "opening_day",
                 "opening_day_members": len(people),
-                "members_with_dob": sum(r[1] is not None for r in people),
+                "members_with_dob": sum(row[1] is not None for row in people),
                 "members_with_secondary_school": len(known_people),
                 "members_without_secondary_school": len(people) - len(known_people),
                 "secondary_education_assertions": len(assertions),
-                "represented_schools": len(institutions),
+                "represented_schools": len(schools),
                 "domestic_schools_matched_acara": len(
                     {
-                        r[2]
-                        for r in assertions
-                        if r[4] and not _is_overseas_country(r[5])
+                        school_key(row)
+                        for row in assertions
+                        if original_metadata(row).get("acara_id")
+                        and not _is_overseas_country(
+                            original_metadata(row).get("country")
+                        )
+                    }
+                ),
+                "schools_linked_to_successor_acara": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if row["is_successor"]
+                        and metadata[row["resolved_institution_id"]]["acara_id"]
                     }
                 ),
                 "historical_schools": len(
                     {
-                        r[2]
-                        for r in assertions
-                        if r[6] in ("historical_only", "closed", "merged")
-                        or r[7] in ("rename", "successor")
+                        school_key(row)
+                        for row in assertions
+                        if original_metadata(row).get("status")
+                        in ("historical_only", "closed", "merged")
+                        or row["institution_resolution"] in ("rename", "successor")
                     }
                 ),
                 "overseas_schools": len(
-                    {r[2] for r in assertions if _is_overseas_country(r[5])}
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if _is_overseas_country(original_metadata(row).get("country"))
+                    }
                 ),
                 "unresolved_school_records": sum(
-                    r[3] == "unconfirmed" for r in assertions
+                    row["confidence"] == "unconfirmed" for row in assertions
                 ),
+                "provisional_original_school_identities": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if row["identity_basis"] == "recorded_name_provisional"
+                    }
+                ),
+                "unresolved_original_school_identities": sum(
+                    row["attended_school_id"] is None for row in assertions
+                ),
+                "displayed_mapped_schools": displayed_schools,
+                "schools_with_verified_attendance_geography": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if row["location_basis"]
+                        in ("original_verified", "successor_verified_same_campus")
+                    }
+                ),
+                "assertions_with_verified_attendance_geography": sum(
+                    row["location_basis"]
+                    in ("original_verified", "successor_verified_same_campus")
+                    for row in assertions
+                ),
+                "schools_eligible_attendance_geography": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if row["attendance_location_eligible"]
+                    }
+                ),
+                "assertions_eligible_attendance_geography": sum(
+                    bool(row["attendance_location_eligible"]) for row in assertions
+                ),
+                "schools_with_successor_sector_assumptions": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if row["sector_basis"] == "successor_assumption"
+                    }
+                ),
+                "finance_reporting_institutions": len(institutions),
                 "schools_with_observed_finance": sum(
                     estimates[iid]["status"] == "observed" for iid in institutions
                 ),
@@ -98,6 +193,14 @@ def compute_parliament_coverage(
                     for iid in institutions
                 ),
                 "schools_with_public_funding": len(institutions & funded),
+                "attended_schools_with_finance_context": len(
+                    {
+                        school_key(row)
+                        for row in assertions
+                        if estimates[row["resolved_institution_id"]]["status"]
+                        != "unavailable"
+                    }
+                ),
                 "finance_reporting_year": finance_year,
             }
         )
@@ -119,11 +222,16 @@ def export_parliament_coverage(
         json.dumps(
             {
                 "cohort": "opening_day",
+                "schema_version": ANALYSIS_SCHEMA_VERSION,
                 "temporal_warning": TEMPORAL_WARNING,
                 "denominators": {
                     "members": "distinct people",
                     "assertions": "distinct secondary education assertions",
-                    "schools": "distinct canonical institutions",
+                    "schools": "distinct original attended schools; unresolved assertions remain separate",
+                    "finance": "distinct resolved reporting institutions",
+                    "mapped": "displayed school points, including successor fallback",
+                    "eligible_attendance_geography": "original reference or reviewed original/same-campus locations",
+                    "verified_attendance_geography": "independently reviewed historical original/same-campus locations",
                 },
                 "parliaments": rows,
             },

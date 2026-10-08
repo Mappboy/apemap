@@ -222,6 +222,112 @@ def test_changed_selected_manual_definition_rejects_save(
         service.save(preview)
 
 
+@pytest.mark.parametrize(
+    "change",
+    ["shared_alias", "original_definition", "original_attendance", "unrelated"],
+)
+def test_successor_historical_preview_guards_original_and_school_wide_scope(
+    service: ReviewService, change: str
+) -> None:
+    original = {
+        "institution_ref": "manual:original",
+        "school_name": "Original School",
+        "country": "Australia",
+        "sector": "Government",
+        "institution_status": "closed",
+    }
+    definition = service.save(
+        service.prepare(
+            institution_review_id("manual:original"),
+            "accept",
+            original,
+            source_url="https://example.org/original",
+            reviewer="Reviewer",
+        )
+    )
+    payload = {
+        "recorded_name": "School A",
+        "institution_ref": "acara:3",
+        "relationship_type": "successor",
+        "attended_institution_ref": "manual:original",
+        "attended_identity_source_url": "https://example.org/identity",
+        "historical_scope_confirmed": True,
+        "historical_broad_sector": "Government",
+        "historical_broad_sector_source_url": "https://example.org/sector",
+        "historical_latitude": -40,
+        "historical_longitude": 145,
+        "historical_location_source_url": "https://example.org/location",
+    }
+    preview = service.prepare(
+        school_review_id("School A"), "map", payload, reviewer="Reviewer"
+    )
+    if change == "original_definition":
+        service.save(
+            service.prepare(
+                definition.review_id,
+                "accept",
+                {**original, "school_name": "Corrected Original"},
+                source_url="https://example.org/original",
+                reviewer="Reviewer",
+                supersedes=[definition.decision_id],
+            )
+        )
+    elif change == "shared_alias":
+        service.save(
+            service.prepare(
+                school_review_id("School B"),
+                "map",
+                {
+                    "recorded_name": "School B",
+                    "institution_ref": "acara:4",
+                    "relationship_type": "successor",
+                    "attended_institution_ref": "manual:original",
+                    "attended_identity_source_url": "https://example.org/identity",
+                    "historical_scope_confirmed": True,
+                },
+                reviewer="Reviewer",
+            )
+        )
+    elif change == "original_attendance":
+        service.save(
+            service.prepare(
+                education_review_id("TEST2", "Original alias"),
+                "accept",
+                {
+                    "aph_id": "TEST2",
+                    "recorded_school_name": "Original alias",
+                    "institution_ref": "manual:original",
+                    "attended_status": "attended_unspecified",
+                    "confidence": "verified",
+                    "retrieved_at": "2026-10-02T00:00:00+10:00",
+                },
+                source_url="https://example.org/attendance",
+                reviewer="Reviewer",
+            )
+        )
+        refreshed = service.prepare(
+            school_review_id("School A"), "map", payload, reviewer="Reviewer"
+        )
+        original_case = next(
+            case
+            for case in refreshed["historical_context"]["cases"]
+            if case["recorded_name"] == "Original alias"
+        )
+        assert original_case["members"][0]["aph_id"] == "TEST2"
+    else:
+        service.save(mapping(service, "School B", "acara:4"))
+    prior = service.log_path.read_bytes()
+    if change == "unrelated":
+        saved = service.save(preview)
+        assert saved.payload == payload
+        assert saved.to_dict() == preview["event"]
+        assert service.log_path.read_bytes().startswith(prior)
+    else:
+        with pytest.raises(StaleReviewError, match="definition"):
+            service.save(preview)
+        assert service.log_path.read_bytes() == prior
+
+
 def test_changed_education_effects_reject_school_save(service: ReviewService) -> None:
     preview = mapping(service, "School A", "acara:3")
     service.save(
