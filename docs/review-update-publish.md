@@ -13,7 +13,10 @@ Commands below use **PowerShell from the repository root**. The example release
 version `0.3.2` and review date `2026-10-04` are placeholders: choose an unused
 version and the actual review date. This guide was checked against the repository
 on 4 October 2026; consult command help and the linked implementation when the
-workflow changes.
+workflow changes. The post-decision commands were rechecked on 6 October 2026;
+use [Decisions to a new release](decisions-to-release.md) when the decisions have
+already been saved and you want the shortest rebuild, verify and package path.
+The [0.3.3 delivery record](releases/0.3.3/README.md) pins the new reviewed bundle.
 
 ## 1. Prepare the review
 
@@ -209,12 +212,15 @@ manual edit of DuckDB, derived JSON/GeoJSON or a generated queue is authoritativ
    ```powershell
    uv run apemap inputs verify
    uv run apemap inputs verify --manifest data/historical-inputs-manifest.json
-   uv run apemap review check
+   uv run apemap review --external-dir data/raw/historical/acara check
    ```
 
    Ingestion records the consumed ledger hash and source fingerprint; releases
    carry that review snapshot separately. Appending a review decision does not
    require repinning an unchanged upstream source archive.
+   The command above selects the historical register. For a standard-only build,
+   omit `--external-dir` to use `data/external/`. Commit the reviewed decisions
+   before building so `source_commit` identifies the consumed ledger revision.
 4. Choose the build recipe that matches the intended release. Use a fresh
    database and output directory, outside the baseline paths.
 
@@ -244,7 +250,6 @@ manual edit of DuckDB, derived JSON/GeoJSON or a generated queue is authoritativ
 ## 7. Validate the candidate and compare it with the baseline
 
 ```powershell
-uv run apemap transform --db-path $CandidateDb
 uv run apemap validate --db-path $CandidateDb --parliament $Parliaments --strict
 uv run apemap analyze --db-path $CandidateDb --parliament $Parliaments --finance-year $FinanceYear --output-dir $ReviewDir
 uv run pytest
@@ -252,6 +257,10 @@ uv run ruff check .
 uv run ruff format --check .
 uv run ty check
 ```
+
+Both rebuild recipes already initialize the schema and transform their data.
+Do not modify a database after building its immutable release without inspecting
+the effects and regenerating that release at a fresh path.
 
 Run focused regression tests first for any ingestion/code change. If a full gate
 has a pre-existing failure or cannot run, record its exact command and error and
@@ -302,6 +311,19 @@ Replace the diff's first path with the available baseline bundle. Inspect
 Check version, source commit, selected terms, source dates, reporting years,
 temporal warnings and attribution. The manifest records hashes, not a digital
 signature. Unknown acquisition dates must remain unknown.
+Compare `review_snapshot.decision_log_sha256` against the committed ledger and
+its `event_count` against the intended snapshot. Building from an older database
+will faithfully export its older decisions; the builder never reads newer working
+ledger entries to substitute for the consumed snapshot.
+
+Package the verified bundle for delivery, outside its payload directory:
+
+```powershell
+uv run python -m apemap.release.package $ReleaseDir --output-dir "data/processed/candidates/$Version"
+```
+
+Keep `SHA256SUMS.dist` with the archive and preserve the bundled payload inventory.
+The deterministic packager refuses to replace existing delivery files.
 
 The immutable release builder excludes restricted private finance fields.
 Passing its verifier checks file inventory, hashes, coordinates, restricted

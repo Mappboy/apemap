@@ -8,6 +8,10 @@ ACARA remain source material; replay applies supported corrections after loading
 those sources. Generated CSV queues and website exports are views, not writable
 authorities.
 
+After saving decisions, use [Decisions to a new release](decisions-to-release.md).
+Rebuild through ingestion before packaging: `release build` reads the database's
+already consumed review snapshot and cannot apply newer ledger entries by itself.
+
 ## Review and replay
 
 Use `uv run apemap review --help` to inspect the review commands. Export a queue,
@@ -88,8 +92,9 @@ country; coordinates require a separate `address_source_url`.
 
 Exact old aliases, manual education and service overrides are preserved in
 `archive/reference/2026-10-05/`. The migration imports three education assertions
-and four sourced school relationships. All 89 unsourced aliases remain research
-decisions. Matching target metadata does not demonstrate that a historical name
+and four sourced school relationships. It retained all 89 unsourced aliases as
+research decisions; later reviewed supersessions can resolve individual items.
+Matching target metadata does not demonstrate that a historical name
 and a school are related. See the [migration audit](review-migration.json) for every
 target. The [independent parity report](review-migration-parity.json) compares the
 archived APH pipeline, matcher and loaders with the new projection using separate

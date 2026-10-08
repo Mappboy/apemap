@@ -16,7 +16,7 @@ APEMAP provides a deterministic, reproducible pipeline to map the secondary educ
 
 - **Parliamentarian Ingestion**: Ingests member biographies and dated service histories from the official Australian Parliament House (APH) Parliamentary Handbook API across the 42nd–48th Parliaments, with opening-day cohorts and explicit historical evidence gaps.
 - **ACARA School Registers**: Ingests authoritative Australian Curriculum, Assessment and Reporting Authority (ACARA) School Location and Longitudinal School Profile datasets.
-- **Deterministic School Matching**: Resolves noisy biographical school names against ACARA school registers using normalized keys, curated alias overrides, and RapidFuzz token matching.
+- **Deterministic School Matching**: Resolves noisy biographical school names against ACARA school registers using normalized keys, reviewed decision-log mappings, and RapidFuzz token matching.
 - **Canonical DuckDB Storage**: Consolidates members, service periods, institutions, education assertions, and historical 2021 financial profiles into an audited relational schema.
 - **Integrity Validation**: Enforces relational integrity, non-null constraints, and opening-day seat benchmarks via automated validation gates.
 - **Reviewed Corrections**: An append-only decision log records sourced member, education, institution and service corrections and replays them after ingestion.
@@ -72,8 +72,8 @@ for integration and notebook commands and fixture isolation rules.
 Execute individual pipeline stages:
 
 ```bash
-uv run apemap ingest aph        # Ingest parliamentarians & match schools
 uv run apemap ingest acara      # Ingest ACARA school data & isolate 2021 finances
+uv run apemap ingest aph        # Ingest parliamentarians, match schools & replay decisions
 uv run apemap transform         # Initialize canonical schema, views, and macros
 uv run apemap validate          # Run database integrity and coverage checks
 uv run apemap analyze           # Compute demographic, sector, and funding stats
@@ -94,6 +94,10 @@ views; decisions live in `data/reference/review/decisions.jsonl`. Install
 concurrent school reviews through four local request workers. Decisions save
 immediately to the ledger. See
 [Review decisions](docs/review-decisions.md) for evidence, imports and replay.
+After saving decisions, follow [Decisions to a new release](docs/decisions-to-release.md)
+to rebuild from pinned sources, verify the consumed ledger, package the public
+bundle and prepare publication. Saving a mapping alone does not update released
+data or the website.
 
 ---
 

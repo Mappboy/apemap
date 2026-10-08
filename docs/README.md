@@ -9,6 +9,7 @@ This index provides an overview of available technical guides, methodologies, an
 | :--- | :--- | :--- |
 | [**Quickstart**](quickstart.md) | Clone-to-useful-result guide covering prerequisites, installation with `uv`, data initialization, and running pipeline stages. | New users, evaluators, developers |
 | [**Review, Update & Publish**](review-update-publish.md) | Step-by-step checklist for reviewing members and schools, applying evidence-backed corrections, validating releases, and publishing dataset and website updates. | Researchers, reviewers, release maintainers |
+| [**Decisions to a New Release**](decisions-to-release.md) | Commands to run after saving decisions: validate, rebuild historical data, verify review provenance, compare, package, and prepare publication. | Reviewers, release maintainers |
 | [**CLI Reference**](cli.md) | Comprehensive command-line reference for the `apemap` CLI (`ingest`, `transform`, `validate`, `analyze`, `export`, `run-all`). | Data engineers, automated workflows |
 | [**Python Package**](package.md) | Reusable Python library architecture, public API surface (`get_connection`, `build_database`, `init_schema`), and internal modules. | Software engineers, tool builders |
 | [**Methodology**](methodology.md) | Ingestion logic, APH text parsing, institutional matching against ACARA, cohort definitions, and research caveats. | Researchers, political scientists, data analysts |

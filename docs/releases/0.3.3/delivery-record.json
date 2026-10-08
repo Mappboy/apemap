@@ -1,0 +1,238 @@
+{
+  "archive_readback_verification": {
+    "checks_passed": 217,
+    "checks_run": 217,
+    "errors": [],
+    "release_version": "0.3.3",
+    "valid": true,
+    "verified_files_count": 50
+  },
+  "baseline_source_commit": "19dcd581081d87cbe32eaa4ed3c0a9906cb5d5c6",
+  "baseline_version": "0.3.0",
+  "dataset_version": "0.3.3",
+  "draft_release": {
+    "url": "https://github.com/Mappboy/apemap/releases/tag/untagged-964ada47a749cc5cc26b",
+    "tag_name": "preview-review-v0.3.3",
+    "target_commit": "013a8df810ce22442801b4040b01297979a569e1",
+    "archive_asset_id": 613998797,
+    "github_archive_digest": "sha256:af5432b39bd6a428b9476fce935b19d202c0c66cad036e5f0f87fc68d098cba8",
+    "all_four_assets_uploaded": true
+  },
+  "education_comparison": {
+    "added_ids": [],
+    "changed_fields": {
+      "confidence": 61,
+      "institution_id": 66,
+      "institution_resolution": 66,
+      "resolution_source_url": 40,
+      "source_url": 5
+    },
+    "changed_institution_examples": [
+      {
+        "after_institution": "acara-40097",
+        "before_institution": "inst-unmatched-queechy-high-school-launceston",
+        "education_id": "edu-008ch-4d2452ab19955c39",
+        "recorded_name": "Queechy High School (Launceston)"
+      },
+      {
+        "after_institution": "acara-40445",
+        "before_institution": "inst-unmatched-rosny-college-hobart",
+        "education_id": "edu-008ch-83d02ebdc1ac0015",
+        "recorded_name": "Rosny College (Hobart)"
+      },
+      {
+        "after_institution": "acara-43271",
+        "before_institution": "inst-unmatched-saint-leos-college",
+        "education_id": "edu-00an3-0d4ed5db9ded5fa9",
+        "recorded_name": "St Leo's College"
+      },
+      {
+        "after_institution": "acara-49470",
+        "before_institution": "inst-unmatched-norwood-high-school",
+        "education_id": "edu-00aol-1b76034a0477fcec",
+        "recorded_name": "Norwood High School"
+      },
+      {
+        "after_institution": "acara-46186",
+        "before_institution": "inst-unmatched-carey-grammar-school",
+        "education_id": "edu-00apg-8979d261ad248a66",
+        "recorded_name": "Carey Grammar School"
+      },
+      {
+        "after_institution": "acara-46144",
+        "before_institution": "inst-unmatched-mlc",
+        "education_id": "edu-11788-7c604789e447d661",
+        "recorded_name": "MLC"
+      },
+      {
+        "after_institution": "acara-43672",
+        "before_institution": "inst-unmatched-saint-scholasticas-college",
+        "education_id": "edu-122087-4b2a2b9fd713b3de",
+        "recorded_name": "St Scholastica's College"
+      },
+      {
+        "after_institution": "acara-47877",
+        "before_institution": "inst-unmatched-stuartholme",
+        "education_id": "edu-123072-1b6548536dd69908",
+        "recorded_name": "Stuartholme"
+      }
+    ],
+    "removed_ids": []
+  },
+  "generated_at": "2026-10-01T22:23:59.813516+00:00",
+  "generation_time_basis": "Pinned historical input manifest; actual delivery date is recorded separately",
+  "inventory_comparison": {
+    "added_files": [
+      "analysis/chamber_sectors.json"
+    ],
+    "modified_files_count": 30,
+    "removed_files": [],
+    "unchanged_files_count": 19
+  },
+  "opening_day_coverage": [
+    {
+      "baseline_members_with_secondary_school": 32,
+      "baseline_unresolved_school_records": 21,
+      "members_with_secondary_school": 36,
+      "opening_day_members": 226,
+      "parliament": 42,
+      "secondary_education_assertions": 60,
+      "unresolved_school_records": 15
+    },
+    {
+      "baseline_members_with_secondary_school": 49,
+      "baseline_unresolved_school_records": 35,
+      "members_with_secondary_school": 57,
+      "opening_day_members": 226,
+      "parliament": 43,
+      "secondary_education_assertions": 93,
+      "unresolved_school_records": 22
+    },
+    {
+      "baseline_members_with_secondary_school": 63,
+      "baseline_unresolved_school_records": 58,
+      "members_with_secondary_school": 79,
+      "opening_day_members": 224,
+      "parliament": 44,
+      "secondary_education_assertions": 130,
+      "unresolved_school_records": 35
+    },
+    {
+      "baseline_members_with_secondary_school": 93,
+      "baseline_unresolved_school_records": 79,
+      "members_with_secondary_school": 114,
+      "opening_day_members": 226,
+      "parliament": 45,
+      "secondary_education_assertions": 188,
+      "unresolved_school_records": 49
+    },
+    {
+      "baseline_members_with_secondary_school": 123,
+      "baseline_unresolved_school_records": 103,
+      "members_with_secondary_school": 151,
+      "opening_day_members": 227,
+      "parliament": 46,
+      "secondary_education_assertions": 243,
+      "unresolved_school_records": 63
+    },
+    {
+      "baseline_members_with_secondary_school": 121,
+      "baseline_unresolved_school_records": 112,
+      "members_with_secondary_school": 151,
+      "opening_day_members": 227,
+      "parliament": 47,
+      "secondary_education_assertions": 249,
+      "unresolved_school_records": 68
+    },
+    {
+      "baseline_members_with_secondary_school": 116,
+      "baseline_unresolved_school_records": 101,
+      "members_with_secondary_school": 144,
+      "opening_day_members": 226,
+      "parliament": 48,
+      "secondary_education_assertions": 234,
+      "unresolved_school_records": 58
+    }
+  ],
+  "package": {
+    "archive": "apemap-release-v0.3.3.tar.gz",
+    "archive_sha256": "af5432b39bd6a428b9476fce935b19d202c0c66cad036e5f0f87fc68d098cba8",
+    "archive_size_bytes": 32607470,
+    "checks_passed": 217,
+    "data_release_version": "0.3.3",
+    "source_commit": "013a8df810ce22442801b4040b01297979a569e1",
+    "verified_files_count": 50
+  },
+  "prepared_date": "2026-10-06",
+  "publication_requirement": "Merge reviewed source and implement/review historical recipe in main-branch publication workflow; current release.yml rebuilds standard inputs with finance year 2021",
+  "recipe": "apemap.historical: cached ACARA 2008-2025 profiles; parliaments 42-48; finance analysis 2024",
+  "review_snapshot": {
+    "decision_log_sha256": "9376bb877fd7ae66620fe547baca46538ced25df62102f5b43ef0592c790e600",
+    "effective_decisions": 103,
+    "event_count": 163,
+    "source_manifest_sha256": "c17c9b8ad8add9d1c127d49384d89e27e66d1ca25e196d367738e90b6b58e0e7"
+  },
+  "row_counts": {
+    "education_sector_benchmarks": {
+      "baseline": 3,
+      "delta": 0,
+      "release": 3
+    },
+    "electoral_boundaries": {
+      "baseline": 150,
+      "delta": 0,
+      "release": 150
+    },
+    "institutions": {
+      "baseline": 11907,
+      "delta": -18,
+      "release": 11889
+    },
+    "member_education": {
+      "baseline": 352,
+      "delta": 0,
+      "release": 352
+    },
+    "members": {
+      "baseline": 580,
+      "delta": 0,
+      "release": 580
+    },
+    "parliament_service": {
+      "baseline": 1754,
+      "delta": 0,
+      "release": 1754
+    },
+    "school_finance_benchmarks": {
+      "baseline": 5184,
+      "delta": 0,
+      "release": 5184
+    },
+    "school_public_funding": {
+      "baseline": 87,
+      "delta": 0,
+      "release": 87
+    },
+    "school_snapshots": {
+      "baseline": 171822,
+      "delta": 0,
+      "release": 171822
+    }
+  },
+  "source_commit": "013a8df810ce22442801b4040b01297979a569e1",
+  "source_snapshot_dates": {
+    "abs": "2026-03-05",
+    "acara": "2026-10-01",
+    "aec": "2025-03-04",
+    "aph": null
+  },
+  "status": "unpublished_draft",
+  "verification": {
+    "checks_passed": 217,
+    "checks_run": 217,
+    "errors": [],
+    "release_version": "0.3.3",
+    "valid": true,
+    "verified_files_count": 50
+  }
+}
