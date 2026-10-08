@@ -20,6 +20,7 @@ from apemap.ingest.matching import (
 )
 from apemap.ingest.aph import parse_individual
 from apemap.ingest.pipeline import run_aph_ingestion
+from apemap.review.integration import review_snapshot_metadata
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SAMPLE_APH_PATH = FIXTURES_DIR / "aph_sample.json"
@@ -224,6 +225,10 @@ def test_pipeline_rerun_is_idempotent(
             external_dir=external_dir,
         )
         assert "connection" not in result
+        with get_connection(db_file, read_only=True) as conn:
+            snapshot = review_snapshot_metadata(conn)
+        assert snapshot["event_count"] == 0
+        assert snapshot["decision_log_sha256"] == hashlib.sha256(b"").hexdigest()
 
     def manifest(root: Path) -> dict[str, str]:
         return {
