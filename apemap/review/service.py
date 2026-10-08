@@ -158,6 +158,7 @@ class ReviewService:
         self._register_lock = RLock()
         self._lookup_revision: tuple[tuple[str, str], ...] | None = None
         self._lookup_rows: list[tuple[tuple[str, ...], dict[str, Any]]] = []
+        self._lookup_refs: dict[str, dict[str, Any]] = {}
         self._matcher_revision: tuple[tuple[str, str], ...] | None = None
         self._matcher: SchoolMatcher | None = None
 
@@ -243,6 +244,7 @@ class ReviewService:
                     )
                 )
             self._lookup_rows = rows
+            self._lookup_refs = {str(row["institution_ref"]): row for _, row in rows}
             self._lookup_revision = source_revision
         return self._lookup_rows
 
@@ -320,14 +322,9 @@ class ReviewService:
     def resolve_institution(self, reference: str) -> dict[str, Any] | None:
         """Describe an exact local reference without granting mapping authority."""
         if reference.startswith("acara:"):
-            row = next(
-                (
-                    row
-                    for _, row in self._institution_lookup_rows()
-                    if row["institution_ref"] == reference
-                ),
-                None,
-            )
+            with self._register_lock:
+                self._institution_lookup_rows()
+                row = self._lookup_refs.get(reference)
             return dict(row) if row is not None else None
         if reference.startswith("manual:"):
             heads = active_heads(self.events(allow_conflicts=True)).get(
@@ -339,10 +336,9 @@ class ReviewService:
 
     def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
         """Snapshot reference metadata once for a single presentation request."""
-        references = {
-            str(row["institution_ref"]): row
-            for _, row in self._institution_lookup_rows()
-        }
+        with self._register_lock:
+            self._institution_lookup_rows()
+            references = dict(self._lookup_refs)
         for heads in active_heads(self.events(allow_conflicts=True)).values():
             if len(heads) == 1:
                 event = heads[0]
