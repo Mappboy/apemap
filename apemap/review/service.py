@@ -342,8 +342,9 @@ class ReviewService:
     def resolve_institution(self, reference: str) -> dict[str, Any] | None:
         """Describe an exact local reference without granting mapping authority."""
         if reference.startswith("acara:"):
+            source_revision = self._register_revision()
             with self._register_lock:
-                self._institution_lookup_rows()
+                self._build_institution_lookup_rows(source_revision)
                 row = self._lookup_refs.get(reference)
             return dict(row) if row is not None else None
         if reference.startswith("manual:"):
@@ -356,8 +357,9 @@ class ReviewService:
 
     def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
         """Snapshot reference metadata once for a single presentation request."""
+        source_revision = self._register_revision()
         with self._register_lock:
-            self._institution_lookup_rows()
+            self._build_institution_lookup_rows(source_revision)
             references = dict(self._lookup_refs)
         for heads in active_heads(self.events(allow_conflicts=True)).values():
             if len(heads) == 1:

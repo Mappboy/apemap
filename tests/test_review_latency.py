@@ -101,6 +101,44 @@ def test_concurrent_queue_build_is_shared_without_blocking_lookup(
     assert calls == 1
 
 
+@pytest.mark.parametrize(
+    "operation",
+    [
+        "matcher",
+        "_institution_lookup_rows",
+        "resolve_institution",
+        "institution_resolver",
+    ],
+)
+def test_register_hashing_leaves_other_cache_readers_available(
+    service: ReviewService, monkeypatch: pytest.MonkeyPatch, operation: str
+) -> None:
+    entered, release = Event(), Event()
+    original = service._register_revision
+
+    def blocked_first_hash() -> tuple[tuple[str, str], ...]:
+        if not entered.is_set():
+            entered.set()
+            assert release.wait(10)
+        return original()
+
+    def read_register() -> Any:
+        if operation == "resolve_institution":
+            return service.resolve_institution("acara:3")
+        return getattr(service, operation)()
+
+    monkeypatch.setattr(service, "_register_revision", blocked_first_hash)
+    with ThreadPoolExecutor(2) as pool:
+        blocked = pool.submit(read_register)
+        try:
+            assert entered.wait(10)
+            assert pool.submit(service.matcher).result(5).acara_id_map
+            assert not blocked.done()
+        finally:
+            release.set()
+        assert blocked.result(15) is not None
+
+
 def test_event_cache_is_content_bound_and_private(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
