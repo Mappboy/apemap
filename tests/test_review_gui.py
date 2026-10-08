@@ -367,14 +367,14 @@ def test_lookup_controls_only_render_for_school_and_education_and_use_local_scri
     client, service = gui
     school_html = client.get(f"/items/{SCHOOL_ID}").get_data(as_text=True)
     assert "data-school-lookup" in school_html
-    assert 'src="/static/school-mapping.js" defer' in school_html
+    assert 'src="/static/school-mapping.js?v=' in school_html
     for path in ("/new/member_education",):
         response = client.get(path)
         html = response.get_data(as_text=True)
         assert "data-institution-lookup" in html
         assert 'data-lookup-url="/institutions/lookup"' in html
         assert 'type="button" data-lookup-search' in html
-        assert 'src="/static/institution-lookup.js" defer' in html
+        assert 'src="/static/institution-lookup.js?v=' in html
         assert "Search by school name" in html
         assert "script-src 'self'" in response.headers["Content-Security-Policy"]
         assert "connect-src 'self'" in response.headers["Content-Security-Policy"]

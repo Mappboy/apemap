@@ -1,6 +1,7 @@
 """Read-only ACARA school-name search over small local registers."""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -161,14 +162,13 @@ def test_lookup_reuses_register_and_reloads_changed_sources(
     lookup_service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls = 0
-    original_matcher = lookup_service.matcher
 
-    def counted_matcher() -> SchoolMatcher:
+    def counted_matcher(*args: Any, **kwargs: Any) -> SchoolMatcher:
         nonlocal calls
         calls += 1
-        return original_matcher()
+        return SchoolMatcher(*args, **kwargs)
 
-    monkeypatch.setattr(lookup_service, "matcher", counted_matcher)
+    monkeypatch.setattr("apemap.review.service.SchoolMatcher", counted_matcher)
     result = lookup_service.lookup_institutions("fairfield")
     result[0]["school_name"] = "Client mutation"
     assert (

@@ -209,6 +209,14 @@ one for the proposal. Source bytes are hashed afresh before and after preview,
 and before save validation and immediately before the atomic ledger replacement.
 These optimizations add no persistent index, database schema or data refresh.
 
+Queue navigation reuses a complete in-memory presentation snapshot while source
+and ledger content hashes are unchanged. Filters and pagination use that snapshot;
+saving a decision or changing source bytes rebuilds it on the next queue request.
+Ledger parsing is also reused by content hash, with private event copies for each
+caller. Details, previews and saves do not use the queue snapshot. Local CSS and
+JavaScript assets have content-versioned URLs and browser caching; review pages,
+lookup responses and previews remain uncached in the browser.
+
 The local server uses one Waitress process with four request worker threads by
 default. Several browser tabs or clients can load schools, search the register
 and preview decisions concurrently. Register caches publish complete snapshots;
@@ -229,3 +237,10 @@ Rebuild the review database separately when ready to apply saved decisions.
 ```powershell
 uv run apemap review --db-path data/aped-review.duckdb serve --port 8765 --workers 4
 ```
+
+`WARNING:waitress.queue:Task queue depth is 1` means a request briefly waited
+while every worker was busy. It does not mean a decision was lost. Sustained
+warnings can occur when several clients preview at once; `--workers 8` provides
+more request capacity, although canonical preview validation still takes work.
+Restart after upgrading to pick up queue and asset caching. Keep the preview and
+save steps, and use the retry button when a writer is busy.
