@@ -18,6 +18,12 @@ use [Decisions to a new release](decisions-to-release.md) when the decisions hav
 already been saved and you want the shortest rebuild, verify and package path.
 The [0.3.3 delivery record](releases/0.3.3/README.md) pins the new reviewed bundle.
 
+For successor mappings, follow [Original schools and reviewed successors](successor-context.md)
+when reviewing original identity, campus continuity and historical sector. Those
+dimensions require their own evidence; a reviewed mapping alone does not verify
+them. Package 0.4.0 changes the web and analysis contracts to `2.0.0`, so a new
+dataset build needs an unused MINOR version and a reviewed frontend migration.
+
 ## 1. Prepare the review
 
 1. Define the scope: selected parliaments, members or schools, reason for review,

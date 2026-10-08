@@ -530,3 +530,9 @@ subcommand. CSV import is a dry run until `--apply` is supplied. Use
 `accept`, `reject`, `research` or `supersede` to append a decision and
 `add-education` or `add-institution` to create an assertion or registry entry.
 Each command's `--help` describes its payload and evidence arguments.
+
+Successor school payloads also support a separately sourced original institution,
+historical campus and broad/detailed sector evidence. Use `accept --payload`
+with a JSON file or the guided school form; preview the school-wide scope before
+saving. See [Original schools and reviewed successors](successor-context.md)
+for fields, verification rules and the effect on exports and analysis.

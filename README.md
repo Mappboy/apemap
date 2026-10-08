@@ -99,6 +99,12 @@ to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released
 data or the website.
 
+Package 0.4.0 distinguishes the school attended from a reviewed successor used
+for matching, profiles and finance. Web and analysis contracts are `2.0.0`;
+historical releases retain their existing contracts. See
+[Original schools and reviewed successors](docs/successor-context.md) for campus
+and sector evidence, map markers, counting rules and the sensitivity comparison.
+
 ---
 
 ## Documentation
