@@ -3,6 +3,11 @@
 This tracks [issue #66](https://github.com/Mappboy/apemap/issues/66) against the
 unreleased review work in [PR #75](https://github.com/Mappboy/apemap/pull/75)
 and its package 0.7.0 follow-up.
+
+The [local 0.6.1 build record](releases/0.6.1/README.md) separately preserves an
+earlier frozen working checkout and its validation limits; it does not establish
+the current branch's acceptance status or package version.
+
 The initial PR implemented assertion resolution. The follow-up adds structured
 retained evidence and deterministic scoring. A further follow-up distinguishes
 ambiguous names and unsuitable candidates from rejected attendance, requires

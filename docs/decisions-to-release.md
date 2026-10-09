@@ -10,14 +10,15 @@ use `apemap release recipe build` with the same committed recipe: parliaments
 42–48, ACARA 2008–2025 profiles, latest available profiles and 2024 finance analysis.
 The recipe pins the source manifest and reviewed ledger separately. Public funding inputs and the tracked 2021 finance GeoPackage are pinned
 explicitly; restricted finance fields remain excluded from public exports.
-See the [0.3.3 delivery record](releases/0.3.3/README.md) for the release generated
-on 6 October 2026. `0.3.4` below is an example next correction version: check local
-bundles and GitHub releases before choosing an unused version. Package and dataset
+See the [0.3.3 delivery record](releases/0.3.3/README.md) for the previous delivery
+and the [local 0.6.1 record](releases/0.6.1/README.md) for the earlier frozen local build.
+`0.6.2` below is only an example next correction version: check local bundles,
+tags and GitHub releases before choosing an unused version. Package and dataset
 versions are separate; a data-only correction needs no package version bump.
-Package 0.5.0 supplies this recipe command without changing the `2.0.0` web/analysis
-contracts introduced in 0.4.0. A successor-contract dataset needs a new dataset
-MINOR version (for example `0.4.0-rc.1` for an unpublished candidate), rather than
-the `0.3.4` correction example. Check that any selected version is unused.
+The retained template is pinned to package 0.5.0; `recipe pin` creates a new recipe
+for the installed package and current ledger/evidence instead of modifying it.
+Web/analysis contracts are `2.0.0`. Migrating a dataset from contract `1.0.0`
+requires a dataset MINOR bump while at 0.x and coordinated frontend joins.
 
 ## 1. Finish and validate the decisions
 
@@ -44,7 +45,7 @@ changes, then commit so the release's `source_commit` identifies the actual ledg
 ```powershell
 git add data/reference/review/decisions.jsonl
 git commit -m "Record reviewed school and member decisions"
-$Version = '0.3.4'
+$Version = '0.6.2'
 $Baseline = 'data/processed/releases/0.3.3'
 $CandidateDb = "data/aped-historical-v$Version.duckdb"
 $ReleaseDir = "data/processed/releases/$Version"
@@ -88,6 +89,15 @@ second build into its populated directory. Stop after any command returns a
 nonzero exit code; PowerShell does not automatically stop on native command errors.
 
 ## 4. Verify the release and its consumed review revision
+
+An existing database is current only when its consumed decision/evidence hashes
+match the intended review revision, its input-manifest hash matches the selected
+recipe, and it passes current schema/cohort validation. A recent modification
+timestamp or `transform` alone cannot establish freshness. Keep the old database
+and build into a fresh path before promoting the verified result to
+`data/aped.duckdb`; close review servers and all database connections first.
+For builds from uncommitted code, retain a frozen source copy and its hashes and
+label the result a local candidate: `source_commit` alone does not describe those bytes.
 
 ```powershell
 uv run apemap release verify $ReleaseDir --strict-assertions

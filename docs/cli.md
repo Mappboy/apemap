@@ -28,8 +28,10 @@ apemap
 │   ├── finances  # Ingest authorised school finance records
 │   ├── funding   # Ingest ACARA benchmarks & jurisdictional public funding
 │   ├── benchmarks# Ingest ABS education sector benchmarks
+│   ├── aec       # Ingest electoral boundaries from the pinned AEC cache
 │   └── wikimedia # Enrich members & review unmatched schools via Wikimedia
 ├── inputs
+│   ├── restore   # Restore and verify pinned APH/AEC inputs
 │   └── verify    # Audit cached source files against inputs manifest
 ├── review        # Authoritative queues, decisions, history, preview and replay
 ├── transform     # Initialize DuckDB schema, canonical views, and table macros
@@ -40,7 +42,8 @@ apemap
 ├── release
 │   ├── build     # Build immutable dataset release bundle
 │   ├── verify    # Read-back verify manifest, checksums, bounds, privacy
-│   └── diff      # Compare changes between two dataset releases
+│   ├── diff      # Compare changes between two dataset releases
+│   └── recipe    # Pin, provision, build and compare historical releases
 └── run-all       # Coordinated end-to-end pipeline execution
 ```
 
@@ -58,7 +61,7 @@ uv run apemap ingest aph [OPTIONS]
 ### Options
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers (e.g. `'46,47,48'`). |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers (e.g. `'46,47,48'`). |
 | `--refresh` | `BOOL` | `False` | Force re-fetching from live APH Handbook API instead of local disk cache. |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
 | `--export-parquet` / `--no-export-parquet` | `BOOL` | `True` | Export updated canonical tables to Parquet files. |
@@ -142,7 +145,7 @@ uv run apemap ingest wikimedia [OPTIONS]
 ### Options
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers. |
 | `--refresh` / `--no-refresh` | `BOOL` | `False` | Force re-fetching live from Wikimedia API instead of local disk cache. |
 | `--members` / `--no-members` | `BOOL` | `True` | Enrich members with Wikidata identifiers and cross-check demographics. |
 | `--schools` / `--no-schools` | `BOOL` | `True` | Generate suggestions for unconfirmed and international schools via Wikimedia. |
@@ -262,7 +265,7 @@ uv run apemap validate [OPTIONS]
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers to validate. |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers to validate. |
 | `--strict` / `--no-strict` | `BOOL` | `True` | Exit with non-zero exit code (1) if any check fails. |
 
 ### Pipeline Behavior
@@ -328,7 +331,7 @@ uv run apemap analyze [OPTIONS]
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers to analyze. |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers to analyze. |
 | `--output-dir` | `PATH` | `data/processed` | Directory to save `analysis_report.json`. |
 | `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances. |
 
@@ -361,7 +364,7 @@ uv run apemap export [OPTIONS]
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers. |
 | `--output-dir` | `PATH` | `data/processed` | Output directory for exported files. |
 | `--finance-year` | `INT` | `2021` | Calendar reporting year for school finances in analytical reports. |
 | `--web-release` / `--no-web-release` | `BOOL` | `False` | Also generate the website bundle and manifest. |
@@ -416,8 +419,8 @@ uv run apemap run-all [OPTIONS]
 | :--- | :--- | :--- | :--- |
 | `--db-path` | `PATH` | `data/aped.duckdb` | Path to DuckDB database file. |
 | `--output-dir` | `PATH` | `data/processed` | Output directory for all generated artifacts. |
-| `-p`, `--parliament` | `TEXT` | `"46,47,48"` | Comma- or space-separated parliament numbers. |
-| `--download` / `--no-download` | `BOOL` | `False` | Download fresh ACARA datasets from portal (default is offline). |
+| `-p`, `--parliament` | `TEXT` | `"42,43,44,45,46,47,48"` | Comma- or space-separated parliament numbers. |
+| `--download` / `--no-download` | `BOOL` | `False` | Download fresh ACARA datasets from portal; default uses local ACARA files. |
 | `--refresh` / `--no-refresh` | `BOOL` | `False` | Force refresh from live APH API (default is cached). |
 | `--longitudinal` / `--single-year` | `BOOL` | `True` | Use ACARA longitudinal profiles or single-year. |
 | `--strict` / `--no-strict` | `BOOL` | `True` | Exit immediately if validation check fails. |
@@ -428,7 +431,7 @@ uv run apemap run-all [OPTIONS]
 
 ### Example Usage
 ```bash
-# Deterministic offline run using local cache
+# Development run using local cache when present
 uv run apemap run-all
 
 # Strict offline run validating inputs against manifest
@@ -521,15 +524,29 @@ uv run apemap review --db-path data/aped-review.duckdb list
 uv run apemap review show <review-id>
 uv run apemap review history <review-id>
 uv run apemap review check
+uv run apemap review readiness --parliament 47 --parliament 48
 uv run apemap review import --source <annotated-csv> --reviewer <name>
-uv run apemap review --db-path data/aped-review.duckdb serve
+uv run apemap review --db-path data/aped.duckdb --external-dir data/raw/historical/acara serve
 ```
 
 The group accepts `--log-path`, `--db-path` and `--external-dir` before the
-subcommand. CSV import is a dry run until `--apply` is supplied. Use
+subcommand. CSV import defaults to a dry run. School proposals, including imports
+and supersessions, require `--preview-out <fresh.json>` followed by
+`apply-preview <fresh.json> --approve <printed-sha256>`; inspect the affected
+assertions before approving. `--apply` alone cannot save school imports. Use
 `accept`, `reject`, `research` or `supersede` to append a decision and
 `add-education` or `add-institution` to create an assertion or registry entry.
 Each command's `--help` describes its payload and evidence arguments.
+
+`review build` ingests cached APH records and regenerates candidate queues with
+the selected register. It does not load the complete historical ACARA profile,
+funding and release pipeline. For full historical ingestion, use `release recipe
+build`; review its populated database directly with `serve`, `show` or `list`.
+
+Optional `serve --research-config docs/research-providers.example.json` enables
+the provider selector. `readiness` reports advisory analytical impact; it does not
+approve decisions or publication. See [assisted research and readiness](review-assisted-search.md)
+for provider setup, inspection and retention limits.
 
 Use `map-education <education-review-id> --institution-ref acara:ID
 --relationship-type direct --source <url> --dry-run` to preview an
@@ -567,13 +584,14 @@ for fields, verification rules and the effect on exports and analysis.
 Every build requires an explicit recipe, unused dataset version, fresh database
 and output directory.
 
-The historical example below uses the retained recipe pinned to package 0.5.0.
-With package 0.6.0, pin a fresh recipe and pass its path to `--recipe`; see
+The retained template is pinned to package 0.5.0. Pin a fresh recipe for the
+installed package (0.7.0 on this branch) and pass its path to `--recipe`; see
 [Assertion-level resolution](assertion-resolution.md#legacy-defaults-and-migration)
 for the pinning command. Preserve existing recipe and dataset version pins.
 
 ```bash
-uv run apemap release recipe build --recipe data/release-recipes/historical.json --version 0.4.0-rc.1 --db-path data/aped-new-candidate.duckdb --output-dir data/processed/releases/new-candidate
+uv run apemap release recipe pin --template data/release-recipes/historical.json --output data/release-recipes/new-candidate.json
+uv run apemap release recipe build --recipe data/release-recipes/new-candidate.json --version 0.6.2-rc.1 --db-path data/aped-new-candidate.duckdb --output-dir data/processed/releases/new-candidate
 ```
 
 Dataset versions follow SemVer 2.0, including optional prerelease and build

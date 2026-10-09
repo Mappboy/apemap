@@ -72,7 +72,7 @@ for integration and notebook commands and fixture isolation rules.
 Execute individual pipeline stages:
 
 ```bash
-uv run apemap ingest acara      # Ingest ACARA school data & isolate 2021 finances
+uv run apemap ingest acara --no-download # Load local ACARA data & isolate 2021 finances
 uv run apemap ingest aph        # Ingest parliamentarians, match schools & replay decisions
 uv run apemap transform         # Initialize canonical schema, views, and macros
 uv run apemap validate          # Run database integrity and coverage checks
@@ -87,6 +87,13 @@ uv run apemap run-all
 ```
 
 For detailed instructions on using local cached data versus live network refreshes, see the [Quickstart Guide](docs/quickstart.md).
+
+The individual commands and `run-all` are the standard development pipeline.
+For a current longitudinal release across 42–48, use the pinned historical
+recipe workflow in [Decisions to a new release](docs/decisions-to-release.md).
+`release build` only exports the database it is given; it does not ingest or
+consume newer review decisions. The [local 0.6.1 build record](docs/releases/0.6.1/README.md)
+records database freshness, input and review revisions, and validation.
 
 Review corrections with `uv run apemap review --help`. Generated CSVs are queue
 views; decisions live in `data/reference/review/decisions.jsonl`. Install

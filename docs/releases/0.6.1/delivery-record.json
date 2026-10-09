@@ -1,0 +1,341 @@
+{
+  "build_date": "2026-10-10",
+  "local_only": true,
+  "package_version": "0.6.1",
+  "data_release_version": "0.6.1",
+  "source_commit": "95d6d9b64c8deb8bc7893b20c7ad5626926dfff0",
+  "source_inventory_sha256": "ad09570e2aef3f2d52f1aaff29f87c99c8c59c6d300d72554812971ab07a3bea",
+  "database": "data/aped.duckdb",
+  "database_sha256": "3e9a0793260c762822279ed8de5b83d3c0c9ac55d008944c02d853c1d2137d64",
+  "old_database_backup": "data/archive/2026-10-10/aped.pre-0.6.1.duckdb",
+  "old_database_sha256": "6aaa707413199dd4ba83fc9299c5368b197e483462686ee156154a2845c1ac16",
+  "validation": {
+    "passed": true,
+    "checks_run": 69,
+    "checks_passed": 69,
+    "failures": [],
+    "table_counts": {
+      "members": 580,
+      "parliament_service": 1754,
+      "institutions": 11876,
+      "member_education": 352,
+      "school_snapshots": 171822,
+      "school_finances": 260,
+      "school_finances_2021": 260,
+      "electoral_boundaries": 150,
+      "education_sector_benchmarks": 3,
+      "school_finance_benchmarks": 5184,
+      "school_public_funding": 87
+    },
+    "parliament_metrics": {
+      "42": {
+        "total_stints": 248,
+        "unique_members": 247,
+        "opening_day_members": 226,
+        "current_members": 0
+      },
+      "43": {
+        "total_stints": 249,
+        "unique_members": 245,
+        "opening_day_members": 226,
+        "current_members": 0
+      },
+      "44": {
+        "total_stints": 255,
+        "unique_members": 248,
+        "opening_day_members": 224,
+        "current_members": 0
+      },
+      "45": {
+        "total_stints": 270,
+        "unique_members": 248,
+        "opening_day_members": 226,
+        "current_members": 0
+      },
+      "46": {
+        "total_stints": 242,
+        "unique_members": 238,
+        "opening_day_members": 227,
+        "current_members": 0
+      },
+      "47": {
+        "total_stints": 247,
+        "unique_members": 237,
+        "opening_day_members": 227,
+        "current_members": 0
+      },
+      "48": {
+        "total_stints": 243,
+        "unique_members": 230,
+        "opening_day_members": 226,
+        "current_members": 226
+      }
+    }
+  },
+  "opening_day_cohorts": [
+    [
+      42,
+      "representatives",
+      150
+    ],
+    [
+      42,
+      "senate",
+      76
+    ],
+    [
+      43,
+      "representatives",
+      150
+    ],
+    [
+      43,
+      "senate",
+      76
+    ],
+    [
+      44,
+      "representatives",
+      150
+    ],
+    [
+      44,
+      "senate",
+      74
+    ],
+    [
+      45,
+      "representatives",
+      150
+    ],
+    [
+      45,
+      "senate",
+      76
+    ],
+    [
+      46,
+      "representatives",
+      151
+    ],
+    [
+      46,
+      "senate",
+      76
+    ],
+    [
+      47,
+      "representatives",
+      151
+    ],
+    [
+      47,
+      "senate",
+      76
+    ],
+    [
+      48,
+      "representatives",
+      150
+    ],
+    [
+      48,
+      "senate",
+      76
+    ]
+  ],
+  "review_snapshot": {
+    "decision_log_sha256": "f83ff1f1389507ca7e27dc203229ccbd2c488536b69cdd48df1d5b751ad0e356",
+    "effective_decisions": 209,
+    "event_count": 302,
+    "schema_version": 1,
+    "source_manifest_sha256": "c17c9b8ad8add9d1c127d49384d89e27e66d1ca25e196d367738e90b6b58e0e7",
+    "source_parliaments": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "source_provenance": {
+      "acara": {
+        "files": {
+          "acara_school_results.json": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+          "school-location-2025.csv": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+          "school-profile-2008-2025.csv": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934"
+        },
+        "source": "ACARA school register and profiles"
+      },
+      "acara_files": {
+        "acara_school_results.json": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+        "school-location-2025.csv": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+        "school-profile-2008-2025.csv": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934"
+      },
+      "input_manifests": {
+        "historical-inputs-manifest.json": {
+          "manifest": {
+            "created_at": "2026-10-01T22:23:59.813516+00:00",
+            "description": "Historical inputs: existing APH/AEC snapshots and ACARA downloaded on 2026-10-01; CSV conversion via apemap.ingest.acara",
+            "files": {
+              "data/raw/aec/2025/AUS-March-2025-esri.zip": {
+                "required": true,
+                "sha256": "bdc0393d8448477bf187ac84473978330f776b5ea2ed6343f7eb891187263a09",
+                "size_bytes": 22689664,
+                "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+              },
+              "data/raw/aec/2025/AUS_ELB_region.dbf": {
+                "required": true,
+                "sha256": "cc36b63b0937b5b97ddcf6b6000015edf6fa558a718fcef568aab9e8c49cb9b7",
+                "size_bytes": 24022,
+                "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+              },
+              "data/raw/aec/2025/AUS_ELB_region.prj": {
+                "required": true,
+                "sha256": "e6e1cc4c5a68009271bab9d22f2f99c861944e577a1e385d8f6b0636a5d8a3fa",
+                "size_bytes": 168,
+                "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+              },
+              "data/raw/aec/2025/AUS_ELB_region.shp": {
+                "required": true,
+                "sha256": "57bbf38dbf8e1caa7360af43fb2154f5827ac12aee5a4927c04a497a31b1987b",
+                "size_bytes": 68966304,
+                "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+              },
+              "data/raw/aec/2025/AUS_ELB_region.shx": {
+                "required": true,
+                "sha256": "0b6187d15d6ea7f6fb937159d5cc43e43dacd2e45c6a2af1ba6bfe347d06bbd1",
+                "size_bytes": 1300,
+                "source": "https://www.aec.gov.au/Electorates/files/2025/AUS-March-2025-esri.zip"
+              },
+              "data/raw/aph/individuals.json": {
+                "required": true,
+                "sha256": "aad9e3798b32d94f6dd849cac20a40b25967664e1f845ce2a070e16f87873093",
+                "size_bytes": 10741777,
+                "source": "https://handbookapi.aph.gov.au/api/individuals"
+              },
+              "data/raw/historical/acara/School Location 2025.xlsx": {
+                "required": true,
+                "sha256": "eb8077bbe5d14326de86f1e27580e0bf5125170ce13c30f165d3de1a317558c4",
+                "size_bytes": 2317091,
+                "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
+              },
+              "data/raw/historical/acara/School Profile 2008-2025.xlsx": {
+                "required": true,
+                "sha256": "f17ef835e7680d0a887dcdb495bb16661743ec55e535696bf343ff0a01ea48dc",
+                "size_bytes": 29934507,
+                "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
+              },
+              "data/raw/historical/acara/acara_school_results.json": {
+                "required": true,
+                "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+                "size_bytes": 11195583,
+                "source": "Existing ACARA cache; original retrieval date unrecorded"
+              },
+              "data/raw/historical/acara/school-location-2025.csv": {
+                "required": true,
+                "sha256": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+                "size_bytes": 3348391,
+                "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Location%202025.xlsx"
+              },
+              "data/raw/historical/acara/school-profile-2008-2025.csv": {
+                "required": true,
+                "sha256": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934",
+                "size_bytes": 52328060,
+                "source": "https://dataandreporting.blob.core.windows.net/anrdataportal/Data-Access-Program/School%20Profile%202008-2025.xlsx"
+              },
+              "data/reference/acara_school_finance_benchmarks.csv": {
+                "required": true,
+                "sha256": "1f69e652e6eda2904297fca554c7a8055fa3e1adf17f057771d75a2ec0d89e36",
+                "size_bytes": 1239662,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              },
+              "data/reference/manual_school_funding.csv": {
+                "required": true,
+                "sha256": "ee17862bc12c8a8e782df21ffbe8f0bec8a54480be389a781092ec9c00b1fcd2",
+                "size_bytes": 906,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              },
+              "data/reference/nsw_ram_allocations.csv": {
+                "required": true,
+                "sha256": "cc81aacbe324ca2a2dad5ab2836fb48417db42fc396aac576b415ce431833fe8",
+                "size_bytes": 1252,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              },
+              "data/reference/nt_school_funding.csv": {
+                "required": true,
+                "sha256": "02640e617b9021d664f43ce058e777ce3b78310a6da472fd72c82d13c5dd7315",
+                "size_bytes": 252,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              },
+              "data/reference/qld_non_state_grants.csv": {
+                "required": true,
+                "sha256": "80d722b624be5277d021392ec474a58ced1052391e63890f791e318cd2595f07",
+                "size_bytes": 313,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              },
+              "data/reference/tasmania_srp_allocations.csv": {
+                "required": true,
+                "sha256": "fcd6158d0ce4431f1cb8727d51634b9c068ecd392c9f0cfe3307797e99b45b89",
+                "size_bytes": 369,
+                "source": "Reviewed APEMAP reference input; individual source URLs in records"
+              }
+            },
+            "licensing": "APH Commonwealth copyright; ACARA attribution and Data Access terms; AEC CC BY 4.0; project reference data CC BY 4.0",
+            "review_authority": "Mutable review ledger/registry is validated separately; consumed ledger and source fingerprints are captured in replay and release metadata.",
+            "schema_version": "1.0"
+          },
+          "sha256": "c17c9b8ad8add9d1c127d49384d89e27e66d1ca25e196d367738e90b6b58e0e7"
+        }
+      },
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "raw_individuals_sha256": "c4b9446c85828313f87661a9f27887a7eab596ab2912205fc46f4526c4a42ae8",
+      "retrieved_at": "2026-10-01T22:23:59.813516+00:00",
+      "source": "APH Parliamentary Handbook"
+    }
+  },
+  "release_verification": {
+    "valid": true,
+    "release_version": "0.6.1",
+    "checks_run": 233,
+    "checks_passed": 233,
+    "verified_files_count": 53,
+    "errors": []
+  },
+  "package": {
+    "data_release_version": "0.6.1",
+    "source_commit": "95d6d9b64c8deb8bc7893b20c7ad5626926dfff0",
+    "archive": "apemap-release-v0.6.1.tar.gz",
+    "archive_sha256": "a05c331db685c1ced8fa18ce73bc09ce228bc2552218e318481e1b0e88088615",
+    "archive_size_bytes": 33589574,
+    "verified_files_count": 53,
+    "checks_passed": 233
+  },
+  "artifacts": {
+    "data/processed/candidates/0.6.1/python/.gitignore": {
+      "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+      "size_bytes": 1
+    },
+    "data/processed/candidates/0.6.1/python/apemap-0.6.1-py3-none-any.whl": {
+      "sha256": "36b89907e6845a6a73c5ca91eaf3b49b8c403469aa820e61637aaa6ccee54f40",
+      "size_bytes": 299990
+    },
+    "data/processed/candidates/0.6.1/python/apemap-0.6.1.tar.gz": {
+      "sha256": "38104d05473f99b6e428f81f4380d26b9355b25e80c0e8dd1db6ed86d57e0791",
+      "size_bytes": 652869
+    },
+    "data/processed/candidates/0.6.1/dataset/apemap-release-v0.6.1.tar.gz": {
+      "sha256": "a05c331db685c1ced8fa18ce73bc09ce228bc2552218e318481e1b0e88088615",
+      "size_bytes": 33589574
+    }
+  }
+}

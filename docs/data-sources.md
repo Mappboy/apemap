@@ -164,7 +164,7 @@ These sources are actively fetched or read during pipeline execution:
   - Populates canonical `members.wikidata_id` using identifier-first linking via Parliament of Australia MP identifier ([Wikidata Property P10020](https://www.wikidata.org/wiki/Property:P10020)).
   - Provides QA and demographic cross-checking (dates of birth, gender) against APH records without silently overwriting authoritative values.
   - Suggests institution names, QIDs, Wikipedia URLs, geographic coordinates, and localities for unmatched/international schools for manual reviewer inspection.
-- **Caching & Provenance**: Cached on local disk under `data/raw/wikimedia/members/` and `data/raw/wikimedia/institutions/`. Normal pipeline runs execute completely offline from cache; live network requests occur only when `--refresh` is explicitly supplied.
+- **Caching & Provenance**: Cached on local disk under `data/raw/wikimedia/members/` and `data/raw/wikimedia/institutions/`. Cache misses can contact Wikimedia even without `--refresh`; that flag explicitly refreshes cached responses. The strict offline pipeline rejects live requests. Optional Wikimedia acquisition is separate from the pinned historical release recipe.
 - **Attribution & Licensing**: *Data from Wikidata is available under CC0 Public Domain Dedication; text and sitelinks from Wikipedia are available under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).*
 - **Limitations**: Crowdsourced and secondary. Used strictly for cross-referencing and supplementary enrichment; never treated as an authoritative replacement for official APH or ACARA data.
 

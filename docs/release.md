@@ -63,6 +63,12 @@ revision when reproducing a release.
 
 The `apemap release` command group provides tools for building, verifying, and comparing release bundles.
 
+Build Python distributions separately with `uv build`; this does not ingest data
+or build a dataset. Package and dataset versions are independent. For the local
+0.6.1 source/data build and database freshness audit, see the
+[build record](releases/0.6.1/README.md). An uncommitted source build needs a retained
+frozen copy and source hashes in addition to the manifest's `source_commit`.
+
 For saved decision updates, first follow [Decisions to a new release](decisions-to-release.md).
 `release build` exports an existing database; it does not ingest sources or apply
 new ledger entries. Use `release recipe build` for the longitudinal dataset, then

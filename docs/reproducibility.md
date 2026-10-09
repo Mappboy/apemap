@@ -31,7 +31,14 @@ uv sync
 uv sync --group analysis
 ```
 
-### Step 2: Provision Pinned Inputs, Then Run Offline
+### Step 2: Choose the historical release or standard development pipeline
+
+For a longitudinal release, use [Decisions to a new release](decisions-to-release.md):
+verify `data/historical-inputs-manifest.json`, pin a fresh recipe matching the
+installed package and current review inputs, then run `release recipe build`
+into fresh paths. It consumes historical ACARA 2008–2025 and 2024 funding context.
+The standard input archive and `run-all` below are a different development
+workflow; they do not provision or reproduce the historical register.
 
 The six APH/AEC cache files under `data/raw/` are ignored by Git. Download the
 pinned [input release](https://github.com/Mappboy/apemap/releases/tag/inputs-20261002)
@@ -81,16 +88,16 @@ To understand reproducibility differences:
 
 | Stage | Default Mode | Offline? | Network Access |
 | :--- | :--- | :--- | :--- |
-| `apemap ingest acara` | `--no-download` | Yes | Only when `--download` is passed |
-| `apemap ingest aph` | Reads local cache `data/raw/aph/individuals.json` | Yes | Only when `--refresh` is passed |
-| `apemap ingest wikimedia` | Reads local cache `data/raw/wikimedia/` | Yes | Only when `--refresh` is passed |
+| `apemap ingest acara` | `--download` | No by default | Use `--no-download` for local files |
+| `apemap ingest aph` | Reads local cache `data/raw/aph/individuals.json` | With populated cache | On cache misses or `--refresh` |
+| `apemap ingest wikimedia` | Reads local cache `data/raw/wikimedia/` | With populated cache | On cache misses or `--refresh` |
 | `apemap transform` | Applies SQL files locally | Yes | Never |
 | `apemap validate` | Queries DuckDB locally | Yes | Never |
 | `apemap analyze` | Queries DuckDB locally | Yes | Never |
 | `apemap export` | Writes local Parquet & GeoJSON | Yes | Never |
 | Notebooks (`notebooks/*.ipynb`) | Read-only queries to `aped.duckdb` | Yes | Never |
 
-### Why We Default to Local Cache
+### Why pinned offline builds use local cache
 Official government endpoints (such as `handbookapi.aph.gov.au` or the ACARA portal) can update their records, alter biographical wording, or become temporarily unavailable. Upstream Wikimedia queries can also reflect crowdsourced edits over time.
 APH/AEC raw payloads are distributed in the pinned input release; curated aliases
 are tracked in `data/reference/review/decisions.jsonl`. Optional Wikimedia responses
@@ -115,8 +122,9 @@ fingerprint, so appending a decision does not invalidate unchanged source pins.
 For a new release after decisions are saved, follow
 [Decisions to a new release](decisions-to-release.md). Reproducing an older
 release requires its recorded source commit and consumed ledger, not the latest
-working log. The [0.3.3 record](releases/0.3.3/README.md) pins the new historical
-draft. Historical releases now use the committed recipe through `apemap release
+working log. The [0.3.3 record](releases/0.3.3/README.md) records the previous
+historical delivery. The [0.6.1 local record](releases/0.6.1/README.md) records the
+earlier frozen local build. Historical releases use the committed recipe through `apemap release
 recipe build` in both local/manual workflows and Actions. The recipe records source
 years, parliament selection, finance mode/year, package/contracts and exact source
 and review hashes. Use `release recipe compare` on two strictly verified builds at
