@@ -853,12 +853,24 @@ def compute_shared_school_summary(
     conn: duckdb.DuckDBPyConnection, parliament: int, min_members: int = 2
 ) -> dict[str, Any]:
     """Count alumni at original schools; sharing a successor does not imply attendance."""
-    members = {
-        member["member_id"]: member
-        for member in get_opening_day_members(conn, parliament)
-    }
+    return summarize_shared_schools(
+        get_opening_day_members(conn, parliament),
+        get_opening_day_education_context(conn, parliament),
+        parliament,
+        min_members,
+    )
+
+
+def summarize_shared_schools(
+    member_rows: list[dict[str, Any]],
+    context_rows: list[dict[str, Any]],
+    parliament: int,
+    min_members: int = 2,
+) -> dict[str, Any]:
+    """Pure shared-school calculation, also used by hypothetical review scenarios."""
+    members = {member["member_id"]: member for member in member_rows}
     schools: dict[str, dict[str, Any]] = {}
-    for row in get_opening_day_education_context(conn, parliament):
+    for row in context_rows:
         key = _attended_school_key(row)
         school = schools.setdefault(
             key,

@@ -145,7 +145,9 @@ supplies and validates that contract; frontend changes belong in its repository.
 
 Coverage separates distinct people, assertions and institutions.
 `members_with_secondary_school` counts people with verified or provisional
-assertions; unresolved assertions appear separately. Finance coverage counts
+institution resolutions; unresolved assertions appear separately, including
+assertion-specific research cases whose attendance evidence remains verified.
+Finance coverage counts
 distinct resolved reporting institutions, separately from original attended-school
 identities. Multiple predecessors sharing a successor do not inflate finance
 samples. Identity counts distinguish verified original references, registry

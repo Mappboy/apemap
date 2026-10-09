@@ -89,6 +89,7 @@ def run_aph_ingestion(
     service_overrides_path: Path | None = None,
     aliases_path: Path | None = None,
     decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
 ) -> AphIngestResult:
     """Execute APH ingestion for specified parliaments and populate DuckDB.
 
@@ -112,7 +113,9 @@ def run_aph_ingestion(
 
     out_dir = Path(output_dir or PROCESSED_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
-    review_events = read_review_events(decision_log_path)
+    review_events = read_review_events(
+        decision_log_path, evidence_log_path=evidence_log_path
+    )
 
     # Initialize components
     client = AphClient(cache_dir=cache_dir or RAW_APH_DIR)
@@ -556,11 +559,13 @@ def run_aph_ingestion(
             events=review_events,
             matcher=matcher,
             decision_log_path=decision_log_path,
+            evidence_log_path=evidence_log_path,
         )
         capture_review_snapshot(
             conn,
             review_events,
             decision_log_path=decision_log_path,
+            evidence_log_path=evidence_log_path,
             source_provenance={
                 **previous_provenance,
                 "source": "APH Parliamentary Handbook",

@@ -8,6 +8,10 @@ ACARA remain source material; replay applies supported corrections after loading
 those sources. Generated CSV queues and website exports are views, not writable
 authorities.
 
+Commands in this guide were checked against the 0.7.0 review branch on
+10 October 2026. The [local 0.6.1 build record](releases/0.6.1/README.md) preserves
+the earlier frozen source snapshot and its validation limits.
+
 After saving decisions, use [Decisions to a new release](decisions-to-release.md).
 Rebuild through ingestion before packaging: `release build` reads the database's
 already consumed review snapshot and cannot apply newer ledger entries by itself.
@@ -60,7 +64,10 @@ broad sector and must not contradict explicit Government evidence.
 Every supplied historical field requires `historical_scope_confirmed: true`:
 evidence covers all associated attendance records and verified aliases of the
 original school displayed in the preview. Mixed-era histories remain unresolved;
-there are no date ranges or per-person exceptions in this model.
+school-wide historical fields do not select date ranges or per-person exceptions.
+The independent timing claims described in
+[assisted research and readiness](review-assisted-search.md) remain reviewed
+annotations and do not automatically select attendance mappings.
 
 Consistent reviewed facts apply school-wide across verified aliases. Contradictory
 location or sector facts suppress the affected dimension and produce review
@@ -97,6 +104,22 @@ and demographic discrepancies still require review.
 
 ## Existing CSV annotations
 
+School changes, school supersessions and imports containing school events require
+a saved affected-record preview before append. Supply `--preview-out` on the
+proposing command, inspect the event, source revisions and affected/protected
+assertions, then approve that exact file using its printed SHA-256:
+
+```powershell
+uv run apemap review --db-path data/aped.duckdb --external-dir data/raw/historical/acara accept <school-review-id> --payload <payload.json> --reviewer <name> --preview-out data/processed/review/school-preview.json
+uv run apemap review --db-path data/aped.duckdb --external-dir data/raw/historical/acara apply-preview data/processed/review/school-preview.json --approve <printed-sha256>
+```
+
+Replace placeholders with actual values. `--dry-run` only shows a proposal;
+it does not approve it. Changed source, candidate, evidence or decision revisions
+invalidate a saved preview. A school save requires the canonical affected-assertion
+inventory from a review database. Assertion-specific `map-education` remains
+separate from school defaults and preserves attendance provenance.
+
 The explicit CSV import workflow starts with a dry run. It lists proposals,
 missing evidence, invalid dates and conflicts. Applying an import appends events;
 it does not rewrite the CSV or automatically promote every `accepted` row. In
@@ -117,6 +140,10 @@ label requires an explicit `resolved_acara_id` or `resolved_institution_ref`.
 Service imports require the complete interval list in `resolved_value` as JSON.
 School imports require an explicit ACARA target or a manual institution name and
 country; coordinates require a separate `address_source_url`.
+
+The `--apply` example is for a member-only import. If proposals include school
+events, export a fresh preview with `--preview-out` and use `apply-preview` after
+inspection; do not treat the dry-run report as approval.
 
 ## Migration and pins
 
@@ -172,6 +199,22 @@ the event graph resolves explicitly without a line-order tie breaker.
 
 ## Optional local reviewer
 
+Package 0.6.0 supports resolution-only decisions on individual education
+assertions. **Map** preserves attendance evidence; **Needs research** withholds
+institution resolution for that assertion while keeping its attendance claim.
+School-wide relationships remain defaults, with explicit assertion decisions
+taking precedence. The comparison panel shows other members with the same
+recorded school name, their resolutions and relationship disagreements. A
+school mapping preview lists which assertions use the default and which have
+their own decisions. See [Assertion-level resolution](assertion-resolution.md)
+for legacy fallback and scoped successor evidence. See
+[retained evidence and advisory scoring](review-evidence.md) for immutable sources,
+multiple evidence references and explained ranking. Assisted search and analytical
+release readiness are implemented in the 0.7.0 follow-up. See
+[assisted research and readiness](review-assisted-search.md) for provider choices,
+source inspection, separate retention and analytical limits, and the
+[acceptance audit](issue-66-acceptance.md) for implementation status.
+
 Install `uv sync --extra review-ui` and run the review server through the review
 CLI. The reviewer binds to loopback and uses the same service, validation,
 locking and replay rules as the CLI. It provides member and school queues,
@@ -179,6 +222,28 @@ evidence and history, institution lookup, correction forms and a before/after
 preview. Browser edits append decisions to the same ledger; there is no second
 database of review authority. Existing generated CSVs remain available for offline
 inspection.
+
+To review the historical working database with the correct register:
+
+```powershell
+uv sync --extra review-ui --frozen
+uv run apemap review --db-path data/aped.duckdb --external-dir data/raw/historical/acara serve
+```
+
+The server defaults to `http://127.0.0.1:8765` and four workers. Saving decisions
+updates the ledger immediately; the database and release retain their consumed
+snapshot until rebuilt. Close the server before replacing its database.
+
+Package 0.7.0 accepts `serve --research-config <providers.json>`
+for optional assisted research. Select a configured provider, inspect suggestions,
+preview and explicitly retain evidence, then separately preview/save a decision.
+Provider credentials come from environment variables named by the configuration;
+suggestions remain disposable until retained. Provider/model availability must be
+checked when configuring acquisition. Offline ingestion, replay and release
+verification do not require provider access. `review readiness` is advisory and
+projects working decisions; release `review/readiness.json` uses consumed
+snapshots. Neither report certifies the research claims or automatically resolves
+an assertion.
 
 School relationship and education forms include a school-name search over the
 local ACARA register selected by `--external-dir`. Choose a result to fill the
@@ -217,7 +282,10 @@ not establish where the member attended school. Context is unavailable without
 the local review database; an omitted mapping source URL is explicit in the preview.
 
 **Preview mapping** shows the relationship, replacements and canonical education
-effects when a review database is available. **Save mapping** appends a decision;
+effects when a review database is available. Affected education assertions show
+the recorded school name, falling back to the school review's name for older
+records without that field. This display fallback does not alter attendance data.
+**Save mapping** appends a decision;
 it does not rebuild the database. The saved mapping is applied on the next source
 build. Guided decisions replace all active decisions for the same review item
 while retaining history. An open school form compares its decisions, candidates,

@@ -34,6 +34,8 @@ const searchButton = new Element("button");
 const searchDetails = new Element("details");
 const save = new Element("button");
 const previewStatus = new Element("p");
+const evidence = new Element("input"); evidence.form = form;
+const unrelatedEvidence = new Element("input"); unrelatedEvidence.form = null;
 const choose = new Element("button");
 choose.dataset.chooseSchool = "acara:123"; choose.dataset.schoolName = "Selected School";
 const useSource = new Element("button"); useSource.dataset.useSource = "https://example.org/chosen";
@@ -52,6 +54,10 @@ for (const [selector, element] of [
   ['[data-school-search-status]', status], ['[data-school-search-button]', searchButton],
 ]) lookup.queries.set(selector, element);
 const document = {
+  querySelectorAll(selector) {
+    assert.equal(selector, '[name="evidence_refs"]');
+    return [evidence, unrelatedEvidence];
+  },
   querySelector(selector) {
     return new Map([['[data-school-draft]', form], ['[data-save-school]', save],
       ['[data-preview-status]', previewStatus]]).get(selector);
@@ -93,6 +99,11 @@ async function main() {
     choose.emit("click");
     assert.equal(payload.value, "{unfinished");
     assert.ok(selected.textContent.includes("invalid"));
+  } else if (scenario === "evidence_selection") {
+    assert.equal(save.disabled, undefined);
+    unrelatedEvidence.emit("change"); assert.equal(save.disabled, undefined);
+    evidence.emit("change"); assert.equal(save.disabled, true);
+    assert.ok(previewStatus.textContent.includes("Preview again"));
   } else if (scenario === "search") {
     find.emit("click");
     assert.equal(searchDetails.open, true);
@@ -148,6 +159,7 @@ main().catch(error => { console.error(error); process.exitCode = 1; });
     [
         "selection",
         "edits",
+        "evidence_selection",
         "search",
         "debounce_stale",
         "empty_timeout",

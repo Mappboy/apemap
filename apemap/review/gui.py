@@ -22,6 +22,8 @@ from waitress import serve as waitress_serve
 from apemap.review.store import ReviewBusyError, StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
 from apemap.education_context import SCHOOL_CONTEXT_FIELDS
+from apemap.review.context_evidence import ROLE_TYPES
+from apemap.review.research import ResearchJobs, ResearchProvider
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -37,6 +39,8 @@ STATUSES = (
     "accepted",
     "rejected",
     "needs_research",
+    "needs_individual_review",
+    "resolved_individually",
     "conflict",
     "superseded",
 )
@@ -48,6 +52,31 @@ ACTION_LABELS = {
     "research": "Needs research",
     "supersede": "Supersede earlier decision",
 }
+RESOLUTION_REASONS = {
+    "ambiguous_name": "Ambiguous name—resolve per member",
+    "no_suitable_candidate": "No suitable candidate—resolve per member",
+}
+RESOLUTION_FIELDS = (
+    "institution_ref",
+    "relationship_type",
+    "candidate_id",
+    *SCHOOL_CONTEXT_FIELDS,
+)
+
+
+def _guided_action(action: str, payload: Mapping[str, Any]) -> str:
+    """Reload a typed research outcome without changing the stored event action."""
+    reason = payload.get("resolution_reason")
+    return (
+        str(reason) if action == "research" and reason in RESOLUTION_REASONS else action
+    )
+
+
+def _clear_resolution_fields(payload: dict[str, Any]) -> None:
+    payload.pop("context_evidence_refs", None)
+    for key in RESOLUTION_FIELDS:
+        payload.pop(key, None)
+
 
 # (name, label, input type, options). Unknown or complex fields stay available
 # through the complete JSON editor, rather than acquiring a second GUI schema.
@@ -117,7 +146,18 @@ FIELDS: dict[str, tuple[tuple[str, str, str, tuple[str, ...]], ...]] = {
     "member_education": (
         ("aph_id", "APH identifier", "text", ()),
         ("recorded_school_name", "School name as recorded", "text", ()),
-        ("institution_ref", "Institution reference (optional)", "text", ()),
+        (
+            "institution_ref",
+            "Institution reference (required to map this assertion)",
+            "text",
+            (),
+        ),
+        (
+            "relationship_type",
+            "Relationship (required to map; optional when accepting attendance)",
+            "select",
+            ("direct", "alias", "rename", "successor"),
+        ),
         (
             "attended_status",
             "Attendance evidence",
@@ -252,6 +292,41 @@ def _sign_preview(preview: dict[str, Any], secret: bytes) -> str:
     commit = {key: preview[key] for key in ("event", "revision", "source_revision")}
     if "school_guard" in preview:
         commit["school_guard"] = preview["school_guard"]
+    event = preview["event"]
+    if (
+        event.get("entity_type") == "school"
+        and (event.get("replacement_action") or event.get("action"))
+        in {"accept", "map"}
+        and preview.get("default_application") is not None
+    ):
+        commit["default_application_available"] = bool(
+            preview["default_application"].get("available")
+        )
+    return _sign_commit(commit, secret)
+
+
+def _sign_evidence_preview(preview: dict[str, Any], secret: bytes) -> str:
+    """Bind only a validated evidence record and its immutable input revisions."""
+    return _sign_commit(
+        {
+            key: preview[key]
+            for key in ("kind", "review_id", "record", "revision", "source_revision")
+        }
+        | (
+            {"candidate_revision": preview["candidate_revision"]}
+            if "candidate_revision" in preview
+            else {}
+        )
+        | (
+            {"research_revisions": preview["research_revisions"]}
+            if "research_revisions" in preview
+            else {}
+        ),
+        secret,
+    )
+
+
+def _sign_commit(commit: dict[str, Any], secret: bytes) -> str:
     data = json.dumps(
         {"issued_at": int(time.time()), "preview": commit},
         sort_keys=True,
@@ -324,10 +399,84 @@ def _payload_from_form(entity_type: str) -> dict[str, Any]:
                 payload[name] = value
         if entity_type == "member" and request.form.get("clear_value") == "1":
             payload["value"] = None
+        if entity_type in {"school", "member_education"} and request.form.get(
+            "evidence_selection"
+        ):
+            selected = sorted(set(request.form.getlist("evidence_refs")))
+            if selected:
+                payload["evidence_refs"] = selected
+            else:
+                payload.pop("evidence_refs", None)
     return payload
 
 
-def create_app(service: ReviewServiceLike) -> Flask:
+def _evidence_payload_from_form() -> dict[str, Any]:
+    """Keep manual research data separate from a proposed review disposition."""
+    payload: dict[str, Any] = {
+        name: request.form.get("evidence_" + name, "").strip()
+        for name in (
+            "candidate_institution_ref",
+            "source_title",
+            "source_type",
+            "source_url",
+            "retrieved_at",
+            "claim_type",
+            "claim_value",
+            "stance",
+            "excerpt_or_note",
+        )
+    }
+    payload["generated_by"] = "manual"
+    if not payload["candidate_institution_ref"]:
+        payload["candidate_institution_ref"] = None
+    if request.form.get("evidence_claim_value_json", "").strip():
+        try:
+            payload["claim_value"] = json.loads(
+                request.form["evidence_claim_value_json"]
+            )
+        except json.JSONDecodeError as err:
+            raise ValueError(f"Structured claim is not valid JSON: {err.msg}") from err
+    for name in (
+        "source_quality",
+        "match_strength",
+        "temporal_relevance",
+        "geographic_relevance",
+    ):
+        value = request.form.get("evidence_" + name, "").strip()
+        if value:
+            try:
+                payload[name] = float(value)
+            except ValueError as err:
+                raise ValueError(f"{name.replace('_', ' ')} must be a number") from err
+    return payload
+
+
+def _comparison_members(item: dict[str, Any]) -> list[dict[str, Any]]:
+    """Group assertion sources without hiding differing relationship resolutions."""
+    members = []
+    for member in item.get("context", {}).get("members", []):
+        grouped: dict[str, dict[str, Any]] = {}
+        for education in member.get("education", []):
+            key = education.get("review_id") or education.get("recorded_name", "")
+            if key not in grouped:
+                grouped[key] = {
+                    **education,
+                    "source_records": [],
+                    "current_resolutions": [],
+                }
+            grouped[key]["source_records"].append(education)
+            resolution = education.get("current_resolution") or {}
+            if resolution not in grouped[key]["current_resolutions"]:
+                grouped[key]["current_resolutions"].append(resolution)
+        members.append({**member, "education": list(grouped.values())})
+    return members
+
+
+def create_app(
+    service: ReviewServiceLike,
+    *,
+    research_providers: dict[str, ResearchProvider] | None = None,
+) -> Flask:
     """Build an isolated Flask app with no separate decision persistence."""
     app = Flask(__name__)
     app.config.update(
@@ -338,6 +487,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
     signing_secret = secrets.token_bytes(32)
     queue_lock = Lock()
     queue_cache: tuple[Any, list[dict[str, Any]]] | None = None
+    research = ResearchJobs(research_providers or {})
+    app.extensions["research_jobs"] = research
     asset_versions = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()[:16]
         for path in Path(app.static_folder or "").glob("*")
@@ -382,6 +533,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
                         "heads": heads,
                         "candidates": item.get("candidates", []),
                         "context": item.get("context", {}),
+                        "ranked_candidates": item.get("ranked_candidates", []),
+                        "retained_evidence": item.get("retained_evidence", []),
                         "school": asdict(school_view(item, resolve_reference)),
                     },
                     sort_keys=True,
@@ -398,6 +551,10 @@ def create_app(service: ReviewServiceLike) -> Flask:
             "statuses": STATUSES,
             "actions": ACTIONS,
             "action_labels": ACTION_LABELS,
+            "resolution_reasons": RESOLUTION_REASONS,
+            "resolution_fields": RESOLUTION_FIELDS,
+            "evidence_enabled": callable(getattr(service, "prepare_evidence", None))
+            and callable(getattr(service, "save_evidence", None)),
         }
 
     @app.before_request
@@ -420,11 +577,16 @@ def create_app(service: ReviewServiceLike) -> Flask:
     def response_headers(response: Any) -> Any:
         response.headers["Content-Security-Policy"] = (
             "default-src 'none'; style-src 'self'; script-src 'self'; "
-            "connect-src 'self'; form-action 'self'; "
+            "connect-src 'self'; frame-src 'self'; form-action 'self'; "
             "base-uri 'none'; frame-ancestors 'none'"
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
+        if request.endpoint == "research_search_suggestions":
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; style-src 'unsafe-inline'; img-src https://www.gstatic.com data:; frame-ancestors 'self'; base-uri 'none'; form-action 'none'"
+            )
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
         if request.endpoint == "static":
             response.headers["Cache-Control"] = "private, max-age=3600"
         else:
@@ -441,18 +603,47 @@ def create_app(service: ReviewServiceLike) -> Flask:
         draft_values: Mapping[str, Any] | None = None,
         retry_preview: dict[str, Any] | None = None,
         retry_token: str | None = None,
+        evidence_preview: dict[str, Any] | None = None,
+        evidence_error: str | None = None,
+        evidence_values: Mapping[str, Any] | None = None,
     ) -> str:
         chosen = _initial_payload(item) if payload is None else payload
         values: Mapping[str, Any] = (
             request.form if draft_values is None else draft_values
         )
+        evidence_context = {
+            "comparison_members": _comparison_members(item),
+            "evidence_preview": evidence_preview,
+            "evidence_preview_token": _sign_evidence_preview(
+                evidence_preview, signing_secret
+            )
+            if evidence_preview
+            else None,
+            "evidence_error": evidence_error,
+            "evidence_values": evidence_values or {},
+            "selected_evidence_refs": chosen.get("evidence_refs", []),
+            "context_roles": ROLE_TYPES,
+            "selected_context_refs": chosen.get("context_evidence_refs", {}),
+            "research_providers": {
+                key: {
+                    "model": getattr(provider, "model", "external"),
+                    "key_env": getattr(
+                        provider, "api_key_env", "externally configured"
+                    ),
+                }
+                for key, provider in research.providers.items()
+            },
+        }
         if item["entity_type"] == "school":
             school = school_view(item, resolve_reference)
             if not values:
                 decision = item.get("decision") or {}
                 action = decision.get("replacement_action") or decision.get("action")
                 values = {
-                    "action": action if action in {"research", "reject"} else "map",
+                    "action": _guided_action("research", chosen)
+                    if action in {"research", "reject"}
+                    else "map",
+                    "advanced_action": action or "map",
                     "payload_mode": "guided",
                     "source_url": decision.get("source_url", ""),
                     "notes": decision.get("notes", ""),
@@ -471,6 +662,12 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     *SCHOOL_CONTEXT_FIELDS,
                 ):
                     chosen[name] = values.get("field_" + name, chosen.get(name, ""))
+            unresolved = values.get("payload_mode", "guided") == "guided" and (
+                values.get("action") in {"research", "reject", *RESOLUTION_REASONS}
+            )
+            if unresolved:
+                chosen = dict(chosen)
+                _clear_resolution_fields(chosen)
             ref = str(chosen.get("institution_ref", ""))
             selected = resolve_reference(ref) if ref else None
             token = _sign_preview(
@@ -498,6 +695,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 retry_token=retry_token,
                 relationships=RELATIONSHIPS,
                 context_fields=FIELDS["school"][3:],
+                resolution_fields_disabled=unresolved,
                 original_selected=resolve_reference(
                     str(chosen.get("attended_institution_ref", ""))
                 )
@@ -509,6 +707,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 )
                 if preview
                 else None,
+                **evidence_context,
             )
         if item.get("conflicts") and not values:
             values = {
@@ -518,6 +717,41 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 ),
                 "replacement_action": "accept",
             }
+        elif item["entity_type"] == "member_education" and not values:
+            decision = item.get("decision") or {}
+            has_attendance = any(
+                row.get("payload", {}).get("recorded_school_name")
+                and not row.get("evidence", {}).get("decision_only")
+                for row in item.get("candidates", [])
+            )
+            action = decision.get("replacement_action") or decision.get("action")
+            if (
+                has_attendance
+                and not new_entity_type
+                and action in {None, "accept", "map"}
+            ):
+                action = "map"
+            values = {
+                "action": _guided_action(action or "accept", chosen),
+                "source_url": decision.get("source_url", ""),
+                "notes": decision.get("notes", ""),
+            }
+        named_education = item["entity_type"] == "member_education" and bool(
+            chosen.get("recorded_school_name")
+        )
+        guided_outcome = (
+            values.get("replacement_action", "accept")
+            if values.get("action") == "supersede"
+            else values.get("action", "accept")
+        )
+        unresolved = (
+            named_education
+            and values.get("payload_mode", "guided") == "guided"
+            and guided_outcome in {"research", "reject", *RESOLUTION_REASONS}
+        )
+        if unresolved:
+            chosen = dict(chosen)
+            _clear_resolution_fields(chosen)
         return render_template(
             "item.html",
             item=item,
@@ -531,6 +765,9 @@ def create_app(service: ReviewServiceLike) -> Flask:
             retry_token=retry_token,
             new_entity_type=new_entity_type,
             form_values=values,
+            named_education=named_education,
+            resolution_fields_disabled=unresolved,
+            **evidence_context,
         )
 
     def build_queue_rows() -> list[dict[str, Any]]:
@@ -657,6 +894,14 @@ def create_app(service: ReviewServiceLike) -> Flask:
             return jsonify({"error": str(err), "results": []}), 400
         return jsonify({"query": query, "results": results[:20]})
 
+    @app.get("/readiness")
+    def readiness_page() -> Any:
+        try:
+            report = getattr(service, "readiness")()
+            return render_template("readiness.html", report=report)
+        except (OSError, ValueError) as err:
+            return render_template("error.html", message=str(err)), 400
+
     @app.get("/items/<path:review_id>")
     def detail(review_id: str) -> str:
         try:
@@ -664,6 +909,181 @@ def create_app(service: ReviewServiceLike) -> Flask:
         except ValueError as err:
             abort(404, str(err))
         return item_page(item)
+
+    @app.post("/items/<path:review_id>/evidence/preview")
+    def preview_evidence(review_id: str) -> Any:
+        prepare = getattr(service, "prepare_evidence", None)
+        if not callable(prepare):
+            abort(404)
+        try:
+            item = load_item(review_id)
+        except ValueError as err:
+            abort(404, str(err))
+        try:
+            if item["entity_type"] not in {"school", "member_education"}:
+                raise ValueError(
+                    "Research evidence belongs to a school or education assertion"
+                )
+            payload = _evidence_payload_from_form()
+            research_id = request.form.get("research_job_id", "")
+            revisions = None
+            if research_id:
+                revisions = getattr(service, "research_revisions")()
+                result = research.result(research_id, review_id, revisions)
+                index = int(request.form.get("research_suggestion_index", "-1"))
+                if result["status"] != "complete" or not 0 <= index < len(
+                    result["suggestions"]
+                ):
+                    raise ValueError("Research suggestion is unavailable")
+                if request.form.get("source_inspected") != "yes":
+                    raise ValueError(
+                        "Inspect the source before previewing retained evidence"
+                    )
+                payload["generated_by"] = "agent-search"
+            preview = prepare(review_id, payload)
+            if revisions is not None:
+                preview["research_revisions"] = revisions
+            return item_page(
+                item,
+                draft_values={},
+                evidence_preview=preview,
+                evidence_values=request.form,
+            )
+        except ValueError as err:
+            return item_page(
+                item,
+                draft_values={},
+                evidence_error=str(err),
+                evidence_values=request.form,
+            ), 400
+
+    @app.post("/items/<path:review_id>/evidence/save")
+    def save_evidence(review_id: str) -> Any:
+        save = getattr(service, "save_evidence", None)
+        if not callable(save):
+            abort(404)
+        preview: dict[str, Any] | None = None
+        try:
+            preview = _read_preview(
+                request.form.get("evidence_preview_token", ""), signing_secret
+            )
+            if preview.get("kind") != "evidence":
+                raise ValueError(
+                    "Preview a research evidence record before retaining it"
+                )
+            if (
+                preview.get("review_id") != review_id
+                or preview.get("record", {}).get("review_id") != review_id
+            ):
+                raise ValueError("Evidence preview belongs to a different review item")
+            save(preview)
+        except (OSError, ValueError) as err:
+            try:
+                item = load_item(review_id)
+            except ValueError:
+                return render_template("error.html", message=str(err)), 400
+            record = preview.get("record", {}) if preview else {}
+            values = {
+                "evidence_" + key: str(value) if value is not None else ""
+                for key, value in record.items()
+            }
+            if record.get("claim_value") is not None and not isinstance(
+                record["claim_value"], str
+            ):
+                values["evidence_claim_value_json"] = json_text(record["claim_value"])
+            message = (
+                "The evidence save could not be confirmed. Check retained records before retrying."
+                if isinstance(err, OSError)
+                else f"{err}. Nothing was retained; review and preview the evidence again."
+            )
+            return item_page(
+                item,
+                draft_values={},
+                evidence_error=message,
+                evidence_values=values,
+            ), (
+                503
+                if isinstance(err, (OSError, ReviewBusyError))
+                else 409
+                if isinstance(err, StaleReviewError)
+                else 400
+            )
+        return redirect(
+            url_for("detail", review_id=review_id, evidence_saved="1"), code=303
+        )
+
+    @app.post("/items/<path:review_id>/research")
+    def find_evidence(review_id: str) -> Any:
+        try:
+            if not research.providers:
+                raise ValueError(
+                    "Configure a research provider when starting the reviewer"
+                )
+            context = getattr(service, "research_context")(review_id)
+            identifier = research.start(request.form.get("provider_id", ""), context)
+            return redirect(
+                url_for("research_detail", review_id=review_id, job_id=identifier),
+                code=303,
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 400
+
+    def research_result(review_id: str, job_id: str) -> dict[str, Any]:
+        return research.result(
+            job_id, review_id, getattr(service, "research_revisions")()
+        )
+
+    @app.get("/items/<path:review_id>/research/<job_id>")
+    def research_detail(review_id: str, job_id: str) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            return render_template(
+                "research.html", review_id=review_id, job_id=job_id, result=result
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 409
+
+    @app.get("/items/<path:review_id>/research/<job_id>/status")
+    def research_status(review_id: str, job_id: str) -> Any:
+        try:
+            return jsonify({"status": research_result(review_id, job_id)["status"]})
+        except ValueError:
+            return jsonify({"status": "stale"}), 409
+
+    @app.get("/items/<path:review_id>/research/<job_id>/search-suggestions")
+    def research_search_suggestions(review_id: str, job_id: str) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            # Sandboxed in its own CSP-protected frame: no scripts, forms or parent access.
+            return app.response_class(
+                result.get("search_entry_point", ""), mimetype="text/html"
+            )
+        except ValueError:
+            abort(409)
+
+    @app.post("/items/<path:review_id>/research/<job_id>/suggestions/<int:index>")
+    def inspect_suggestion(review_id: str, job_id: str, index: int) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            if result["status"] != "complete" or not 0 <= index < len(
+                result["suggestions"]
+            ):
+                raise ValueError("Research suggestion is unavailable")
+            suggestion = result["suggestions"][index]
+            values = {
+                "evidence_" + key: value if isinstance(value, str) else ""
+                for key, value in suggestion.items()
+            }
+            if not isinstance(suggestion["claim_value"], str):
+                values["evidence_claim_value_json"] = json.dumps(
+                    suggestion["claim_value"]
+                )
+            values.update(research_job_id=job_id, research_suggestion_index=str(index))
+            return item_page(
+                load_item(review_id), draft_values={}, evidence_values=values
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 409
 
     @app.get("/new/<entity_type>")
     def new_item(entity_type: str) -> str:
@@ -694,18 +1114,47 @@ def create_app(service: ReviewServiceLike) -> Flask:
         bound: dict[str, Any] | None = None
         try:
             action = request.form.get("action", "accept")
+            guided = request.form.get("payload_mode") == "guided"
+            school_workflow = (
+                item["entity_type"] == "school"
+                and request.form.get("school_workflow") == "1"
+            )
+            if school_workflow and not guided:
+                action = request.form.get("advanced_action", action)
+            payload = _payload_from_form(item["entity_type"])
+            reason = action if action in RESOLUTION_REASONS else None
+            if (
+                reason
+                and guided
+                and (
+                    school_workflow
+                    or (
+                        item["entity_type"] == "member_education"
+                        and payload.get("recorded_school_name")
+                    )
+                )
+            ):
+                action = "research"
             if action not in ACTIONS:
                 raise ValueError("Unknown review action")
-            payload = _payload_from_form(item["entity_type"])
+            if item["entity_type"] == "member_education" and request.form.get(
+                "choose_ref"
+            ):
+                ref = request.form["choose_ref"]
+                if resolve_reference(ref) is None:
+                    raise ValueError(
+                        "Choose an institution available in the local register"
+                    )
+                payload["institution_ref"] = ref
+                draft = dict(request.form)
+                draft["field_institution_ref"] = ref
+                draft["payload"] = json_text(payload)
+                return item_page(item, payload=payload, draft_values=draft)
             supersedes = [
                 value.strip()
                 for value in request.form.get("supersedes", "").split(",")
                 if value.strip()
             ]
-            school_workflow = (
-                item["entity_type"] == "school"
-                and request.form.get("school_workflow") == "1"
-            )
             if school_workflow:
                 bound = _read_preview(
                     request.form.get("form_token", ""), signing_secret
@@ -745,22 +1194,21 @@ def create_app(service: ReviewServiceLike) -> Flask:
                         query, limit=20
                     )
                     return item_page(item, payload=payload, draft_values=draft)
-                if request.form.get("payload_mode") == "json":
-                    action = request.form.get("advanced_action", action)
-                    if action not in ACTIONS:
-                        raise ValueError("Unknown review action")
-                if request.form.get("payload_mode") == "guided":
+                if guided:
                     if action not in {"map", "research", "reject"}:
                         raise ValueError("Choose a school mapping disposition")
                     supersedes = bound["event"]["heads"]
+                    for key in (
+                        "resolution_reason",
+                        "requires_individual_resolution",
+                        "resolution_only",
+                    ):
+                        payload.pop(key, None)
+                    if reason:
+                        payload["resolution_reason"] = reason
+                        payload["requires_individual_resolution"] = True
                     if action in {"research", "reject"}:
-                        for key in (
-                            "institution_ref",
-                            "relationship_type",
-                            "candidate_id",
-                            *SCHOOL_CONTEXT_FIELDS,
-                        ):
-                            payload.pop(key, None)
+                        _clear_resolution_fields(payload)
                     if supersedes:
                         replacement_action, action = action, "supersede"
                     else:
@@ -777,6 +1225,54 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     if action == "supersede"
                     else None
                 )
+            if item["entity_type"] == "member_education" and guided:
+                outcome = replacement_action or action
+                reason = outcome if outcome in RESOLUTION_REASONS else reason
+                if reason and not payload.get("recorded_school_name"):
+                    raise ValueError(
+                        "Per-member resolution needs a recorded school name"
+                    )
+                if outcome in RESOLUTION_REASONS:
+                    replacement_action = "research"
+                    outcome = "research"
+                # The guided disposition controls this research-only marker.
+                # A previous decision's metadata must not change the new action.
+                for key in (
+                    "resolution_only",
+                    "resolution_reason",
+                    "requires_individual_resolution",
+                ):
+                    payload.pop(key, None)
+                if reason:
+                    payload["resolution_reason"] = reason
+                if outcome == "research" and payload.get("recorded_school_name"):
+                    payload["resolution_only"] = True
+                if outcome in {"research", "reject"}:
+                    _clear_resolution_fields(payload)
+                if outcome == "map":
+                    # A populated attendance form can also resolve school identity.
+                    # Mapping must never submit changes to its source attendance.
+                    for key in (
+                        "attended_status",
+                        "confidence",
+                        "retrieved_at",
+                        "years_attended",
+                        "graduation_year",
+                    ):
+                        payload.pop(key, None)
+            if guided and (replacement_action or action) in {"accept", "map"}:
+                roles: dict[str, list[str]] = {}
+                for key in request.form:
+                    if key.startswith("context_role:") and request.form[key]:
+                        role = request.form[key]
+                        if role not in ROLE_TYPES:
+                            raise ValueError("Unknown reviewed context role")
+                        roles.setdefault(role, []).append(
+                            key.removeprefix("context_role:")
+                        )
+                payload.pop("context_evidence_refs", None)
+                if roles:
+                    payload["context_evidence_refs"] = roles
             preview = service.prepare(
                 review_id,
                 action,
@@ -872,6 +1368,12 @@ def create_app(service: ReviewServiceLike) -> Flask:
             preview = _read_preview(
                 request.form.get("preview_token", ""), signing_secret
             )
+            if preview.get("kind") == "evidence":
+                raise ValueError("Evidence retention cannot save a review decision")
+            if preview.get("default_application_available") is False:
+                raise ValueError(
+                    "Run a review build and inspect the affected assertions before saving a school-wide default"
+                )
             if preview.get("source_revision") == "school-form":
                 raise ValueError("A school draft must be previewed before saving")
             if preview.get("event", {}).get("review_id") != review_id:
@@ -911,6 +1413,9 @@ def create_app(service: ReviewServiceLike) -> Flask:
                             },
                         }
                     )
+                    draft["action"] = _guided_action(
+                        draft["action"], event.get("payload", {})
+                    )
                 try:
                     item = load_item(review_id)
                 except (ValueError, OSError):
@@ -949,16 +1454,32 @@ def create_app(service: ReviewServiceLike) -> Flask:
     return app
 
 
-def serve(service: ReviewServiceLike, port: int = 8765, workers: int = 4) -> None:
+def serve(
+    service: ReviewServiceLike,
+    port: int = 8765,
+    workers: int = 4,
+    *,
+    research_providers: dict[str, ResearchProvider] | None = None,
+) -> None:
     """Run a single loopback process with a bounded pool of request threads."""
     if not 1 <= port <= 65535:
         raise ValueError("Port must be between 1 and 65535")
     if workers < 1:
         raise ValueError("Workers must be a positive integer")
-    waitress_serve(
-        create_app(service),
-        host="127.0.0.1",
-        port=port,
-        threads=workers,
-        max_request_body_size=256 * 1024,
+    app = (
+        create_app(service)
+        if research_providers is None
+        else create_app(service, research_providers=research_providers)
     )
+    try:
+        waitress_serve(
+            app,
+            host="127.0.0.1",
+            port=port,
+            threads=workers,
+            max_request_body_size=256 * 1024,
+        )
+    finally:
+        jobs = getattr(app, "extensions", {}).get("research_jobs")
+        if jobs is not None:
+            jobs.close()

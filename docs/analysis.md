@@ -85,7 +85,7 @@ The canonical interactive analysis is implemented in the `notebooks/` directory.
 To launch Jupyter Lab with all analytical dependencies:
 
 ```bash
-uv sync --extra analysis
+uv sync --group analysis
 uv run jupyter lab
 ```
 

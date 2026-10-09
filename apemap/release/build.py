@@ -115,10 +115,50 @@ def build_release(
     try:
         init_schema(active_conn)
         ensure_spatial(active_conn)
-        from apemap.review.integration import review_snapshot_metadata
+        from apemap.review.integration import (
+            review_snapshot_evidence,
+            review_snapshot_metadata,
+        )
 
         # Read the revision actually consumed by ingestion, never a newer working log.
         review_snapshot = review_snapshot_metadata(active_conn)
+        retained_evidence = review_snapshot_evidence(active_conn)
+        from apemap.review.readiness import consumed_review_inputs, readiness_report
+        from apemap.review.context_evidence import context_report
+
+        consumed_events, consumed_evidence, consumed_provenance = (
+            consumed_review_inputs(active_conn)
+        )
+        review_dir = out_dir / "review"
+        review_dir.mkdir(parents=True, exist_ok=True)
+        for filename, report in (
+            (
+                "readiness.json",
+                readiness_report(
+                    active_conn,
+                    consumed_events,
+                    consumed_evidence,
+                    target_parls,
+                    consumed_provenance,
+                ),
+            ),
+            (
+                "successor-context.json",
+                {
+                    **context_report(consumed_events, consumed_evidence),
+                    "provenance": consumed_provenance,
+                },
+            ),
+        ):
+            (review_dir / filename).write_text(
+                json.dumps(report, indent=2, sort_keys=True, default=str) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+        if retained_evidence is not None:
+            review_dir = out_dir / "review"
+            review_dir.mkdir(parents=True, exist_ok=True)
+            (review_dir / "evidence.jsonl").write_bytes(retained_evidence)
 
         # 1. Validation Gate
         logger.info("Validating canonical database before release build...")

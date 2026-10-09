@@ -39,6 +39,7 @@ CONTEXT_COLUMNS: tuple[tuple[str, str], ...] = (
     ("attended_institution_id", "VARCHAR"),
     ("attended_identity_source_url", "VARCHAR"),
     ("historical_scope_confirmed", "BOOLEAN"),
+    ("historical_context_scope", "VARCHAR"),
     ("historical_latitude", "DOUBLE"),
     ("historical_longitude", "DOUBLE"),
     ("historical_location_source_url", "VARCHAR"),
@@ -55,6 +56,11 @@ SCHOOL_CONTEXT_FIELDS = (
     *tuple(
         name
         for name in CONTEXT_FIELDS
-        if name not in {"attended_institution_id", "recorded_school_id"}
+        if name
+        not in {
+            "attended_institution_id",
+            "recorded_school_id",
+            "historical_context_scope",
+        }
     ),
 )

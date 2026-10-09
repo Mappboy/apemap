@@ -27,6 +27,7 @@ DEFAULT_LOG_PATH = REFERENCE_DIR / "review" / "decisions.jsonl"
 ENTITY_TYPES = ("school", "member", "member_education", "service", "manual_institution")
 ACTIONS = ("accept", "map", "reject", "research", "supersede")
 MEMBER_FIELDS = ("date_of_birth", "gender", "wikidata_id")
+RESOLUTION_REASONS = ("ambiguous_name", "no_suitable_candidate")
 
 
 def school_key(name: str) -> str:
@@ -206,8 +207,8 @@ def validate_event(event: ReviewEvent) -> None:
     elif event.supersedes or event.replacement_action is not None:
         raise ValueError("Only supersede events may replace prior decisions")
     action = event.effective_action
-    if action == "map" and event.entity_type != "school":
-        raise ValueError("map is only valid for schools")
+    if action == "map" and event.entity_type not in {"school", "member_education"}:
+        raise ValueError("map is only valid for schools and education assertions")
     if action in ("reject", "research") and not event.notes.strip():
         raise ValueError("Rejection/research requires a reason or note")
     if not isinstance(event.source_url, str):
@@ -219,6 +220,53 @@ def validate_event(event: ReviewEvent) -> None:
     if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
+    if "resolution_reason" in payload:
+        if (
+            payload["resolution_reason"] not in RESOLUTION_REASONS
+            or event.entity_type not in {"school", "member_education"}
+            or action != "research"
+        ):
+            raise ValueError(
+                "resolution_reason requires school or named education research "
+                "and must be ambiguous_name or no_suitable_candidate"
+            )
+        if event.entity_type == "member_education":
+            _text(payload.get("recorded_school_name"), "recorded_school_name")
+            if payload.get("resolution_only") is not True:
+                raise ValueError(
+                    "Typed education research requires resolution_only: true"
+                )
+        elif payload.get("requires_individual_resolution") is not True:
+            raise ValueError(
+                "Typed school research requires requires_individual_resolution: true"
+            )
+    if "requires_individual_resolution" in payload:
+        if type(payload["requires_individual_resolution"]) is not bool:
+            raise ValueError("requires_individual_resolution must be a boolean")
+        if event.entity_type != "school" or action != "research":
+            raise ValueError(
+                "requires_individual_resolution is only valid for school research"
+            )
+        if (
+            payload["requires_individual_resolution"]
+            and payload.get("resolution_reason") not in RESOLUTION_REASONS
+        ):
+            raise ValueError("Individual school review requires a resolution_reason")
+    if "evidence_refs" in payload:
+        references = payload["evidence_refs"]
+        if event.entity_type not in {"school", "member_education"}:
+            raise ValueError(
+                "Institution evidence references require a school or education assertion"
+            )
+        if (
+            not isinstance(references, list)
+            or any(
+                not isinstance(reference, str) or not reference.strip()
+                for reference in references
+            )
+            or len(references) != len(set(references))
+        ):
+            raise ValueError("evidence_refs must contain unique nonempty evidence IDs")
     expected_id = event.review_id
     if event.entity_type == "school":
         name = _text(payload.get("recorded_name"), "recorded_name")
@@ -266,10 +314,41 @@ def validate_event(event: ReviewEvent) -> None:
         if not isinstance(name, str):
             raise ValueError("recorded_school_name must be a string")
         expected_id = education_review_id(aph_id, name)
+        if "resolution_only" in payload:
+            if type(payload["resolution_only"]) is not bool:
+                raise ValueError("resolution_only must be a boolean")
+            if action != "research":
+                raise ValueError("resolution_only is only valid for education research")
+            if payload["resolution_only"]:
+                _text(name, "recorded_school_name")
+        if action == "map":
+            _text(name, "recorded_school_name")
+            institution_reference(payload.get("institution_ref"))
+            _validate_relationship(payload)
+            _validate_school_context(payload, assertion_scope=True)
+            if any(
+                name in payload
+                for name in (
+                    "attended_status",
+                    "confidence",
+                    "retrieved_at",
+                    "years_attended",
+                    "graduation_year",
+                )
+            ):
+                raise ValueError("Education mapping cannot change attendance facts")
         if action == "accept":
             _text(name, "recorded_school_name")
             if payload.get("institution_ref"):
                 institution_reference(payload["institution_ref"])
+            if "relationship_type" in payload:
+                institution_reference(payload.get("institution_ref"))
+                _validate_relationship(payload)
+                _validate_school_context(payload, assertion_scope=True)
+            elif any(payload.get(name) is not None for name in SCHOOL_CONTEXT_FIELDS):
+                raise ValueError(
+                    "Assertion historical context requires an explicit relationship_type"
+                )
             if (
                 payload.get("attended_status") not in ATTENDED_STATUSES
                 or payload.get("confidence") not in CONFIDENCE_LEVELS
@@ -329,14 +408,32 @@ def validate_event(event: ReviewEvent) -> None:
         raise ValueError(f"Payload identity requires review_id {expected_id}")
 
 
-def _validate_school_context(payload: dict[str, Any]) -> None:
-    """Validate independent school-wide historical evidence on successors."""
+def _validate_relationship(payload: dict[str, Any]) -> None:
+    if payload.get("relationship_type") not in (
+        "direct",
+        "alias",
+        "rename",
+        "successor",
+    ):
+        raise ValueError("Education mapping requires a relationship_type")
+
+
+def _validate_school_context(
+    payload: dict[str, Any], *, assertion_scope: bool = False
+) -> None:
+    """Validate independent historical evidence within the decision's scope."""
+    if (
+        assertion_scope
+        and payload.get("historical_scope_confirmed") is not None
+        and type(payload["historical_scope_confirmed"]) is not bool
+    ):
+        raise ValueError("historical_scope_confirmed must be a boolean")
     supplied = {name for name in SCHOOL_CONTEXT_FIELDS if payload.get(name) is not None}
     if not supplied:
         return
     if payload.get("relationship_type") != "successor":
         raise ValueError("Historical school context requires a successor relationship")
-    if payload.get("historical_scope_confirmed") is not True:
+    if not assertion_scope and payload.get("historical_scope_confirmed") is not True:
         raise ValueError(
             "Confirm historical evidence covers all attendance records and verified aliases"
         )
@@ -430,6 +527,70 @@ def validate_intervals(intervals: Any, parliament: int) -> None:
     for left, right in zip(ordered, ordered[1:]):
         if left[1] is None or left[1] >= right[0]:
             raise ValueError("Overlapping service intervals")
+
+
+def accepted_education_ancestor(
+    event: ReviewEvent, events: list[ReviewEvent]
+) -> ReviewEvent | None:
+    """Recover attendance evidence retained by a later resolution-only decision.
+
+    An accepted claim supersedes older claims. Rejection and untagged legacy
+    research stop inheritance; map and tagged research replace resolution only.
+    Competing attendance facts need an explicit acceptance rather than an
+    arbitrary event-order winner.
+    """
+    if (
+        event.effective_action == "research"
+        and event.payload.get("resolution_only") is not True
+    ):
+        return None
+    by_id = {item.decision_id: item for item in events}
+    claims: dict[str, ReviewEvent] = {}
+    pending = list(event.supersedes)
+    visited: set[str] = set()
+    while pending:
+        identifier = pending.pop()
+        if identifier in visited:
+            continue
+        visited.add(identifier)
+        parent = by_id[identifier]
+        if parent.effective_action == "accept":
+            claims[identifier] = parent
+        elif parent.effective_action != "reject" and not (
+            parent.effective_action == "research"
+            and parent.payload.get("resolution_only") is not True
+        ):
+            pending.extend(parent.supersedes)
+    if not claims:
+        return None
+    facts = {
+        json.dumps(
+            {
+                "source_url": claim.source_url,
+                "notes": claim.notes,
+                # Legacy acceptance caps attendance confidence by its match.
+                # A reviewed reference and an automatic match can impose
+                # different caps even when the explicit attendance facts agree.
+                "reviewed_confidence_basis": bool(claim.payload.get("institution_ref")),
+                **{
+                    name: claim.payload.get(name)
+                    for name in (
+                        "recorded_school_name",
+                        "attended_status",
+                        "confidence",
+                        "retrieved_at",
+                        "years_attended",
+                        "graduation_year",
+                    )
+                },
+            },
+            sort_keys=True,
+        )
+        for claim in claims.values()
+    }
+    if len(facts) != 1:
+        raise ValueError("Resolve conflicting attendance facts with an accept decision")
+    return claims[min(claims)]
 
 
 def resolve_events(

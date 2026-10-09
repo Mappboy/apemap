@@ -14,6 +14,8 @@ from threading import RLock
 from typing import Any
 from uuid import uuid4
 
+import duckdb
+
 from apemap.constants import (
     DATA_DIR,
     EXTERNAL_DIR,
@@ -44,6 +46,23 @@ from apemap.review.model import (
     validate_events,
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
+from apemap.review.resolution import relationship_conflicts
+from apemap.review.evidence import (
+    EvidenceRecord,
+    append_evidence,
+    evidence_revision,
+    evidence_applies,
+    legacy_evidence,
+    load_evidence,
+    validate_evidence_references,
+)
+from apemap.review.scoring import score_candidates
+from apemap.review.progress import (
+    annotate_individual_progress,
+    individual_school_ids,
+    school_resolution_progress,
+)
+from apemap.review.resolution import requires_individual_resolution
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
 REGISTER_FILES = (
@@ -151,7 +170,10 @@ def _school_state(events: list[ReviewEvent], event: ReviewEvent) -> dict[str, An
             head.decision_id
             for alternatives in heads.values()
             for head in alternatives
-            if event.payload.get("historical_scope_confirmed")
+            if (
+                event.payload.get("historical_scope_confirmed")
+                or requires_individual_resolution(event)
+            )
             and head.entity_type == "member_education"
             and (
                 school_review_id(str(head.payload.get("recorded_school_name", "")))
@@ -175,7 +197,15 @@ def _effect_revision(changes: dict[str, Any]) -> str:
                 for table, change in canonical["after"].items()
             },
         }
-    return _value_revision({"decisions": changes["decisions"], "canonical": effects})
+    return _value_revision(
+        {
+            "decisions": changes["decisions"],
+            "canonical": effects,
+            "relationship_conflicts": changes.get("relationship_conflicts", []),
+            "default_applications": changes.get("default_applications", []),
+            "individual_resolutions": changes.get("individual_resolutions", {}),
+        }
+    )
 
 
 class ReviewService:
@@ -184,12 +214,18 @@ class ReviewService:
         log_path: Path = DEFAULT_LOG_PATH,
         db_path: Path | None = None,
         external_dir: Path | None = None,
+        evidence_path: Path | None = None,
     ) -> None:
         self.log_path = Path(log_path).resolve()
         self.db_path = (
             Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
         ).resolve()
         self.external_dir = Path(external_dir or EXTERNAL_DIR).resolve()
+        self.evidence_path = (
+            Path(evidence_path)
+            if evidence_path is not None
+            else self.log_path.parent / "evidence.jsonl"
+        ).resolve()
         self._register_lock = RLock()
         self._events_lock = RLock()
         self._events_cache: dict[bool, tuple[str, list[ReviewEvent]]] = {}
@@ -209,6 +245,122 @@ class ReviewService:
                 self._events_cache[allow_conflicts] = cached
         # Event payloads and supersession lists remain private to each caller.
         return deepcopy(cached[1])
+
+    def evidence_records(
+        self, events: list[ReviewEvent] | None = None
+    ) -> list[EvidenceRecord]:
+        """Read retained evidence and stable provenance represented by old events."""
+        selected = self.events(allow_conflicts=True) if events is None else events
+        records: dict[str, EvidenceRecord] = {}
+        for record in [*legacy_evidence(selected), *load_evidence(self.evidence_path)]:
+            previous = records.get(record.evidence_id)
+            if previous is not None and previous != record:
+                raise ValueError("Evidence ID has conflicting immutable contents")
+            records[record.evidence_id] = record
+        return [records[key] for key in sorted(records)]
+
+    def retained_evidence(self, review_id: str) -> list[dict[str, Any]]:
+        """Expose evidence for a case without retaining or accepting suggestions."""
+        entity_for_review_id(review_id)
+        return [
+            record.to_dict()
+            for record in self.evidence_records()
+            if evidence_applies(record, review_id)
+        ]
+
+    def prepare_evidence(
+        self, review_id: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Preview a separately retained evidence record, never a review decision."""
+        if entity_for_review_id(review_id) not in {"school", "member_education"}:
+            raise ValueError(
+                "Retain institution evidence for a school or education assertion"
+            )
+        revision = evidence_revision(self.evidence_path)
+        source = self.source_revision()
+        proposed = dict(payload)
+        if proposed.get("review_id", review_id) != review_id:
+            raise ValueError("Evidence belongs to another review item")
+        proposed["review_id"] = review_id
+        proposed.setdefault("generated_by", "manual")
+        proposed.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
+        record = EvidenceRecord.from_dict(proposed)
+        reference = record.candidate_institution_ref
+        if reference and self.resolve_institution(reference) is None:
+            raise ValueError(
+                "Evidence candidate is unavailable in the pinned institution register"
+            )
+        candidate = self._evidence_candidate_revision(reference)
+        if (
+            evidence_revision(self.evidence_path) != revision
+            or self.source_revision() != source
+            or self._evidence_candidate_revision(reference) != candidate
+        ):
+            raise StaleReviewError("Evidence inputs changed while previewing; retry")
+        return {
+            "kind": "evidence",
+            "review_id": review_id,
+            "record": record.to_dict(),
+            "revision": revision,
+            "source_revision": source,
+            "candidate_revision": candidate,
+            "validation": [
+                "Immutable retained evidence validated",
+                "Evidence never accepts a mapping",
+            ],
+        }
+
+    def save_evidence(self, preview: dict[str, Any]) -> EvidenceRecord:
+        """Append only the reviewed evidence snapshot; decision state stays intact."""
+        if preview.get("kind") != "evidence":
+            raise ValueError("Expected an evidence preview")
+        record = EvidenceRecord.from_dict(preview["record"])
+        if record.review_id != preview.get("review_id"):
+            raise ValueError("Evidence preview belongs to another review item")
+        reference = record.candidate_institution_ref
+
+        def check_sources() -> None:
+            if preview.get("source_revision") != self.source_revision():
+                raise StaleReviewError("Evidence sources changed; preview again")
+            if (
+                preview.get("research_revisions") is not None
+                and preview["research_revisions"] != self.research_revisions()
+            ):
+                raise StaleReviewError(
+                    "Research inputs changed; inspect and preview again"
+                )
+            if reference and self.resolve_institution(reference) is None:
+                raise StaleReviewError("Evidence candidate changed; preview again")
+            if preview.get("candidate_revision") != self._evidence_candidate_revision(
+                reference
+            ):
+                raise StaleReviewError(
+                    "Evidence candidate definition changed; preview again"
+                )
+
+        append_evidence(
+            self.evidence_path,
+            [record],
+            expected_revision=preview["revision"],
+            source_check=check_sources,
+        )
+        return record
+
+    def _evidence_candidate_revision(self, reference: str | None) -> str:
+        """Bind candidate facts and manual-definition heads without unrelated reviews."""
+        heads = (
+            active_heads(self.events(allow_conflicts=True)).get(
+                f"institution:{reference}", []
+            )
+            if reference and reference.startswith("manual:")
+            else []
+        )
+        return _value_revision(
+            {
+                "metadata": self.resolve_institution(reference) if reference else None,
+                "manual_heads": sorted(head.decision_id for head in heads),
+            }
+        )
 
     def queue_revision(self) -> tuple[str, str, tuple[tuple[str, str], ...]]:
         """Content-bound key for disposable GUI queue presentation only."""
@@ -338,7 +490,7 @@ class ReviewService:
             dict(row) for _, row in sorted(ranked, key=lambda item: item[0])[:limit]
         ]
 
-    def source_revision(self) -> str:
+    def source_revision(self, *, include_evidence: bool = True) -> str:
         paths = [
             path
             for path in sorted(self.external_dir.glob("school-*.csv"))
@@ -350,6 +502,8 @@ class ReviewService:
         paths.extend(sorted(RAW_WIKIMEDIA_DIR.rglob("*.json")))
         if self.db_path.exists():
             paths.append(self.db_path)
+        if include_evidence and self.evidence_path.exists():
+            paths.append(self.evidence_path)
         wal_path = self.db_path.with_suffix(self.db_path.suffix + ".wal")
         if wal_path.exists():
             paths.append(wal_path)
@@ -419,16 +573,25 @@ class ReviewService:
             from apemap.review.integration import project_review_records
 
             with get_connection(self.db_path, read_only=True) as conn:
-                project_review_records(conn, selected, matcher=matcher)
+                project_review_records(
+                    conn,
+                    selected,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(selected),
+                )
         return result
 
     def _check_references(
         self, selected: list[ReviewEvent], matcher: SchoolMatcher
     ) -> dict[str, Any]:
         """Validate event/reference integrity without repeating canonical replay."""
+        from apemap.review.context_evidence import expand_context_events
+
+        records = self.evidence_records(selected)
+        expanded = expand_context_events(selected, records)
         refs = [
             e
-            for e in resolve_events(selected).values()
+            for e in resolve_events(expanded).values()
             if e.effective_action in ("accept", "map")
             and any(
                 str(e.payload.get(name, "")).startswith("acara:")
@@ -456,15 +619,17 @@ class ReviewService:
                     ).fetchall()
                 )
         validate_events(
-            selected,
+            expanded,
             acara_ids=set(matcher.acara_id_map),
             member_ids=member_ids if member_ids else None,
         )
+        validate_evidence_references(selected, records)
         return {
             "valid": True,
             "events": len(selected),
             "effective_decisions": len(resolve_events(selected)),
             "revision": log_revision(self.log_path),
+            "relationship_conflicts": relationship_conflicts(selected),
             "warnings": []
             if has_full_inventory
             else [
@@ -480,10 +645,16 @@ class ReviewService:
         search: str | None = None,
     ) -> list[dict[str, Any]]:
         items: list[dict[str, Any]] = []
+        events = self.events(allow_conflicts=True)
         if self.db_path.exists():
             with get_connection(self.db_path, read_only=True) as conn:
                 items = build_candidates(conn)
-        items = annotate_candidates(items, self.events(allow_conflicts=True))
+                progress = self._individual_progress(conn, events)
+        else:
+            progress = self._individual_progress(None, events)
+        items = annotate_individual_progress(
+            annotate_candidates(items, events), progress
+        )
         aliases = {
             "schools": "school",
             "members": "member",
@@ -502,6 +673,19 @@ class ReviewService:
                 or search.lower() in json.dumps(item, ensure_ascii=False).lower()
             )
         ]
+
+    def _individual_progress(
+        self,
+        conn: duckdb.DuckDBPyConnection | None,
+        events: list[ReviewEvent],
+        school_ids: set[str] | None = None,
+    ) -> dict[str, dict[str, Any]]:
+        selected = individual_school_ids(events) if school_ids is None else school_ids
+        if not selected:
+            return {}
+        return school_resolution_progress(
+            conn, events, selected, resolve=self.institution_resolver()
+        )
 
     def history(self, review_id: str) -> list[dict[str, Any]]:
         return [
@@ -533,14 +717,50 @@ class ReviewService:
         heads = active_heads(events).get(review_id, [])
         decision = heads[0] if len(heads) == 1 else None
         context = dict(candidates[0]["payload"]) if candidates else {}
-        if entity == "school":
+        name = ""
+        if entity in {"school", "member_education"}:
+            effective = {
+                key: alternatives[0]
+                for key, alternatives in active_heads(events).items()
+                if len(alternatives) == 1
+            }
+            name = (
+                context.get("recorded_school_name", "")
+                if entity == "member_education"
+                else context.get("recorded_name", "")
+            )
+            if decision:
+                name = decision.payload.get(
+                    "recorded_school_name"
+                    if entity == "member_education"
+                    else "recorded_name",
+                    name,
+                )
+            school_id = (
+                school_review_id(name)
+                if entity == "member_education" and name
+                else review_id
+            )
+            relationship = effective.get(school_id)
+            context["school_relationship"] = (
+                relationship.to_dict() if relationship else None
+            )
+            context["resolution_warnings"] = [
+                warning
+                for warning in relationship_conflicts(events)
+                if warning["school_review_id"] == school_id
+            ]
             context["members"] = []
+            progress_ids = (
+                {school_id} if school_id in individual_school_ids(events) else set()
+            )
+            progress = self._individual_progress(None, events, progress_ids)
             original = (
                 decision.payload.get("attended_institution_ref") if decision else None
             )
             aliases = [
                 event
-                for event in resolve_events(events, allow_conflicts=True).values()
+                for event in effective.values()
                 if original
                 and event.entity_type == "school"
                 and event.effective_action in {"map", "accept"}
@@ -555,18 +775,60 @@ class ReviewService:
             ]
             if self.db_path.exists():
                 with get_connection(self.db_path, read_only=True) as conn:
-                    context["members"] = school_member_context(conn, review_id)
+                    context["members"] = school_member_context(conn, school_id, events)
+                    progress = self._individual_progress(conn, events, progress_ids)
                     context["alias_members"] = [
                         {
                             "recorded_name": alias.payload["recorded_name"],
-                            "members": school_member_context(conn, alias.review_id),
+                            "members": school_member_context(
+                                conn, alias.review_id, events
+                            ),
                         }
                         for alias in aliases
                         if alias.review_id != review_id
                     ]
+            if school_id in progress:
+                context["individual_resolution"] = progress[school_id]
+                if entity == "school":
+                    candidates = annotate_individual_progress(candidates, progress)
+            resolver = self.institution_resolver()
+            for member in context["members"]:
+                for education in member["education"]:
+                    summary = education["current_resolution"]
+                    target = (
+                        resolver(summary["institution_ref"])
+                        if summary["institution_ref"]
+                        else None
+                    )
+                    summary["institution_name"] = (
+                        target.get("school_name") if target else None
+                    )
+                    summary["state"] = target.get("state") if target else None
+                    summary["suburb"] = target.get("suburb") if target else None
+        ranked: list[dict[str, Any]] = []
+        from apemap.review.context_evidence import attendance_period, resolve_context
+
+        for member in context.get("members", []):
+            for assertion in member.get("education", []):
+                assertion["attendance_period"] = attendance_period(member, assertion)
+        if decision and decision.payload.get("relationship_type") == "successor":
+            context["reviewed_context_claims"] = resolve_context(
+                decision, self.evidence_records(events)
+            )[1]
+        if entity == "member_education" and name:
+            ranked = self.rank_education_candidates(review_id, name, candidates, events)
         return {
             "review_id": review_id,
             "entity_type": entity,
+            "status": (
+                context["individual_resolution"]["status"]
+                if entity == "school" and "individual_resolution" in context
+                else "conflict"
+                if len(heads) > 1
+                else decision.status
+                if decision
+                else "pending"
+            ),
             "candidates": candidates,
             "decision": decision.to_dict() if decision else None,
             "history": [
@@ -578,7 +840,178 @@ class ReviewService:
             ],
             "conflicts": [event.to_dict() for event in heads] if len(heads) > 1 else [],
             "context": context,
+            "ranked_candidates": ranked,
+            "retained_evidence": self.retained_evidence(review_id)
+            if entity in {"school", "member_education"}
+            else [],
+            "evidence_revision": evidence_revision(self.evidence_path),
         }
+
+    def research_revisions(self) -> dict[str, str]:
+        """New evidence does not discard other suggestions from the same search."""
+        return {
+            "source_revision": self.source_revision(include_evidence=False),
+            "decision_revision": log_revision(self.log_path),
+        }
+
+    def research_context(self, review_id: str) -> dict[str, Any]:
+        if not review_id.startswith("education:") or review_id.endswith(":missing"):
+            raise ValueError("Find evidence for one recorded education assertion")
+        revisions = self.research_revisions()
+        item = self.show(review_id)
+        aph_id = review_id.split(":")[1]
+        member = next(
+            (
+                row
+                for row in item["context"].get("members", [])
+                if str(row.get("aph_id", "")).lower() == aph_id
+            ),
+            None,
+        )
+        if member is None:
+            raise ValueError("Source member context is unavailable; run review build")
+        assertions = [
+            row for row in member["education"] if row.get("review_id") == review_id
+        ]
+        result = {
+            "review_id": review_id,
+            **revisions,
+            "member": {
+                key: member.get(key)
+                for key in ("display_name", "aph_id", "date_of_birth", "services")
+            },
+            "assertions": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "recorded_name",
+                        "years_attended",
+                        "graduation_year",
+                        "attendance_period",
+                        "source_url",
+                    )
+                }
+                for row in assertions
+            ],
+            "candidates": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "institution_ref",
+                        "school_name",
+                        "state",
+                        "suburb",
+                        "country",
+                    )
+                }
+                for row in item["ranked_candidates"]
+            ],
+            "school_relationship": item["context"].get("school_relationship"),
+        }
+        if revisions != self.research_revisions():
+            raise StaleReviewError("Research context changed while loading; retry")
+        return json_value(result)
+
+    def rank_education_candidates(
+        self,
+        review_id: str,
+        recorded_name: str,
+        source_candidates: list[dict[str, Any]] | None = None,
+        events: list[ReviewEvent] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Compare distinct institutions for one assertion; never choose authority."""
+        if entity_for_review_id(review_id) != "member_education":
+            raise ValueError(
+                "Candidate evidence ranking requires an education assertion"
+            )
+        selected = self.events(allow_conflicts=True) if events is None else events
+        records = self.evidence_records(selected)
+        resolver = self.institution_resolver()
+        institutions = {
+            row["institution_ref"]: row
+            for row in self.lookup_institutions(recorded_name, limit=50)
+        }
+        references = {
+            record.candidate_institution_ref
+            for record in records
+            if record.review_id in {review_id, school_review_id(recorded_name)}
+            and record.candidate_institution_ref
+        }
+        for candidate in source_candidates or []:
+            value = candidate["evidence"].get("institution_id")
+            if value and str(value).startswith("acara-"):
+                references.add(str(value).replace("acara-", "acara:", 1))
+            elif value and str(value).startswith("manual:"):
+                references.add(str(value))
+        for head in active_heads(selected).get(review_id, []):
+            if head.payload.get("institution_ref"):
+                references.add(head.payload["institution_ref"])
+        for reference in sorted(references):
+            metadata = resolver(reference)
+            if metadata is not None:
+                institutions[reference] = {**metadata, "institution_ref": reference}
+        proposals = [
+            {
+                **row,
+                "institution_name": row.get("school_name"),
+                "recorded_name": recorded_name,
+            }
+            for row in institutions.values()
+        ]
+        return score_candidates(review_id, proposals, records)
+
+    def readiness(self, parliaments: list[int] | None = None) -> dict[str, Any]:
+        """Project working decisions in memory; never update the source database."""
+        from apemap.db import init_schema
+        from apemap.review.integration import _write_records, project_review_records
+        from apemap.review.readiness import readiness_report
+
+        revisions = self.research_revisions()
+        evidence_hash = evidence_revision(self.evidence_path)
+        events = self.events()
+        records = self.evidence_records(events)
+        with get_connection(self.db_path, read_only=True) as source:
+            projected = project_review_records(
+                source, events, matcher=self.matcher(), evidence_records=records
+            )
+        with duckdb.connect(":memory:") as temporary:
+            init_schema(temporary)
+            _write_records(temporary, projected)
+            selected = (
+                parliaments
+                if parliaments is not None
+                else [
+                    row[0]
+                    for row in temporary.execute(
+                        "SELECT DISTINCT parliament_number FROM parliament_service ORDER BY 1"
+                    ).fetchall()
+                ]
+            )
+            report = readiness_report(
+                temporary,
+                events,
+                records,
+                selected,
+                {
+                    "basis": "working_review_projection",
+                    **revisions,
+                    "evidence_revision": evidence_hash,
+                },
+                extra_institutions=[
+                    {
+                        **row,
+                        "institution_id": row["institution_ref"].replace(
+                            "acara:", "acara-", 1
+                        ),
+                    }
+                    for _, row in self._institution_lookup_rows()
+                ],
+            )
+        if revisions != self.research_revisions() or evidence_hash != evidence_revision(
+            self.evidence_path
+        ):
+            raise StaleReviewError("Readiness inputs changed while computing; retry")
+        return json_value(report)
 
     def status(self) -> dict[str, Any]:
         counts: Counter[tuple[str, str, int | None]] = Counter()
@@ -609,6 +1042,11 @@ class ReviewService:
         self, events: list[ReviewEvent], event: ReviewEvent
     ) -> dict[str, Any]:
         """Display every linked name and attendance before school-wide acceptance."""
+        from apemap.review.context_evidence import expand_context_events
+
+        records = self.evidence_records(events + [event])
+        events = expand_context_events(events, records)
+        event = expand_context_events([event], records)[0]
         payload = event.payload
         reference = payload.get("attended_institution_ref")
         related = [
@@ -667,7 +1105,9 @@ class ReviewService:
                         [canonical_ref],
                     ).fetchall():
                         cases[school_review_id(name)] = name
-                members = {key: school_member_context(conn, key) for key in cases}
+                members = {
+                    key: school_member_context(conn, key, events) for key in cases
+                }
                 member_names = dict(
                     conn.execute(
                         "SELECT aph_id, display_name FROM members WHERE aph_id IS NOT NULL"
@@ -751,7 +1191,7 @@ class ReviewService:
                 "Successor broad-sector assumptions disagree; sector remains unresolved and needs review."
             )
         return {
-            "scope": "All attendance records and verified aliases of the original school",
+            "scope": "Default-dependent attendance records and verified aliases of the original school; assertion-specific resolutions remain separate",
             "cases": [
                 {
                     "review_id": key,
@@ -813,7 +1253,32 @@ class ReviewService:
                 changes.append(
                     {"review_id": key, "before": left_value, "after": right_value}
                 )
-        result: dict[str, Any] = {"decisions": changes, "canonical": None}
+        school_ids = set()
+        for change in changes:
+            head = new.get(change["review_id"])
+            if head and head.entity_type == "school":
+                school_ids.add(head.review_id)
+            elif (
+                head
+                and head.entity_type == "member_education"
+                and head.payload.get("recorded_school_name")
+            ):
+                school_ids.add(school_review_id(head.payload["recorded_school_name"]))
+        result: dict[str, Any] = {
+            "decisions": changes,
+            "canonical": None,
+            "relationship_conflicts": [
+                warning
+                for warning in relationship_conflicts(after)
+                if warning["school_review_id"] in school_ids
+            ],
+            "default_applications": [],
+        }
+        progress_ids = school_ids & (
+            individual_school_ids(before) | individual_school_ids(after)
+        )
+        before_progress = self._individual_progress(None, before, progress_ids)
+        after_progress = self._individual_progress(None, after, progress_ids)
         if self.db_path.exists():
             from apemap.review.integration import (
                 compare_review_records,
@@ -821,13 +1286,56 @@ class ReviewService:
             )
 
             with get_connection(self.db_path, read_only=True) as conn:
+                before_progress = self._individual_progress(conn, before, progress_ids)
+                after_progress = self._individual_progress(conn, after, progress_ids)
                 matcher = matcher or self.matcher()
                 conflicts = [key for key, heads in old_heads.items() if len(heads) > 1]
                 old_records = project_review_records(
-                    conn, [] if conflicts else before, matcher=matcher
+                    conn,
+                    [] if conflicts else before,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(before),
                 )
-                new_records = project_review_records(conn, after, matcher=matcher)
+                new_records = project_review_records(
+                    conn,
+                    after,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(after),
+                )
                 differences = compare_review_records(old_records, new_records)
+                for school_id in sorted(school_ids):
+                    head = new.get(school_id)
+                    if (
+                        not head
+                        or head.entity_type != "school"
+                        or head.effective_action not in {"accept", "map"}
+                    ):
+                        continue
+                    assertions = []
+                    for member in school_member_context(conn, school_id, after):
+                        for assertion in member["education"]:
+                            scope = assertion["current_resolution"]["resolution_scope"]
+                            assertions.append(
+                                {
+                                    "review_id": assertion["review_id"],
+                                    "aph_id": member["aph_id"],
+                                    "display_name": member["display_name"],
+                                    "recorded_name": assertion["recorded_name"],
+                                    "applies": scope == "school_default",
+                                    "reason": "Uses the school-wide default"
+                                    if scope == "school_default"
+                                    else "Assertion decision takes precedence",
+                                }
+                            )
+                    result["default_applications"].append(
+                        {
+                            "school_review_id": school_id,
+                            "available": True,
+                            "assertions": sorted(
+                                assertions, key=lambda row: row["review_id"] or ""
+                            ),
+                        }
+                    )
             result["canonical"] = {
                 "baseline": "source" if conflicts else "prior_effective_decisions",
                 "before": {"conflicts": conflicts}
@@ -843,6 +1351,13 @@ class ReviewService:
             result["canonical_unavailable"] = (
                 "Run review build to preview canonical effects"
             )
+        result["individual_resolutions"] = {
+            school_id: {
+                "before": before_progress[school_id],
+                "after": after_progress[school_id],
+            }
+            for school_id in sorted(progress_ids)
+        }
         return json_value(result)
 
     def prepare(
@@ -867,7 +1382,21 @@ class ReviewService:
             options = self._case_candidates(review_id, events)
             if options:
                 identity = options[0]["payload"]
-        proposed = {**identity, **payload}
+        proposed: dict[str, Any] = {**identity, **payload}
+        if (
+            entity == "school"
+            and (replacement_action or action) == "research"
+            and proposed.get("resolution_reason") is not None
+        ):
+            proposed.setdefault("requires_individual_resolution", True)
+        if (
+            entity == "member_education"
+            and (replacement_action or action) == "research"
+            and proposed.get("recorded_school_name")
+        ):
+            # Distinguish new resolution research from legacy attendance
+            # withdrawals, whose schema-1 replay must remain unchanged.
+            proposed.setdefault("resolution_only", True)
         if (
             entity == "member_education"
             and review_id.endswith(":missing")
@@ -909,6 +1438,7 @@ class ReviewService:
             "revision": revision,
             "source_revision": source_revision,
             "changes": changes,
+            "relationship_conflicts": changes["relationship_conflicts"],
             "validation": [
                 "Event, available source references and effective state validated",
                 "Canonical projection validated"
@@ -917,7 +1447,38 @@ class ReviewService:
                 *validation_result["warnings"],
             ],
         }
+        if event.payload.get("context_evidence_refs"):
+            from apemap.review.context_evidence import resolve_context
+
+            preview["context_claims"] = resolve_context(
+                event, self.evidence_records(events + [event])
+            )[1]
+        progress_id = (
+            event.review_id
+            if entity == "school"
+            else school_review_id(event.payload["recorded_school_name"])
+            if entity == "member_education"
+            and event.payload.get("recorded_school_name")
+            else None
+        )
+        if progress_id in changes["individual_resolutions"]:
+            preview["individual_resolution"] = changes["individual_resolutions"][
+                progress_id
+            ]
         if entity == "school":
+            if event.effective_action in {"accept", "map"}:
+                preview["default_application"] = next(
+                    (
+                        application
+                        for application in changes["default_applications"]
+                        if application["school_review_id"] == review_id
+                    ),
+                    {
+                        "school_review_id": review_id,
+                        "available": False,
+                        "assertions": [],
+                    },
+                )
             if event.payload.get("relationship_type") == "successor":
                 preview["historical_context"] = self._historical_scope(
                     events + [event], event
@@ -1004,6 +1565,7 @@ class ReviewService:
                 external_dir=self.external_dir,
                 output_dir=output,
                 decision_log_path=self.log_path,
+                evidence_log_path=self.evidence_path,
                 retrieved_at=datetime.fromisoformat(manifest["created_at"]),
             )
             if review_snapshot_metadata(conn).get("decision_log_sha256") != before:
@@ -1011,7 +1573,10 @@ class ReviewService:
                     "Ingestion consumed a newer decision log; rebuild before exporting reviews"
                 )
             attach_source_manifest(conn, manifest_path, manifest_bytes=manifest_bytes)
-            items = annotate_candidates(build_candidates(conn), events)
+            items = annotate_individual_progress(
+                annotate_candidates(build_candidates(conn), events),
+                self._individual_progress(conn, events),
+            )
             load_into_duckdb(conn, events, items)
             export_candidates(conn, items, output)
         if log_revision(self.log_path) != before:

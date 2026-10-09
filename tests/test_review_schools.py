@@ -2,6 +2,7 @@
 
 from dataclasses import replace
 import hashlib
+from html import unescape
 import json
 from pathlib import Path
 from typing import Any
@@ -146,9 +147,12 @@ def test_grouping_preserves_other_entity_rows_and_parliaments() -> None:
 
 @pytest.fixture
 def real_school(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    database_factory: DatabaseFactory,
 ) -> tuple[Any, ReviewService]:
     from apemap.review import service as service_module
+    from apemap.review.integration import capture_review_sources
 
     monkeypatch.setattr(service_module, "RAW_APH_DIR", tmp_path / "aph")
     monkeypatch.setattr(service_module, "RAW_WIKIMEDIA_DIR", tmp_path / "wiki")
@@ -162,9 +166,24 @@ def real_school(
     )
     log = tmp_path / "decisions.jsonl"
     log.write_bytes(encode_event(event()))
-    service = ReviewService(
-        log_path=log, db_path=tmp_path / "absent.duckdb", external_dir=external
+    path, conn = database_factory(None)
+    conn.execute(
+        "INSERT INTO members (member_id, family_name, given_name, display_name, aph_id) VALUES ('source-member', 'Person', 'Source', 'Source Person', 'SOURCE-MEMBER')"
     )
+    conn.execute(
+        "INSERT INTO parliament_service (service_id, member_id, parliament_number, chamber, party, party_abbrev, state_or_territory, service_start) VALUES ('source-service', 'source-member', 48, 'representatives', 'Party', 'P', 'ACT', '2025-07-22')"
+    )
+    conn.execute(
+        "INSERT INTO institutions (institution_id, school_name, sector) VALUES ('inst-unmatched-clare', ?, 'Other')",
+        [NAME],
+    )
+    conn.execute(
+        "INSERT INTO member_education (education_id, member_id, institution_id, level, attended_status, source_url, retrieved_at, confidence, school_name_as_recorded, evidence_origin) VALUES ('source-education', 'source-member', 'inst-unmatched-clare', 'secondary', 'attended_unspecified', ?, '2026-10-02T00:00:00+00:00', 'verified', ?, 'aph')",
+        [SOURCE, NAME],
+    )
+    capture_review_sources(conn)
+    conn.close()
+    service = ReviewService(log_path=log, db_path=path, external_dir=external)
     app = create_app(service)
     app.config["TESTING"] = True
     return app.test_client(), service
@@ -203,7 +222,9 @@ def test_guided_mapping_replaces_earlier_event_after_read_only_preview(
     preview = client.post(f"/items/{REVIEW_ID}/preview", data=guided(client))
     assert preview.status_code == 200
     assert "Replaces 1 active decision" in preview.get_data(as_text=True)
-    assert "Canonical preview unavailable" in preview.get_data(as_text=True)
+    assert "School-wide default application" in preview.get_data(as_text=True)
+    assert "Source Person" in preview.get_data(as_text=True)
+    assert "1 updated" in preview.get_data(as_text=True)
     assert service.log_path.read_bytes() == baseline
     values = Inputs(preview.get_data(as_text=True)).values
     saved = client.post(
@@ -461,21 +482,35 @@ def test_parliamentarian_context_uses_source_attendance_and_service(
     )
     assert "Griffith · ACT · Australia" in html and "Dublin · Ireland" in html
     assert "Changed country" not in html and "Changed school" not in html
-    assert "Review attendance" in html and 'href="javascript:alert(1)"' not in html
+    assert (
+        "Resolve this member’s school" in html
+        and 'href="javascript:alert(1)"' not in html
+    )
     assert html.index("Parliamentarians using this school name") < html.index(
         "Possible matches"
     )
     assert hashlib.sha256(path.read_bytes()).hexdigest() == baseline
 
 
-def test_school_without_database_has_explicit_missing_member_context(
+def test_school_without_database_has_missing_context_and_blocks_mapping_save(
     real_school: tuple[Any, ReviewService],
+    tmp_path: Path,
 ) -> None:
     client, service = real_school
+    service.db_path = tmp_path / "absent.duckdb"
+    baseline = service.log_path.read_bytes()
     assert service.show(REVIEW_ID)["context"]["members"] == []
     assert "No parliamentarian context is available" in client.get(
         f"/items/{REVIEW_ID}"
     ).get_data(as_text=True)
+    response = client.post(f"/items/{REVIEW_ID}/preview", data=guided(client))
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "Run a review build and inspect the affected assertions" in html
+    assert "data-save-school" not in html
+    assert "preview_token" not in Inputs(html).values
+    assert service.log_path.read_bytes() == baseline
+    assert not service.db_path.exists()
 
 
 def test_stale_form_retains_draft_and_requires_fresh_preview(
@@ -763,10 +798,12 @@ def test_exact_manual_resolution_only_accepts_one_active_definition(
 
 
 @pytest.mark.parametrize("source", [SOURCE, ""])
+@pytest.mark.parametrize("recorded_name", [NAME, None, "", "missing-column"])
 def test_readable_canonical_preview_leaves_database_unchanged(
     real_school: tuple[Any, ReviewService],
     database_factory: DatabaseFactory,
     source: str,
+    recorded_name: str | None,
 ) -> None:
     client, service = real_school
     path, conn = database_factory(None)
@@ -782,11 +819,14 @@ def test_readable_canonical_preview_leaves_database_unchanged(
     )
     conn.execute(
         "INSERT INTO member_education (education_id, member_id, institution_id, level, attended_status, source_url, retrieved_at, confidence, school_name_as_recorded, evidence_origin) VALUES ('edu-test', 'aph-test', 'inst-unmatched-clare', 'secondary', 'attended_unspecified', ?, '2026-10-02T00:00:00+10:00', 'verified', ?, 'aph')",
-        [SOURCE, NAME],
+        [SOURCE, recorded_name],
     )
     from apemap.review.integration import capture_review_sources
 
     capture_review_sources(conn)
+    if recorded_name == "missing-column":
+        for table in ("member_education", "review_source_member_education"):
+            conn.execute(f"ALTER TABLE {table} DROP COLUMN school_name_as_recorded")
     conn.close()
     service.db_path = path
     baseline = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -796,6 +836,10 @@ def test_readable_canonical_preview_leaves_database_unchanged(
     html = response.get_data(as_text=True)
     assert response.status_code == 200
     assert "Affected education assertions" in html and "1 updated" in html
+    affected = html.split("<h3>Affected education assertions</h3>", 1)[1].split(
+        "</table>", 1
+    )[0]
+    assert f"<td>{NAME}</td><td>acara-49968</td><td>alias</td>" in unescape(affected)
     assert "acara-49968" in html and "Alternate name" in html
     assert hashlib.sha256(path.read_bytes()).hexdigest() == baseline
     assert len(service.events()) == 1

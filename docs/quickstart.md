@@ -11,7 +11,7 @@ This guide walks you through setting up APEMAP, exploring the command-line inter
 
 ## Prerequisites
 
-- **Python**: Version `>= 3.10` (tested with Python 3.10, 3.11, 3.12).
+- **Python**: Version `>= 3.11`, as declared in `pyproject.toml`.
 - **uv**: Modern, fast Python package and environment manager ([Astral uv](https://docs.astral.sh/uv/)).
   Install `uv` if not already present:
   - macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
@@ -31,7 +31,7 @@ cd apemap
 uv sync
 
 # (Optional) Sync interactive notebook and analysis dependencies
-uv sync --extra analysis
+uv sync --group analysis
 ```
 
 `uv` reads `pyproject.toml` and locks exact dependency versions via `uv.lock`.
@@ -69,11 +69,22 @@ uv run apemap validate --help
 An important distinction exists between working with existing data and refreshing upstream sources:
 
 ### A. Working with Local / Existing Data (Default)
-The repository includes checked-in reference data (`data/reference/review/decisions.jsonl`), cached APH individual records (`data/raw/aph/individuals.json`), and sample ACARA files (`data/external/`).
-By default, commands do **not** trigger live external network downloads:
-- `apemap ingest aph` uses `data/raw/aph/individuals.json` if present.
+The repository includes checked-in reference data
+(`data/reference/review/decisions.jsonl`) and ACARA files (`data/external/`).
+APH/AEC caches under `data/raw/` and DuckDB databases are ignored by Git; a clone
+does not supply them. Restore pinned inputs before ingestion. Standalone command
+defaults do not guarantee an offline run:
+- `apemap ingest aph` uses `data/raw/aph/individuals.json` if present, and may fetch it on a cache miss.
 - `apemap ingest acara --no-download` parses local CSV/Excel files in `data/external/`.
+- `apemap ingest acara` defaults to `--download`; use `--no-download` explicitly for local files.
 - `apemap transform`, `validate`, `analyze`, and `export` operate locally against DuckDB (`data/aped.duckdb`) and are completely offline and deterministic.
+
+For the full historical dataset, follow [Decisions to a new release](decisions-to-release.md)
+and pin a fresh recipe for the installed package. The historical recipe loads
+ACARA 2008–2025 before APH, replays the consumed ledger/evidence, loads funding,
+and builds and strictly verifies the release. Standard `run-all` uses
+`data/external/` and is a development pipeline, not an equivalent historical build.
+See the [local 0.6.1 build record](releases/0.6.1/README.md) for the checked snapshot.
 
 ### B. Live Upstream Refreshes
 When you want to refresh upstream data directly from official government endpoints:
@@ -93,7 +104,7 @@ uv run apemap ingest acara --no-download
 ```
 
 ### Step 2: Ingest APH Parliamentarians
-Extract members and secondary education records for the 46th, 47th, and 48th Parliaments, matching schools against ACARA:
+Extract a contemporary subset for the 46th, 47th, and 48th Parliaments, matching schools against ACARA (the CLI default covers 42–48):
 ```bash
 uv run apemap ingest aph --parliament "46,47,48"
 ```

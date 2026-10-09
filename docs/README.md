@@ -20,6 +20,7 @@ This index provides an overview of available technical guides, methodologies, an
 | [**Original Schools & Successors**](successor-context.md) | Independent campus and sector evidence, attended identities, successor warnings, counting rules and sensitivity comparisons. | Reviewers, researchers, frontend developers |
 | [**Historical Coverage**](historical-coverage.md) | Populated 42nd–48th release, service reconstruction, source gaps, historical institutions, replay and website follow-up. | Researchers, release maintainers |
 | [**Dataset Release System**](release.md) | Immutable dataset releases, layout, manifest, verification, privacy checks, and GitHub release publication. | Release engineers, researchers, data users |
+| [**Local 0.6.1 Build Record**](releases/0.6.1/README.md) | Database freshness audit, pinned inputs, consumed review revision, local bundle and verification results. | Reviewers, release maintainers |
 | [**Continuous Integration (CI)**](ci.md) | Offline CI pipeline architecture, quality gates, automated verification, and local execution. | Contributors, CI/CD engineers |
 | [**Reproducibility Guide**](reproducibility.md) | Deterministic guarantees, virtual environment locking, network-isolated stages, and validation gates. | Auditors, peer reviewers, CI/CD |
 | [**Development Guide**](development.md) | Contributing guide, local environment setup, running tests, code formatting, linting, type-checking, and schema evolution. | Contributors, developers |

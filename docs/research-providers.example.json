@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "providers": [
+    {"id": "openrouter", "provider": "openrouter", "model": "openai/gpt-5.2", "api_key_env": "OPENROUTER_API_KEY", "timeout": 90},
+    {"id": "gemini", "provider": "gemini", "model": "gemini-3.8-flash", "api_key_env": "GEMINI_API_KEY", "timeout": 90},
+    {"id": "openai", "provider": "openai", "model": "gpt-5.5", "api_key_env": "OPENAI_API_KEY", "timeout": 90}
+  ]
+}

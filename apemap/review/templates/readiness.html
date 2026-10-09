@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Review readiness{% endblock %}
+{% block content %}
+<h1>Review readiness</h1><p>{{ report.policy }}</p>
+{% for cohort in report.parliaments %}
+<section><h2>Parliament {{ cohort.parliament_number }}</h2>
+<p>{{ cohort.baseline.total_parliamentarians }} people · {{ cohort.baseline.total_attendance_instances }} attendance assertions · {{ cohort.status | replace('_', ' ') }}</p>
+{% for case in cohort.cases %}<article><h3><a href="{{ url_for('detail', review_id=case.review_id) }}">{{ case.recorded_name }}</a></h3><p>{{ case.impact | replace('_', ' ') }} · {{ case.candidate_coverage | replace('_', ' ') }}. {{ case.unknown_reason }}</p><details><summary>Candidate impact and evidence scores</summary><pre>{{ case | json_text }}</pre></details></article>{% else %}<p>No unresolved named assertions were detected in this cohort.</p>{% endfor %}
+<details><summary>Joint analytical bounds, context gaps and successor sensitivity</summary><pre>{{ cohort.joint_sector_bounds | json_text }}</pre><pre>{{ cohort.joint_shared_school_bounds | json_text }}</pre><pre>{{ cohort.context_gaps | json_text }}</pre><pre>{{ cohort.missing_attendance_members | json_text }}</pre><pre>{{ cohort.successor_sensitivity | json_text }}</pre></details></section>
+{% endfor %}<details><summary>Input provenance</summary><pre>{{ report.provenance | json_text }}</pre></details>
+{% endblock %}

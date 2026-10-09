@@ -17,6 +17,12 @@ from apemap.review.model import (
     parse_events,
 )
 from apemap.review.service import ReviewService, default_reviewer
+from apemap.review.preview import (
+    apply_preview,
+    finish_preview,
+    requires_approval,
+    write_preview,
+)
 from apemap.review.store import append_events, check_append_only, log_revision
 
 review_app = typer.Typer(
@@ -37,9 +43,19 @@ def review_options(
     external_dir: Annotated[
         Path | None, typer.Option(help="Pinned ACARA register directory.")
     ] = None,
+    evidence_path: Annotated[
+        Path | None,
+        typer.Option(help="Retained evidence JSONL; defaults beside the decision log."),
+    ] = None,
 ) -> None:
+    # A command-level log override must derive its sibling evidence store unless
+    # the caller selected an evidence path explicitly in this callback.
+    ctx.meta["review_evidence_path"] = evidence_path
     ctx.obj = ReviewService(
-        log_path=log_path, db_path=db_path, external_dir=external_dir
+        log_path=log_path,
+        db_path=db_path,
+        external_dir=external_dir,
+        evidence_path=evidence_path,
     )
 
 
@@ -125,6 +141,45 @@ def show_cmd(ctx: typer.Context, review_id: str) -> None:
     _run(lambda: _service(ctx).show(review_id))
 
 
+@review_app.command("readiness")
+def readiness_cmd(
+    ctx: typer.Context, parliament: Annotated[list[int] | None, typer.Option()] = None
+) -> None:
+    """Report advisory analytical impact from a disposable working projection."""
+    _run(lambda: _service(ctx).readiness(parliament))
+
+
+@review_app.command("evidence")
+def evidence_cmd(ctx: typer.Context, review_id: str) -> None:
+    """Inspect retained records and stable legacy source provenance for one case."""
+    _run(lambda: _service(ctx).retained_evidence(review_id))
+
+
+@review_app.command("retain-evidence")
+def retain_evidence_cmd(
+    ctx: typer.Context,
+    review_id: str,
+    payload: Annotated[Path, typer.Option(help="Structured evidence JSON object.")],
+    dry_run: bool = False,
+) -> None:
+    """Preview and explicitly retain evidence without accepting a mapping."""
+
+    def retain() -> Any:
+        service = _service(ctx)
+        preview = service.prepare_evidence(review_id, _payload(payload))
+        return preview if dry_run else service.save_evidence(preview).to_dict()
+
+    _run(retain)
+
+
+@review_app.command("rank-education")
+def rank_education_cmd(ctx: typer.Context, review_id: str) -> None:
+    """Show deterministic advisory ranking; evidence scores never save decisions."""
+    if not review_id.startswith("education:"):
+        raise typer.BadParameter("Use an education assertion review ID")
+    _run(lambda: _service(ctx).show(review_id)["ranked_candidates"])
+
+
 @review_app.command("history")
 def history_cmd(ctx: typer.Context, review_id: str) -> None:
     _run(lambda: _service(ctx).history(review_id))
@@ -148,7 +203,12 @@ def check_cmd(
     def check() -> dict[str, Any]:
         service = _service(ctx)
         if log_path:
-            service.log_path = log_path
+            service = ReviewService(
+                log_path=log_path,
+                db_path=service.db_path,
+                external_dir=service.external_dir,
+                evidence_path=ctx.meta.get("review_evidence_path"),
+            )
         if external_dir:
             service.external_dir = external_dir
         result = service.check()
@@ -190,6 +250,7 @@ def _record(
     reviewer: str | None,
     note: str,
     dry_run: bool,
+    preview_out: Path | None = None,
     **values: Any,
 ) -> Any:
     payload = _payload(payload_path)
@@ -200,7 +261,7 @@ def _record(
     preview = service.prepare(
         review_id, action, payload, source_url=source, reviewer=reviewer, notes=note
     )
-    return preview if dry_run else service.save(preview).to_dict()
+    return finish_preview(service, preview, dry_run=dry_run, preview_out=preview_out)
 
 
 @review_app.command("accept")
@@ -219,6 +280,7 @@ def accept_cmd(
     confidence: str | None = None,
     retrieved_at: str | None = None,
     relationship_type: str | None = None,
+    preview_out: Path | None = None,
 ) -> None:
     """Accept explicit facts, using a JSON payload for complex correction types."""
 
@@ -235,6 +297,8 @@ def accept_cmd(
             if school:
                 values["recorded_name"] = school
         if review_id.startswith("education:"):
+            if relationship_type:
+                values["relationship_type"] = relationship_type
             values.update(
                 attended_status=attended_status
                 or supplied.get("attended_status", "attended_unspecified"),
@@ -245,10 +309,50 @@ def accept_cmd(
             if retrieved_at:
                 values["retrieved_at"] = retrieved_at
         return _record(
-            ctx, review_id, "accept", payload, source, reviewer, note, dry_run, **values
+            ctx,
+            review_id,
+            "accept",
+            payload,
+            source,
+            reviewer,
+            note,
+            dry_run,
+            preview_out,
+            **values,
         )
 
     _run(accept)
+
+
+@review_app.command("map-education")
+def map_education_cmd(
+    ctx: typer.Context,
+    review_id: str,
+    institution_ref: Annotated[str, typer.Option()],
+    relationship_type: Annotated[str, typer.Option()],
+    source: Annotated[str, typer.Option()],
+    payload: Path | None = None,
+    reviewer: str | None = None,
+    note: str = "",
+    dry_run: bool = False,
+) -> None:
+    """Resolve one existing attendance assertion without replacing its evidence."""
+    if not review_id.startswith("education:"):
+        raise typer.BadParameter("Use an education:<aph-id>:<school-digest> review ID")
+    _run(
+        lambda: _record(
+            ctx,
+            review_id,
+            "map",
+            payload,
+            source,
+            reviewer,
+            note,
+            dry_run,
+            institution_ref=institution_ref,
+            relationship_type=relationship_type,
+        )
+    )
 
 
 @review_app.command("reject")
@@ -259,10 +363,19 @@ def reject_cmd(
     payload: Path | None = None,
     reviewer: str | None = None,
     dry_run: bool = False,
+    preview_out: Path | None = None,
 ) -> None:
     _run(
         lambda: _record(
-            ctx, review_id, "reject", payload, "", reviewer, reason, dry_run
+            ctx,
+            review_id,
+            "reject",
+            payload,
+            "",
+            reviewer,
+            reason,
+            dry_run,
+            preview_out,
         )
     )
 
@@ -275,10 +388,19 @@ def research_cmd(
     payload: Path | None = None,
     reviewer: str | None = None,
     dry_run: bool = False,
+    preview_out: Path | None = None,
 ) -> None:
     _run(
         lambda: _record(
-            ctx, review_id, "research", payload, "", reviewer, note, dry_run
+            ctx,
+            review_id,
+            "research",
+            payload,
+            "",
+            reviewer,
+            note,
+            dry_run,
+            preview_out,
         )
     )
 
@@ -294,6 +416,7 @@ def supersede_cmd(
     note: str = "",
     also_supersede: Annotated[list[str] | None, typer.Option()] = None,
     dry_run: bool = False,
+    preview_out: Path | None = None,
 ) -> None:
     def supersede() -> Any:
         service = _service(ctx)
@@ -313,7 +436,9 @@ def supersede_cmd(
             supersedes=[decision_id, *(also_supersede or [])],
             replacement_action=replacement_action,
         )
-        return preview if dry_run else service.save(preview).to_dict()
+        return finish_preview(
+            service, preview, dry_run=dry_run, preview_out=preview_out
+        )
 
     _run(supersede)
 
@@ -383,6 +508,7 @@ def import_cmd(
     reviewer: str | None = None,
     apply: bool = False,
     incomplete_as_research: bool = False,
+    preview_out: Path | None = None,
 ) -> None:
     """Validate deterministic proposals; default to preview without writing."""
 
@@ -417,6 +543,12 @@ def import_cmd(
             if event.decision_id not in existing:
                 additions.append(event)
         service.check(service.events() + additions)
+        if preview_out is not None:
+            return {**write_preview(service, additions, preview_out), "report": report}
+        if apply and requires_approval(additions):
+            raise ValueError(
+                "School imports require --preview-out FILE, then apply-preview with its SHA-256"
+            )
         if apply:
             append_events(
                 service.log_path,
@@ -434,6 +566,18 @@ def import_cmd(
     _run(import_records)
 
 
+@review_app.command("apply-preview")
+def apply_preview_cmd(
+    ctx: typer.Context,
+    preview: Path,
+    approve: Annotated[
+        str, typer.Option(help="SHA-256 printed with the reviewed preview.")
+    ],
+) -> None:
+    """Approve and append exactly the events in a separately inspected preview."""
+    _run(lambda: apply_preview(_service(ctx), preview, approve))
+
+
 @review_app.command("serve")
 def serve_cmd(
     ctx: typer.Context,
@@ -441,6 +585,7 @@ def serve_cmd(
     workers: Annotated[
         int, typer.Option(min=1, help="Local request worker threads.")
     ] = 4,
+    research_config: Path | None = None,
 ) -> None:
     """Serve the optional local GUI on loopback only."""
     if not 1 <= port <= 65535:
@@ -450,4 +595,19 @@ def serve_cmd(
     except ImportError as exc:
         typer.echo("Install the optional GUI: uv sync --extra review-ui", err=True)
         raise typer.Exit(1) from exc
-    serve(_service(ctx), port=port, workers=workers)
+    if research_config is not None:
+        from apemap.review.research import load_providers
+
+        try:
+            providers = load_providers(research_config)
+        except (OSError, ValueError) as exc:
+            typer.echo(f"Research configuration failed: {exc}", err=True)
+            raise typer.Exit(1) from exc
+        serve(
+            _service(ctx),
+            port=port,
+            workers=workers,
+            research_providers=dict(providers),
+        )
+    else:
+        serve(_service(ctx), port=port, workers=workers)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from contextlib import closing
 from functools import partial
+from importlib.metadata import version as package_version
 import json
 import sqlite3
 from pathlib import Path
@@ -38,6 +39,9 @@ def recipe_fixture(tmp_path: Path) -> tuple[Path, Path]:
     template = json.loads(
         (PROJECT_ROOT / "data/release-recipes/historical.json").read_text()
     )
+    # This synthetic recipe targets the executing package; keep the historical
+    # recipe's existing package pin unchanged in the repository.
+    template["package_version"] = package_version("apemap")
     inputs: dict[str, bytes] = {}
     for suffix in ("shp", "shx", "dbf", "prj"):
         inputs[f"data/raw/aec/2025/AUS_ELB_region.{suffix}"] = b"fixture-boundary"
@@ -182,6 +186,7 @@ def recipe_fixture(tmp_path: Path) -> tuple[Path, Path]:
         ("acara_profile_years", [2022]),
         ("profile_selection", "current"),
         ("web_schema_version", "1.0.0"),
+        ("package_version", "0.0.0"),
         ("parliaments", [999]),
     ],
 )
@@ -466,7 +471,7 @@ def test_local_and_cli_recipe_replay_match_offline(
         == manifest["review_snapshot"]["source_manifest_sha256"]
     )
     assert effective["data_release_version"] == "0.4.0-rc.1"
-    assert effective["package_version"] == "0.5.0"
+    assert effective["package_version"] == package_version("apemap")
     assert verify_release(ci, strict_assertions=True)["valid"]
     for path in ci.rglob("*.json"):
         assert b"\r\n" not in path.read_bytes()

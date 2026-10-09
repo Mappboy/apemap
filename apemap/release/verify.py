@@ -117,8 +117,51 @@ def verify_release(
                         "source_manifest_sha256"
                     ):
                         errors.append("Release recipe source manifest was not consumed")
+                    if recipe.get("evidence_log_sha256") != snapshot.get(
+                        "evidence_log_sha256"
+                    ):
+                        errors.append(
+                            "Release recipe evidence revision was not consumed"
+                        )
         except (OSError, ValueError) as exc:
             errors.append(f"Cannot read release recipe metadata: {exc}")
+
+    snapshot = manifest_data.get("review_snapshot", {})
+    if isinstance(snapshot, dict) and "evidence_log_sha256" in snapshot:
+        checks_run += 1
+        retained = root / "review/evidence.jsonl"
+        if not retained.is_file():
+            errors.append("Release is missing its retained review evidence")
+        elif _file_sha256(retained) != snapshot["evidence_log_sha256"]:
+            errors.append("Released evidence differs from the consumed review snapshot")
+
+    # Additive review reports are optional for historical releases, but declared
+    # reports must identify the exact consumed snapshot and advisory contract.
+    for name in ("readiness.json", "successor-context.json"):
+        relative = "review/" + name
+        if relative not in manifest_data.get("files", {}):
+            continue
+        checks_run += 1
+        try:
+            report = json.loads((root / relative).read_text(encoding="utf-8"))
+            if report.get("schema_version") != 1 or not isinstance(
+                report.get("provenance"), dict
+            ):
+                raise ValueError("Invalid report schema or provenance")
+            for key in (
+                "decision_log_sha256",
+                "evidence_log_sha256",
+                "source_manifest_sha256",
+            ):
+                if report["provenance"].get(key) != snapshot.get(key):
+                    raise ValueError("Report differs from consumed snapshot: " + key)
+            if name == "readiness.json" and (
+                report.get("advisory") is not True
+                or not isinstance(report.get("parliaments"), list)
+            ):
+                raise ValueError("Readiness must be advisory with parliament scenarios")
+        except (OSError, ValueError, AttributeError, TypeError) as exc:
+            errors.append(f"Invalid {relative}: {exc}")
 
     # Historical releases declare centrally configured terms and one public layer each.
     if "supported_parliaments" in manifest_data:

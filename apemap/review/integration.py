@@ -16,17 +16,20 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from apemap.constants import PARLIAMENT_METADATA, current_parliament
-from apemap.education_context import CONTEXT_FIELDS
+from apemap.education_context import CONTEXT_FIELDS, SCHOOL_CONTEXT_FIELDS
 from apemap.ingest.aph import parse_individual
 from apemap.ingest.matching import (
     SchoolMatcher,
     extract_schools_from_bio_text,
+    is_international_text,
     normalize_school_key,
     split_school_string,
 )
 from apemap.review.model import (
     DEFAULT_LOG_PATH,
     ReviewEvent,
+    accepted_education_ancestor,
+    education_review_id,
     load_events,
     parse_events,
     resolve_events,
@@ -35,7 +38,15 @@ from apemap.review.model import (
     school_review_id,
     validate_events,
 )
+from apemap.review.evidence import (
+    EvidenceRecord,
+    evidence_path,
+    legacy_evidence,
+    parse_evidence,
+    validate_evidence_references,
+)
 from apemap.review.store import StaleReviewError
+from apemap.review.resolution import requires_individual_resolution
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -53,9 +64,58 @@ Records = dict[str, list[dict[str, Any]]]
 RawInventory = dict[str, tuple[dict[str, Any], datetime]]
 
 
-def read_review_events(path: Path | str | None = None) -> list[ReviewEvent]:
-    """Read the canonical authority; an explicitly missing fixture path is empty."""
-    return load_events(Path(path) if path is not None else DEFAULT_LOG_PATH)
+class _ReviewEventSnapshot(list[ReviewEvent]):
+    """Carry the exact offline evidence revision consumed with the authority."""
+
+    def __init__(
+        self, events: list[ReviewEvent], path: Path, raw: bytes | None
+    ) -> None:
+        super().__init__(events)
+        self.evidence_path = path
+        self.evidence_raw = raw
+
+
+def _review_evidence(
+    events: list[ReviewEvent],
+    *,
+    decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
+) -> tuple[Path, bytes | None, list[EvidenceRecord]]:
+    if isinstance(events, _ReviewEventSnapshot):
+        if (
+            evidence_log_path is not None
+            and Path(evidence_log_path).resolve() != events.evidence_path.resolve()
+        ):
+            raise ValueError("Evidence log differs from the consumed review snapshot")
+        path, raw = events.evidence_path, events.evidence_raw
+    else:
+        path = (
+            Path(evidence_log_path)
+            if evidence_log_path is not None
+            else evidence_path(
+                Path(decision_log_path)
+                if decision_log_path is not None
+                else DEFAULT_LOG_PATH
+            )
+        )
+        raw = path.read_bytes() if path.exists() else None
+    records = parse_evidence(raw or b"") + legacy_evidence(events)
+    validate_evidence_references(events, records)
+    return path, raw, records
+
+
+def read_review_events(
+    path: Path | str | None = None,
+    *,
+    evidence_log_path: Path | str | None = None,
+) -> list[ReviewEvent]:
+    """Read and validate local authority and evidence without external access."""
+    ledger = Path(path) if path is not None else DEFAULT_LOG_PATH
+    events = load_events(ledger)
+    retained_path, raw, _ = _review_evidence(
+        events, decision_log_path=ledger, evidence_log_path=evidence_log_path
+    )
+    return _ReviewEventSnapshot(events, retained_path, raw)
 
 
 def configure_review_matcher(matcher: SchoolMatcher, events: list[ReviewEvent]) -> None:
@@ -66,6 +126,7 @@ def configure_review_matcher(matcher: SchoolMatcher, events: list[ReviewEvent]) 
         if event.entity_type == "school"
         and event.effective_action in {"research", "reject"}
         and event.payload.get("recorded_name")
+        and not requires_individual_resolution(event)
     }
 
 
@@ -599,16 +660,129 @@ def _apply_school_context(
     recorded_id = row.get("recorded_school_id")
     row.update(dict.fromkeys(CONTEXT_FIELDS))
     row["recorded_school_id"] = recorded_id
-    if decision is None or decision.payload["relationship_type"] != "successor":
+    if decision is None:
+        return
+    assertion_scope = decision.entity_type == "member_education"
+    row["historical_context_scope"] = "assertion" if assertion_scope else "school"
+    if decision.payload.get("relationship_type", "direct") != "successor":
         return
     payload = decision.payload
     for field_name in CONTEXT_FIELDS:
-        if field_name not in {"recorded_school_id", "attended_institution_id"}:
+        if field_name not in {
+            "recorded_school_id",
+            "attended_institution_id",
+            "historical_context_scope",
+        }:
             row[field_name] = payload.get(field_name)
+    if assertion_scope and any(
+        payload.get(name) is not None
+        for name in SCHOOL_CONTEXT_FIELDS
+        if name != "historical_scope_confirmed"
+    ):
+        row["historical_scope_confirmed"] = True
     if payload.get("attended_institution_ref"):
         row["attended_institution_id"], _ = _institution(
             payload["attended_institution_ref"], institutions, definitions, matcher
         )
+
+
+def _recorded_education_name(
+    row: dict[str, Any], institutions: dict[str, dict[str, Any]]
+) -> str:
+    return str(
+        row.get("school_name_as_recorded")
+        or institutions[row["institution_id"]]["school_name"]
+    )
+
+
+def _education_claim(
+    event: ReviewEvent, member_id: str, confidence: str
+) -> dict[str, Any]:
+    """Construct attendance evidence independently of its institution resolution."""
+    payload = event.payload
+    recorded = str(payload["recorded_school_name"])
+    ranks = {"unconfirmed": 0, "provisional": 1, "verified": 2}
+    return {
+        "education_id": f"edu-{str(payload['aph_id']).lower()}-{school_digest(recorded)}",
+        "member_id": member_id,
+        "level": "secondary",
+        "years_attended": payload.get("years_attended"),
+        "graduation_year": payload.get("graduation_year"),
+        "attended_status": payload["attended_status"],
+        "source_url": event.source_url,
+        "retrieved_at": datetime.fromisoformat(payload["retrieved_at"]),
+        "confidence": min(
+            (str(payload["confidence"]), confidence), key=lambda value: ranks[value]
+        ),
+        "reviewer_notes": event.notes,
+        "school_name_as_recorded": recorded,
+        "evidence_origin": "manual",
+        **dict.fromkeys(CONTEXT_FIELDS),
+        "recorded_school_id": school_review_id(recorded),
+    }
+
+
+def _unresolve_education(
+    row: dict[str, Any],
+    recorded: str,
+    institutions: dict[str, dict[str, Any]],
+    definitions: dict[str, ReviewEvent],
+    matcher: SchoolMatcher,
+) -> None:
+    """Leave attendance evidence intact while withholding institution identity."""
+    identifier = f"inst-unmatched-reviewed-{school_digest(recorded)}"
+    institutions.setdefault(
+        identifier,
+        {
+            "institution_id": identifier,
+            "acara_id": None,
+            "school_name": recorded,
+            "school_type": "Secondary",
+            "sector": "Other",
+            "campus_type": None,
+            "state": None,
+            "suburb": None,
+            "postcode": None,
+            "longitude": None,
+            "latitude": None,
+            "country": "overseas" if is_international_text(recorded) else None,
+            "institution_status": "unknown",
+        },
+    )
+    row.update(
+        institution_id=identifier,
+        institution_resolution="unresolved",
+        resolution_source_url=None,
+    )
+    _apply_school_context(row, None, institutions, definitions, matcher)
+    row["historical_context_scope"] = "assertion"
+
+
+def _policy_attendance_confidence(
+    policies: dict[str, ReviewEvent], events: list[ReviewEvent]
+) -> set[str]:
+    """Retain an earlier reviewed confidence cap without reviving its identity.
+
+    Legacy attendance accepts without a target used their school default's
+    verified match cap. A resolution-only policy must not lower those attendance
+    facts. Ordinary research/rejection still withdraws the old default entirely.
+    """
+    by_id = {event.decision_id: event for event in events}
+    reviewed: set[str] = set()
+    for key, policy in policies.items():
+        pending = list(policy.supersedes)
+        visited: set[str] = set()
+        while pending:
+            identifier = pending.pop()
+            if identifier in visited:
+                continue
+            visited.add(identifier)
+            parent = by_id[identifier]
+            if parent.effective_action in {"accept", "map"}:
+                reviewed.add(key)
+            elif requires_individual_resolution(parent):
+                pending.extend(parent.supersedes)
+    return reviewed
 
 
 def _project(
@@ -642,11 +816,36 @@ def _project(
         for event in accepted
         if event.entity_type == "school"
     }
+    policies = {
+        school_key(str(event.payload["recorded_name"])): event
+        for event in effective
+        if requires_individual_resolution(event)
+    }
+    attendance_confidence_keys = _policy_attendance_confidence(policies, events)
+    assertions = {
+        event.review_id: event
+        for event in effective
+        if event.entity_type == "member_education"
+    }
+    member_aph_ids = {row["member_id"]: str(row["aph_id"]) for row in members.values()}
     for row in result["member_education"]:
-        raw_name = (
-            row.get("school_name_as_recorded")
-            or institutions[row["institution_id"]]["school_name"]
+        raw_name = _recorded_education_name(row, institutions)
+        aph_id = member_aph_ids.get(row["member_id"])
+        assertion = (
+            assertions.get(education_review_id(aph_id, raw_name)) if aph_id else None
         )
+        if assertion and (
+            assertion.effective_action == "map"
+            or (
+                assertion.effective_action == "research"
+                and assertion.payload.get("resolution_only") is True
+            )
+            or (
+                assertion.effective_action == "accept"
+                and "relationship_type" in assertion.payload
+            )
+        ):
+            continue  # Individual decisions own both resolution and its context.
         decision = schools.get(school_key(str(raw_name)))
         if decision:
             identifier, confidence = _institution(
@@ -688,6 +887,70 @@ def _project(
             and member is None
         ):
             continue  # A pinned cohort can legitimately omit the reviewed member.
+        if event.entity_type == "member_education" and (
+            event.effective_action == "map"
+            or (
+                event.effective_action == "research"
+                and payload.get("resolution_only") is True
+            )
+        ):
+            assert member is not None
+            recorded = str(payload["recorded_school_name"])
+            if not recorded.strip():
+                continue  # A missing-education research case has no named claim.
+            rows = [
+                row
+                for row in result["member_education"]
+                if row["member_id"] == member["member_id"]
+                and school_key(_recorded_education_name(row, institutions))
+                == school_key(recorded)
+            ]
+            ancestor = accepted_education_ancestor(event, events)
+            if ancestor is not None:
+                match_confidence = (
+                    "verified"
+                    if ancestor.payload.get("institution_ref")
+                    or schools.get(school_key(recorded))
+                    or school_key(recorded) in attendance_confidence_keys
+                    else matcher.match(recorded).confidence
+                )
+                claim = _education_claim(
+                    ancestor, str(member["member_id"]), match_confidence
+                )
+                result["member_education"] = [
+                    row for row in result["member_education"] if row not in rows
+                ]
+                rows = [claim]
+                result["member_education"].append(claim)
+            if event.effective_action == "map":
+                if not rows:
+                    raise ValueError(
+                        f"{event.review_id}: Mapping requires an existing attendance assertion"
+                    )
+                identifier, _ = _institution(
+                    str(payload["institution_ref"]), institutions, definitions, matcher
+                )
+                for row in rows:
+                    row.update(
+                        institution_id=identifier,
+                        institution_resolution=payload["relationship_type"],
+                        resolution_source_url=event.source_url,
+                    )
+                    _apply_school_context(
+                        row, event, institutions, definitions, matcher
+                    )
+            else:
+                for row in rows:
+                    _unresolve_education(
+                        row,
+                        _recorded_education_name(row, institutions)
+                        if row.get("institution_id")
+                        else str(row["school_name_as_recorded"]),
+                        institutions,
+                        definitions,
+                        matcher,
+                    )
+            continue
         if (
             event.entity_type == "member_education"
             and event.effective_action == "reject"
@@ -723,8 +986,11 @@ def _project(
             reference = payload.get("institution_ref") or (
                 school.payload["institution_ref"] if school else None
             )
-            if school and reference != school.payload["institution_ref"]:
-                school = None  # Assertion-specific identity has its own provenance.
+            own_resolution = "relationship_type" in payload or (
+                bool(payload.get("institution_ref"))
+                and (school is None or reference != school.payload["institution_ref"])
+            )
+            resolution = event if own_resolution else school
             if reference:
                 identifier, match_confidence = _institution(
                     str(reference), institutions, definitions, matcher
@@ -734,13 +1000,13 @@ def _project(
                 identifier, match_confidence = match.institution_id, match.confidence
                 if identifier not in institutions:
                     institutions[identifier] = _matched_institution(match)
-            digest = school_digest(recorded)
-            identifier_education = f"edu-{str(payload['aph_id']).lower()}-{digest}"
-            ranks = {"unconfirmed": 0, "provisional": 1, "verified": 2}
+                if school_key(recorded) in attendance_confidence_keys:
+                    match_confidence = "verified"
+            claim = _education_claim(event, str(member["member_id"]), match_confidence)
             result["member_education"] = [
                 row
                 for row in result["member_education"]
-                if row["education_id"] != identifier_education
+                if row["education_id"] != claim["education_id"]
                 and not (
                     row["member_id"] == member["member_id"]
                     and school_key(
@@ -754,33 +1020,22 @@ def _project(
             ]
             result["member_education"].append(
                 {
-                    "education_id": identifier_education,
-                    "member_id": member["member_id"],
+                    **claim,
                     "institution_id": identifier,
-                    "level": "secondary",
-                    "years_attended": payload.get("years_attended"),
-                    "graduation_year": payload.get("graduation_year"),
-                    "attended_status": payload["attended_status"],
-                    "source_url": event.source_url,
-                    "retrieved_at": datetime.fromisoformat(payload["retrieved_at"]),
-                    "confidence": min(
-                        (str(payload["confidence"]), match_confidence),
-                        key=lambda value: ranks[value],
-                    ),
-                    "reviewer_notes": event.notes,
-                    "school_name_as_recorded": recorded,
-                    "institution_resolution": school.payload["relationship_type"]
-                    if school
+                    "institution_resolution": resolution.payload.get(
+                        "relationship_type", "direct"
+                    )
+                    if resolution
                     else ("direct" if reference else "unresolved"),
-                    "resolution_source_url": school.source_url if school else None,
-                    "evidence_origin": "manual",
-                    **dict.fromkeys(CONTEXT_FIELDS),
-                    "recorded_school_id": school_review_id(recorded),
+                    "resolution_source_url": resolution.source_url
+                    if resolution is not None
+                    and (resolution is school or "relationship_type" in payload)
+                    else None,
                 }
             )
             _apply_school_context(
                 result["member_education"][-1],
-                school,
+                resolution,
                 institutions,
                 definitions,
                 matcher,
@@ -837,6 +1092,23 @@ def _project(
                         "source_service_end": end,
                     }
                 )
+    # Apply the shared-name policy last so neither exact/fuzzy source matches nor
+    # legacy attendance accepts can reintroduce an unreviewed school identity.
+    for row in result["member_education"]:
+        recorded = _recorded_education_name(row, institutions)
+        if school_key(recorded) not in policies:
+            continue
+        aph_id = member_aph_ids.get(row["member_id"])
+        assertion = (
+            assertions.get(education_review_id(aph_id, recorded)) if aph_id else None
+        )
+        if (
+            assertion
+            and assertion.effective_action in {"accept", "map"}
+            and assertion.payload.get("institution_ref")
+        ):
+            continue
+        _unresolve_education(row, recorded, institutions, definitions, matcher)
     result["institutions"] = list(institutions.values())
     qids = [row["wikidata_id"] for row in result["members"] if row.get("wikidata_id")]
     if len(qids) != len(set(qids)):
@@ -853,19 +1125,32 @@ def project_review_records(
     conn: DuckDBPyConnection,
     events: list[ReviewEvent],
     matcher: SchoolMatcher | None = None,
+    *,
+    evidence_records: list[EvidenceRecord] | None = None,
 ) -> Records:
     """Return replayed source rows without changing the connection or authority.
 
-    Complete reference validation belongs to the review service. A pinned cohort
+    Complete institution validation belongs to the review service. A pinned cohort
     may omit reviewed schools and people, so the projector checks ACARA identity
     when that reference is actually applied, rather than against unrelated events.
     """
+    from apemap.review.context_evidence import expand_context_events
+
+    records = evidence_records
+    if records is None:
+        records = (
+            _review_evidence(events)[2]
+            if isinstance(events, _ReviewEventSnapshot)
+            else legacy_evidence(events)
+        )
+    validate_evidence_references(events, records)
+    expanded = expand_context_events(events, records)
     active_matcher = matcher or SchoolMatcher()
-    configure_review_matcher(active_matcher, events)
-    validate_events(events)
+    configure_review_matcher(active_matcher, expanded)
+    validate_events(expanded)
     return _project(
         _records(conn, source=True),
-        events,
+        expanded,
         active_matcher,
         _source_cohorts(conn),
         _raw_inventory(conn),
@@ -918,6 +1203,7 @@ def capture_review_snapshot(
     events: list[ReviewEvent],
     *,
     decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
     source_provenance: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Archive the exact consumed ledger and its provenance in the caller transaction.
@@ -931,6 +1217,14 @@ def capture_review_snapshot(
     raw = path.read_bytes() if path.exists() else b""
     if parse_events(raw) != events:
         raise StaleReviewError("Decision log changed during ingestion; rebuild")
+    retained_path, evidence_raw, _ = _review_evidence(
+        events,
+        decision_log_path=path,
+        evidence_log_path=evidence_log_path,
+    )
+    current_evidence = retained_path.read_bytes() if retained_path.exists() else None
+    if current_evidence != evidence_raw:
+        raise StaleReviewError("Evidence log changed during ingestion; rebuild")
     metadata: dict[str, Any] = {
         "schema_version": 1,
         "decision_log_sha256": hashlib.sha256(raw).hexdigest(),
@@ -939,6 +1233,14 @@ def capture_review_snapshot(
         "source_parliaments": sorted(_source_cohorts(conn)),
         "source_provenance": source_provenance or {},
     }
+    if evidence_raw is not None:
+        metadata["evidence_log_sha256"] = hashlib.sha256(evidence_raw).hexdigest()
+        metadata["evidence_count"] = len(parse_evidence(evidence_raw))
+        metadata["evidence_source"] = "retained_review_evidence"
+    if any(event.payload.get("evidence_refs") for event in events):
+        metadata["referenced_evidence_count"] = len(
+            {ref for event in events for ref in event.payload.get("evidence_refs", [])}
+        )
     manifests = metadata["source_provenance"].get("input_manifests", {})
     manifest_digests = (
         {
@@ -966,6 +1268,15 @@ def capture_review_snapshot(
         "INSERT OR REPLACE INTO review_build_snapshot VALUES (1, ?, ?)",
         [raw, encoded_metadata],
     )
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS review_build_evidence (
+            snapshot_id INTEGER PRIMARY KEY CHECK (snapshot_id = 1),
+            evidence_jsonl BLOB NOT NULL
+        )"""
+    )
+    conn.execute("DELETE FROM review_build_evidence")
+    if evidence_raw is not None:
+        conn.execute("INSERT INTO review_build_evidence VALUES (1, ?)", [evidence_raw])
     return metadata
 
 
@@ -989,7 +1300,43 @@ def review_snapshot_metadata(conn: DuckDBPyConnection) -> dict[str, Any]:
         raise ValueError(
             "Stored review snapshot metadata does not match its archived ledger"
         )
+    retained_records = []
+    if "evidence_log_sha256" in metadata:
+        evidence_exists = conn.execute(
+            "SELECT count(*) FROM information_schema.tables WHERE table_name = 'review_build_evidence'"
+        ).fetchone()
+        retained = (
+            conn.execute(
+                "SELECT evidence_jsonl FROM review_build_evidence WHERE snapshot_id = 1"
+            ).fetchone()
+            if evidence_exists and evidence_exists[0]
+            else None
+        )
+        if (
+            retained is None
+            or metadata["evidence_log_sha256"]
+            != hashlib.sha256(retained[0]).hexdigest()
+        ):
+            raise ValueError(
+                "Stored review snapshot metadata does not match its archived evidence"
+            )
+        retained_records = parse_evidence(retained[0])
+        if metadata.get("evidence_count") != len(retained_records):
+            raise ValueError("Stored review snapshot evidence count is inconsistent")
+    events = parse_events(row[0])
+    validate_evidence_references(events, retained_records + legacy_evidence(events))
     return metadata
+
+
+def review_snapshot_evidence(conn: DuckDBPyConnection) -> bytes | None:
+    """Return verified archived evidence bytes without reading working files."""
+    metadata = review_snapshot_metadata(conn)
+    if "evidence_log_sha256" not in metadata:
+        return None
+    row = conn.execute(
+        "SELECT evidence_jsonl FROM review_build_evidence WHERE snapshot_id = 1"
+    ).fetchone()
+    return bytes(row[0]) if row else None
 
 
 def attach_source_manifest(
@@ -1041,13 +1388,25 @@ def apply_review_events(
     conn: DuckDBPyConnection,
     *,
     decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
     events: list[ReviewEvent] | None = None,
     matcher: SchoolMatcher | None = None,
 ) -> dict[str, Any]:
     """Validate and reconcile all effective reviews within a caller transaction."""
-    authority = events if events is not None else read_review_events(decision_log_path)
+    authority = (
+        events
+        if events is not None
+        else read_review_events(decision_log_path, evidence_log_path=evidence_log_path)
+    )
+    _, _, records = _review_evidence(
+        authority,
+        decision_log_path=decision_log_path,
+        evidence_log_path=evidence_log_path,
+    )
     active_matcher = matcher or SchoolMatcher()
-    projected = project_review_records(conn, authority, active_matcher)
+    projected = project_review_records(
+        conn, authority, active_matcher, evidence_records=records
+    )
     preview = compare_review_records(_records(conn, source=True), projected)
     _write_records(conn, projected)
     from apemap.review.candidates import load_into_duckdb

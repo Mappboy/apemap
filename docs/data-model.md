@@ -208,6 +208,15 @@ Links parliamentarians to institutions with mandatory audit provenance fields.
 - `retrieved_at` (`TIMESTAMPTZ NOT NULL`): Timestamp of record retrieval.
 - `confidence` (`VARCHAR NOT NULL CHECK (confidence IN ('verified', 'provisional', 'unconfirmed'))`).
 - `reviewer_notes` (`VARCHAR`): Human or algorithmic rationale for the match.
+- `historical_context_scope` (`VARCHAR`, nullable): Generated review scope,
+  `assertion` or `school`. Legacy nulls preserve school-wide consensus behavior.
+  Assertion scope isolates historical facts and successor assumptions to one
+  education row, even when an explicit original identity is shared. A scoped
+  successor without a verified original reference has a provisional assertion
+  identity, so identical recorded text does not establish a shared institution.
+  The schema initializer adds this column to canonical and retained source
+  tables without changing legacy facts. See
+  [Assertion-level resolution](assertion-resolution.md).
 
 ### `school_snapshots`
 Annual institutional snapshots containing enrolment and socio-educational index values from the ACARA School Profile dataset.
@@ -335,11 +344,34 @@ fields and complete member/parliament service groups. DuckDB projects it into
 `review_decision_events`, `review_effective_decisions`, resolved decision views
 and regeneratable candidate queues under `data/processed/review/`.
 
+Research decisions can retain `resolution_reason` (`ambiguous_name` or
+`no_suitable_candidate`). School `requires_individual_resolution: true` withholds
+unreviewed identities while preserving attendance; named education research uses
+`resolution_only: true`. These are optional payload fields, not new relationship
+types. Disposable school candidate statuses `needs_individual_review` and
+`resolved_individually` describe current assertion progress; decision event status
+and accepted mapping views keep their historical semantics. Completion is derived,
+so new source attendance can reopen a case without rewriting authority.
+
 Private `review_source_*` tables preserve source facts before corrections;
 `review_source_cohorts` records the requested terms, and `review_source_individuals`
 retains APH records for reviewing omitted memberships. `review_build_snapshot` and
 `review_build_input_manifests` retain the exact consumed ledger and source manifest
 bytes. These working tables are excluded from public release tables.
+
+Optional retained research lives in the sibling `evidence.jsonl` append log.
+School and education decisions can reference several immutable evidence IDs;
+records identify the case, candidate, source, claim and supporting, contradicting
+or contextual stance. Existing decision URLs produce stable initial records
+without rewriting historical events. Evidence retention and advisory candidate
+scores do not change attendance facts or decision authority. See
+[retained evidence and scoring](review-evidence.md) for the schema and scope rules.
+
+When retained evidence is consumed, private `review_build_evidence` archives its
+exact bytes alongside the ledger snapshot. Release packages export that archived
+input as `review/evidence.jsonl` and record its checksum and evidence counts in
+review provenance. Fresh recipes can pin `evidence_log` and `evidence_log_sha256`;
+historical recipes without those fields preserve their original input contract.
 
 The legacy-named CSVs below remain generated evidence exports. Their former manual
 annotation columns describe the supported explicit import format; regeneration
@@ -418,7 +450,8 @@ data/
 │   └── school-profile-2022.csv
 ├── reference/                   # Curated reference files maintained in Git
 │   └── review/
-│       └── decisions.jsonl       # Immutable decisions and manual institution registry
+│       ├── decisions.jsonl       # Immutable decisions and manual institution registry
+│       └── evidence.jsonl        # Optional immutable retained research records
 ├── raw/                         # Raw cached responses from external APIs
 │   ├── aec/                     # Raw cached AEC boundary archives
 │   │   └── 2025/                # Extracted 2025 federal boundary Shapefile

@@ -72,7 +72,7 @@ for integration and notebook commands and fixture isolation rules.
 Execute individual pipeline stages:
 
 ```bash
-uv run apemap ingest acara      # Ingest ACARA school data & isolate 2021 finances
+uv run apemap ingest acara --no-download # Load local ACARA data & isolate 2021 finances
 uv run apemap ingest aph        # Ingest parliamentarians, match schools & replay decisions
 uv run apemap transform         # Initialize canonical schema, views, and macros
 uv run apemap validate          # Run database integrity and coverage checks
@@ -88,6 +88,13 @@ uv run apemap run-all
 
 For detailed instructions on using local cached data versus live network refreshes, see the [Quickstart Guide](docs/quickstart.md).
 
+The individual commands and `run-all` are the standard development pipeline.
+For a current longitudinal release across 42–48, use the pinned historical
+recipe workflow in [Decisions to a new release](docs/decisions-to-release.md).
+`release build` only exports the database it is given; it does not ingest or
+consume newer review decisions. The [local 0.6.1 build record](docs/releases/0.6.1/README.md)
+records database freshness, input and review revisions, and validation.
+
 Review corrections with `uv run apemap review --help`. Generated CSVs are queue
 views; decisions live in `data/reference/review/decisions.jsonl`. Install
 `uv sync --extra review-ui` for the optional local reviewer, which supports
@@ -98,6 +105,17 @@ After saving decisions, follow [Decisions to a new release](docs/decisions-to-re
 to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released
 data or the website.
+
+Package 0.6.0 adds assertion-specific school resolution. Use **Map** on an
+education assertion to preserve attendance provenance while choosing its
+institution independently of other members with the same recorded school name.
+School relationships remain reusable defaults. **Ambiguous name** and
+**No suitable candidate** preserve attendance and require separate member
+resolutions; the shared-name case completes when its active assertions are
+individually reviewed. See
+[Assertion-level resolution](docs/assertion-resolution.md) for precedence,
+migration compatibility, [retained evidence and advisory scoring](docs/review-evidence.md),
+and the [issue #66 acceptance audit](docs/issue-66-acceptance.md).
 
 Package 0.4.0 distinguishes the school attended from a reviewed successor used
 for matching, profiles and finance. Web and analysis contracts are `2.0.0`;

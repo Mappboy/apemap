@@ -10,13 +10,13 @@ The maintained data pipeline uses DuckDB and `data/reference/`. The Dash app in
 cpoole.dev belong in its frontend repository.
 
 Commands below use **PowerShell from the repository root**. The example release
-version `0.3.2` and review date `2026-10-04` are placeholders: choose an unused
-version and the actual review date. This guide was checked against the repository
-on 4 October 2026; consult command help and the linked implementation when the
-workflow changes. The post-decision commands were rechecked on 6 October 2026;
+version `0.6.2` and review date `2026-10-10` are placeholders: choose an unused
+version and the actual review date. The build, ingestion and review instructions
+were rechecked on 10 October 2026 against the 0.7.0 review branch;
 use [Decisions to a new release](decisions-to-release.md) when the decisions have
 already been saved and you want the shortest rebuild, verify and package path.
-The [0.3.3 delivery record](releases/0.3.3/README.md) pins the new reviewed bundle.
+The [0.3.3 delivery record](releases/0.3.3/README.md) pins the previous delivery;
+the [local 0.6.1 record](releases/0.6.1/README.md) preserves the earlier frozen build.
 
 For successor mappings, follow [Original schools and reviewed successors](successor-context.md)
 when reviewing original identity, campus continuity and historical sector. Those
@@ -47,16 +47,17 @@ dataset build needs an unused MINOR version and a reviewed frontend migration.
 
    ```powershell
    $Parliaments = '42,43,44,45,46,47,48'
-   $Version = '0.3.2'
-   $ReviewDir = 'data/processed/reviews/2026-10-04'
-   $WorkingDb = 'data/aped-review-2026-10-04.duckdb'
+   $Version = '0.6.2'
+   $ReviewDir = 'data/processed/reviews/2026-10-10'
+   $WorkingDb = 'data/aped-review-2026-10-10.duckdb'
    $BaselineDb = 'data/aped.duckdb'
    $ReleaseDir = "data/processed/releases/v$Version"
    New-Item -ItemType Directory -Path $ReviewDir -Force
    ```
 
-   For the historical 0.3.0 baseline, select
-   `data/aped-historical-v0.3.0.duckdb` if that is the database used locally.
+   Select the database that actually generated the intended baseline and inspect
+   its consumed review/input hashes. The filename `aped.duckdb` does not prove it
+   is current. For a historical baseline, use its retained historical build database.
    Close database connections before copying it. Use fresh paths for each job.
 
    ```powershell

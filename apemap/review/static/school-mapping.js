@@ -148,4 +148,36 @@
   });
   form.addEventListener("input", invalidatePreview);
   form.addEventListener("change", invalidatePreview);
+  for (const checkbox of document.querySelectorAll('[name="evidence_refs"]')) {
+    if (checkbox.form === form) checkbox.addEventListener("change", invalidatePreview);
+  }
+})();
+
+(() => {
+  const form = document.querySelector("[data-resolution-outcomes]");
+  if (!form) return;
+  const action = form.elements.namedItem("action");
+  const replacement = form.elements.namedItem("replacement_action");
+  const mode = form.elements.namedItem("payload_mode");
+  const fields = form.querySelectorAll("[data-resolution-field]");
+
+  function updateResolutionFields() {
+    const outcome = action.value === "supersede" ? replacement.value : action.value;
+    const unresolved = mode.value === "guided" &&
+      ["research", "reject", "ambiguous_name", "no_suitable_candidate"].includes(outcome);
+    for (const field of fields) {
+      field.disabled = unresolved;
+      if (unresolved) {
+        if (field.type === "checkbox") field.checked = false;
+        else field.value = "";
+      }
+    }
+    if (unresolved) {
+      const selected = form.querySelector("[data-selected-school]");
+      if (selected) selected.textContent = "No school selected; resolve each member's assertion independently.";
+    }
+  }
+
+  form.addEventListener("change", updateResolutionFields);
+  updateResolutionFields();
 })();
