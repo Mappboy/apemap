@@ -541,7 +541,9 @@ corrections with an explicit target; omitting that field preserves legacy
 matching-default semantics. `check` reports relationship disagreements as
 diagnostics, allowing reviewed assertions to override school defaults.
 See [Assertion-level resolution](assertion-resolution.md) for JSON examples,
-research precedence and migration compatibility.
+research precedence and migration compatibility. See
+[retained evidence and scoring](review-evidence.md) for `retain-evidence`,
+`evidence`, `rank-education`, and mapping payload `evidence_refs`.
 
 Successor school payloads also support a separately sourced original institution,
 historical campus and broad/detailed sector evidence. Use `accept --payload`

@@ -350,6 +350,20 @@ retains APH records for reviewing omitted memberships. `review_build_snapshot` a
 `review_build_input_manifests` retain the exact consumed ledger and source manifest
 bytes. These working tables are excluded from public release tables.
 
+Optional retained research lives in the sibling `evidence.jsonl` append log.
+School and education decisions can reference several immutable evidence IDs;
+records identify the case, candidate, source, claim and supporting, contradicting
+or contextual stance. Existing decision URLs produce stable initial records
+without rewriting historical events. Evidence retention and advisory candidate
+scores do not change attendance facts or decision authority. See
+[retained evidence and scoring](review-evidence.md) for the schema and scope rules.
+
+When retained evidence is consumed, private `review_build_evidence` archives its
+exact bytes alongside the ledger snapshot. Release packages export that archived
+input as `review/evidence.jsonl` and record its checksum and evidence counts in
+review provenance. Fresh recipes can pin `evidence_log` and `evidence_log_sha256`;
+historical recipes without those fields preserve their original input contract.
+
 The legacy-named CSVs below remain generated evidence exports. Their former manual
 annotation columns describe the supported explicit import format; regeneration
 does not preserve edits or treat those CSVs as correction authority.
@@ -427,7 +441,8 @@ data/
 │   └── school-profile-2022.csv
 ├── reference/                   # Curated reference files maintained in Git
 │   └── review/
-│       └── decisions.jsonl       # Immutable decisions and manual institution registry
+│       ├── decisions.jsonl       # Immutable decisions and manual institution registry
+│       └── evidence.jsonl        # Optional immutable retained research records
 ├── raw/                         # Raw cached responses from external APIs
 │   ├── aec/                     # Raw cached AEC boundary archives
 │   │   └── 2025/                # Extracted 2025 federal boundary Shapefile

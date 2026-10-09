@@ -7,11 +7,12 @@ that member without assigning the same institution to every use of that school
 name. Source attendance evidence and institution relationship evidence remain
 separate.
 
-This first phase provides scoped mappings, unresolved/research states, replay,
-conflict diagnostics, and a local review form. Structured evidence records,
-automatic external research, contextual candidate ranking and the issue's later
-research and retrieval phases remain future work. The review tools continue to
-use pinned local sources.
+This provides scoped mappings, unresolved/research states, replay, conflict
+diagnostics, and a local review form. The follow-up adds
+[structured retained evidence and advisory scoring](review-evidence.md).
+Assisted external search and analytical-impact readiness remain future work;
+the [acceptance audit](issue-66-acceptance.md) records every outstanding criterion.
+The review tools continue to use pinned local sources.
 
 ## Map an existing assertion
 

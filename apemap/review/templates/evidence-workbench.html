@@ -1,0 +1,66 @@
+{% macro evidence_source(record) %}
+<p><strong>{{ record.get('stance', 'contextual') | capitalize }}</strong> · {{ record.get('claim_type', 'Claim') }}{% if record.get('candidate_institution_ref') %} · {{ record.candidate_institution_ref }}{% endif %}</p>
+{% set source = record.get('source_url') | source_link %}
+<p>{% if source %}<a href="{{ source }}" target="_blank" rel="noopener noreferrer">{{ record.get('source_title') or source }}</a>{% else %}{{ record.get('source_title') or 'Source title unavailable' }}{% endif %} · {{ record.get('source_type', '') }} · Retrieved {{ record.get('retrieved_at', 'date unknown') }}</p>
+<p>{{ record.get('excerpt_or_note', '') }}</p>
+<details><summary>Claim and retained provenance</summary><pre>{{ record | json_text }}</pre></details>
+{% endmacro %}
+{% set retained = item.get('retained_evidence', []) %}
+{% if item.get('ranked_candidates') %}
+<section aria-label="Explained candidate ranking">
+<h2>Candidate institutions and evidence</h2>
+<p>Scores are advisory and do not verify attendance or select an institution. Name similarity contributes at most 40 points; explicit research assessments contribute at most 60. Unknown assessments contribute no points. Parliamentary state is not school-location evidence.</p>
+<div class="candidate-cards">
+{% for candidate in item.ranked_candidates %}
+<article class="candidate-card" aria-label="{{ candidate.get('institution_ref', '') }} candidate">
+<h3>{{ candidate.get('school_name') or candidate.get('institution_name') or candidate.get('name') or candidate.institution_ref }}</h3>
+<p>{{ candidate.institution_ref }} · {{ candidate.get('suburb') or 'Locality unknown' }} · {{ candidate.get('state') or 'State unknown' }}</p>
+<p><strong>{{ candidate.score }} / 100</strong> · {{ candidate.score_band | replace('_', ' ') }} · Rank {{ candidate.get('rank', loop.index) }}{% if candidate.get('tied') %} · Tied score{% endif %}</p>
+{% if candidate.get('tied') and candidate.get('score_band') == 'name_only' and candidate.get('components', {}).get('name_match') == 40 %}<p class="notice">Ambiguous exact-name match: the name alone cannot distinguish these institutions.</p>{% endif %}
+<dl class="score-components">{% for name, points in candidate.get('components', {}).items() %}<div><dt>{{ name | replace('_', ' ') | capitalize }}</dt><dd>{{ points }} points</dd></div>{% endfor %}</dl>
+{% if candidate.get('reasons') %}<details open><summary>Why this score</summary><ul>{% for reason in candidate.reasons %}<li>{{ reason.get('note', reason.get('message', reason | json_text)) if reason is mapping else reason }}{% if reason is mapping and reason.get('evidence_id') %} · <code>{{ reason.evidence_id }}</code>{% endif %}</li>{% endfor %}</ul></details>{% endif %}
+{% for stance, heading in [('supports', 'Supporting sources'), ('contradicts', 'Contradicting sources'), ('contextual', 'Context sources')] %}
+{% set matching = namespace(records=[]) %}{% for record in retained %}{% if record.get('evidence_id') in candidate.get('evidence_ids', []) and record.get('stance') == stance %}{% set matching.records = matching.records + [record] %}{% endif %}{% endfor %}
+{% if matching.records %}<details open><summary>{{ heading }}</summary>{% for record in matching.records %}{{ evidence_source(record) }}{% endfor %}</details>{% endif %}
+{% endfor %}
+{% if not candidate.get('evidence_ids') %}<p>No retained research evidence supports or contradicts this candidate.</p>{% endif %}
+<button type="submit" form="{{ decision_form_id }}" name="choose_ref" value="{{ candidate.institution_ref }}" formnovalidate>Use this institution in the decision draft</button>
+</article>
+{% endfor %}
+</div>
+</section>
+{% endif %}
+{% if evidence_enabled %}
+<section aria-label="Retained research evidence">
+<h2>Retained research evidence</h2>
+<p>Retaining evidence records a source and its claim. It changes no attendance assertion or review decision. Select the records that justify your guided decision; complete JSON mode uses only the evidence references in its payload.</p>
+{% for record in retained %}<article class="retained-record">
+<label class="choice"><input type="checkbox" name="evidence_refs" value="{{ record.evidence_id }}" form="{{ decision_form_id }}" {% if record.evidence_id in selected_evidence_refs %}checked{% endif %}>Reference this evidence in the decision</label>
+{{ evidence_source(record) }}
+<p><code>{{ record.evidence_id }}</code></p>
+</article>{% else %}<p>No research evidence has been retained for this case.</p>{% endfor %}
+{% if evidence_error %}<p class="error" role="alert">{{ evidence_error }}</p>{% endif %}
+<details {% if evidence_error %}open{% endif %}><summary>Record a research source</summary>
+<form method="post" action="{{ url_for('preview_evidence', review_id=item.review_id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<p>Record sources manually from your research. Links open separately; this interface does not retrieve pages. Use an exact candidate reference when the claim concerns one institution, or leave it blank for case context.</p>
+<label>Candidate institution reference (optional)<input name="evidence_candidate_institution_ref" value="{{ evidence_values.get('evidence_candidate_institution_ref', payload.get('institution_ref', '')) }}" placeholder="acara:123 or manual:school-slug"></label>
+<label>Source title<input name="evidence_source_title" value="{{ evidence_values.get('evidence_source_title', '') }}" required></label>
+<div class="guided-fields"><label>Source type<input name="evidence_source_type" list="research-source-types" value="{{ evidence_values.get('evidence_source_type', '') }}" required></label><datalist id="research-source-types">{% for choice in ['APH', 'school-history', 'register', 'wikimedia', 'archive', 'other'] %}<option value="{{ choice }}">{% endfor %}</datalist>
+<label>Source URL<input name="evidence_source_url" type="url" value="{{ evidence_values.get('evidence_source_url', '') }}" required></label>
+<label>Retrieved at (ISO date and time with timezone)<input name="evidence_retrieved_at" value="{{ evidence_values.get('evidence_retrieved_at', '') }}" placeholder="2026-10-09T10:00:00+11:00" required></label></div>
+<div class="guided-fields"><label>Claim type<input name="evidence_claim_type" list="research-claim-types" value="{{ evidence_values.get('evidence_claim_type', '') }}" required></label><datalist id="research-claim-types">{% for choice in ['attendance', 'identity', 'name', 'locality', 'temporal', 'relationship', 'historical_context'] %}<option value="{{ choice }}">{% endfor %}</datalist>
+<label>Stance<select name="evidence_stance">{% for choice in ['supports', 'contradicts', 'contextual'] %}<option value="{{ choice }}" {% if evidence_values.get('evidence_stance', 'contextual') == choice %}selected{% endif %}>{{ choice | capitalize }}</option>{% endfor %}</select></label></div>
+<label>Claim value<textarea name="evidence_claim_value" rows="2">{{ evidence_values.get('evidence_claim_value', '') }}</textarea></label>
+<label>Excerpt or research note<textarea name="evidence_excerpt_or_note" rows="3" required>{{ evidence_values.get('evidence_excerpt_or_note', '') }}</textarea></label>
+<details><summary>Structured claim and score assessments</summary>
+<label>Structured claim value (optional JSON)<textarea name="evidence_claim_value_json" rows="4" spellcheck="false">{{ evidence_values.get('evidence_claim_value_json', '') }}</textarea></label><p>When supplied, this JSON value replaces the plain claim value above.</p>
+<p>Assess only what this source establishes, from 0 to 1. Leave unknown dimensions blank. These assessments explain candidate ordering; a high score does not authorize a mapping.</p>
+<div class="guided-fields">{% for name, label in [('match_strength', 'Identity match strength'), ('source_quality', 'Source quality'), ('temporal_relevance', 'Attendance-era relevance'), ('geographic_relevance', 'Geographic relevance')] %}<label>{{ label }}<input name="evidence_{{ name }}" type="number" min="0" max="1" step="0.05" value="{{ evidence_values.get('evidence_' + name, '') }}"></label>{% endfor %}</div>
+</details>
+<button type="submit">Validate and preview evidence</button>
+</form>
+</details>
+{% if evidence_preview %}<section id="evidence-preview" aria-label="Validated evidence preview"><h3>Validated evidence preview</h3><p>This preview has not changed any file. Retaining this record will append research provenance; it will not save a decision.</p>{{ evidence_source(evidence_preview.record) }}{% for message in evidence_preview.validation %}<p>{{ message }}</p>{% endfor %}<form method="post" action="{{ url_for('save_evidence', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="evidence_preview_token" value="{{ evidence_preview_token }}"><button type="submit">Retain this evidence record</button></form><p>The preview expires after 15 minutes. Changed sources or retained evidence require another preview.</p></section>{% endif %}
+</section>
+{% endif %}

@@ -148,4 +148,7 @@
   });
   form.addEventListener("input", invalidatePreview);
   form.addEventListener("change", invalidatePreview);
+  for (const checkbox of document.querySelectorAll('[name="evidence_refs"]')) {
+    if (checkbox.form === form) checkbox.addEventListener("change", invalidatePreview);
+  }
 })();

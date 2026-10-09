@@ -180,8 +180,10 @@ taking precedence. The comparison panel shows other members with the same
 recorded school name, their resolutions and relationship disagreements. A
 school mapping preview lists which assertions use the default and which have
 their own decisions. See [Assertion-level resolution](assertion-resolution.md)
-for legacy fallback and scoped successor evidence. Structured evidence scoring,
-assisted search and release-readiness ranking remain later phases of issue #66.
+for legacy fallback and scoped successor evidence. See
+[retained evidence and advisory scoring](review-evidence.md) for immutable sources,
+multiple evidence references and explained ranking. Assisted search and analytical
+release readiness remain outstanding in the [acceptance audit](issue-66-acceptance.md).
 
 Install `uv sync --extra review-ui` and run the review server through the review
 CLI. The reviewer binds to loopback and uses the same service, validation,

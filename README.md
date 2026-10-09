@@ -104,7 +104,8 @@ education assertion to preserve attendance provenance while choosing its
 institution independently of other members with the same recorded school name.
 School relationships remain reusable defaults. See
 [Assertion-level resolution](docs/assertion-resolution.md) for precedence,
-migration compatibility and the remaining review v2 phases.
+migration compatibility, [retained evidence and advisory scoring](docs/review-evidence.md),
+and the [issue #66 acceptance audit](docs/issue-66-acceptance.md).
 
 Package 0.4.0 distinguishes the school attended from a reviewed successor used
 for matching, profiles and finance. Web and analysis contracts are `2.0.0`;
