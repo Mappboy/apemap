@@ -43,6 +43,16 @@ discards them. Only cited HTTP(S) sources and candidates supplied for the case c
 be suggested. Model quality scores are discarded; unknown dimensions stay unknown.
 Jobs are bounded, have request timeouts and do not run in offline mode
 (`APEMAP_OFFLINE=1`). A manual reviewer works without configured providers.
+OpenRouter requests set a total server-tool budget of two calls (`max_tool_calls`)
+and retain the ten-result limit. The provider-specific `max_uses` setting alone
+does not limit native search for every model; see the linked OpenRouter guide.
+Retrieval timestamps come from the local application clock. Timestamps supplied
+in model or provider JSON are ignored, including during job validation.
+
+Citation validation establishes that a URL appears in the provider's citations,
+not that its page supports an individual suggestion. Source inspection remains
+mandatory. Retaining provider-specific claim-to-source grounding, where available,
+is a follow-up improvement.
 
 1. Open the cited source and assess what it actually establishes.
 2. Select **Inspect and edit evidence draft**. Correct the claim, stance and quality

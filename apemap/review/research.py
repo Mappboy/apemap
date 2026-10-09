@@ -123,8 +123,13 @@ def _citations(
     return "\n".join(text), sources, search_entry
 
 
-def validate_result(context: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
-    """Accept only cited URLs and known candidates; omit all generated score values."""
+def validate_result(
+    context: dict[str, Any],
+    result: dict[str, Any],
+    *,
+    retrieved_at: datetime | None = None,
+) -> dict[str, Any]:
+    """Validate suggestions using a local timestamp, never a provider JSON field."""
     if not isinstance(result, dict) or not isinstance(result.get("suggestions"), list):
         raise ValueError("Invalid research result")
     sources: dict[str, str] = {}
@@ -132,7 +137,7 @@ def validate_result(context: dict[str, Any], result: dict[str, Any]) -> dict[str
         evidence_url(source.get("url"))
         sources[source["url"]] = source.get("title") or source["url"]
     candidates = {item["institution_ref"] for item in context.get("candidates", [])}
-    timestamp = result.get("retrieved_at") or datetime.now(timezone.utc).isoformat()
+    timestamp = (retrieved_at or datetime.now(timezone.utc)).isoformat()
     suggestions = []
     if len(result["suggestions"]) > 20:
         raise ValueError("Research result exceeds the 20-suggestion limit")
@@ -202,6 +207,7 @@ class HTTPResearchProvider:
             payload = {
                 "model": self.model,
                 "messages": [{"role": "user", "content": prompt}],
+                "max_tool_calls": 2,
                 "tools": [
                     {
                         "type": "openrouter:web_search",
@@ -221,6 +227,7 @@ class HTTPResearchProvider:
                 endpoint, headers=headers, json=payload, timeout=(10, self.timeout)
             )
             response.raise_for_status()
+            retrieved_at = datetime.now(timezone.utc)
             if len(response.content) > MAX_RESPONSE_BYTES:
                 raise ValueError("Research provider response exceeds the size limit")
             data = response.json()
@@ -228,6 +235,7 @@ class HTTPResearchProvider:
             result = validate_result(
                 context,
                 {**_object(text), "sources": sources, "search_entry_point": entry},
+                retrieved_at=retrieved_at,
             )
         except requests.RequestException as exc:
             # Exception messages can contain request headers or upstream bodies.

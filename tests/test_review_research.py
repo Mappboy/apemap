@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 from typing import Any
+from unittest.mock import Mock
 
 import pytest
 import requests
@@ -22,10 +24,12 @@ from tests.test_review_service import review_service as review_service
 
 CASE = education_review_id("TEST", "Test High School")
 URL = "https://example.org/school-history"
+FORGED_TIMESTAMP = "2001-01-01T00:00:00+00:00"
 
 
 def result() -> dict[str, Any]:
     return {
+        "retrieved_at": FORGED_TIMESTAMP,
         "sources": [{"url": URL, "title": "History <script>"}],
         "suggestions": [
             {
@@ -36,6 +40,7 @@ def result() -> dict[str, Any]:
                 "stance": "supports",
                 "excerpt_or_note": "Source names the school",
                 "source_quality": 1.0,
+                "retrieved_at": FORGED_TIMESTAMP,
             }
         ],
     }
@@ -46,7 +51,7 @@ def test_official_provider_requests_and_citation_shapes(
     monkeypatch: pytest.MonkeyPatch, provider: str
 ) -> None:
     context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
-    content = json.dumps({"suggestions": result()["suggestions"]})
+    content = json.dumps(result())
     data = {
         "openai": {
             "output": [
@@ -94,6 +99,9 @@ def test_official_provider_requests_and_citation_shapes(
         },
     }[provider]
     calls = []
+    received_at = datetime(2026, 10, 10, 12, tzinfo=timezone.utc)
+    clock = Mock()
+    clock.now.return_value = received_at
 
     class Response:
         content = b"fixture"
@@ -102,6 +110,8 @@ def test_official_provider_requests_and_citation_shapes(
             pass
 
         def json(self) -> dict[str, Any]:
+            clock.now.assert_called_once_with(timezone.utc)
+            clock.now.return_value = received_at + timedelta(seconds=5)
             return data
 
     def post(url: str, **kwargs: Any) -> Response:
@@ -111,11 +121,14 @@ def test_official_provider_requests_and_citation_shapes(
     monkeypatch.setenv("TEST_RESEARCH_KEY", "private-test-secret")
     monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
     monkeypatch.setattr(requests, "post", post)
+    monkeypatch.setattr("apemap.review.research.datetime", clock)
     output = HTTPResearchProvider(
         provider, "fixture-model", "TEST_RESEARCH_KEY"
     ).search(context)
     assert output["suggestions"][0]["source_quality"] is None
     assert output["suggestions"][0]["generated_by"] == "agent-search"
+    assert output["retrieved_at"] == received_at.isoformat()
+    assert output["suggestions"][0]["retrieved_at"] == received_at.isoformat()
     assert "private-test-secret" not in json.dumps(output)
     payload = calls[0][1]["json"]
     assert calls[0][1]["timeout"] == (10, 90)
@@ -131,6 +144,8 @@ def test_official_provider_requests_and_citation_shapes(
     )
     if provider == "gemini":
         assert output["search_entry_point"] and "?key=" not in calls[0][0]
+    elif provider == "openrouter":
+        assert payload["max_tool_calls"] == 2
 
 
 def test_configuration_supports_multiple_choices_and_rejects_credentials(
@@ -173,6 +188,19 @@ def test_untrusted_suggestions_are_rejected(change: str) -> None:
         )
 
 
+def test_validation_ignores_provider_and_suggestion_timestamps() -> None:
+    before = datetime.now(timezone.utc)
+    output = validate_result(
+        {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}, result()
+    )
+    assert (
+        before
+        <= datetime.fromisoformat(output["retrieved_at"])
+        <= datetime.now(timezone.utc)
+    )
+    assert output["suggestions"][0]["retrieved_at"] == output["retrieved_at"]
+
+
 def test_network_errors_are_redacted_and_offline_does_not_call(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -200,9 +228,44 @@ class FixtureProvider:
         return result()
 
 
+def test_jobs_ignore_provider_timestamps(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
+    context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
+    jobs = ResearchJobs({"fixture": FixtureProvider()})
+    try:
+        before = datetime.now(timezone.utc)
+        identifier = jobs.start("fixture", context)
+        jobs.get(identifier, CASE).future.result(timeout=5)
+        output = jobs.result(identifier, CASE, {})
+        assert output["status"] == "complete"
+        assert (
+            before
+            <= datetime.fromisoformat(output["retrieved_at"])
+            <= datetime.now(timezone.utc)
+        )
+        assert output["suggestions"][0]["retrieved_at"] == output["retrieved_at"]
+    finally:
+        jobs.close()
+
+
+def test_offline_jobs_never_call_provider(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("APEMAP_OFFLINE", "1")
+    provider = Mock(spec=FixtureProvider)
+    jobs = ResearchJobs({"fixture": provider})
+    try:
+        with pytest.raises(ValueError, match="offline"):
+            jobs.start("fixture", {"review_id": CASE})
+        provider.search.assert_not_called()
+        assert jobs.jobs == {}
+    finally:
+        jobs.close()
+
+
 def test_ui_provider_choice_inspection_preview_and_retention(
     review_service: ReviewService,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
     pytest.importorskip("flask")
     from apemap.review.gui import create_app
     from tests.test_review_gui import Inputs
@@ -264,7 +327,10 @@ def test_ui_provider_choice_inspection_preview_and_retention(
             },
         )
         assert saved.status_code == 303
-        assert service.evidence_records()[0].generated_by == "agent-search"
+        retained = service.evidence_records()[0]
+        assert retained.generated_by == "agent-search"
+        assert retained.retrieved_at == suggestion["retrieved_at"]
+        assert retained.retrieved_at != FORGED_TIMESTAMP
         assert not service.log_path.exists()
         assert client.get("/readiness").status_code == 200
     finally:
@@ -273,7 +339,9 @@ def test_ui_provider_choice_inspection_preview_and_retention(
 
 def test_jobs_and_signed_retention_reject_stale_decisions(
     review_service: ReviewService,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
     from apemap.review.gui import _read_preview, _sign_evidence_preview
 
     service = review_service

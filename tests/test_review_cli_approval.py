@@ -20,6 +20,14 @@ from tests.test_review_service import review_service as review_service
 pytestmark = pytest.mark.integration
 
 
+@pytest.fixture(autouse=True)
+def no_git_reviewer(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Approval fixtures must work without a developer's configured Git identity."""
+    monkeypatch.setenv("GIT_CONFIG_COUNT", "1")
+    monkeypatch.setenv("GIT_CONFIG_KEY_0", "user.name")
+    monkeypatch.setenv("GIT_CONFIG_VALUE_0", "")
+
+
 def command(service: ReviewService) -> list[str]:
     return [
         "review",
@@ -56,6 +64,8 @@ def test_cli_requires_separately_approved_school_preview(
         school_review_id("Test High School"),
         "--institution-ref",
         "acara:2",
+        "--reviewer",
+        "Fixture reviewer",
     ]
     blocked = runner.invoke(app, args)
     assert blocked.exit_code == 1 and "--preview-out" in blocked.output
@@ -107,6 +117,7 @@ def test_changed_preview_or_inputs_never_append(
                 "research",
                 {"aph_id": "TEST", "field": "gender"},
                 notes="Research gender",
+                reviewer="Fixture reviewer",
             )
         )
     before = service.log_path.read_bytes() if service.log_path.exists() else b""
@@ -141,6 +152,7 @@ def test_batch_is_atomic_and_preserves_preexisting_bytes(
             "research",
             {"aph_id": "TEST", "field": "gender"},
             notes="Research gender",
+            reviewer="Fixture reviewer",
         )
     )
     before = service.log_path.read_bytes()
@@ -151,6 +163,7 @@ def test_batch_is_atomic_and_preserves_preexisting_bytes(
             "research",
             {"aph_id": "TEST", "field": "date_of_birth"},
             notes="Research date",
+            reviewer="Fixture reviewer",
         )["event"]
     )
     path = tmp_path / "batch.json"
@@ -180,6 +193,8 @@ def test_import_apply_cannot_bypass_school_approval(
         "import",
         "--source",
         str(tmp_path / "source.csv"),
+        "--reviewer",
+        "Fixture reviewer",
     ]
     result = runner.invoke(app, [*args, "--apply"])
     assert result.exit_code == 1 and "preview-out" in result.output
