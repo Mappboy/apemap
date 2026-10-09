@@ -235,6 +235,8 @@ def accept_cmd(
             if school:
                 values["recorded_name"] = school
         if review_id.startswith("education:"):
+            if relationship_type:
+                values["relationship_type"] = relationship_type
             values.update(
                 attended_status=attended_status
                 or supplied.get("attended_status", "attended_unspecified"),
@@ -249,6 +251,37 @@ def accept_cmd(
         )
 
     _run(accept)
+
+
+@review_app.command("map-education")
+def map_education_cmd(
+    ctx: typer.Context,
+    review_id: str,
+    institution_ref: Annotated[str, typer.Option()],
+    relationship_type: Annotated[str, typer.Option()],
+    source: Annotated[str, typer.Option()],
+    payload: Path | None = None,
+    reviewer: str | None = None,
+    note: str = "",
+    dry_run: bool = False,
+) -> None:
+    """Resolve one existing attendance assertion without replacing its evidence."""
+    if not review_id.startswith("education:"):
+        raise typer.BadParameter("Use an education:<aph-id>:<school-digest> review ID")
+    _run(
+        lambda: _record(
+            ctx,
+            review_id,
+            "map",
+            payload,
+            source,
+            reviewer,
+            note,
+            dry_run,
+            institution_ref=institution_ref,
+            relationship_type=relationship_type,
+        )
+    )
 
 
 @review_app.command("reject")

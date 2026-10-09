@@ -44,6 +44,7 @@ from apemap.review.model import (
     validate_events,
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
+from apemap.review.resolution import relationship_conflicts
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
 REGISTER_FILES = (
@@ -175,7 +176,14 @@ def _effect_revision(changes: dict[str, Any]) -> str:
                 for table, change in canonical["after"].items()
             },
         }
-    return _value_revision({"decisions": changes["decisions"], "canonical": effects})
+    return _value_revision(
+        {
+            "decisions": changes["decisions"],
+            "canonical": effects,
+            "relationship_conflicts": changes.get("relationship_conflicts", []),
+            "default_applications": changes.get("default_applications", []),
+        }
+    )
 
 
 class ReviewService:
@@ -465,6 +473,7 @@ class ReviewService:
             "events": len(selected),
             "effective_decisions": len(resolve_events(selected)),
             "revision": log_revision(self.log_path),
+            "relationship_conflicts": relationship_conflicts(selected),
             "warnings": []
             if has_full_inventory
             else [
@@ -533,14 +542,45 @@ class ReviewService:
         heads = active_heads(events).get(review_id, [])
         decision = heads[0] if len(heads) == 1 else None
         context = dict(candidates[0]["payload"]) if candidates else {}
-        if entity == "school":
+        if entity in {"school", "member_education"}:
+            effective = {
+                key: alternatives[0]
+                for key, alternatives in active_heads(events).items()
+                if len(alternatives) == 1
+            }
+            name = (
+                context.get("recorded_school_name", "")
+                if entity == "member_education"
+                else context.get("recorded_name", "")
+            )
+            if decision:
+                name = decision.payload.get(
+                    "recorded_school_name"
+                    if entity == "member_education"
+                    else "recorded_name",
+                    name,
+                )
+            school_id = (
+                school_review_id(name)
+                if entity == "member_education" and name
+                else review_id
+            )
+            relationship = effective.get(school_id)
+            context["school_relationship"] = (
+                relationship.to_dict() if relationship else None
+            )
+            context["resolution_warnings"] = [
+                warning
+                for warning in relationship_conflicts(events)
+                if warning["school_review_id"] == school_id
+            ]
             context["members"] = []
             original = (
                 decision.payload.get("attended_institution_ref") if decision else None
             )
             aliases = [
                 event
-                for event in resolve_events(events, allow_conflicts=True).values()
+                for event in effective.values()
                 if original
                 and event.entity_type == "school"
                 and event.effective_action in {"map", "accept"}
@@ -555,15 +595,29 @@ class ReviewService:
             ]
             if self.db_path.exists():
                 with get_connection(self.db_path, read_only=True) as conn:
-                    context["members"] = school_member_context(conn, review_id)
+                    context["members"] = school_member_context(conn, school_id, events)
                     context["alias_members"] = [
                         {
                             "recorded_name": alias.payload["recorded_name"],
-                            "members": school_member_context(conn, alias.review_id),
+                            "members": school_member_context(
+                                conn, alias.review_id, events
+                            ),
                         }
                         for alias in aliases
                         if alias.review_id != review_id
                     ]
+            resolver = self.institution_resolver()
+            for member in context["members"]:
+                for education in member["education"]:
+                    summary = education["current_resolution"]
+                    target = (
+                        resolver(summary["institution_ref"])
+                        if summary["institution_ref"]
+                        else None
+                    )
+                    summary["institution_name"] = (
+                        target.get("school_name") if target else None
+                    )
         return {
             "review_id": review_id,
             "entity_type": entity,
@@ -667,7 +721,9 @@ class ReviewService:
                         [canonical_ref],
                     ).fetchall():
                         cases[school_review_id(name)] = name
-                members = {key: school_member_context(conn, key) for key in cases}
+                members = {
+                    key: school_member_context(conn, key, events) for key in cases
+                }
                 member_names = dict(
                     conn.execute(
                         "SELECT aph_id, display_name FROM members WHERE aph_id IS NOT NULL"
@@ -751,7 +807,7 @@ class ReviewService:
                 "Successor broad-sector assumptions disagree; sector remains unresolved and needs review."
             )
         return {
-            "scope": "All attendance records and verified aliases of the original school",
+            "scope": "Default-dependent attendance records and verified aliases of the original school; assertion-specific resolutions remain separate",
             "cases": [
                 {
                     "review_id": key,
@@ -813,7 +869,27 @@ class ReviewService:
                 changes.append(
                     {"review_id": key, "before": left_value, "after": right_value}
                 )
-        result: dict[str, Any] = {"decisions": changes, "canonical": None}
+        school_ids = set()
+        for change in changes:
+            head = new.get(change["review_id"])
+            if head and head.entity_type == "school":
+                school_ids.add(head.review_id)
+            elif (
+                head
+                and head.entity_type == "member_education"
+                and head.payload.get("recorded_school_name")
+            ):
+                school_ids.add(school_review_id(head.payload["recorded_school_name"]))
+        result: dict[str, Any] = {
+            "decisions": changes,
+            "canonical": None,
+            "relationship_conflicts": [
+                warning
+                for warning in relationship_conflicts(after)
+                if warning["school_review_id"] in school_ids
+            ],
+            "default_applications": [],
+        }
         if self.db_path.exists():
             from apemap.review.integration import (
                 compare_review_records,
@@ -828,6 +904,39 @@ class ReviewService:
                 )
                 new_records = project_review_records(conn, after, matcher=matcher)
                 differences = compare_review_records(old_records, new_records)
+                for school_id in sorted(school_ids):
+                    head = new.get(school_id)
+                    if (
+                        not head
+                        or head.entity_type != "school"
+                        or head.effective_action not in {"accept", "map"}
+                    ):
+                        continue
+                    assertions = []
+                    for member in school_member_context(conn, school_id, after):
+                        for assertion in member["education"]:
+                            scope = assertion["current_resolution"]["resolution_scope"]
+                            assertions.append(
+                                {
+                                    "review_id": assertion["review_id"],
+                                    "aph_id": member["aph_id"],
+                                    "display_name": member["display_name"],
+                                    "recorded_name": assertion["recorded_name"],
+                                    "applies": scope == "school_default",
+                                    "reason": "Uses the school-wide default"
+                                    if scope == "school_default"
+                                    else "Assertion decision takes precedence",
+                                }
+                            )
+                    result["default_applications"].append(
+                        {
+                            "school_review_id": school_id,
+                            "available": True,
+                            "assertions": sorted(
+                                assertions, key=lambda row: row["review_id"] or ""
+                            ),
+                        }
+                    )
             result["canonical"] = {
                 "baseline": "source" if conflicts else "prior_effective_decisions",
                 "before": {"conflicts": conflicts}
@@ -909,6 +1018,7 @@ class ReviewService:
             "revision": revision,
             "source_revision": source_revision,
             "changes": changes,
+            "relationship_conflicts": changes["relationship_conflicts"],
             "validation": [
                 "Event, available source references and effective state validated",
                 "Canonical projection validated"
@@ -918,6 +1028,19 @@ class ReviewService:
             ],
         }
         if entity == "school":
+            if event.effective_action in {"accept", "map"}:
+                preview["default_application"] = next(
+                    (
+                        application
+                        for application in changes["default_applications"]
+                        if application["school_review_id"] == review_id
+                    ),
+                    {
+                        "school_review_id": review_id,
+                        "available": False,
+                        "assertions": [],
+                    },
+                )
             if event.payload.get("relationship_type") == "successor":
                 preview["historical_context"] = self._historical_scope(
                     events + [event], event

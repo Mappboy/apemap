@@ -15,6 +15,7 @@ import duckdb
 from apemap.constants import RAW_WIKIMEDIA_DIR
 from apemap.review.model import (
     ReviewEvent,
+    accepted_education_ancestor,
     active_heads,
     education_review_id,
     member_review_id,
@@ -22,6 +23,7 @@ from apemap.review.model import (
     school_review_id,
     service_review_id,
 )
+from apemap.review.resolution import relationship_conflicts, resolution_summary
 
 
 def json_value(value: Any) -> Any:
@@ -84,7 +86,9 @@ def _cache_object(path: Path) -> dict[str, Any]:
 
 
 def school_member_context(
-    conn: duckdb.DuckDBPyConnection, review_id: str
+    conn: duckdb.DuckDBPyConnection,
+    review_id: str,
+    events: list[ReviewEvent] | None = None,
 ) -> list[dict[str, Any]]:
     """Find source attendance and service context by the immutable school key."""
     members = {row["member_id"]: row for row in _rows(conn, "members")}
@@ -93,7 +97,58 @@ def school_member_context(
     for row in _rows(conn, "parliament_service"):
         services.setdefault(row["member_id"], []).append(row)
     result: dict[str, dict[str, Any]] = {}
-    for row in _rows(conn, "member_education"):
+    education = _rows(conn, "member_education")
+    heads = active_heads(events or [])
+    effective = {
+        key: alternatives[0]
+        for key, alternatives in heads.items()
+        if len(alternatives) == 1
+    }
+    diagnostics = relationship_conflicts(events or [])
+    source_by_review = {
+        education_review_id(
+            members[row["member_id"]]["aph_id"],
+            row.get("school_name_as_recorded")
+            or institutions.get(row["institution_id"], {}).get("school_name", ""),
+        ): row
+        for row in education
+        if row["member_id"] in members and members[row["member_id"]].get("aph_id")
+    }
+    by_aph = {
+        str(member.get("aph_id", "")).lower(): member for member in members.values()
+    }
+    # Review ancestry retains attendance through resolution-only supersessions.
+    # Overlay those facts for truthful evidence links, including manual claims
+    # that have never appeared in an upstream snapshot.
+    for event in effective.values():
+        if event.entity_type != "member_education":
+            continue
+        claim = (
+            event
+            if event.effective_action == "accept"
+            else accepted_education_ancestor(event, events or [])
+            if event.effective_action in {"map", "research"}
+            else None
+        )
+        if claim is None:
+            continue
+        member = by_aph.get(str(event.payload["aph_id"]).lower())
+        if member:
+            facts = {
+                "member_id": member["member_id"],
+                "institution_id": "",
+                "school_name_as_recorded": claim.payload["recorded_school_name"],
+                "source_url": claim.source_url,
+                "attended_status": claim.payload["attended_status"],
+                "years_attended": claim.payload.get("years_attended"),
+            }
+            existing = source_by_review.get(event.review_id)
+            if existing is not None:
+                facts["institution_id"] = existing["institution_id"]
+                existing.update(facts)
+            else:
+                education.append(facts)
+    for row in education:
         institution = institutions.get(row["institution_id"], {})
         name = row.get("school_name_as_recorded") or institution.get("school_name", "")
         if not name or school_review_id(name) != review_id:
@@ -116,6 +171,7 @@ def school_member_context(
             result[row["member_id"]] = {
                 "display_name": member["display_name"],
                 "aph_id": aph_id,
+                "date_of_birth": member.get("date_of_birth"),
                 "biography_url": f"https://handbook.aph.gov.au/individual/{quote(aph_id, safe='')}"
                 if aph_id
                 else None,
@@ -130,6 +186,39 @@ def school_member_context(
                 ],
                 "education": [],
             }
+        assertion_id = education_review_id(aph_id, name) if aph_id else None
+        assertion = effective.get(assertion_id) if assertion_id else None
+        default = effective.get(review_id)
+        reference = (
+            f"acara:{institution['acara_id']}"
+            if institution.get("acara_id")
+            else institution.get("institution_id")
+            if str(institution.get("institution_id", "")).startswith("manual:")
+            else None
+        )
+        summary = resolution_summary(
+            assertion,
+            default,
+            {
+                "institution_ref": reference,
+                "relationship_type": row.get("institution_resolution")
+                or ("direct" if reference else "unresolved"),
+            },
+        )
+        if assertion_id and len(heads.get(assertion_id, [])) > 1:
+            summary.update(
+                status="conflict",
+                institution_ref=None,
+                relationship_type="unresolved",
+                resolution_scope="assertion",
+            )
+        elif (
+            len(heads.get(review_id, [])) > 1
+            and summary["resolution_scope"] != "assertion"
+        ):
+            summary.update(
+                status="conflict", institution_ref=None, relationship_type="unresolved"
+            )
         result[row["member_id"]]["education"].append(
             {
                 "review_id": education_review_id(aph_id, name) if aph_id else None,
@@ -137,6 +226,14 @@ def school_member_context(
                 "source_url": row.get("source_url"),
                 "attended_status": row.get("attended_status"),
                 "years_attended": row.get("years_attended"),
+                "decision": assertion.to_dict() if assertion else None,
+                "current_resolution": summary,
+                "default_relationship": default.to_dict() if default else None,
+                "relationship_conflicts": [
+                    warning
+                    for warning in diagnostics
+                    if warning["review_id"] == assertion_id
+                ],
                 "location": " · ".join(
                     str(institution[key])
                     for key in ("suburb", "state", "country")

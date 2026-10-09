@@ -81,12 +81,13 @@ CREATE TABLE IF NOT EXISTS member_education (
     institution_resolution VARCHAR,
     resolution_source_url VARCHAR,
     evidence_origin VARCHAR,
-    -- Explicit reviewed original identity and school-wide historical evidence.
+    -- Explicit reviewed original identity and scoped historical evidence.
     -- Registry metadata for either reference does not verify historical facts.
     recorded_school_id VARCHAR,
     attended_institution_id VARCHAR,
     attended_identity_source_url VARCHAR,
     historical_scope_confirmed BOOLEAN,
+    historical_context_scope VARCHAR,
     historical_latitude DOUBLE,
     historical_longitude DOUBLE,
     historical_location_source_url VARCHAR,

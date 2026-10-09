@@ -56,8 +56,9 @@ FROM school_finances
 WHERE reporting_year = 2021;
 
 -- One attendance row, with original-school facts separate from reporting metadata.
--- School-wide evidence is grouped only by explicit original identity or its
--- frozen recorded-name review identity. Contradictions never choose a winner.
+-- School-wide evidence groups by original identity; assertion evidence stays
+-- isolated even when another assertion identifies the same original school.
+-- Contradictions never choose a winner.
 CREATE OR REPLACE VIEW v_education_attendance_context AS
 WITH identities AS (
     SELECT e.*,
@@ -68,8 +69,12 @@ WITH identities AS (
         COALESCE(e.institution_resolution = 'successor', FALSE) AS is_successor,
         CASE
             WHEN e.institution_resolution = 'successor' THEN
-                COALESCE(e.attended_institution_id, e.recorded_school_id)
-            WHEN e.institution_resolution = 'unresolved' THEN e.recorded_school_id
+                COALESCE(e.attended_institution_id,
+                    CASE WHEN e.historical_context_scope = 'assertion'
+                        THEN 'assertion:' || e.education_id ELSE e.recorded_school_id END)
+            WHEN e.institution_resolution = 'unresolved' THEN
+                CASE WHEN e.historical_context_scope = 'assertion'
+                    THEN 'assertion:' || e.education_id ELSE e.recorded_school_id END
             ELSE e.institution_id
         END AS attended_school_id,
         CASE
@@ -90,8 +95,13 @@ WITH identities AS (
     FROM member_education e
     JOIN institutions r ON e.institution_id = r.institution_id
     LEFT JOIN institutions a ON e.attended_institution_id = a.institution_id
+), context_groups AS (
+    SELECT *, CASE WHEN historical_context_scope = 'assertion'
+        THEN 'assertion:' || education_id
+        ELSE 'school:' || attended_school_id END AS historical_context_key
+    FROM identities
 ), consensus AS (
-    SELECT attended_school_id,
+    SELECT historical_context_key,
         COUNT(DISTINCT CASE WHEN historical_scope_confirmed AND historical_location_source_url IS NOT NULL
             AND historical_longitude IS NOT NULL AND historical_latitude IS NOT NULL
             THEN STRUCT_PACK(longitude := historical_longitude, latitude := historical_latitude) END) > 1
@@ -119,8 +129,8 @@ WITH identities AS (
         COUNT(DISTINCT historical_detailed_sector) FILTER (WHERE historical_scope_confirmed AND historical_detailed_sector_source_url IS NOT NULL) > 1 AS detailed_conflict,
         MIN(historical_detailed_sector) FILTER (WHERE historical_scope_confirmed AND historical_detailed_sector_source_url IS NOT NULL) AS historical_detailed,
         MIN(historical_detailed_sector_source_url) FILTER (WHERE historical_scope_confirmed) AS detailed_source
-    FROM identities WHERE attended_school_id IS NOT NULL
-    GROUP BY attended_school_id
+    FROM context_groups WHERE historical_context_key IS NOT NULL
+    GROUP BY historical_context_key
 ), facts AS (
     SELECT i.*,
         COALESCE(c.original_location_conflict, FALSE)
@@ -164,7 +174,7 @@ WITH identities AS (
         CASE WHEN c.historical_broad = 'Government' THEN c.broad_source ELSE c.detailed_source END AS detailed_sector_source_url,
         c.original_longitude, c.original_latitude, c.original_location_source,
         c.campus, c.campus_source, c.successor_longitude, c.successor_latitude
-    FROM identities i LEFT JOIN consensus c USING (attended_school_id)
+    FROM context_groups i LEFT JOIN consensus c USING (historical_context_key)
 ), locations AS (
     SELECT f.*,
         CASE
@@ -178,6 +188,7 @@ WITH identities AS (
     FROM facts f
 )
 SELECT * EXCLUDE (resolved_longitude, resolved_latitude, resolved_sector,
+        historical_context_key,
         original_longitude, original_latitude, original_location_source,
         campus, campus_source, successor_longitude, successor_latitude),
     CASE location_basis
@@ -284,7 +295,7 @@ SELECT
     sf.total_net_recurrent_income_per_student AS historical_2021_net_recurrent_income_per_student,
     c.attended_school_id, c.attended_school_name, c.identity_basis,
     c.attended_institution_id, c.attended_identity_source_url,
-    c.recorded_school_id, c.historical_scope_confirmed,
+    c.recorded_school_id, c.historical_scope_confirmed, c.historical_context_scope,
     c.historical_latitude, c.historical_longitude, c.historical_location_source_url,
     c.campus_continuity, c.campus_continuity_source_url,
     c.historical_broad_sector, c.historical_broad_sector_source_url,
@@ -339,8 +350,10 @@ SELECT
     COUNT(DISTINCT ps.member_id) AS total_parliamentarians,
     COUNT(DISTINCT CASE WHEN ps.is_opening_day_member THEN ps.member_id END) AS opening_day_parliamentarians,
     COUNT(DISTINCT CASE WHEN ps.is_current_member THEN ps.member_id END) AS current_parliamentarians,
-    COUNT(DISTINCT CASE WHEN me.confidence IN ('verified', 'provisional') THEN me.education_id END) AS matched_education_records,
-    COUNT(DISTINCT CASE WHEN me.confidence = 'unconfirmed' THEN me.education_id END) AS unmatched_education_records,
+    COUNT(DISTINCT CASE WHEN me.confidence IN ('verified', 'provisional')
+        AND me.institution_resolution IS DISTINCT FROM 'unresolved' THEN me.education_id END) AS matched_education_records,
+    COUNT(DISTINCT CASE WHEN me.confidence = 'unconfirmed'
+        OR me.institution_resolution = 'unresolved' THEN me.education_id END) AS unmatched_education_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Government' THEN me.education_id END) AS government_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Catholic' THEN me.education_id END) AS catholic_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Independent' THEN me.education_id END) AS independent_records,

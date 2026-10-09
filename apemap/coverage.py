@@ -94,6 +94,7 @@ def compute_parliament_coverage(
             row["member_id"]
             for row in assertions
             if row["confidence"] in ("verified", "provisional")
+            and row["institution_resolution"] != "unresolved"
         }
         output.append(
             {
@@ -141,7 +142,9 @@ def compute_parliament_coverage(
                     }
                 ),
                 "unresolved_school_records": sum(
-                    row["confidence"] == "unconfirmed" for row in assertions
+                    row["confidence"] == "unconfirmed"
+                    or row["institution_resolution"] == "unresolved"
+                    for row in assertions
                 ),
                 "provisional_original_school_identities": len(
                     {

@@ -516,6 +516,7 @@ HISTORICAL_EVIDENCE_COLUMNS = (
     "recorded_school_id",
     "attended_identity_source_url",
     "historical_scope_confirmed",
+    "historical_context_scope",
     "historical_latitude",
     "historical_longitude",
     "historical_location_source_url",

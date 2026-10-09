@@ -193,6 +193,8 @@ def validate_database(
         (
             "member_education historical evidence scope and identity",
             """SELECT count(*) FROM member_education WHERE
+                historical_context_scope NOT IN ('school', 'assertion')
+                OR
                 (attended_institution_id IS NOT NULL AND
                     (attended_identity_source_url IS NULL OR attended_institution_id = institution_id))
                 OR (attended_institution_id IS NULL AND attended_identity_source_url IS NOT NULL)

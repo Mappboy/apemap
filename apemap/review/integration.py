@@ -16,17 +16,20 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from apemap.constants import PARLIAMENT_METADATA, current_parliament
-from apemap.education_context import CONTEXT_FIELDS
+from apemap.education_context import CONTEXT_FIELDS, SCHOOL_CONTEXT_FIELDS
 from apemap.ingest.aph import parse_individual
 from apemap.ingest.matching import (
     SchoolMatcher,
     extract_schools_from_bio_text,
+    is_international_text,
     normalize_school_key,
     split_school_string,
 )
 from apemap.review.model import (
     DEFAULT_LOG_PATH,
     ReviewEvent,
+    accepted_education_ancestor,
+    education_review_id,
     load_events,
     parse_events,
     resolve_events,
@@ -599,16 +602,102 @@ def _apply_school_context(
     recorded_id = row.get("recorded_school_id")
     row.update(dict.fromkeys(CONTEXT_FIELDS))
     row["recorded_school_id"] = recorded_id
-    if decision is None or decision.payload["relationship_type"] != "successor":
+    if decision is None:
+        return
+    assertion_scope = decision.entity_type == "member_education"
+    row["historical_context_scope"] = "assertion" if assertion_scope else "school"
+    if decision.payload.get("relationship_type", "direct") != "successor":
         return
     payload = decision.payload
     for field_name in CONTEXT_FIELDS:
-        if field_name not in {"recorded_school_id", "attended_institution_id"}:
+        if field_name not in {
+            "recorded_school_id",
+            "attended_institution_id",
+            "historical_context_scope",
+        }:
             row[field_name] = payload.get(field_name)
+    if assertion_scope and any(
+        payload.get(name) is not None
+        for name in SCHOOL_CONTEXT_FIELDS
+        if name != "historical_scope_confirmed"
+    ):
+        row["historical_scope_confirmed"] = True
     if payload.get("attended_institution_ref"):
         row["attended_institution_id"], _ = _institution(
             payload["attended_institution_ref"], institutions, definitions, matcher
         )
+
+
+def _recorded_education_name(
+    row: dict[str, Any], institutions: dict[str, dict[str, Any]]
+) -> str:
+    return str(
+        row.get("school_name_as_recorded")
+        or institutions[row["institution_id"]]["school_name"]
+    )
+
+
+def _education_claim(
+    event: ReviewEvent, member_id: str, confidence: str
+) -> dict[str, Any]:
+    """Construct attendance evidence independently of its institution resolution."""
+    payload = event.payload
+    recorded = str(payload["recorded_school_name"])
+    ranks = {"unconfirmed": 0, "provisional": 1, "verified": 2}
+    return {
+        "education_id": f"edu-{str(payload['aph_id']).lower()}-{school_digest(recorded)}",
+        "member_id": member_id,
+        "level": "secondary",
+        "years_attended": payload.get("years_attended"),
+        "graduation_year": payload.get("graduation_year"),
+        "attended_status": payload["attended_status"],
+        "source_url": event.source_url,
+        "retrieved_at": datetime.fromisoformat(payload["retrieved_at"]),
+        "confidence": min(
+            (str(payload["confidence"]), confidence), key=lambda value: ranks[value]
+        ),
+        "reviewer_notes": event.notes,
+        "school_name_as_recorded": recorded,
+        "evidence_origin": "manual",
+        **dict.fromkeys(CONTEXT_FIELDS),
+        "recorded_school_id": school_review_id(recorded),
+    }
+
+
+def _unresolve_education(
+    row: dict[str, Any],
+    recorded: str,
+    institutions: dict[str, dict[str, Any]],
+    definitions: dict[str, ReviewEvent],
+    matcher: SchoolMatcher,
+) -> None:
+    """Leave attendance evidence intact while withholding institution identity."""
+    identifier = f"inst-unmatched-reviewed-{school_digest(recorded)}"
+    institutions.setdefault(
+        identifier,
+        {
+            "institution_id": identifier,
+            "acara_id": None,
+            "school_name": recorded,
+            "school_type": "Secondary",
+            "sector": "Other",
+            "campus_type": None,
+            "state": None,
+            "suburb": None,
+            "postcode": None,
+            "longitude": None,
+            "latitude": None,
+            "country": "overseas" if is_international_text(recorded) else None,
+            "institution_status": "unknown",
+        },
+    )
+    row.update(
+        institution_id=identifier,
+        institution_resolution="unresolved",
+        resolution_source_url=None,
+    )
+    _apply_school_context(row, None, institutions, definitions, matcher)
+    row["historical_context_scope"] = "assertion"
 
 
 def _project(
@@ -642,11 +731,26 @@ def _project(
         for event in accepted
         if event.entity_type == "school"
     }
+    assertions = {
+        event.review_id: event
+        for event in effective
+        if event.entity_type == "member_education"
+    }
+    member_aph_ids = {row["member_id"]: str(row["aph_id"]) for row in members.values()}
     for row in result["member_education"]:
-        raw_name = (
-            row.get("school_name_as_recorded")
-            or institutions[row["institution_id"]]["school_name"]
+        raw_name = _recorded_education_name(row, institutions)
+        aph_id = member_aph_ids.get(row["member_id"])
+        assertion = (
+            assertions.get(education_review_id(aph_id, raw_name)) if aph_id else None
         )
+        if assertion and (
+            assertion.effective_action in {"map", "research"}
+            or (
+                assertion.effective_action == "accept"
+                and "relationship_type" in assertion.payload
+            )
+        ):
+            continue  # Individual decisions own both resolution and its context.
         decision = schools.get(school_key(str(raw_name)))
         if decision:
             identifier, confidence = _institution(
@@ -688,6 +792,66 @@ def _project(
             and member is None
         ):
             continue  # A pinned cohort can legitimately omit the reviewed member.
+        if event.entity_type == "member_education" and event.effective_action in {
+            "map",
+            "research",
+        }:
+            assert member is not None
+            recorded = str(payload["recorded_school_name"])
+            if not recorded.strip():
+                continue  # A missing-education research case has no named claim.
+            rows = [
+                row
+                for row in result["member_education"]
+                if row["member_id"] == member["member_id"]
+                and school_key(_recorded_education_name(row, institutions))
+                == school_key(recorded)
+            ]
+            ancestor = accepted_education_ancestor(event, events)
+            if ancestor is not None:
+                match_confidence = (
+                    "verified"
+                    if ancestor.payload.get("institution_ref")
+                    or schools.get(school_key(recorded))
+                    else matcher.match(recorded).confidence
+                )
+                claim = _education_claim(
+                    ancestor, str(member["member_id"]), match_confidence
+                )
+                result["member_education"] = [
+                    row for row in result["member_education"] if row not in rows
+                ]
+                rows = [claim]
+                result["member_education"].append(claim)
+            if event.effective_action == "map":
+                if not rows:
+                    raise ValueError(
+                        f"{event.review_id}: Mapping requires an existing attendance assertion"
+                    )
+                identifier, _ = _institution(
+                    str(payload["institution_ref"]), institutions, definitions, matcher
+                )
+                for row in rows:
+                    row.update(
+                        institution_id=identifier,
+                        institution_resolution=payload["relationship_type"],
+                        resolution_source_url=event.source_url,
+                    )
+                    _apply_school_context(
+                        row, event, institutions, definitions, matcher
+                    )
+            else:
+                for row in rows:
+                    _unresolve_education(
+                        row,
+                        _recorded_education_name(row, institutions)
+                        if row.get("institution_id")
+                        else str(row["school_name_as_recorded"]),
+                        institutions,
+                        definitions,
+                        matcher,
+                    )
+            continue
         if (
             event.entity_type == "member_education"
             and event.effective_action == "reject"
@@ -723,8 +887,11 @@ def _project(
             reference = payload.get("institution_ref") or (
                 school.payload["institution_ref"] if school else None
             )
-            if school and reference != school.payload["institution_ref"]:
-                school = None  # Assertion-specific identity has its own provenance.
+            own_resolution = "relationship_type" in payload or (
+                bool(payload.get("institution_ref"))
+                and (school is None or reference != school.payload["institution_ref"])
+            )
+            resolution = event if own_resolution else school
             if reference:
                 identifier, match_confidence = _institution(
                     str(reference), institutions, definitions, matcher
@@ -734,13 +901,11 @@ def _project(
                 identifier, match_confidence = match.institution_id, match.confidence
                 if identifier not in institutions:
                     institutions[identifier] = _matched_institution(match)
-            digest = school_digest(recorded)
-            identifier_education = f"edu-{str(payload['aph_id']).lower()}-{digest}"
-            ranks = {"unconfirmed": 0, "provisional": 1, "verified": 2}
+            claim = _education_claim(event, str(member["member_id"]), match_confidence)
             result["member_education"] = [
                 row
                 for row in result["member_education"]
-                if row["education_id"] != identifier_education
+                if row["education_id"] != claim["education_id"]
                 and not (
                     row["member_id"] == member["member_id"]
                     and school_key(
@@ -754,33 +919,22 @@ def _project(
             ]
             result["member_education"].append(
                 {
-                    "education_id": identifier_education,
-                    "member_id": member["member_id"],
+                    **claim,
                     "institution_id": identifier,
-                    "level": "secondary",
-                    "years_attended": payload.get("years_attended"),
-                    "graduation_year": payload.get("graduation_year"),
-                    "attended_status": payload["attended_status"],
-                    "source_url": event.source_url,
-                    "retrieved_at": datetime.fromisoformat(payload["retrieved_at"]),
-                    "confidence": min(
-                        (str(payload["confidence"]), match_confidence),
-                        key=lambda value: ranks[value],
-                    ),
-                    "reviewer_notes": event.notes,
-                    "school_name_as_recorded": recorded,
-                    "institution_resolution": school.payload["relationship_type"]
-                    if school
+                    "institution_resolution": resolution.payload.get(
+                        "relationship_type", "direct"
+                    )
+                    if resolution
                     else ("direct" if reference else "unresolved"),
-                    "resolution_source_url": school.source_url if school else None,
-                    "evidence_origin": "manual",
-                    **dict.fromkeys(CONTEXT_FIELDS),
-                    "recorded_school_id": school_review_id(recorded),
+                    "resolution_source_url": resolution.source_url
+                    if resolution is not None
+                    and (resolution is school or "relationship_type" in payload)
+                    else None,
                 }
             )
             _apply_school_context(
                 result["member_education"][-1],
-                school,
+                resolution,
                 institutions,
                 definitions,
                 matcher,
