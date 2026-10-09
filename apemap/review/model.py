@@ -27,6 +27,7 @@ DEFAULT_LOG_PATH = REFERENCE_DIR / "review" / "decisions.jsonl"
 ENTITY_TYPES = ("school", "member", "member_education", "service", "manual_institution")
 ACTIONS = ("accept", "map", "reject", "research", "supersede")
 MEMBER_FIELDS = ("date_of_birth", "gender", "wikidata_id")
+RESOLUTION_REASONS = ("ambiguous_name", "no_suitable_candidate")
 
 
 def school_key(name: str) -> str:
@@ -219,6 +220,38 @@ def validate_event(event: ReviewEvent) -> None:
     if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
+    if "resolution_reason" in payload:
+        if (
+            payload["resolution_reason"] not in RESOLUTION_REASONS
+            or event.entity_type not in {"school", "member_education"}
+            or action != "research"
+        ):
+            raise ValueError(
+                "resolution_reason requires school or named education research "
+                "and must be ambiguous_name or no_suitable_candidate"
+            )
+        if event.entity_type == "member_education":
+            _text(payload.get("recorded_school_name"), "recorded_school_name")
+            if payload.get("resolution_only") is not True:
+                raise ValueError(
+                    "Typed education research requires resolution_only: true"
+                )
+        elif payload.get("requires_individual_resolution") is not True:
+            raise ValueError(
+                "Typed school research requires requires_individual_resolution: true"
+            )
+    if "requires_individual_resolution" in payload:
+        if type(payload["requires_individual_resolution"]) is not bool:
+            raise ValueError("requires_individual_resolution must be a boolean")
+        if event.entity_type != "school" or action != "research":
+            raise ValueError(
+                "requires_individual_resolution is only valid for school research"
+            )
+        if (
+            payload["requires_individual_resolution"]
+            and payload.get("resolution_reason") not in RESOLUTION_REASONS
+        ):
+            raise ValueError("Individual school review requires a resolution_reason")
     if "evidence_refs" in payload:
         references = payload["evidence_refs"]
         if event.entity_type not in {"school", "member_education"}:

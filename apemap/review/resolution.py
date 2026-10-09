@@ -4,7 +4,23 @@ from __future__ import annotations
 
 from typing import Any
 
-from apemap.review.model import ReviewEvent, active_heads, school_review_id
+from apemap.review.model import (
+    RESOLUTION_REASONS,
+    ReviewEvent,
+    active_heads,
+    school_review_id,
+)
+
+
+def requires_individual_resolution(event: ReviewEvent | None) -> bool:
+    """Identify the opt-in policy without reinterpreting historical research."""
+    return (
+        event is not None
+        and event.entity_type == "school"
+        and event.effective_action == "research"
+        and event.payload.get("requires_individual_resolution") is True
+        and event.payload.get("resolution_reason") in RESOLUTION_REASONS
+    )
 
 
 def relationship_conflicts(events: list[ReviewEvent]) -> list[dict[str, Any]]:
@@ -118,9 +134,24 @@ def resolution_summary(
             # target, but without a reviewed relationship replay leaves school
             # identity unresolved. Do not present its old source match as reviewed.
             reference, relationship, scope = None, "unresolved", "assertion"
+    reason = assertion.payload.get("resolution_reason") if assertion else None
+    if (
+        default is not None
+        and requires_individual_resolution(default)
+        and not (
+            assertion
+            and assertion.effective_action in {"accept", "map"}
+            and assertion.payload.get("institution_ref")
+        )
+    ):
+        reference, relationship = None, "unresolved"
+        if assertion is None:
+            status = "needs_individual_review"
+        reason = reason or default.payload["resolution_reason"]
     return {
         "institution_ref": reference,
         "relationship_type": relationship,
         "resolution_scope": scope,
         "status": status,
+        **({"resolution_reason": reason} if reason else {}),
     }

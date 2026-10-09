@@ -46,6 +46,7 @@ from apemap.review.evidence import (
     validate_evidence_references,
 )
 from apemap.review.store import StaleReviewError
+from apemap.review.resolution import requires_individual_resolution
 
 if TYPE_CHECKING:
     from duckdb import DuckDBPyConnection
@@ -125,6 +126,7 @@ def configure_review_matcher(matcher: SchoolMatcher, events: list[ReviewEvent]) 
         if event.entity_type == "school"
         and event.effective_action in {"research", "reject"}
         and event.payload.get("recorded_name")
+        and not requires_individual_resolution(event)
     }
 
 
@@ -756,6 +758,33 @@ def _unresolve_education(
     row["historical_context_scope"] = "assertion"
 
 
+def _policy_attendance_confidence(
+    policies: dict[str, ReviewEvent], events: list[ReviewEvent]
+) -> set[str]:
+    """Retain an earlier reviewed confidence cap without reviving its identity.
+
+    Legacy attendance accepts without a target used their school default's
+    verified match cap. A resolution-only policy must not lower those attendance
+    facts. Ordinary research/rejection still withdraws the old default entirely.
+    """
+    by_id = {event.decision_id: event for event in events}
+    reviewed: set[str] = set()
+    for key, policy in policies.items():
+        pending = list(policy.supersedes)
+        visited: set[str] = set()
+        while pending:
+            identifier = pending.pop()
+            if identifier in visited:
+                continue
+            visited.add(identifier)
+            parent = by_id[identifier]
+            if parent.effective_action in {"accept", "map"}:
+                reviewed.add(key)
+            elif requires_individual_resolution(parent):
+                pending.extend(parent.supersedes)
+    return reviewed
+
+
 def _project(
     base: Records,
     events: list[ReviewEvent],
@@ -787,6 +816,12 @@ def _project(
         for event in accepted
         if event.entity_type == "school"
     }
+    policies = {
+        school_key(str(event.payload["recorded_name"])): event
+        for event in effective
+        if requires_individual_resolution(event)
+    }
+    attendance_confidence_keys = _policy_attendance_confidence(policies, events)
     assertions = {
         event.review_id: event
         for event in effective
@@ -876,6 +911,7 @@ def _project(
                     "verified"
                     if ancestor.payload.get("institution_ref")
                     or schools.get(school_key(recorded))
+                    or school_key(recorded) in attendance_confidence_keys
                     else matcher.match(recorded).confidence
                 )
                 claim = _education_claim(
@@ -964,6 +1000,8 @@ def _project(
                 identifier, match_confidence = match.institution_id, match.confidence
                 if identifier not in institutions:
                     institutions[identifier] = _matched_institution(match)
+                if school_key(recorded) in attendance_confidence_keys:
+                    match_confidence = "verified"
             claim = _education_claim(event, str(member["member_id"]), match_confidence)
             result["member_education"] = [
                 row
@@ -1054,6 +1092,23 @@ def _project(
                         "source_service_end": end,
                     }
                 )
+    # Apply the shared-name policy last so neither exact/fuzzy source matches nor
+    # legacy attendance accepts can reintroduce an unreviewed school identity.
+    for row in result["member_education"]:
+        recorded = _recorded_education_name(row, institutions)
+        if school_key(recorded) not in policies:
+            continue
+        aph_id = member_aph_ids.get(row["member_id"])
+        assertion = (
+            assertions.get(education_review_id(aph_id, recorded)) if aph_id else None
+        )
+        if (
+            assertion
+            and assertion.effective_action in {"accept", "map"}
+            and assertion.payload.get("institution_ref")
+        ):
+            continue
+        _unresolve_education(row, recorded, institutions, definitions, matcher)
     result["institutions"] = list(institutions.values())
     qids = [row["wikidata_id"] for row in result["members"] if row.get("wikidata_id")]
     if len(qids) != len(set(qids)):
