@@ -32,6 +32,8 @@ from apemap.review.model import (
     validate_event,
 )
 from apemap.review.store import StaleReviewError, encode_event
+from apemap.review.service import ReviewService
+from tests.test_review_service import review_service as review_service
 
 SCHOOL_ID = school_review_id("Fixture School")
 SOURCE = "https://example.edu.au/history"
@@ -909,3 +911,372 @@ def test_real_merged_conflict_is_visible_and_repaired_by_superseding_all_heads(
     assert service.show(SCHOOL_ID)["conflicts"] == []
     assert service.show(SCHOOL_ID)["decision"]["replacement_action"] == "research"
     assert service.candidates()[0]["status"] == "needs_research"
+
+
+def test_assertion_mapping_controls_keep_other_entity_actions_scoped(
+    gui: tuple[Any, FixtureService],
+) -> None:
+    client, _service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    html = client.get(f"/items/{review_id}").get_data(as_text=True)
+    assert html.count('value="map"') == 2
+    assert "Map this assertion" in html
+    assert 'name="field_relationship_type"' in html
+    assert "optional when accepting attendance" in html
+    assert "preserving attendance and its provenance" in html
+    assert "Needs research retains attendance" in html
+    assert "Reject removes the attendance claim" in html
+    assert "HTTP(S) evidence source" in html
+    assert "Their evidence applies only to this assertion" in html
+    for review_id in (
+        member_review_id("abc", "gender"),
+        service_review_id("abc", 47),
+        institution_review_id("manual:fixture"),
+    ):
+        html = client.get(f"/items/{review_id}").get_data(as_text=True)
+        assert 'value="map"' not in html
+        assert 'name="field_relationship_type"' not in html
+
+
+@pytest.mark.parametrize("action", ["map", "supersede"])
+def test_guided_assertion_mapping_previews_and_saves_the_exact_resolution(
+    gui: tuple[Any, FixtureService], action: str
+) -> None:
+    client, service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action=action,
+            payload="{}",
+            payload_mode="guided",
+            field_aph_id="abc",
+            field_recorded_school_name="Fixture School",
+            field_institution_ref="acara:456",
+            field_relationship_type="alias",
+            field_attended_status="graduated",
+            field_confidence="verified",
+            field_retrieved_at="2026-10-05T10:00:00+11:00",
+            supersedes="prior-resolution" if action == "supersede" else "",
+            replacement_action="map",
+            notes="Resolve this member's school identity",
+        ),
+    )
+    assert response.status_code == 200
+    proposed = service.prepared[-1]["event"]
+    assert proposed["payload"] == {
+        "aph_id": "abc",
+        "recorded_school_name": "Fixture School",
+        "institution_ref": "acara:456",
+        "relationship_type": "alias",
+    }
+    assert proposed["source_url"] == SOURCE
+    assert proposed["action"] == action
+    assert proposed["replacement_action"] == ("map" if action == "supersede" else None)
+    assert not service.saved
+    assert (
+        client.post(f"/items/{review_id}/save", data=save_form(response)).status_code
+        == 303
+    )
+    assert service.saved[-1].payload == proposed["payload"]
+    assert service.saved[-1].source_url == SOURCE
+    html = client.get(f"/items/{review_id}").get_data(as_text=True)
+    assert 'value="map" selected' in html
+    assert f'value="{SOURCE}"' in html
+
+
+def test_guided_acceptance_keeps_relationship_optional(
+    gui: tuple[Any, FixtureService],
+) -> None:
+    client, service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            payload="{}",
+            payload_mode="guided",
+            field_aph_id="abc",
+            field_recorded_school_name="Fixture School",
+            field_institution_ref="acara:123",
+            field_relationship_type="",
+            field_attended_status="attended_unspecified",
+            field_confidence="verified",
+            field_retrieved_at="2026-10-05T10:00:00+11:00",
+        ),
+    )
+    assert response.status_code == 200
+    assert "relationship_type" not in service.prepared[-1]["event"]["payload"]
+    assert service.prepared[-1]["event"]["payload"]["attended_status"] == (
+        "attended_unspecified"
+    )
+
+
+@pytest.mark.parametrize(
+    "overrides", [{"source_url": ""}, {"field_relationship_type": ""}]
+)
+def test_incomplete_assertion_mapping_retains_draft_and_never_saves(
+    gui: tuple[Any, FixtureService], overrides: dict[str, str]
+) -> None:
+    client, service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    values = {
+        "action": "map",
+        "payload": "{}",
+        "payload_mode": "guided",
+        "field_aph_id": "abc",
+        "field_recorded_school_name": "Fixture School",
+        "field_institution_ref": "acara:456",
+        "field_relationship_type": "alias",
+        "notes": "Keep this resolution draft",
+        **overrides,
+    }
+    response = client.post(
+        f"/items/{review_id}/preview", data=form(client, review_id, **values)
+    )
+    assert response.status_code == 400
+    html = response.get_data(as_text=True)
+    assert 'value="map" selected' in html
+    assert 'value="acara:456"' in html
+    assert "Keep this resolution draft" in html
+    assert not service.prepared and not service.saved
+
+
+@pytest.mark.parametrize("entity", ["school", "member_education"])
+def test_school_and_assertion_pages_compare_current_targets_and_defaults(
+    gui: tuple[Any, FixtureService],
+    monkeypatch: pytest.MonkeyPatch,
+    entity: str,
+) -> None:
+    client, service = gui
+    original_show = service.show
+    default = {"action": "map", "payload": dict(SCHOOL_PAYLOAD)}
+    first_id = education_review_id("abc", "Fixture School")
+    second_id = education_review_id("def", "Fixture School")
+
+    def show(review_id: str) -> dict[str, Any]:
+        item = original_show(review_id)
+        item["context"] = {
+            "school_relationship": default,
+            "resolution_warnings": ["Recorded name refers to different institutions"],
+            "members": [
+                {
+                    "aph_id": aph_id,
+                    "display_name": display_name,
+                    "education": [
+                        {
+                            "review_id": assertion_id,
+                            "recorded_name": "Fixture School",
+                            "current_resolution": {
+                                "institution_ref": ref,
+                                "institution_name": name,
+                                "relationship_type": "alias",
+                                "resolution_scope": scope,
+                                "status": "accepted",
+                            },
+                            "default_relationship": default,
+                            "decision": {"action": "map"}
+                            if scope == "assertion"
+                            else None,
+                            "relationship_conflicts": [
+                                {"message": "<b>Different from school-wide default</b>"}
+                            ]
+                            if scope == "assertion"
+                            else [],
+                        }
+                    ],
+                }
+                for aph_id, display_name, assertion_id, ref, name, scope in (
+                    (
+                        "abc",
+                        "First Member",
+                        first_id,
+                        "acara:456",
+                        "Member School",
+                        "assertion",
+                    ),
+                    (
+                        "def",
+                        "Second Member",
+                        second_id,
+                        "acara:123",
+                        "Default School",
+                        "school",
+                    ),
+                )
+            ],
+        }
+        return item
+
+    monkeypatch.setattr(service, "show", show)
+    review_id = SCHOOL_ID if entity == "school" else first_id
+    response = client.get(f"/items/{review_id}")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert 'aria-label="Assertion relationship comparison"' in html
+    assert "First Member" in html and "Second Member" in html
+    assert "Member School" in html and "Default School" in html
+    assert "acara:456" in html and "acara:123" in html
+    assert f'href="/items/{first_id}"' in html
+    assert f'href="/items/{second_id}"' in html
+    assert "Recorded name refers to different institutions" in html
+    assert "&lt;b&gt;Different from school-wide default&lt;/b&gt;" in html
+    assert "<b>Different from school-wide default</b>" not in html
+    assert not service.prepared and not service.saved
+
+
+@pytest.mark.parametrize("entity", ["school", "member_education"])
+def test_relationship_preview_identifies_default_application_and_disagreements(
+    gui: tuple[Any, FixtureService],
+    monkeypatch: pytest.MonkeyPatch,
+    entity: str,
+) -> None:
+    client, service = gui
+    original_prepare = service.prepare
+    first_id = education_review_id("abc", "Fixture School")
+    second_id = education_review_id("def", "Fixture School")
+
+    def prepare(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        preview = original_prepare(*args, **kwargs)
+        preview["relationship_conflicts"] = [
+            {"message": "Member School differs from Default School"}
+        ]
+        preview["default_application"] = {
+            "available": True,
+            "school_review_id": SCHOOL_ID,
+            "assertions": [
+                {
+                    "review_id": assertion_id,
+                    "aph_id": aph_id,
+                    "display_name": display_name,
+                    "recorded_name": "Fixture School",
+                    "applies": applies,
+                    "reason": reason,
+                }
+                for assertion_id, aph_id, display_name, applies, reason in (
+                    (
+                        first_id,
+                        "abc",
+                        "First Member",
+                        False,
+                        "Explicit assertion resolution",
+                    ),
+                    (
+                        second_id,
+                        "def",
+                        "Second Member",
+                        True,
+                        "Uses school-wide default",
+                    ),
+                )
+            ],
+        }
+        return preview
+
+    monkeypatch.setattr(service, "prepare", prepare)
+    review_id = SCHOOL_ID if entity == "school" else first_id
+    payload = (
+        SCHOOL_PAYLOAD
+        if entity == "school"
+        else {
+            "aph_id": "abc",
+            "recorded_school_name": "Fixture School",
+            "institution_ref": "acara:456",
+            "relationship_type": "alias",
+        }
+    )
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(client, review_id, action="map", payload=json.dumps(payload)),
+    )
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert 'aria-label="School-wide default application"' in html
+    assert 'aria-label="Relationship disagreements"' in html
+    assert "Member School differs from Default School" in html
+    assert (
+        "Explicit assertion resolution" in html and "Uses school-wide default" in html
+    )
+    assert f'href="/items/{first_id}"' in html
+    assert f'href="/items/{second_id}"' in html
+    assert "<td>No</td>" in html and "<td>Yes</td>" in html
+    assert not service.saved
+
+
+@pytest.mark.integration
+def test_real_guided_assertion_mapping_preserves_source_and_signed_save(
+    review_service: ReviewService,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from apemap.db import get_connection
+    from apemap.review import service as service_module
+    from apemap.review.integration import project_review_records
+
+    service = review_service
+    monkeypatch.setattr(service_module, "RAW_APH_DIR", tmp_path / "aph")
+    monkeypatch.setattr(service_module, "RAW_WIKIMEDIA_DIR", tmp_path / "wiki")
+    db_before = hashlib.sha256(service.db_path.read_bytes()).hexdigest()
+    with get_connection(service.db_path, read_only=True) as conn:
+        source = project_review_records(conn, [], matcher=service.matcher())[
+            "member_education"
+        ][0]
+    client = create_app(service).test_client()
+    review_id = education_review_id("TEST", "Test High School")
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action="map",
+            payload_mode="guided",
+            payload=json.dumps(
+                {
+                    "aph_id": "TEST",
+                    "recorded_school_name": "Test High School",
+                    "years_attended": "1980-1985",
+                    "graduation_year": 1985,
+                }
+            ),
+            field_aph_id="TEST",
+            field_recorded_school_name="Test High School",
+            field_institution_ref="acara:2",
+            field_relationship_type="direct",
+            field_attended_status="graduated",
+            field_confidence="provisional",
+            field_retrieved_at="2026-10-09T10:00:00+11:00",
+            source_url="https://example.org/member-school-identity",
+            reviewer="Fixture GUI reviewer",
+        ),
+    )
+    assert response.status_code == 200, response.get_data(as_text=True)
+    assert not service.log_path.exists()
+    assert hashlib.sha256(service.db_path.read_bytes()).hexdigest() == db_before
+    response = client.post(f"/items/{review_id}/save", data=save_form(response))
+    assert response.status_code == 303
+    event = service.show(review_id)["decision"]
+    assert event["action"] == "map"
+    assert event["payload"] == {
+        "aph_id": "TEST",
+        "recorded_school_name": "Test High School",
+        "institution_ref": "acara:2",
+        "relationship_type": "direct",
+    }
+    assert event["source_url"] == "https://example.org/member-school-identity"
+    with get_connection(service.db_path, read_only=True) as conn:
+        after = project_review_records(
+            conn, service.events(), matcher=service.matcher()
+        )["member_education"][0]
+    mutable = {"institution_id", "institution_resolution", "resolution_source_url"}
+    from apemap.education_context import CONTEXT_FIELDS
+
+    mutable.update(CONTEXT_FIELDS)
+    assert {name: value for name, value in after.items() if name not in mutable} == {
+        name: value for name, value in source.items() if name not in mutable
+    }
+    assert after["institution_id"] == "acara-2"
+    assert after["historical_context_scope"] == "assertion"
+    assert hashlib.sha256(service.db_path.read_bytes()).hexdigest() == db_before

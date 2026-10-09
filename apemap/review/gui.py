@@ -117,7 +117,18 @@ FIELDS: dict[str, tuple[tuple[str, str, str, tuple[str, ...]], ...]] = {
     "member_education": (
         ("aph_id", "APH identifier", "text", ()),
         ("recorded_school_name", "School name as recorded", "text", ()),
-        ("institution_ref", "Institution reference (optional)", "text", ()),
+        (
+            "institution_ref",
+            "Institution reference (required to map this assertion)",
+            "text",
+            (),
+        ),
+        (
+            "relationship_type",
+            "Relationship (required to map; optional when accepting attendance)",
+            "select",
+            ("direct", "alias", "rename", "successor"),
+        ),
         (
             "attended_status",
             "Attendance evidence",
@@ -518,6 +529,14 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 ),
                 "replacement_action": "accept",
             }
+        elif item["entity_type"] == "member_education" and not values:
+            decision = item.get("decision") or {}
+            values = {
+                "action": decision.get("replacement_action")
+                or decision.get("action", "accept"),
+                "source_url": decision.get("source_url", ""),
+                "notes": decision.get("notes", ""),
+            }
         return render_template(
             "item.html",
             item=item,
@@ -777,6 +796,21 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     if action == "supersede"
                     else None
                 )
+            if (
+                item["entity_type"] == "member_education"
+                and request.form.get("payload_mode") == "guided"
+                and (replacement_action or action) == "map"
+            ):
+                # A populated attendance form can also resolve school identity.
+                # Mapping must never submit changes to its source attendance.
+                for key in (
+                    "attended_status",
+                    "confidence",
+                    "retrieved_at",
+                    "years_attended",
+                    "graduation_year",
+                ):
+                    payload.pop(key, None)
             preview = service.prepare(
                 review_id,
                 action,

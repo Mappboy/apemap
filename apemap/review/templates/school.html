@@ -11,7 +11,9 @@
 <h1>{{ school.name }}</h1>
 <p>{{ school.status | replace('_', ' ') }}{% if school.parliaments %} · Parliaments {{ school.parliaments | join(', ') }}{% endif %}</p>
 {% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
-{% if school.saved_reference %}<p>Saved mapping: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }}. This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
+{% if school.saved_reference %}<p>Saved school-wide default: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }}. This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
+<p>School mappings provide a default for assertions using this recorded name. Explicit assertion resolutions and research decisions take precedence. Review the affected assertions in the preview before saving.</p>
+{% include "assertion-context.html" %}
 <section aria-label="Parliamentarian context"><h2>Parliamentarians using this school name</h2>
 {% for member in item.context.get('members', []) %}<div class="school-option">
 {% set biography = member.get('biography_url') | source_link %}<h3>{% if biography %}<a href="{{ biography }}" target="_blank" rel="noopener noreferrer">{{ member.display_name }}</a>{% else %}{{ member.display_name }}{% endif %}</h3>
@@ -63,7 +65,7 @@
 {% else %}<label>{{ label }}<input name="field_{{ name }}" type="{{ kind }}" {% if kind == 'number' %}step="any"{% endif %} value="{{ payload.get(name, '') if payload.get(name) is not none else '' }}"></label>{% endif %}
 {% endfor %}
 <p>Historical coordinates require their own location source. Same-campus continuity requires separate evidence. Government/non-government continuity and Catholic/Independent continuity are separate questions; leave details unknown when unsupported.</p>
-<p>Confirm evidence covers the complete school's associated attendance records and verified name aliases shown in the preview. Mixed-era or conflicting histories remain unresolved; this version does not support date ranges or per-person exceptions.</p>
+<p>Confirm evidence covers the attendance records receiving this default and verified name aliases shown in the preview. Mixed-era or conflicting histories remain unresolved; date ranges are not supported. Use an education assertion review for evidence that applies to one member.</p>
 {% if item.context.get('verified_aliases') %}<p>Verified aliases:</p>{% for alias in item.context.verified_aliases %}<p><a href="{{ url_for('detail', review_id=alias.review_id) }}">{{ alias.recorded_name }}</a></p>{% endfor %}{% endif %}
 </section>
 <details><summary>Technical details</summary>
@@ -83,6 +85,7 @@
 {% if preview %}<section id="preview" data-school-preview><h2>Validated semantic preview</h2>
 {% set event = preview.event %}{% set proposal = event.payload %}{% set outcome = event.replacement_action or event.action %}
 <p>This preview has not changed any file.</p>
+{% include "relationship-preview.html" %}
 {% if outcome in ['accept', 'map'] %}<p><strong>{{ proposal.recorded_name }} → {{ preview_target.school_name if preview_target else proposal.institution_ref }}</strong></p><p>{{ proposal.institution_ref }} · {{ relationships.get(proposal.relationship_type, proposal.relationship_type) }}</p>{% if event.source_url %}<p>Evidence: <a href="{{ event.source_url }}" target="_blank" rel="noopener noreferrer">{{ event.source_url }}</a></p>{% else %}<p>No source URL supplied.</p>{% endif %}{% else %}<p>{{ outcome | replace('research', 'Needs research') | replace('reject', 'Reject this mapping claim') }} · {{ event.notes }}</p>{% endif %}
 {% if event.supersedes %}<p>Replaces {{ event.supersedes | length }} active decision(s):</p>{% for old in ([item.decision] if item.decision else item.get('conflicts', [])) %}<p>{{ old.action }} · {{ old.reviewer }} · {{ old.payload.get('institution_ref', 'No selected target') }}</p>{% endfor %}{% endif %}
 {% set canonical = preview.changes.get('canonical') %}

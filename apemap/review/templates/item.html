@@ -7,6 +7,7 @@
 {% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
 {% include "retry.html" %}
+{% if item.entity_type == 'member_education' %}{% include "assertion-context.html" %}{% endif %}
 {% if item.get('conflicts') %}<section class="error" aria-label="Conflicting decisions"><h2>Conflicting active decisions</h2><p>Review every alternative and supersede all active event identifiers with one supported replacement. No alternative currently has authority.</p>{% for event in item.conflicts %}<details open><summary>{{ event.decision_id }} · {{ event.action }} · {{ event.reviewer }}</summary><pre>{{ event | json_text }}</pre></details>{% endfor %}</section>{% endif %}
 <div class="detail-grid">
 <div>
@@ -23,7 +24,8 @@
 <section><h2>Review decision</h2>
 <form method="post" action="{% if new_entity_type %}{{ url_for('preview_new', entity_type=new_entity_type) }}{% else %}{{ url_for('preview_item', review_id=item.review_id) }}{% endif %}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-  <label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type == 'school' %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
+  <label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type in ['school', 'member_education'] %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ 'Map this assertion' if action == 'map' and item.entity_type == 'member_education' else action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
+  {% if item.entity_type == 'member_education' %}<p>Map this assertion resolves the institution for this member and recorded school name, preserving attendance and its provenance. It requires a target, relationship and HTTP(S) evidence source. Accept adds or corrects attendance evidence. Needs research retains attendance and leaves its institution unresolved, overriding a school-wide default. Reject removes the attendance claim.</p><p>For successor mappings, use the complete JSON payload for original institution and historical evidence fields. Their evidence applies only to this assertion.</p>{% endif %}
   {% if fields %}
   <fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') == 'guided' %}checked{% endif %}>Use the fields below</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
   <div class="guided-fields">{% for name, label, kind, choices in fields %}<div class="guided-field"><label>{{ label }}
@@ -51,13 +53,14 @@
   <label>Review notes<textarea name="notes" rows="4">{{ form_values.get('notes', '') }}</textarea></label>
   {% if item.entity_type == 'member_education' %}<p>Accepted education notes are published with the assertion's evidence. Use public provenance explanations.</p>{% endif %}
   <label>Superseded event identifiers (comma separated)<input name="supersedes" value="{{ form_values.get('supersedes', '') }}"></label>
-  <label>Replacement action (when superseding)<select name="replacement_action">{% for action in actions %}{% if action != 'supersede' and (action != 'map' or item.entity_type == 'school') %}<option value="{{ action }}" {% if form_values.get('replacement_action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
+  <label>Replacement action (when superseding)<select name="replacement_action">{% for action in actions %}{% if action != 'supersede' and (action != 'map' or item.entity_type in ['school', 'member_education']) %}<option value="{{ action }}" {% if form_values.get('replacement_action', 'accept') == action %}selected{% endif %}>{{ 'Map this assertion' if action == 'map' and item.entity_type == 'member_education' else action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>
   <button type="submit">Validate and preview</button>
 </form>
 </section>
 </div>
 {% if preview %}
 <section id="preview"><h2>Validated semantic preview</h2><p>Review the affected values before saving. This preview has not changed any file.</p>
+  {% include "relationship-preview.html" %}
   <h3>Changes</h3><pre>{{ preview.changes | json_text }}</pre>
   <h3>Validation</h3><pre>{{ preview.validation | json_text }}</pre>
   <h3>Recorded decision</h3><pre>{{ preview.event | json_text }}</pre>

@@ -531,6 +531,18 @@ subcommand. CSV import is a dry run until `--apply` is supplied. Use
 `add-education` or `add-institution` to create an assertion or registry entry.
 Each command's `--help` describes its payload and evidence arguments.
 
+Use `map-education <education-review-id> --institution-ref acara:ID
+--relationship-type direct --source <url> --dry-run` to preview an
+assertion-specific resolution without replacing attendance facts. Remove
+`--dry-run` to append it, or use `supersede --replacement-action map` when
+replacing an existing decision. Relationships also support `alias`, `rename`
+and `successor`. `accept --relationship-type` is supported for education
+corrections with an explicit target; omitting that field preserves legacy
+matching-default semantics. `check` reports relationship disagreements as
+diagnostics, allowing reviewed assertions to override school defaults.
+See [Assertion-level resolution](assertion-resolution.md) for JSON examples,
+research precedence and migration compatibility.
+
 Successor school payloads also support a separately sourced original institution,
 historical campus and broad/detailed sector evidence. Use `accept --payload`
 with a JSON file or the guided school form; preview the school-wide scope before

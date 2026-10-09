@@ -208,6 +208,15 @@ Links parliamentarians to institutions with mandatory audit provenance fields.
 - `retrieved_at` (`TIMESTAMPTZ NOT NULL`): Timestamp of record retrieval.
 - `confidence` (`VARCHAR NOT NULL CHECK (confidence IN ('verified', 'provisional', 'unconfirmed'))`).
 - `reviewer_notes` (`VARCHAR`): Human or algorithmic rationale for the match.
+- `historical_context_scope` (`VARCHAR`, nullable): Generated review scope,
+  `assertion` or `school`. Legacy nulls preserve school-wide consensus behavior.
+  Assertion scope isolates historical facts and successor assumptions to one
+  education row, even when an explicit original identity is shared. A scoped
+  successor without a verified original reference has a provisional assertion
+  identity, so identical recorded text does not establish a shared institution.
+  The schema initializer adds this column to canonical and retained source
+  tables without changing legacy facts. See
+  [Assertion-level resolution](assertion-resolution.md).
 
 ### `school_snapshots`
 Annual institutional snapshots containing enrolment and socio-educational index values from the ACARA School Profile dataset.

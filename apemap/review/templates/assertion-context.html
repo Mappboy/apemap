@@ -1,0 +1,27 @@
+{% set context = item.get('context', {}) %}
+{% if context.get('members') or context.get('school_relationship') or context.get('resolution_warnings') %}
+<section aria-label="Assertion relationship comparison">
+  <h2>Assertions using this recorded school name</h2>
+  <p>Compare the institution resolved for each assertion with the school-wide default. A shared recorded name can refer to different institutions.</p>
+  {% set school_default = context.get('school_relationship') or {} %}
+  {% if school_default %}<p>School-wide default: {{ school_default.get('payload', {}).get('institution_ref', 'No selected target') }} · {{ school_default.get('payload', {}).get('relationship_type', 'Unresolved') }} · {{ school_default.get('replacement_action') or school_default.get('action', '') }}</p>{% endif %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Member and assertion</th><th>Current institution</th><th>Resolution scope</th><th>School-wide default</th><th>Relationship review</th></tr></thead>
+    <tbody>
+    {% for member in context.members %}{% for education in member.get('education', []) %}
+      {% set resolution = education.get('current_resolution') or {} %}
+      {% set default = education.get('default_relationship') or school_default %}
+      {% set decision = education.get('decision') or {} %}
+      <tr>
+        <th scope="row">{{ member.get('display_name', member.get('aph_id', 'Unknown member')) }}<br>{% if education.get('review_id') %}<a href="{{ url_for('detail', review_id=education.review_id) }}">{{ education.get('recorded_name', education.get('recorded_school_name', 'Education assertion')) }}</a>{% else %}{{ education.get('recorded_name', education.get('recorded_school_name', 'Education assertion')) }}{% endif %}{% if education.get('years_attended') %}<br>{{ education.years_attended }}{% endif %}</th>
+        <td>{{ resolution.get('institution_name') or resolution.get('institution_ref') or 'Unresolved' }}{% if resolution.get('institution_name') and resolution.get('institution_ref') %}<br>{{ resolution.institution_ref }}{% endif %}<br>{{ resolution.get('relationship_type') or 'Unresolved relationship' }}</td>
+        <td>{{ (resolution.get('resolution_scope') or 'Unresolved') | replace('_', ' ') }}{% if resolution.get('status') %}<br>{{ resolution.status | replace('_', ' ') }}{% endif %}{% if decision %}<br>Decision: {{ decision.get('replacement_action') or decision.get('action', '') }}{% endif %}</td>
+        <td>{% if default %}{{ default.get('payload', {}).get('institution_ref') or 'No selected target' }}<br>{{ default.get('payload', {}).get('relationship_type') or default.get('replacement_action') or default.get('action', 'Unresolved') }}{% else %}No school-wide default{% endif %}</td>
+        <td>{% for conflict in education.get('relationship_conflicts', []) %}<p class="notice">{{ conflict.get('message', conflict | json_text) if conflict is mapping else conflict }}</p>{% else %}No disagreement reported{% endfor %}</td>
+      </tr>
+    {% endfor %}{% endfor %}
+    </tbody>
+  </table></div>
+  {% for warning in context.get('resolution_warnings', []) %}<p class="notice" role="status">{{ warning.get('message', warning | json_text) if warning is mapping else warning }}</p>{% endfor %}
+</section>
+{% endif %}

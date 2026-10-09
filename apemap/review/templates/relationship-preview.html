@@ -1,0 +1,17 @@
+{% if preview.get('relationship_conflicts') %}
+<section aria-label="Relationship disagreements"><h3>Relationship disagreements</h3>
+  <p>These disagreements need review. Explicit assertion decisions retain their own scope.</p>
+  {% for conflict in preview.relationship_conflicts %}<p class="notice" role="status">{{ conflict.get('message', conflict | json_text) if conflict is mapping else conflict }}</p>{% endfor %}
+</section>
+{% endif %}
+{% if preview.get('default_application') %}
+{% set application = preview.default_application %}
+<section aria-label="School-wide default application"><h3>School-wide default application</h3>
+  <p>The school-wide default applies only to assertions without an explicit resolution or research decision.</p>
+  {% if application.get('available') %}
+  <div class="table-wrap"><table><thead><tr><th>Member</th><th>Recorded school</th><th>Default applies</th><th>Reason</th></tr></thead><tbody>
+  {% for assertion in application.get('assertions', []) %}<tr><td>{{ assertion.get('display_name') or assertion.get('aph_id', '') }}</td><td>{% if assertion.get('review_id') %}<a href="{{ url_for('detail', review_id=assertion.review_id) }}">{{ assertion.get('recorded_name', '') }}</a>{% else %}{{ assertion.get('recorded_name', '') }}{% endif %}</td><td>{{ 'Yes' if assertion.get('applies') else 'No' }}</td><td>{{ assertion.get('reason', '') }}</td></tr>{% else %}<tr><td colspan="4">No existing assertions use this recorded school name.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p>Assertion effects are unavailable. Run a source build to inspect current attendance records.</p>{% endif %}
+</section>
+{% endif %}

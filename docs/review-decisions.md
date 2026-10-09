@@ -172,6 +172,17 @@ the event graph resolves explicitly without a line-order tie breaker.
 
 ## Optional local reviewer
 
+Package 0.6.0 supports resolution-only decisions on individual education
+assertions. **Map** preserves attendance evidence; **Needs research** withholds
+institution resolution for that assertion while keeping its attendance claim.
+School-wide relationships remain defaults, with explicit assertion decisions
+taking precedence. The comparison panel shows other members with the same
+recorded school name, their resolutions and relationship disagreements. A
+school mapping preview lists which assertions use the default and which have
+their own decisions. See [Assertion-level resolution](assertion-resolution.md)
+for legacy fallback and scoped successor evidence. Structured evidence scoring,
+assisted search and release-readiness ranking remain later phases of issue #66.
+
 Install `uv sync --extra review-ui` and run the review server through the review
 CLI. The reviewer binds to loopback and uses the same service, validation,
 locking and replay rules as the CLI. It provides member and school queues,

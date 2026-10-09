@@ -99,6 +99,13 @@ to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released
 data or the website.
 
+Package 0.6.0 adds assertion-specific school resolution. Use **Map** on an
+education assertion to preserve attendance provenance while choosing its
+institution independently of other members with the same recorded school name.
+School relationships remain reusable defaults. See
+[Assertion-level resolution](docs/assertion-resolution.md) for precedence,
+migration compatibility and the remaining review v2 phases.
+
 Package 0.4.0 distinguishes the school attended from a reviewed successor used
 for matching, profiles and finance. Web and analysis contracts are `2.0.0`;
 historical releases retain their existing contracts. See
