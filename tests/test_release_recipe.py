@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import closing
 from functools import partial
 import json
 import sqlite3
@@ -141,13 +142,14 @@ def recipe_fixture(tmp_path: Path) -> tuple[Path, Path]:
         newline="\n",
     )
     finance_path = root / template["legacy_finance_input"]
-    with sqlite3.connect(finance_path) as finance:
+    with closing(sqlite3.connect(finance_path)) as finance:
         finance.execute(
             "CREATE TABLE acara_education_finances(acara_id INTEGER, year INTEGER, total_net_recurrent_income_per_student INTEGER, total_gross_income_total INTEGER)"
         )
         finance.execute(
             "INSERT INTO acara_education_finances VALUES (1, 2021, 20000, 6000000)"
         )
+        finance.commit()
     ledger = root / template["decision_log"]
     ledger.parent.mkdir(parents=True, exist_ok=True)
     write_log(
@@ -219,6 +221,42 @@ def test_recipe_requires_explicit_year_and_exact_review_revision(
 
 
 @pytest.mark.unit
+def test_recipe_closes_pinned_finance_connection(
+    recipe_fixture: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, recipe = recipe_fixture
+    connect = sqlite3.connect
+    opened: list[sqlite3.Connection] = []
+
+    def track_connection(*args: Any, **kwargs: Any) -> sqlite3.Connection:
+        connection = connect(*args, **kwargs)
+        opened.append(connection)
+        return connection
+
+    monkeypatch.setattr("apemap.release.recipe.sqlite3.connect", track_connection)
+    load_recipe(recipe, root=root)
+    assert len(opened) == 1
+    with pytest.raises(sqlite3.ProgrammingError, match="closed database"):
+        opened[0].execute("SELECT 1")
+
+
+@pytest.mark.unit
+def test_recipe_pin_validates_before_creating_output(
+    recipe_fixture: tuple[Path, Path],
+) -> None:
+    root, template = recipe_fixture
+    data = json.loads(template.read_bytes())
+    data["finance_year"] = 2021
+    template.write_text(json.dumps(data))
+    original = template.read_bytes()
+    output = root / "new-recipe.json"
+    with pytest.raises(ValueError, match="Unsupported recipe finance_year"):
+        pin_recipe(template, output, root=root)
+    assert not output.exists()
+    assert template.read_bytes() == original
+
+
+@pytest.mark.unit
 def test_recipe_inputs_are_deterministic_and_restored_by_hash(
     recipe_fixture: tuple[Path, Path], tmp_path: Path
 ) -> None:
@@ -234,6 +272,63 @@ def test_recipe_inputs_are_deterministic_and_restored_by_hash(
     assert source.read_bytes() == original
     with pytest.raises(FileExistsError):
         bundle_recipe_inputs(recipe, first, root=root)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("link_kind", ["file", "parent"])
+def test_recipe_restoration_rejects_symlink_targets_before_copy(
+    recipe_fixture: tuple[Path, Path], tmp_path: Path, link_kind: str
+) -> None:
+    root, recipe = recipe_fixture
+    archive = tmp_path / "inputs.tar.gz"
+    bundle_recipe_inputs(recipe, archive, root=root)
+    source = root / "data/raw/aph/individuals.json"
+    victim = root / "unrelated-research.json"
+    if link_kind == "file":
+        source.unlink()
+        victim.write_bytes(b"preserve-this")
+        link = source
+        destination = victim
+    else:
+        destination = root / "unrelated-research"
+        source.parent.rename(destination)
+        victim = destination / source.name
+        victim.write_bytes(b"preserve-this")
+        link = source.parent
+    try:
+        link.symlink_to(destination, target_is_directory=link_kind == "parent")
+    except OSError as err:
+        pytest.skip(f"Symlink creation is unavailable: {err}")
+    with pytest.raises(ValueError, match="symlink"):
+        restore_recipe_inputs(recipe, archive=archive, root=root)
+    assert victim.read_bytes() == b"preserve-this"
+
+
+@pytest.mark.unit
+def test_recipe_restoration_respects_offline_mode(
+    recipe_fixture: tuple[Path, Path],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root, recipe = recipe_fixture
+    archive = tmp_path / "inputs.tar.gz"
+    bundle_recipe_inputs(recipe, archive, root=root)
+    source = root / "data/raw/aph/individuals.json"
+    original = source.read_bytes()
+    source.write_bytes(b"changed")
+    monkeypatch.setenv("APEMAP_OFFLINE", "1")
+
+    def no_http() -> None:
+        raise AssertionError("Offline restoration must not create an HTTP session")
+
+    monkeypatch.setattr("apemap.release.recipe.create_retry_session", no_http)
+    with pytest.raises(ValueError, match="online setup or --archive"):
+        restore_recipe_inputs(
+            recipe, archive_url="https://example.org/inputs.tar.gz", root=root
+        )
+    assert source.read_bytes() == b"changed"
+    restore_recipe_inputs(recipe, archive=archive, root=root)
+    assert source.read_bytes() == original
 
 
 @pytest.mark.unit

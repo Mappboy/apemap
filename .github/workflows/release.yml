@@ -24,8 +24,13 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: dataset-release-publication
+  cancel-in-progress: false
+
 env:
   APEMAP_OFFLINE: "1"
+  REQUESTED_VERSION: ${{ github.event.inputs.version }}
   RECIPE_PATH: ${{ github.event.inputs.recipe || vars.APEMAP_RELEASE_RECIPE || 'data/release-recipes/historical.json' }}
   INPUT_ARCHIVE_URL: ${{ github.event.inputs.inputs_archive_url || vars.APEMAP_HISTORICAL_INPUTS_URL }}
 
@@ -39,45 +44,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify release trigger is on main branch
-        id: branch-check
-        run: |
-          # Release publication is strictly restricted to commits on the main/master branch
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ "${{ github.ref_name }}" != "main" ] && [ "${{ github.ref_name }}" != "master" ]; then
-              echo "Error: Manual release dispatch must be executed against main branch. Current branch: ${{ github.ref_name }}"
-              exit 1
-            fi
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            git fetch origin main:refs/remotes/origin/main 2>/dev/null || git fetch origin master:refs/remotes/origin/master 2>/dev/null
-            MAIN_REF=$(git rev-parse --verify origin/main 2>/dev/null || git rev-parse --verify origin/master 2>/dev/null)
-            if [ -n "$MAIN_REF" ]; then
-              if ! git merge-base --is-ancestor ${{ github.sha }} "$MAIN_REF"; then
-                echo "Error: Tag was pushed on a commit (${{ github.sha }}) not contained in main branch."
-                exit 1
-              fi
-            else
-              echo "Error: Neither origin/main nor origin/master remote branch found."
-              exit 1
-            fi
-          fi
-
-      - name: Determine release version and tag name
-        id: version
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          REQUESTED_VERSION: ${{ github.event.inputs.version }}
-          REF_NAME: ${{ github.ref_name }}
-        run: |
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            VER="$REQUESTED_VERSION"
-          else
-            RAW_TAG="$REF_NAME"
-            VER=$(echo "$RAW_TAG" | sed -E 's/^data-v?//')
-          fi
-          echo "RELEASE_VERSION=$VER" >> $GITHUB_ENV
-          echo "TAG_NAME=data-v$VER" >> $GITHUB_ENV
-
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -88,6 +54,11 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-groups --extra review-ui --frozen
+
+      - name: Validate source revision and unused dataset version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run python -m apemap.release.publication prepare
 
       - name: Restore pinned raw inputs
         env:
@@ -130,17 +101,4 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="$TAG_NAME"
-          # Check if tag already exists in remote
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG exists"
-          else
-            git tag "$TAG"
-            git push origin "$TAG" || true
-          fi
-
-          gh release create "$TAG" dist/* \
-            --title "APEMAP Dataset Release v${RELEASE_VERSION}" \
-            --notes "Immutable, cryptographically verified APEMAP dataset release v${RELEASE_VERSION}. Contains web layers, analytical metrics, canonical data tables, manifest.json, and SHA256 checksums." \
-            --draft=false
+        run: uv run python -m apemap.release.publication publish --artifact-dir dist

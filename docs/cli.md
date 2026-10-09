@@ -548,13 +548,21 @@ and output directory:
 uv run apemap release recipe build --recipe data/release-recipes/historical.json --version 0.4.0-rc.1 --db-path data/aped-new-candidate.duckdb --output-dir data/processed/releases/new-candidate
 ```
 
+Dataset versions follow SemVer 2.0, including optional prerelease and build
+metadata (for example `0.4.0-rc.1+review.2`). Numeric prerelease identifiers cannot
+have leading zeroes, and identifiers cannot be empty.
+
 - `recipe pin --template <recipe> --output <fresh-recipe>` freezes current source
   manifest and review hashes and package version, preserving analytical choices.
+  Validation finishes before the new recipe is written; failed validation leaves
+  no output file.
 - `recipe inputs-bundle --recipe <recipe> --archive <fresh.tar.gz>` packages verified
   raw inputs deterministically without publishing them.
 - `recipe inputs-restore --recipe <recipe> --archive <local-bundle>` provisions offline;
   use `--archive-url <https-url>` instead for online setup. Every archived file must
-  match the pinned manifest inventory, size and SHA-256.
+  match the pinned manifest inventory, size and SHA-256. Remote restoration fails
+  when `APEMAP_OFFLINE=1`; a local archive remains available. Recipe paths and
+  restoration targets must stay within the checkout and contain no symlinks.
 - `recipe compare <first-release> <second-release>` strictly verifies both bundles
   and requires identical effective metadata and artifact hashes at the same source
   commit and dataset version.
@@ -568,4 +576,6 @@ See [Decisions to a new release](decisions-to-release.md) for review and publica
 Ingestion commands `ingest aph`, `ingest acara`, `ingest wikimedia` and `run-all`
 accept `--decision-log <path>` for explicit review authority. Omitting it retains
 production's working-ledger default; fixture tests pass a private empty or pinned
-ledger explicitly.
+ledger explicitly. An explicit path must be an existing, readable file; missing
+paths and directories fail before ingestion. Use an existing empty file when an
+empty review authority is intended.

@@ -381,6 +381,12 @@ runs set `APEMAP_HISTORICAL_INPUTS_URL` and `APEMAP_RELEASE_RECIPE` repository
 variables to the approved asset URL and recipe path. The workflow rejects missing
 or mismatched sources and checks deterministic replay before publication.
 
+Manual dispatch requires an unused version with no `data-v<version>` or
+`data-<version>` tag. A tag-triggered run must build the exact commit referenced
+by its incoming tag and must have no alternate tag for that version. Existing
+draft or public releases stop either trigger. The workflow checks these conditions
+before building and again before publication, and fails on tag push errors.
+
 Once the correct recipe is approved, choose one trigger. For manual dispatch:
 
 ```powershell
@@ -404,6 +410,9 @@ candidate; publication success alone does not establish data equivalence.
 
 If publication fails, inspect the workflow logs and fix the specific input,
 validation or permission failure. Keep the previous public version available.
+If a failed manual run already pushed its tag, retry the matching tag-triggered
+run at the same approved commit if one exists, or choose a fresh version. Do not
+move the tag or reuse an existing release to publish changed contents.
 
 ## 11. Update the website and check the published result
 

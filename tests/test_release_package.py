@@ -108,3 +108,15 @@ def test_package_does_not_replace_another_versions_inventory(tmp_path: Path) -> 
     with pytest.raises(FileExistsError):
         package_release(root, out)
     assert {path.name: path.read_bytes() for path in out.iterdir()} == before
+
+
+def test_package_preserves_semver_build_metadata(tmp_path: Path) -> None:
+    root, out = tmp_path / "source", tmp_path / "out"
+    minimal_verified_release(root)
+    manifest_path = root / "manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["data_release_version"] = "0.5.0-rc.1+build.01"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    packaged = package_release(root, out)
+    assert packaged["archive"] == "apemap-release-v0.5.0-rc.1+build.01.tar.gz"
+    assert (out / packaged["archive"]).is_file()

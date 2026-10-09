@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from contextlib import closing
 import gzip
 import hashlib
 from importlib.metadata import version as package_version
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -25,6 +27,7 @@ from apemap.ingest.http import create_retry_session
 from apemap.inputs import compute_sha256, extract_inputs_archive, verify_inputs_manifest
 from apemap.review.integration import read_review_events
 from apemap.release.verify import verify_release
+from apemap.release.version import validate_dataset_version
 
 
 def compare_recipe_releases(first: Path, second: Path) -> None:
@@ -48,8 +51,18 @@ def compare_recipe_releases(first: Path, second: Path) -> None:
 
 def _path(root: Path, name: str) -> Path:
     """Resolve recipe paths against the checkout, rejecting traversal and links."""
-    path = (root / name).resolve()
-    if not name or Path(name).is_absolute() or not path.is_relative_to(root.resolve()):
+    checkout = root.resolve()
+    candidate = checkout / name
+    if not name or Path(name).is_absolute():
+        raise ValueError(f"Recipe path must stay within the checkout: {name}")
+    if any(
+        parent.is_symlink()
+        for parent in (candidate, *candidate.parents)
+        if parent.is_relative_to(checkout)
+    ):
+        raise ValueError(f"Recipe path contains a symlink: {name}")
+    path = candidate.resolve()
+    if not path.is_relative_to(checkout):
         raise ValueError(f"Recipe path must stay within the checkout: {name}")
     return path
 
@@ -138,7 +151,9 @@ def load_recipe(recipe_path: Path, *, root: Path = PROJECT_ROOT) -> dict[str, An
         _check_hash(_path(root, recipe[key]), recipe[f"{key}_sha256"])
     read_review_events(_path(root, recipe["decision_log"]))
     finance_path = _path(root, recipe["legacy_finance_input"])
-    with sqlite3.connect(finance_path.as_uri() + "?mode=ro", uri=True) as finance:
+    with closing(
+        sqlite3.connect(finance_path.as_uri() + "?mode=ro", uri=True)
+    ) as finance:
         finance_years = finance.execute(
             "SELECT DISTINCT year FROM acara_education_finances"
         ).fetchall()
@@ -189,10 +204,14 @@ def pin_recipe(template: Path, output: Path, *, root: Path = PROJECT_ROOT) -> No
     recipe["package_version"] = package_version("apemap")
     for key in ("input_manifest", "decision_log", "legacy_finance_input"):
         recipe[f"{key}_sha256"] = compute_sha256(_path(root, recipe[key]))
+    pinned_bytes = (json.dumps(recipe, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    with TemporaryDirectory(prefix="apemap-pin-recipe-") as temp:
+        candidate = Path(temp) / "recipe.json"
+        candidate.write_bytes(pinned_bytes)
+        load_recipe(candidate, root=root)
     output.parent.mkdir(parents=True, exist_ok=True)
-    with output.open("x", encoding="utf-8", newline="\n") as target:
-        target.write(json.dumps(recipe, indent=2, sort_keys=True) + "\n")
-    load_recipe(output, root=root)
+    with output.open("xb") as target:
+        target.write(pinned_bytes)
 
 
 def _raw_files(recipe: dict[str, Any], root: Path) -> dict[str, Any]:
@@ -245,6 +264,8 @@ def restore_recipe_inputs(
     with TemporaryDirectory(prefix="apemap-recipe-inputs-") as temp:
         staging = Path(temp).resolve()
         if archive_url is not None:
+            if os.environ.get("APEMAP_OFFLINE") == "1":
+                raise ValueError("Input download requires online setup or --archive")
             if urlparse(archive_url).scheme != "https":
                 raise ValueError("Recipe input archive URL must use HTTPS")
             archive = staging / "inputs.tar.gz"
@@ -290,12 +311,7 @@ def build_recipe_release(
     source_commit: str | None = None,
 ) -> dict[str, Any]:
     """Execute the same strictly verified, offline historical build locally and in CI."""
-    if not re.fullmatch(
-        r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?", version
-    ):
-        raise ValueError(
-            "Dataset version must be Semantic Versioning, optionally a prerelease"
-        )
+    validate_dataset_version(version)
     recipe = load_recipe(recipe_path, root=root)
     manifest_path = _path(root, recipe["input_manifest"])
     manifest = json.loads(manifest_path.read_bytes())

@@ -380,6 +380,10 @@ def ingest_aph(
         Path | None,
         typer.Option(
             "--decision-log",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
             help="Explicit review ledger; defaults to the working review log.",
         ),
     ] = None,
@@ -516,6 +520,10 @@ def ingest_acara(
         Path | None,
         typer.Option(
             "--decision-log",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
             help="Explicit review ledger; defaults to the working review log.",
         ),
     ] = None,
@@ -702,6 +710,10 @@ def ingest_wikimedia(
         Path | None,
         typer.Option(
             "--decision-log",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
             help="Explicit review ledger; defaults to the working review log.",
         ),
     ] = None,
@@ -1554,6 +1566,10 @@ def run_all_cmd(
         Path | None,
         typer.Option(
             "--decision-log",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
             help="Explicit review ledger; defaults to the working review log.",
         ),
     ] = None,

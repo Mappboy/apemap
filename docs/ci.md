@@ -41,6 +41,13 @@ build, compares metadata and artifact hashes, strictly verifies privacy/integrit
 and uses the deterministic Python packager. See
 [the release path](decisions-to-release.md) for pinning/provisioning and trigger inputs.
 
+Publication checks version availability and the exact remote tag commit before
+building and immediately before upload. Existing draft or public releases and
+alternate tags for the same version fail the run. Manual dispatch creates a fresh
+tag only after verification; a tag-triggered run keeps its incoming tag. Failed
+tag pushes and GitHub lookup errors stop publication. Runs for the same version
+are serialized without cancelling an active release.
+
 The CI workflow is configured in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) and comprises four specialized jobs:
 
 ```text

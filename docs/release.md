@@ -176,10 +176,15 @@ their original metadata and bytes. See the
 [publication checklist](review-update-publish.md#10-publish-the-approved-dataset).
 
 ### Guardrails:
+
 - **Main Branch Only**: Release jobs verify that the target commit is contained within `main`. If a release tag is pushed on a feature branch, the workflow immediately fails.
+- **Version and Tag Identity**: Before building and again before publication, the workflow checks remote tags and releases. Manual dispatch requires an unused version with neither a `data-v<version>` nor `data-<version>` tag. Tag runs preserve the incoming tag and require it to resolve to the exact build commit. An alternate tag or an existing draft/public release for that version stops publication.
+- **Legacy Dataset Releases**: A release under `v<version>` also reserves the dataset version when it contains an APEMAP dataset archive, including the published `v0.3.3` release. Bare package tags and releases containing only Python packages remain independent of dataset versions.
+- **Publication Failure Handling**: Tag pushes must succeed, and GitHub Release creation requires the verified remote tag. Permission, network and tag-identity errors stop the run; GitHub cannot silently select another commit.
+- **Prerelease Status**: SemVer prereleases such as `0.4.0-rc.1` are explicitly marked as prereleases and never promoted to the latest release. Build metadata alone does not make a version a prerelease.
 - **Automated Verification**: Before publication, the workflow builds the release bundle in an isolated offline environment and runs `apemap release verify --strict-assertions`.
 - **Packaging**: The bundle is archived into `apemap-release-v<version>.tar.gz` alongside `manifest.json` and `SHA256SUMS`.
-- **GitHub Release**: The artifacts are uploaded to a draft-free GitHub Release tagged as `data-v<version>`.
+- **GitHub Release**: The artifacts are uploaded to a public GitHub Release using the verified incoming tag, or `data-v<version>` for manual dispatch.
 
 ### Original v0.3.0 publication checkpoint
 
