@@ -40,7 +40,11 @@ from apemap.review.integration import attach_source_manifest
 
 
 def prepare_historical_inputs(
-    input_dir: Path, manifest_path: Path, *, download: bool = False
+    input_dir: Path,
+    manifest_path: Path,
+    *,
+    download: bool = False,
+    project_root: Path = PROJECT_ROOT,
 ) -> None:
     """Acquire into a separate cache, leaving checked-in external inputs intact."""
     input_dir.mkdir(parents=True, exist_ok=True)
@@ -111,7 +115,7 @@ def prepare_historical_inputs(
             encoding="utf-8",
             newline="\n",
         )
-    preflight_offline_inputs(manifest_path=manifest_path)
+    preflight_offline_inputs(manifest_path=manifest_path, base_dir=project_root)
     for name in ("school-profile-2008-2025.csv", "school-location-2025.csv"):
         if not (input_dir / name).exists():
             raise FileNotFoundError(
@@ -127,9 +131,18 @@ def build_historical_release(
     version: str,
     *,
     download: bool = False,
+    parliaments: list[int] | None = None,
+    decision_log_path: Path | None = None,
+    finance_year: int = 2024,
+    legacy_finance_path: Path | None = None,
+    release_recipe: dict[str, Any] | None = None,
+    source_commit: str | None = None,
+    project_root: Path = PROJECT_ROOT,
 ) -> dict[str, Any]:
     """Populate all terms and verify a public release without modifying old artifacts."""
-    prepare_historical_inputs(input_dir, manifest_path, download=download)
+    prepare_historical_inputs(
+        input_dir, manifest_path, download=download, project_root=project_root
+    )
     manifest_bytes = manifest_path.read_bytes()
     input_manifest = json.loads(manifest_bytes)
     source_time = datetime.fromisoformat(input_manifest["created_at"])
@@ -143,7 +156,11 @@ def build_historical_release(
         review_dir = output_dir / "review"
         init_schema(conn)
         run_aec_ingestion(
-            conn=conn, election_year=2025, refresh=False, export_parquet_files=False
+            conn=conn,
+            election_year=2025,
+            refresh=False,
+            export_parquet_files=False,
+            raw_dir=project_root / "data/raw/aec/2025",
         )
         run_abs_ingestion(conn=conn, export_parquet_files=False)
         run_acara_ingestion(
@@ -152,22 +169,42 @@ def build_historical_release(
             external_dir=input_dir,
             output_dir=review_dir,
             export_parquet_files=False,
+            decision_log_path=decision_log_path,
+            gpkg_path=legacy_finance_path,
         )
         run_aph_ingestion(
             conn=conn,
             external_dir=input_dir,
             output_dir=review_dir,
             retrieved_at=source_time,
+            parliaments=parliaments,
+            decision_log_path=decision_log_path,
+            cache_dir=project_root / "data/raw/aph",
         )
         attach_source_manifest(conn, manifest_path, manifest_bytes=manifest_bytes)
         # Historical profile-only institutions must exist before finance/funding resolution.
-        ingest_all_funding(conn, retrieved_at=source_time)
-        export_parliament_coverage(conn, review_dir, finance_year=2024)
+        reference_dir = project_root / "data/reference"
+        ingest_all_funding(
+            conn,
+            retrieved_at=source_time,
+            benchmarks_path=reference_dir / "acara_school_finance_benchmarks.csv",
+            nsw_path=reference_dir / "nsw_ram_allocations.csv",
+            tas_path=reference_dir / "tasmania_srp_allocations.csv",
+            nt_path=reference_dir / "nt_school_funding.csv",
+            qld_path=reference_dir / "qld_non_state_grants.csv",
+            manual_path=reference_dir / "manual_school_funding.csv",
+        )
+        export_parliament_coverage(
+            conn, review_dir, parliaments, finance_year=finance_year
+        )
         result = build_release(
             conn=conn,
             output_dir=output_dir,
             version=version,
-            finance_reporting_year=2024,
+            finance_reporting_year=finance_year,
+            parliaments=parliaments,
+            source_commit=source_commit,
+            release_recipe=release_recipe,
             strict=True,
             generated_at=input_manifest["created_at"],
             source_snapshot_dates={

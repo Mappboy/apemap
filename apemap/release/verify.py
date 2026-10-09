@@ -83,6 +83,43 @@ def verify_release(
     manifest_files = manifest_data.get("files", {})
     version = manifest_data.get("data_release_version")
 
+    recipe = manifest_data.get("release_recipe")
+    if recipe is not None:
+        checks_run += 1
+        try:
+            web_metadata = json.loads(
+                (root / "web/metadata.json").read_text(encoding="utf-8")
+            )
+            if not isinstance(web_metadata, dict):
+                raise ValueError("Web metadata must be a JSON object")
+            web_recipe = web_metadata.get("release_recipe")
+            if not isinstance(recipe, dict) or web_recipe != recipe:
+                errors.append("Web and release recipe metadata disagree")
+            else:
+                for field in (
+                    "data_release_version",
+                    "source_commit",
+                    "generated_at",
+                    "parliaments",
+                    "web_schema_version",
+                ):
+                    if recipe.get(field) != manifest_data.get(field):
+                        errors.append(f"Release recipe {field} disagrees with manifest")
+                snapshot = manifest_data.get("review_snapshot", {})
+                if not isinstance(snapshot, dict):
+                    errors.append("Release recipe review snapshot must be an object")
+                else:
+                    if recipe.get("decision_log_sha256") != snapshot.get(
+                        "decision_log_sha256"
+                    ):
+                        errors.append("Release recipe review revision was not consumed")
+                    if recipe.get("input_manifest_sha256") != snapshot.get(
+                        "source_manifest_sha256"
+                    ):
+                        errors.append("Release recipe source manifest was not consumed")
+        except (OSError, ValueError) as exc:
+            errors.append(f"Cannot read release recipe metadata: {exc}")
+
     # Historical releases declare centrally configured terms and one public layer each.
     if "supported_parliaments" in manifest_data:
         checks_run += 1
@@ -100,6 +137,8 @@ def verify_release(
         metadata_path = root / "web" / "metadata.json"
         try:
             web_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            if not isinstance(web_metadata, dict):
+                raise ValueError("Web metadata must be a JSON object")
             if web_metadata.get("parliament_metadata") != metadata:
                 errors.append("Web and release parliament metadata disagree")
             if web_metadata.get("cohort") != "opening_day" or not web_metadata.get(
@@ -271,6 +310,8 @@ def verify_release(
     if metadata_path.exists():
         try:
             web_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            if not isinstance(web_metadata, dict):
+                raise ValueError("Web metadata must be a JSON object")
             if web_metadata.get("web_schema_version") == WEB_SCHEMA_VERSION:
                 from apemap.explorer_contract import audit_explorer_contract
 

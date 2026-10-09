@@ -239,6 +239,7 @@ def export_parliament_coverage(
             sort_keys=True,
         )
         + "\n",
+        newline="\n",
         encoding="utf-8",
     )
     with csv_path.open("w", newline="", encoding="utf-8") as handle:

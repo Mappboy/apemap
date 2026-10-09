@@ -11,18 +11,28 @@ on:
         description: 'Semantic version for dataset release (e.g. 1.0.0)'
         required: true
         type: string
-        default: '1.0.0'
-      parliaments:
-        description: 'Comma-separated parliaments to include'
-        required: false
+      recipe:
+        description: 'Reviewed recipe path committed on the release revision'
+        required: true
         type: string
-        default: ''
+        default: 'data/release-recipes/historical.json'
+      inputs_archive_url:
+        description: 'HTTPS bundle of the exact historical raw inputs (verified against recipe pins)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: dataset-release-publication
+  cancel-in-progress: false
+
 env:
   APEMAP_OFFLINE: "1"
+  REQUESTED_VERSION: ${{ github.event.inputs.version }}
+  RECIPE_PATH: ${{ github.event.inputs.recipe || vars.APEMAP_RELEASE_RECIPE || 'data/release-recipes/historical.json' }}
+  INPUT_ARCHIVE_URL: ${{ github.event.inputs.inputs_archive_url || vars.APEMAP_HISTORICAL_INPUTS_URL }}
 
 jobs:
   release:
@@ -33,40 +43,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Verify release trigger is on main branch
-        id: branch-check
-        run: |
-          # Release publication is strictly restricted to commits on the main/master branch
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            if [ "${{ github.ref_name }}" != "main" ] && [ "${{ github.ref_name }}" != "master" ]; then
-              echo "Error: Manual release dispatch must be executed against main branch. Current branch: ${{ github.ref_name }}"
-              exit 1
-            fi
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            git fetch origin main:refs/remotes/origin/main 2>/dev/null || git fetch origin master:refs/remotes/origin/master 2>/dev/null
-            MAIN_REF=$(git rev-parse --verify origin/main 2>/dev/null || git rev-parse --verify origin/master 2>/dev/null)
-            if [ -n "$MAIN_REF" ]; then
-              if ! git merge-base --is-ancestor ${{ github.sha }} "$MAIN_REF"; then
-                echo "Error: Tag was pushed on a commit (${{ github.sha }}) not contained in main branch."
-                exit 1
-              fi
-            else
-              echo "Warning: Neither origin/main nor origin/master remote branch found; verifying against local HEAD."
-            fi
-          fi
-
-      - name: Determine release version and tag name
-        id: version
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VER="${{ github.event.inputs.version }}"
-          else
-            RAW_TAG="${{ github.ref_name }}"
-            VER=$(echo "$RAW_TAG" | sed -E 's/^data-v?//')
-          fi
-          echo "RELEASE_VERSION=$VER" >> $GITHUB_ENV
-          echo "TAG_NAME=data-v$VER" >> $GITHUB_ENV
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
@@ -79,72 +55,50 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --extra review-ui --frozen
 
+      - name: Validate source revision and unused dataset version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run python -m apemap.release.publication prepare
+
       - name: Restore pinned raw inputs
         env:
           APEMAP_OFFLINE: "0"
-        run: uv run apemap inputs restore
+        run: |
+          if [ -z "$INPUT_ARCHIVE_URL" ]; then
+            echo "Set inputs_archive_url or APEMAP_HISTORICAL_INPUTS_URL to the approved historical input bundle."
+            exit 1
+          fi
+          uv run apemap release recipe inputs-restore --recipe "$RECIPE_PATH" --archive-url "$INPUT_ARCHIVE_URL"
 
       - name: Preinstall DuckDB spatial extension
         run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
 
-      - name: Validate authoritative review decisions
-        run: uv run apemap review check
-
-      - name: Verify inputs manifest
-        run: uv run apemap inputs verify
-
       - name: Run pipeline and build release bundle
-        env:
-          PARLIAMENT_SELECTION: ${{ github.event.inputs.parliaments }}
         run: |
-          PARLS="$PARLIAMENT_SELECTION"
-          if [ -z "$PARLS" ]; then
-            PARLS="$(uv run python -c 'from apemap.constants import supported_parliaments; print(",".join(map(str, supported_parliaments())))')"
-          fi
-          mkdir -p /tmp/build_db /tmp/build_out /tmp/release_bundle
-          uv run apemap run-all \
-            --offline \
-            --inputs-manifest data/inputs-manifest.json \
-            --db-path /tmp/build_db/aped.duckdb \
-            --output-dir /tmp/build_out \
-            --parliament "$PARLS" \
-            --strict
-          uv run apemap release build \
+          mkdir -p /tmp/build_db
+          uv run apemap release recipe build \
+            --recipe "$RECIPE_PATH" \
             --db-path /tmp/build_db/aped.duckdb \
             --output-dir /tmp/release_bundle \
-            --version "$RELEASE_VERSION" \
-            --parliament "$PARLS" \
-            --strict
+            --version "$RELEASE_VERSION"
+
+      - name: Check deterministic recipe replay
+        run: |
+          uv run apemap release recipe build \
+            --recipe "$RECIPE_PATH" \
+            --db-path /tmp/build_db/replay.duckdb \
+            --output-dir /tmp/release_replay \
+            --version "$RELEASE_VERSION"
+          uv run apemap release recipe compare /tmp/release_bundle /tmp/release_replay
 
       - name: Verify release bundle integrity and privacy
         run: |
           uv run apemap release verify /tmp/release_bundle --strict-assertions
 
       - name: Package release artifacts
-        run: |
-          mkdir -p dist
-          TAR_NAME="apemap-release-v${RELEASE_VERSION}.tar.gz"
-          tar -czvf "dist/${TAR_NAME}" -C /tmp/release_bundle .
-          cp /tmp/release_bundle/manifest.json dist/
-          cp /tmp/release_bundle/SHA256SUMS dist/
-          cd dist
-          sha256sum "$TAR_NAME" >> SHA256SUMS.dist
-          cd ..
+        run: uv run python -m apemap.release.package /tmp/release_bundle --output-dir dist
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG="$TAG_NAME"
-          # Check if tag already exists in remote
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG exists"
-          else
-            git tag "$TAG"
-            git push origin "$TAG" || true
-          fi
-
-          gh release create "$TAG" dist/* \
-            --title "APEMAP Dataset Release v${RELEASE_VERSION}" \
-            --notes "Immutable, cryptographically verified APEMAP dataset release v${RELEASE_VERSION}. Contains web layers, analytical metrics, canonical data tables, manifest.json, and SHA256 checksums." \
-            --draft=false
+        run: uv run python -m apemap.release.publication publish --artifact-dir dist

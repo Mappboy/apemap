@@ -116,7 +116,13 @@ For a new release after decisions are saved, follow
 [Decisions to a new release](decisions-to-release.md). Reproducing an older
 release requires its recorded source commit and consumed ledger, not the latest
 working log. The [0.3.3 record](releases/0.3.3/README.md) pins the new historical
-draft. Do not substitute `run-all`'s standard sources for its longitudinal recipe.
+draft. Historical releases now use the committed recipe through `apemap release
+recipe build` in both local/manual workflows and Actions. The recipe records source
+years, parliament selection, finance mode/year, package/contracts and exact source
+and review hashes. Use `release recipe compare` on two strictly verified builds at
+the same source commit and dataset version to require matching metadata and all
+payload hashes. See [Decisions to a new release](decisions-to-release.md) for recipe
+pinning and historical input-bundle provisioning.
 
 ## 4. Supported Parliaments
 

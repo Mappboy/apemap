@@ -134,10 +134,13 @@ def test_late_entry_gap_and_party_change() -> None:
     assert parsed.services[1].party == "Independent"
 
 
-def test_longitudinal_only_school_and_ambiguous_name(tmp_path: Path) -> None:
+def test_longitudinal_only_school_and_ambiguous_name(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     profile = tmp_path / "school-profile-2008-2025.csv"
     profile.write_text(
         "ACARA SML ID,School Name,School Sector,School Type,State,Calendar Year,Total Enrolments\n1,Historic High School,Government,Secondary,VIC,2008,300\n1,Renamed High School,Government,Secondary,VIC,2009,350\n2,Ambiguous High School,Government,Secondary,VIC,2008,100\n3,Ambiguous High School,Government,Secondary,NSW,2008,200\n",
+        newline="\n",
         encoding="utf-8",
     )
     matcher = SchoolMatcher(external_dir=tmp_path, reference_dir=tmp_path)
@@ -147,6 +150,7 @@ def test_longitudinal_only_school_and_ambiguous_name(tmp_path: Path) -> None:
     assert matcher.match("Ambiguous High School").confidence == "unconfirmed"
     with get_connection() as conn:
         run_acara_ingestion(
+            decision_log_path=empty_review_log,
             download_latest=False,
             conn=conn,
             external_dir=tmp_path,
@@ -155,6 +159,7 @@ def test_longitudinal_only_school_and_ambiguous_name(tmp_path: Path) -> None:
         )
         assert conn.execute("SELECT count(*) FROM school_snapshots").fetchone() == (4,)
         result = run_aph_ingestion(
+            decision_log_path=empty_review_log,
             raw_individuals=[historical_member()],
             conn=conn,
             external_dir=tmp_path,
@@ -171,10 +176,13 @@ def test_longitudinal_only_school_and_ambiguous_name(tmp_path: Path) -> None:
         ).fetchall() == [("attended_unspecified",)]
 
 
-def test_all_layers_and_latest_profile_grain(tmp_path: Path) -> None:
+def test_all_layers_and_latest_profile_grain(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     with get_connection() as conn:
         init_schema(conn)
         result = run_aph_ingestion(
+            decision_log_path=empty_review_log,
             raw_individuals=[historical_member()],
             conn=conn,
             external_dir=tmp_path,
@@ -213,18 +221,24 @@ def test_all_layers_and_latest_profile_grain(tmp_path: Path) -> None:
             )
 
 
-def test_missing_education_export_discards_local_edits(tmp_path: Path) -> None:
+def test_missing_education_export_discards_local_edits(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     raw = historical_member()
     raw["SecondarySchool"] = ""
     run_aph_ingestion(
+        decision_log_path=empty_review_log,
         raw_individuals=[raw],
         db_path=tmp_path / "db.duckdb",
         external_dir=tmp_path,
         output_dir=tmp_path,
     )
     path = tmp_path / "historical_education_review.csv"
-    path.write_text("review_status,review_notes\naccepted,Local CSV edit\n")
+    path.write_text(
+        "review_status,review_notes\naccepted,Local CSV edit\n", newline="\n"
+    )
     run_aph_ingestion(
+        decision_log_path=empty_review_log,
         raw_individuals=[raw],
         db_path=tmp_path / "db.duckdb",
         external_dir=tmp_path,
@@ -235,11 +249,14 @@ def test_missing_education_export_discards_local_edits(tmp_path: Path) -> None:
     assert "No APH secondary-school evidence" in path.read_text()
 
 
-def test_corrected_source_removes_stale_generated_rows(tmp_path: Path) -> None:
+def test_corrected_source_removes_stale_generated_rows(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     raw = historical_member()
     with get_connection() as conn:
         run_aph_ingestion(
             [42],
+            decision_log_path=empty_review_log,
             raw_individuals=[raw],
             conn=conn,
             external_dir=tmp_path,
@@ -248,6 +265,7 @@ def test_corrected_source_removes_stale_generated_rows(tmp_path: Path) -> None:
         raw["SecondarySchool"] = ""
         run_aph_ingestion(
             [42],
+            decision_log_path=empty_review_log,
             raw_individuals=[raw],
             conn=conn,
             external_dir=tmp_path,
@@ -257,6 +275,7 @@ def test_corrected_source_removes_stale_generated_rows(tmp_path: Path) -> None:
         raw["RepresentedParliaments"] = [48]
         run_aph_ingestion(
             [42],
+            decision_log_path=empty_review_log,
             raw_individuals=[raw],
             conn=conn,
             external_dir=tmp_path,
@@ -267,16 +286,20 @@ def test_corrected_source_removes_stale_generated_rows(tmp_path: Path) -> None:
         )
 
 
-def test_sourced_service_override_replaces_whole_term(tmp_path: Path) -> None:
+def test_sourced_service_override_replaces_whole_term(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     path = tmp_path / "overrides.csv"
     path.write_text(
         "aph_id,parliament_number,service_start,service_end,chamber,party,party_abbrev,electorate,state_or_territory,source_url,retrieved_at,reviewer_notes\n"
-        "HIST,42,2008-02-12,2010-07-19,representatives,Reviewed Party,RP,Reviewed Seat,VIC,https://example.org/primary,2026-10-02T00:00:00Z,Reviewed primary evidence\n"
+        "HIST,42,2008-02-12,2010-07-19,representatives,Reviewed Party,RP,Reviewed Seat,VIC,https://example.org/primary,2026-10-02T00:00:00Z,Reviewed primary evidence\n",
+        newline="\n",
     )
     with get_connection() as conn:
         for _ in range(2):
             run_aph_ingestion(
                 [42],
+                decision_log_path=empty_review_log,
                 raw_individuals=[historical_member()],
                 conn=conn,
                 external_dir=tmp_path,
@@ -293,7 +316,8 @@ def test_sourced_service_override_replaces_whole_term(tmp_path: Path) -> None:
 
 def test_sourced_successor_alias(tmp_path: Path) -> None:
     (tmp_path / "school-location-2025.csv").write_text(
-        "ACARA SML ID,School Name,School Sector,State,Latitude,Longitude\n123,Successor College,Government,VIC,-37,145\n"
+        "ACARA SML ID,School Name,School Sector,State,Latitude,Longitude\n123,Successor College,Government,VIC,-37,145\n",
+        newline="\n",
     )
     aliases = tmp_path / "aliases.json"
     aliases.write_text(
@@ -310,7 +334,8 @@ def test_sourced_successor_alias(tmp_path: Path) -> None:
                     }
                 }
             }
-        )
+        ),
+        newline="\n",
     )
     matcher = SchoolMatcher(
         external_dir=tmp_path, aliases_file=aliases, require_alias_sources=True
@@ -325,7 +350,8 @@ def test_invalid_source_sea_is_withheld_with_audit(tmp_path: Path) -> None:
 
     (tmp_path / "school-profile-2008-2025.csv").write_text(
         "Calendar Year,ACARA SML ID,Total Enrolments,Bottom SEA Quarter,Lower Middle SEA Quarter,Upper Middle SEA Quarter,Top SEA Quarter\n"
-        "2010,123,100,14,7,12,10\n"
+        "2010,123,100,14,7,12,10\n",
+        newline="\n",
     )
     audit = tmp_path / "audit.csv"
     frame = load_snapshots_dataframe(tmp_path, review_path=audit)
@@ -335,18 +361,21 @@ def test_invalid_source_sea_is_withheld_with_audit(tmp_path: Path) -> None:
 
 
 def test_manual_biography_does_not_verify_unresolved_institution(
+    empty_review_log: Path,
     tmp_path: Path,
 ) -> None:
     path = tmp_path / "manual.csv"
     path.write_text(
         "aph_id,school_name,source_url,retrieved_at,confidence,reviewer_notes,attended_status\n"
-        "HIST,Unresolved Academy,https://example.org/biography,2026-10-02T00:00:00Z,verified,Explicit attendance,attended_unspecified\n"
+        "HIST,Unresolved Academy,https://example.org/biography,2026-10-02T00:00:00Z,verified,Explicit attendance,attended_unspecified\n",
+        newline="\n",
     )
     raw = historical_member()
     raw["SecondarySchool"] = ""
     with get_connection() as conn:
         run_aph_ingestion(
             [42],
+            decision_log_path=empty_review_log,
             raw_individuals=[raw],
             conn=conn,
             external_dir=tmp_path,
@@ -372,7 +401,8 @@ def test_pinned_funding_timestamp_and_historical_rows(tmp_path: Path) -> None:
     path = tmp_path / "ram.csv"
     path.write_text(
         "school_code,school_name,reporting_year,ram_allocation_total,acara_id\n"
-        "1,Example School,2024,1000,123\n"
+        "1,Example School,2024,1000,123\n",
+        newline="\n",
     )
     stamp = datetime(2026, 10, 2, tzinfo=timezone.utc)
     with get_connection() as conn:

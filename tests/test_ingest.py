@@ -104,13 +104,14 @@ def test_school_matcher_unmatched_and_international(tmp_path: Path) -> None:
 
 @pytest.mark.integration
 def test_pipeline_dual_snapshot_isolation(
-    sample_aph_records: list[dict[str, Any]], tmp_path: Path
+    empty_review_log: Path, sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
     """Verify dual snapshot isolation (baseline vs ongoing tracker) across 46, 47, 48."""
     out_dir = tmp_path / "processed"
     db_file = tmp_path / "test_aped.duckdb"
 
     result = run_aph_ingestion(
+        decision_log_path=empty_review_log,
         parliaments=[46, 47, 48],
         raw_individuals=sample_aph_records,
         db_path=db_file,
@@ -207,7 +208,7 @@ def test_pipeline_dual_snapshot_isolation(
 
 @pytest.mark.integration
 def test_pipeline_rerun_is_idempotent(
-    sample_aph_records: list[dict[str, Any]], tmp_path: Path
+    empty_review_log: Path, sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
     """Rerunning ingestion into one database keeps exported artifacts stable."""
     db_file = tmp_path / "idempotent.duckdb"
@@ -217,6 +218,7 @@ def test_pipeline_rerun_is_idempotent(
 
     for output_dir in (first_dir, second_dir):
         result = run_aph_ingestion(
+            decision_log_path=empty_review_log,
             parliaments=[48],
             raw_individuals=sample_aph_records,
             db_path=db_file,
@@ -255,6 +257,7 @@ def test_cli_ingest_aph(
     sample_aph_records: list[dict[str, Any]],
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    empty_review_log: Path,
 ) -> None:
     """Verify Typer CLI invocation of `apemap ingest aph`."""
     db_file = tmp_path / "cli_aped.duckdb"
@@ -272,6 +275,8 @@ def test_cli_ingest_aph(
         [
             "ingest",
             "aph",
+            "--decision-log",
+            str(empty_review_log),
             "--parliament",
             "46,47,48",
             "--db-path",
@@ -290,7 +295,9 @@ def test_cli_ingest_aph(
 
 
 @pytest.mark.integration
-def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) -> None:
+def test_ingest_rejects_non_overlapping_parliament_membership(
+    empty_review_log: Path, tmp_path: Path
+) -> None:
     """Verify that an individual whose RepresentedParliaments contains 47 but whose
     service ended before Parliament 47 does NOT produce a Parliament 47 service record."""
     raw_record = {
@@ -320,6 +327,7 @@ def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) ->
     db_file = tmp_path / "test_reject_p47.duckdb"
     out_dir = tmp_path / "processed_reject"
     result = run_aph_ingestion(
+        decision_log_path=empty_review_log,
         parliaments=[46, 47],
         raw_individuals=[raw_record],
         db_path=db_file,
@@ -343,7 +351,7 @@ def test_ingest_rejects_non_overlapping_parliament_membership(tmp_path: Path) ->
 
 @pytest.mark.integration
 def test_pipeline_caller_owned_connection(
-    sample_aph_records: list[dict[str, Any]], tmp_path: Path
+    empty_review_log: Path, sample_aph_records: list[dict[str, Any]], tmp_path: Path
 ) -> None:
     """Verify caller-provided DuckDB connection remains open and owned by caller."""
     db_file = tmp_path / "caller_owned.duckdb"
@@ -351,6 +359,7 @@ def test_pipeline_caller_owned_connection(
     out_dir = tmp_path / "processed_caller"
 
     result = run_aph_ingestion(
+        decision_log_path=empty_review_log,
         parliaments=[48],
         raw_individuals=sample_aph_records,
         conn=conn,

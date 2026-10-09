@@ -32,7 +32,7 @@ def package_release(release_dir: Path, output_dir: Path) -> dict[str, Any]:
         not isinstance(version, str)
         or not version
         or any(
-            c not in "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-"
+            c not in "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-+"
             for c in version
         )
     ):

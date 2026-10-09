@@ -5,12 +5,19 @@ It does not rebuild DuckDB, replace a release, or update cpoole.dev. The sequenc
 **save -> validate -> commit -> rebuild -> verify -> compare -> package -> review
 and publish -> update the website pin**.
 
-These PowerShell commands run from the repository root. They use the historical
-recipe for parliaments 42–48, ACARA 2008–2025 profiles and 2024 finance analysis.
+These PowerShell commands run from the repository root. Local and Actions builds
+use `apemap release recipe build` with the same committed recipe: parliaments
+42–48, ACARA 2008–2025 profiles, latest available profiles and 2024 finance analysis.
+The recipe pins the source manifest and reviewed ledger separately. Public funding inputs and the tracked 2021 finance GeoPackage are pinned
+explicitly; restricted finance fields remain excluded from public exports.
 See the [0.3.3 delivery record](releases/0.3.3/README.md) for the release generated
 on 6 October 2026. `0.3.4` below is an example next correction version: check local
 bundles and GitHub releases before choosing an unused version. Package and dataset
 versions are separate; a data-only correction needs no package version bump.
+Package 0.5.0 supplies this recipe command without changing the `2.0.0` web/analysis
+contracts introduced in 0.4.0. A successor-contract dataset needs a new dataset
+MINOR version (for example `0.4.0-rc.1` for an unpublished candidate), rather than
+the `0.3.4` correction example. Check that any selected version is unused.
 
 ## 1. Finish and validate the decisions
 
@@ -42,10 +49,15 @@ $Baseline = 'data/processed/releases/0.3.3'
 $CandidateDb = "data/aped-historical-v$Version.duckdb"
 $ReleaseDir = "data/processed/releases/$Version"
 $PackageDir = "data/processed/candidates/$Version"
+$Recipe = "data/release-recipes/reviewed-$Version.json"
 if (Test-Path $CandidateDb) { throw 'Choose a fresh database path.' }
 if (Test-Path $ReleaseDir) { throw 'Choose a fresh release directory.' }
 if (Test-Path $PackageDir) { throw 'Choose a fresh package directory.' }
 git rev-parse HEAD
+uv run apemap release recipe pin --template data/release-recipes/historical.json --output $Recipe
+if ($LASTEXITCODE -ne 0) { throw 'Recipe pinning failed.' }
+git add $Recipe
+git commit -m "Pin reviewed historical release recipe"
 ```
 
 If the decisions are already committed, skip the add/commit. Do not include
@@ -58,11 +70,11 @@ old releases and databases remain unchanged.
 uv run apemap inputs verify --manifest data/historical-inputs-manifest.json
 if ($LASTEXITCODE -ne 0) { throw 'Historical input verification failed.' }
 $env:APEMAP_OFFLINE = '1'
-uv run python -m apemap.historical --db-path $CandidateDb --output-dir $ReleaseDir --input-dir data/raw/historical/acara --manifest-path data/historical-inputs-manifest.json --version $Version
+uv run apemap release recipe build --recipe $Recipe --db-path $CandidateDb --output-dir $ReleaseDir --version $Version
 if ($LASTEXITCODE -ne 0) { throw 'Historical rebuild failed; do not package it.' }
 ```
 
-This loads ACARA before APH, replays the decisions, captures their exact bytes in
+This verifies every recipe pin, loads ACARA before APH, replays the decisions, captures their exact bytes in
 the database, loads funding references, builds all seven parliament layers, and
 runs strict database and release validation. It also regenerates review queues
 under the new release's `review/` directory. Never use `--download` merely to apply
@@ -87,6 +99,7 @@ if ($Manifest.review_snapshot.decision_log_sha256 -ne $LedgerHash) {
 }
 $Manifest.review_snapshot | Select-Object event_count,effective_decisions,decision_log_sha256
 $Manifest | Select-Object data_release_version,source_commit,parliaments,source_snapshot_dates
+$Manifest.release_recipe
 uv run apemap release diff $Baseline $ReleaseDir --json
 ```
 
@@ -127,10 +140,31 @@ Full databases and release payloads are ignored and belong in release assets.
 ## 6. Publish the reviewed dataset, then update the website
 
 An uploaded draft is an unpublished preview. Public publication requires the
-reviewed source revision on `main` and a workflow that reproduces the selected
-recipe. The current `release.yml` runs the standard inputs with 2021 finance; it
-does not run this historical recipe or upload your local archive. **Do not dispatch
-it for a historical release until that recipe is implemented and reviewed.**
+reviewed source revision and recipe on `main`. `release.yml` calls the same recipe
+builder, repeats the build, requires identical manifests/payload hashes, and uses
+the deterministic packager after strict integrity/privacy verification.
+
+Provision the historical input bundle separately, without refreshing upstream
+files. The published `inputs-20261002` bundle contains only standard APH/AEC inputs;
+it cannot provision historical ACARA. Build the exact raw-input bundle locally:
+
+```powershell
+uv run apemap release recipe inputs-bundle --recipe $Recipe --archive "data/processed/candidates/historical-inputs-$Version.tar.gz"
+```
+
+Have a maintainer upload that bundle to an approved immutable input asset location,
+then pass its HTTPS URL as `inputs_archive_url` to workflow dispatch. For tag runs,
+set repository variables `APEMAP_HISTORICAL_INPUTS_URL` and `APEMAP_RELEASE_RECIPE`
+to the approved asset URL and committed recipe path. No historical input asset is
+published by this code change. CI fails if the URL is missing or any archived file
+differs from the recipe's per-file SHA-256/size pins. Local offline provisioning
+uses `release recipe inputs-restore --recipe $Recipe --archive <local-bundle>`.
+
+To compare an equivalent local/CI replay at the same source commit and version:
+`uv run apemap release recipe compare <local-release> <ci-release>`. This verifies
+both bundles strictly and requires identical effective metadata and artifact
+hashes, including LF JSON bytes. Commit changes intentionally change provenance;
+review those differences rather than claiming byte equality across revisions.
 
 Follow [Publish the approved dataset](review-update-publish.md#10-publish-the-approved-dataset)
 once the source and recipe are approved. Download the resulting public archive,
