@@ -45,6 +45,16 @@ from apemap.review.model import (
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
 from apemap.review.resolution import relationship_conflicts
+from apemap.review.evidence import (
+    EvidenceRecord,
+    append_evidence,
+    evidence_revision,
+    evidence_applies,
+    legacy_evidence,
+    load_evidence,
+    validate_evidence_references,
+)
+from apemap.review.scoring import score_candidates
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
 REGISTER_FILES = (
@@ -192,12 +202,18 @@ class ReviewService:
         log_path: Path = DEFAULT_LOG_PATH,
         db_path: Path | None = None,
         external_dir: Path | None = None,
+        evidence_path: Path | None = None,
     ) -> None:
         self.log_path = Path(log_path).resolve()
         self.db_path = (
             Path(db_path) if db_path is not None else DEFAULT_REVIEW_DB
         ).resolve()
         self.external_dir = Path(external_dir or EXTERNAL_DIR).resolve()
+        self.evidence_path = (
+            Path(evidence_path)
+            if evidence_path is not None
+            else self.log_path.parent / "evidence.jsonl"
+        ).resolve()
         self._register_lock = RLock()
         self._events_lock = RLock()
         self._events_cache: dict[bool, tuple[str, list[ReviewEvent]]] = {}
@@ -217,6 +233,115 @@ class ReviewService:
                 self._events_cache[allow_conflicts] = cached
         # Event payloads and supersession lists remain private to each caller.
         return deepcopy(cached[1])
+
+    def evidence_records(
+        self, events: list[ReviewEvent] | None = None
+    ) -> list[EvidenceRecord]:
+        """Read retained evidence and stable provenance represented by old events."""
+        selected = self.events(allow_conflicts=True) if events is None else events
+        records: dict[str, EvidenceRecord] = {}
+        for record in [*legacy_evidence(selected), *load_evidence(self.evidence_path)]:
+            previous = records.get(record.evidence_id)
+            if previous is not None and previous != record:
+                raise ValueError("Evidence ID has conflicting immutable contents")
+            records[record.evidence_id] = record
+        return [records[key] for key in sorted(records)]
+
+    def retained_evidence(self, review_id: str) -> list[dict[str, Any]]:
+        """Expose evidence for a case without retaining or accepting suggestions."""
+        entity_for_review_id(review_id)
+        return [
+            record.to_dict()
+            for record in self.evidence_records()
+            if evidence_applies(record, review_id)
+        ]
+
+    def prepare_evidence(
+        self, review_id: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Preview a separately retained evidence record, never a review decision."""
+        if entity_for_review_id(review_id) not in {"school", "member_education"}:
+            raise ValueError(
+                "Retain institution evidence for a school or education assertion"
+            )
+        revision = evidence_revision(self.evidence_path)
+        source = self.source_revision()
+        proposed = dict(payload)
+        if proposed.get("review_id", review_id) != review_id:
+            raise ValueError("Evidence belongs to another review item")
+        proposed["review_id"] = review_id
+        proposed.setdefault("generated_by", "manual")
+        proposed.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
+        record = EvidenceRecord.from_dict(proposed)
+        reference = record.candidate_institution_ref
+        if reference and self.resolve_institution(reference) is None:
+            raise ValueError(
+                "Evidence candidate is unavailable in the pinned institution register"
+            )
+        candidate = self._evidence_candidate_revision(reference)
+        if (
+            evidence_revision(self.evidence_path) != revision
+            or self.source_revision() != source
+            or self._evidence_candidate_revision(reference) != candidate
+        ):
+            raise StaleReviewError("Evidence inputs changed while previewing; retry")
+        return {
+            "kind": "evidence",
+            "review_id": review_id,
+            "record": record.to_dict(),
+            "revision": revision,
+            "source_revision": source,
+            "candidate_revision": candidate,
+            "validation": [
+                "Immutable retained evidence validated",
+                "Evidence never accepts a mapping",
+            ],
+        }
+
+    def save_evidence(self, preview: dict[str, Any]) -> EvidenceRecord:
+        """Append only the reviewed evidence snapshot; decision state stays intact."""
+        if preview.get("kind") != "evidence":
+            raise ValueError("Expected an evidence preview")
+        record = EvidenceRecord.from_dict(preview["record"])
+        if record.review_id != preview.get("review_id"):
+            raise ValueError("Evidence preview belongs to another review item")
+        reference = record.candidate_institution_ref
+
+        def check_sources() -> None:
+            if preview.get("source_revision") != self.source_revision():
+                raise StaleReviewError("Evidence sources changed; preview again")
+            if reference and self.resolve_institution(reference) is None:
+                raise StaleReviewError("Evidence candidate changed; preview again")
+            if preview.get("candidate_revision") != self._evidence_candidate_revision(
+                reference
+            ):
+                raise StaleReviewError(
+                    "Evidence candidate definition changed; preview again"
+                )
+
+        append_evidence(
+            self.evidence_path,
+            [record],
+            expected_revision=preview["revision"],
+            source_check=check_sources,
+        )
+        return record
+
+    def _evidence_candidate_revision(self, reference: str | None) -> str:
+        """Bind candidate facts and manual-definition heads without unrelated reviews."""
+        heads = (
+            active_heads(self.events(allow_conflicts=True)).get(
+                f"institution:{reference}", []
+            )
+            if reference and reference.startswith("manual:")
+            else []
+        )
+        return _value_revision(
+            {
+                "metadata": self.resolve_institution(reference) if reference else None,
+                "manual_heads": sorted(head.decision_id for head in heads),
+            }
+        )
 
     def queue_revision(self) -> tuple[str, str, tuple[tuple[str, str], ...]]:
         """Content-bound key for disposable GUI queue presentation only."""
@@ -358,6 +483,8 @@ class ReviewService:
         paths.extend(sorted(RAW_WIKIMEDIA_DIR.rglob("*.json")))
         if self.db_path.exists():
             paths.append(self.db_path)
+        if self.evidence_path.exists():
+            paths.append(self.evidence_path)
         wal_path = self.db_path.with_suffix(self.db_path.suffix + ".wal")
         if wal_path.exists():
             paths.append(wal_path)
@@ -427,7 +554,12 @@ class ReviewService:
             from apemap.review.integration import project_review_records
 
             with get_connection(self.db_path, read_only=True) as conn:
-                project_review_records(conn, selected, matcher=matcher)
+                project_review_records(
+                    conn,
+                    selected,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(selected),
+                )
         return result
 
     def _check_references(
@@ -468,6 +600,7 @@ class ReviewService:
             acara_ids=set(matcher.acara_id_map),
             member_ids=member_ids if member_ids else None,
         )
+        validate_evidence_references(selected, self.evidence_records(selected))
         return {
             "valid": True,
             "events": len(selected),
@@ -542,6 +675,7 @@ class ReviewService:
         heads = active_heads(events).get(review_id, [])
         decision = heads[0] if len(heads) == 1 else None
         context = dict(candidates[0]["payload"]) if candidates else {}
+        name = ""
         if entity in {"school", "member_education"}:
             effective = {
                 key: alternatives[0]
@@ -618,6 +752,11 @@ class ReviewService:
                     summary["institution_name"] = (
                         target.get("school_name") if target else None
                     )
+                    summary["state"] = target.get("state") if target else None
+                    summary["suburb"] = target.get("suburb") if target else None
+        ranked: list[dict[str, Any]] = []
+        if entity == "member_education" and name:
+            ranked = self.rank_education_candidates(review_id, name, candidates, events)
         return {
             "review_id": review_id,
             "entity_type": entity,
@@ -632,7 +771,60 @@ class ReviewService:
             ],
             "conflicts": [event.to_dict() for event in heads] if len(heads) > 1 else [],
             "context": context,
+            "ranked_candidates": ranked,
+            "retained_evidence": self.retained_evidence(review_id)
+            if entity in {"school", "member_education"}
+            else [],
+            "evidence_revision": evidence_revision(self.evidence_path),
         }
+
+    def rank_education_candidates(
+        self,
+        review_id: str,
+        recorded_name: str,
+        source_candidates: list[dict[str, Any]] | None = None,
+        events: list[ReviewEvent] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Compare distinct institutions for one assertion; never choose authority."""
+        if entity_for_review_id(review_id) != "member_education":
+            raise ValueError(
+                "Candidate evidence ranking requires an education assertion"
+            )
+        selected = self.events(allow_conflicts=True) if events is None else events
+        records = self.evidence_records(selected)
+        resolver = self.institution_resolver()
+        institutions = {
+            row["institution_ref"]: row
+            for row in self.lookup_institutions(recorded_name, limit=50)
+        }
+        references = {
+            record.candidate_institution_ref
+            for record in records
+            if record.review_id in {review_id, school_review_id(recorded_name)}
+            and record.candidate_institution_ref
+        }
+        for candidate in source_candidates or []:
+            value = candidate["evidence"].get("institution_id")
+            if value and str(value).startswith("acara-"):
+                references.add(str(value).replace("acara-", "acara:", 1))
+            elif value and str(value).startswith("manual:"):
+                references.add(str(value))
+        for head in active_heads(selected).get(review_id, []):
+            if head.payload.get("institution_ref"):
+                references.add(head.payload["institution_ref"])
+        for reference in sorted(references):
+            metadata = resolver(reference)
+            if metadata is not None:
+                institutions[reference] = {**metadata, "institution_ref": reference}
+        proposals = [
+            {
+                **row,
+                "institution_name": row.get("school_name"),
+                "recorded_name": recorded_name,
+            }
+            for row in institutions.values()
+        ]
+        return score_candidates(review_id, proposals, records)
 
     def status(self) -> dict[str, Any]:
         counts: Counter[tuple[str, str, int | None]] = Counter()
@@ -900,9 +1092,17 @@ class ReviewService:
                 matcher = matcher or self.matcher()
                 conflicts = [key for key, heads in old_heads.items() if len(heads) > 1]
                 old_records = project_review_records(
-                    conn, [] if conflicts else before, matcher=matcher
+                    conn,
+                    [] if conflicts else before,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(before),
                 )
-                new_records = project_review_records(conn, after, matcher=matcher)
+                new_records = project_review_records(
+                    conn,
+                    after,
+                    matcher=matcher,
+                    evidence_records=self.evidence_records(after),
+                )
                 differences = compare_review_records(old_records, new_records)
                 for school_id in sorted(school_ids):
                     head = new.get(school_id)
@@ -1135,6 +1335,7 @@ class ReviewService:
                 external_dir=self.external_dir,
                 output_dir=output,
                 decision_log_path=self.log_path,
+                evidence_log_path=self.evidence_path,
                 retrieved_at=datetime.fromisoformat(manifest["created_at"]),
             )
             if review_snapshot_metadata(conn).get("decision_log_sha256") != before:

@@ -38,6 +38,13 @@ from apemap.review.model import (
     school_review_id,
     validate_events,
 )
+from apemap.review.evidence import (
+    EvidenceRecord,
+    evidence_path,
+    legacy_evidence,
+    parse_evidence,
+    validate_evidence_references,
+)
 from apemap.review.store import StaleReviewError
 
 if TYPE_CHECKING:
@@ -56,9 +63,58 @@ Records = dict[str, list[dict[str, Any]]]
 RawInventory = dict[str, tuple[dict[str, Any], datetime]]
 
 
-def read_review_events(path: Path | str | None = None) -> list[ReviewEvent]:
-    """Read the canonical authority; an explicitly missing fixture path is empty."""
-    return load_events(Path(path) if path is not None else DEFAULT_LOG_PATH)
+class _ReviewEventSnapshot(list[ReviewEvent]):
+    """Carry the exact offline evidence revision consumed with the authority."""
+
+    def __init__(
+        self, events: list[ReviewEvent], path: Path, raw: bytes | None
+    ) -> None:
+        super().__init__(events)
+        self.evidence_path = path
+        self.evidence_raw = raw
+
+
+def _review_evidence(
+    events: list[ReviewEvent],
+    *,
+    decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
+) -> tuple[Path, bytes | None, list[EvidenceRecord]]:
+    if isinstance(events, _ReviewEventSnapshot):
+        if (
+            evidence_log_path is not None
+            and Path(evidence_log_path).resolve() != events.evidence_path.resolve()
+        ):
+            raise ValueError("Evidence log differs from the consumed review snapshot")
+        path, raw = events.evidence_path, events.evidence_raw
+    else:
+        path = (
+            Path(evidence_log_path)
+            if evidence_log_path is not None
+            else evidence_path(
+                Path(decision_log_path)
+                if decision_log_path is not None
+                else DEFAULT_LOG_PATH
+            )
+        )
+        raw = path.read_bytes() if path.exists() else None
+    records = parse_evidence(raw or b"") + legacy_evidence(events)
+    validate_evidence_references(events, records)
+    return path, raw, records
+
+
+def read_review_events(
+    path: Path | str | None = None,
+    *,
+    evidence_log_path: Path | str | None = None,
+) -> list[ReviewEvent]:
+    """Read and validate local authority and evidence without external access."""
+    ledger = Path(path) if path is not None else DEFAULT_LOG_PATH
+    events = load_events(ledger)
+    retained_path, raw, _ = _review_evidence(
+        events, decision_log_path=ledger, evidence_log_path=evidence_log_path
+    )
+    return _ReviewEventSnapshot(events, retained_path, raw)
 
 
 def configure_review_matcher(matcher: SchoolMatcher, events: list[ReviewEvent]) -> None:
@@ -1014,16 +1070,24 @@ def project_review_records(
     conn: DuckDBPyConnection,
     events: list[ReviewEvent],
     matcher: SchoolMatcher | None = None,
+    *,
+    evidence_records: list[EvidenceRecord] | None = None,
 ) -> Records:
     """Return replayed source rows without changing the connection or authority.
 
-    Complete reference validation belongs to the review service. A pinned cohort
+    Complete institution validation belongs to the review service. A pinned cohort
     may omit reviewed schools and people, so the projector checks ACARA identity
     when that reference is actually applied, rather than against unrelated events.
     """
     active_matcher = matcher or SchoolMatcher()
     configure_review_matcher(active_matcher, events)
     validate_events(events)
+    if evidence_records is not None:
+        validate_evidence_references(events, evidence_records)
+    elif isinstance(events, _ReviewEventSnapshot):
+        _review_evidence(events)
+    else:
+        validate_evidence_references(events, legacy_evidence(events))
     return _project(
         _records(conn, source=True),
         events,
@@ -1079,6 +1143,7 @@ def capture_review_snapshot(
     events: list[ReviewEvent],
     *,
     decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
     source_provenance: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Archive the exact consumed ledger and its provenance in the caller transaction.
@@ -1092,6 +1157,14 @@ def capture_review_snapshot(
     raw = path.read_bytes() if path.exists() else b""
     if parse_events(raw) != events:
         raise StaleReviewError("Decision log changed during ingestion; rebuild")
+    retained_path, evidence_raw, _ = _review_evidence(
+        events,
+        decision_log_path=path,
+        evidence_log_path=evidence_log_path,
+    )
+    current_evidence = retained_path.read_bytes() if retained_path.exists() else None
+    if current_evidence != evidence_raw:
+        raise StaleReviewError("Evidence log changed during ingestion; rebuild")
     metadata: dict[str, Any] = {
         "schema_version": 1,
         "decision_log_sha256": hashlib.sha256(raw).hexdigest(),
@@ -1100,6 +1173,14 @@ def capture_review_snapshot(
         "source_parliaments": sorted(_source_cohorts(conn)),
         "source_provenance": source_provenance or {},
     }
+    if evidence_raw is not None:
+        metadata["evidence_log_sha256"] = hashlib.sha256(evidence_raw).hexdigest()
+        metadata["evidence_count"] = len(parse_evidence(evidence_raw))
+        metadata["evidence_source"] = "retained_review_evidence"
+    if any(event.payload.get("evidence_refs") for event in events):
+        metadata["referenced_evidence_count"] = len(
+            {ref for event in events for ref in event.payload.get("evidence_refs", [])}
+        )
     manifests = metadata["source_provenance"].get("input_manifests", {})
     manifest_digests = (
         {
@@ -1127,6 +1208,15 @@ def capture_review_snapshot(
         "INSERT OR REPLACE INTO review_build_snapshot VALUES (1, ?, ?)",
         [raw, encoded_metadata],
     )
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS review_build_evidence (
+            snapshot_id INTEGER PRIMARY KEY CHECK (snapshot_id = 1),
+            evidence_jsonl BLOB NOT NULL
+        )"""
+    )
+    conn.execute("DELETE FROM review_build_evidence")
+    if evidence_raw is not None:
+        conn.execute("INSERT INTO review_build_evidence VALUES (1, ?)", [evidence_raw])
     return metadata
 
 
@@ -1150,7 +1240,43 @@ def review_snapshot_metadata(conn: DuckDBPyConnection) -> dict[str, Any]:
         raise ValueError(
             "Stored review snapshot metadata does not match its archived ledger"
         )
+    retained_records = []
+    if "evidence_log_sha256" in metadata:
+        evidence_exists = conn.execute(
+            "SELECT count(*) FROM information_schema.tables WHERE table_name = 'review_build_evidence'"
+        ).fetchone()
+        retained = (
+            conn.execute(
+                "SELECT evidence_jsonl FROM review_build_evidence WHERE snapshot_id = 1"
+            ).fetchone()
+            if evidence_exists and evidence_exists[0]
+            else None
+        )
+        if (
+            retained is None
+            or metadata["evidence_log_sha256"]
+            != hashlib.sha256(retained[0]).hexdigest()
+        ):
+            raise ValueError(
+                "Stored review snapshot metadata does not match its archived evidence"
+            )
+        retained_records = parse_evidence(retained[0])
+        if metadata.get("evidence_count") != len(retained_records):
+            raise ValueError("Stored review snapshot evidence count is inconsistent")
+    events = parse_events(row[0])
+    validate_evidence_references(events, retained_records + legacy_evidence(events))
     return metadata
+
+
+def review_snapshot_evidence(conn: DuckDBPyConnection) -> bytes | None:
+    """Return verified archived evidence bytes without reading working files."""
+    metadata = review_snapshot_metadata(conn)
+    if "evidence_log_sha256" not in metadata:
+        return None
+    row = conn.execute(
+        "SELECT evidence_jsonl FROM review_build_evidence WHERE snapshot_id = 1"
+    ).fetchone()
+    return bytes(row[0]) if row else None
 
 
 def attach_source_manifest(
@@ -1202,13 +1328,25 @@ def apply_review_events(
     conn: DuckDBPyConnection,
     *,
     decision_log_path: Path | str | None = None,
+    evidence_log_path: Path | str | None = None,
     events: list[ReviewEvent] | None = None,
     matcher: SchoolMatcher | None = None,
 ) -> dict[str, Any]:
     """Validate and reconcile all effective reviews within a caller transaction."""
-    authority = events if events is not None else read_review_events(decision_log_path)
+    authority = (
+        events
+        if events is not None
+        else read_review_events(decision_log_path, evidence_log_path=evidence_log_path)
+    )
+    _, _, records = _review_evidence(
+        authority,
+        decision_log_path=decision_log_path,
+        evidence_log_path=evidence_log_path,
+    )
     active_matcher = matcher or SchoolMatcher()
-    projected = project_review_records(conn, authority, active_matcher)
+    projected = project_review_records(
+        conn, authority, active_matcher, evidence_records=records
+    )
     preview = compare_review_records(_records(conn, source=True), projected)
     _write_records(conn, projected)
     from apemap.review.candidates import load_into_duckdb

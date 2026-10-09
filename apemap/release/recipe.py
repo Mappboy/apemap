@@ -26,6 +26,12 @@ from apemap.historical import build_historical_release
 from apemap.ingest.http import create_retry_session
 from apemap.inputs import compute_sha256, extract_inputs_archive, verify_inputs_manifest
 from apemap.review.integration import read_review_events
+from apemap.review.evidence import (
+    evidence_path,
+    legacy_evidence,
+    validate_evidence_references,
+)
+from apemap.review.model import load_events
 from apemap.release.verify import verify_release
 from apemap.release.version import validate_dataset_version
 
@@ -103,7 +109,11 @@ def load_recipe(recipe_path: Path, *, root: Path = PROJECT_ROOT) -> dict[str, An
         "analysis_schema_version",
         "package_version",
     }
-    if not isinstance(recipe, dict) or set(recipe) != required:
+    evidence_fields = {"evidence_log", "evidence_log_sha256"}
+    if not isinstance(recipe, dict) or set(recipe) not in (
+        required,
+        required | evidence_fields,
+    ):
         raise ValueError(
             "Recipe must contain exactly the documented configuration fields"
         )
@@ -149,7 +159,19 @@ def load_recipe(recipe_path: Path, *, root: Path = PROJECT_ROOT) -> dict[str, An
         _path(root, recipe[key])
     for key in ("input_manifest", "decision_log", "legacy_finance_input"):
         _check_hash(_path(root, recipe[key]), recipe[f"{key}_sha256"])
-    read_review_events(_path(root, recipe["decision_log"]))
+    if "evidence_log" in recipe:
+        if not isinstance(recipe["evidence_log"], str):
+            raise ValueError("Recipe evidence_log must be a relative path")
+        retained_path = _path(root, recipe["evidence_log"])
+        _check_hash(retained_path, recipe["evidence_log_sha256"])
+        read_review_events(
+            _path(root, recipe["decision_log"]), evidence_log_path=retained_path
+        )
+    else:
+        # A legacy recipe consumes no unpinned working evidence. Its adjacent
+        # store may be created later without rewriting its reviewed input pins.
+        events = load_events(_path(root, recipe["decision_log"]))
+        validate_evidence_references(events, legacy_evidence(events))
     finance_path = _path(root, recipe["legacy_finance_input"])
     with closing(
         sqlite3.connect(finance_path.as_uri() + "?mode=ro", uri=True)
@@ -204,6 +226,14 @@ def pin_recipe(template: Path, output: Path, *, root: Path = PROJECT_ROOT) -> No
     recipe["package_version"] = package_version("apemap")
     for key in ("input_manifest", "decision_log", "legacy_finance_input"):
         recipe[f"{key}_sha256"] = compute_sha256(_path(root, recipe[key]))
+    retained_path = (
+        _path(root, recipe["evidence_log"])
+        if "evidence_log" in recipe
+        else evidence_path(_path(root, recipe["decision_log"]))
+    )
+    if retained_path.exists():
+        recipe["evidence_log"] = retained_path.relative_to(root.resolve()).as_posix()
+        recipe["evidence_log_sha256"] = compute_sha256(retained_path)
     pinned_bytes = (json.dumps(recipe, indent=2, sort_keys=True) + "\n").encode("utf-8")
     with TemporaryDirectory(prefix="apemap-pin-recipe-") as temp:
         candidate = Path(temp) / "recipe.json"
@@ -356,6 +386,10 @@ def build_recipe_release(
         ledger = Path(temp) / "decisions.jsonl"
         ledger.write_bytes(_path(root, recipe["decision_log"]).read_bytes())
         _check_hash(ledger, recipe["decision_log_sha256"])
+        if "evidence_log" in recipe:
+            retained = ledger.with_name("evidence.jsonl")
+            retained.write_bytes(_path(root, recipe["evidence_log"]).read_bytes())
+            _check_hash(retained, recipe["evidence_log_sha256"])
         result = build_historical_release(
             db_path,
             output_dir,

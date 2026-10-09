@@ -117,8 +117,23 @@ def verify_release(
                         "source_manifest_sha256"
                     ):
                         errors.append("Release recipe source manifest was not consumed")
+                    if recipe.get("evidence_log_sha256") != snapshot.get(
+                        "evidence_log_sha256"
+                    ):
+                        errors.append(
+                            "Release recipe evidence revision was not consumed"
+                        )
         except (OSError, ValueError) as exc:
             errors.append(f"Cannot read release recipe metadata: {exc}")
+
+    snapshot = manifest_data.get("review_snapshot", {})
+    if isinstance(snapshot, dict) and "evidence_log_sha256" in snapshot:
+        checks_run += 1
+        retained = root / "review/evidence.jsonl"
+        if not retained.is_file():
+            errors.append("Release is missing its retained review evidence")
+        elif _file_sha256(retained) != snapshot["evidence_log_sha256"]:
+            errors.append("Released evidence differs from the consumed review snapshot")
 
     # Historical releases declare centrally configured terms and one public layer each.
     if "supported_parliaments" in manifest_data:

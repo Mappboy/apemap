@@ -219,6 +219,21 @@ def validate_event(event: ReviewEvent) -> None:
     if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
+    if "evidence_refs" in payload:
+        references = payload["evidence_refs"]
+        if event.entity_type not in {"school", "member_education"}:
+            raise ValueError(
+                "Institution evidence references require a school or education assertion"
+            )
+        if (
+            not isinstance(references, list)
+            or any(
+                not isinstance(reference, str) or not reference.strip()
+                for reference in references
+            )
+            or len(references) != len(set(references))
+        ):
+            raise ValueError("evidence_refs must contain unique nonempty evidence IDs")
     expected_id = event.review_id
     if event.entity_type == "school":
         name = _text(payload.get("recorded_name"), "recorded_name")

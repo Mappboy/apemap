@@ -37,9 +37,19 @@ def review_options(
     external_dir: Annotated[
         Path | None, typer.Option(help="Pinned ACARA register directory.")
     ] = None,
+    evidence_path: Annotated[
+        Path | None,
+        typer.Option(help="Retained evidence JSONL; defaults beside the decision log."),
+    ] = None,
 ) -> None:
+    # A command-level log override must derive its sibling evidence store unless
+    # the caller selected an evidence path explicitly in this callback.
+    ctx.meta["review_evidence_path"] = evidence_path
     ctx.obj = ReviewService(
-        log_path=log_path, db_path=db_path, external_dir=external_dir
+        log_path=log_path,
+        db_path=db_path,
+        external_dir=external_dir,
+        evidence_path=evidence_path,
     )
 
 
@@ -125,6 +135,37 @@ def show_cmd(ctx: typer.Context, review_id: str) -> None:
     _run(lambda: _service(ctx).show(review_id))
 
 
+@review_app.command("evidence")
+def evidence_cmd(ctx: typer.Context, review_id: str) -> None:
+    """Inspect retained records and stable legacy source provenance for one case."""
+    _run(lambda: _service(ctx).retained_evidence(review_id))
+
+
+@review_app.command("retain-evidence")
+def retain_evidence_cmd(
+    ctx: typer.Context,
+    review_id: str,
+    payload: Annotated[Path, typer.Option(help="Structured evidence JSON object.")],
+    dry_run: bool = False,
+) -> None:
+    """Preview and explicitly retain evidence without accepting a mapping."""
+
+    def retain() -> Any:
+        service = _service(ctx)
+        preview = service.prepare_evidence(review_id, _payload(payload))
+        return preview if dry_run else service.save_evidence(preview).to_dict()
+
+    _run(retain)
+
+
+@review_app.command("rank-education")
+def rank_education_cmd(ctx: typer.Context, review_id: str) -> None:
+    """Show deterministic advisory ranking; evidence scores never save decisions."""
+    if not review_id.startswith("education:"):
+        raise typer.BadParameter("Use an education assertion review ID")
+    _run(lambda: _service(ctx).show(review_id)["ranked_candidates"])
+
+
 @review_app.command("history")
 def history_cmd(ctx: typer.Context, review_id: str) -> None:
     _run(lambda: _service(ctx).history(review_id))
@@ -148,7 +189,12 @@ def check_cmd(
     def check() -> dict[str, Any]:
         service = _service(ctx)
         if log_path:
-            service.log_path = log_path
+            service = ReviewService(
+                log_path=log_path,
+                db_path=service.db_path,
+                external_dir=service.external_dir,
+                evidence_path=ctx.meta.get("review_evidence_path"),
+            )
         if external_dir:
             service.external_dir = external_dir
         result = service.check()

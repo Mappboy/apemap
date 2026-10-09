@@ -115,10 +115,18 @@ def build_release(
     try:
         init_schema(active_conn)
         ensure_spatial(active_conn)
-        from apemap.review.integration import review_snapshot_metadata
+        from apemap.review.integration import (
+            review_snapshot_evidence,
+            review_snapshot_metadata,
+        )
 
         # Read the revision actually consumed by ingestion, never a newer working log.
         review_snapshot = review_snapshot_metadata(active_conn)
+        retained_evidence = review_snapshot_evidence(active_conn)
+        if retained_evidence is not None:
+            review_dir = out_dir / "review"
+            review_dir.mkdir(parents=True, exist_ok=True)
+            (review_dir / "evidence.jsonl").write_bytes(retained_evidence)
 
         # 1. Validation Gate
         logger.info("Validating canonical database before release build...")
