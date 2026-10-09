@@ -1280,3 +1280,82 @@ def test_real_guided_assertion_mapping_preserves_source_and_signed_save(
     assert after["institution_id"] == "acara-2"
     assert after["historical_context_scope"] == "assertion"
     assert hashlib.sha256(service.db_path.read_bytes()).hexdigest() == db_before
+
+
+@pytest.mark.parametrize("outcome", ["map", "accept", "reject", "research"])
+@pytest.mark.parametrize("previous_marker", [True, False])
+def test_guided_research_marker_follows_the_new_disposition(
+    gui: tuple[Any, FixtureService], outcome: str, previous_marker: bool
+) -> None:
+    client, service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    previous = service.save(
+        service.prepare(
+            review_id,
+            "research",
+            {
+                "aph_id": "abc",
+                "recorded_school_name": "Fixture School",
+                "resolution_only": previous_marker,
+            },
+            notes="School identity needs research",
+        )
+    )
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action="supersede",
+            replacement_action=outcome,
+            supersedes=previous.decision_id,
+            payload=json.dumps(previous.payload),
+            payload_mode="guided",
+            field_aph_id="abc",
+            field_recorded_school_name="Fixture School",
+            field_institution_ref="acara:456",
+            field_relationship_type="alias",
+            field_attended_status="attended_unspecified",
+            field_confidence="verified",
+            field_retrieved_at="2026-10-09T10:00:00+11:00",
+            notes="Reviewed the current institution identity",
+        ),
+    )
+    assert response.status_code == 200, response.get_data(as_text=True)
+    proposal = service.prepared[-1]["event"]["payload"]
+    if outcome == "research":
+        assert proposal["resolution_only"] is True
+    else:
+        assert "resolution_only" not in proposal
+    assert len(service.saved) == 1
+
+
+@pytest.mark.parametrize("outcome", ["map", "accept", "reject"])
+def test_complete_json_retains_strict_research_marker_validation(
+    gui: tuple[Any, FixtureService], outcome: str
+) -> None:
+    client, service = gui
+    review_id = education_review_id("abc", "Fixture School")
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action=outcome,
+            payload_mode="json",
+            payload=json.dumps(
+                {
+                    "aph_id": "abc",
+                    "recorded_school_name": "Fixture School",
+                    "institution_ref": "acara:456",
+                    "relationship_type": "alias",
+                    "resolution_only": True,
+                }
+            ),
+        ),
+    )
+    assert response.status_code == 400
+    assert "resolution_only is only valid for education research" in response.get_data(
+        as_text=True
+    )
+    assert not service.prepared and not service.saved

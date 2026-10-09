@@ -83,6 +83,9 @@ uv run apemap review research <education-review-id> --note "Two same-name school
 
 For a named source assertion, research preserves the attendance row and its
 evidence but clears the reviewed institution relationship and historical context.
+New CLI and guided-form research decisions automatically record
+`resolution_only: true` to distinguish this institution-resolution decision from
+older research that withdrew an accepted attendance claim.
 Replay creates an unresolved institution placeholder and bypasses the school-wide
 default and automatic match for that assertion. Other members with the same
 recorded school name keep their own applicable resolutions.
@@ -113,6 +116,11 @@ relationship meaning, include both `institution_ref` and `relationship_type`
 (or use `accept --relationship-type`). Use `map-education` to resolve an existing
 claim while retaining its attendance facts. Replacing a prior decision requires
 an appended superseding event; do not edit old ledger lines.
+Legacy research events without `resolution_only: true` retain their previous
+attendance-withdrawal behavior. Superseding a manual acceptance with such an event
+restores the source attendance and ordinary matching fallback; it does not recover
+the withdrawn manual claim. New resolution-only research can retain the accepted
+attendance evidence while marking its institution relationship unresolved.
 
 A read-only audit at implementation time found 297 retained events, 204 active
 decisions and nine active education accepts, eight with explicit references.
@@ -138,6 +146,15 @@ It does not publish a dataset release or refresh upstream data. Rebuild with the
 pinned inputs and saved ledger, inspect the derived differences, and prepare an
 unused dataset version through [decisions to a new release](decisions-to-release.md)
 when producing a new delivery. Existing historical deliveries remain unchanged.
+
+The checked-in historical release recipe retains its package 0.5.0 pin. To
+build a new delivery with 0.6.0, pin a fresh recipe from that template before
+building; do not rewrite an existing release's recipe or switch its package
+version in place:
+
+```powershell
+uv run apemap release recipe pin --template data/release-recipes/historical.json --output <fresh-recipe.json>
+```
 
 Validation uses deterministic fixtures for legacy fallback, source fact parity,
 scoped research and rejection, split diagnostics, context isolation, provisional

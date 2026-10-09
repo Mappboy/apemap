@@ -266,6 +266,13 @@ def validate_event(event: ReviewEvent) -> None:
         if not isinstance(name, str):
             raise ValueError("recorded_school_name must be a string")
         expected_id = education_review_id(aph_id, name)
+        if "resolution_only" in payload:
+            if type(payload["resolution_only"]) is not bool:
+                raise ValueError("resolution_only must be a boolean")
+            if action != "research":
+                raise ValueError("resolution_only is only valid for education research")
+            if payload["resolution_only"]:
+                _text(name, "recorded_school_name")
         if action == "map":
             _text(name, "recorded_school_name")
             institution_reference(payload.get("institution_ref"))
@@ -367,6 +374,12 @@ def _validate_school_context(
     payload: dict[str, Any], *, assertion_scope: bool = False
 ) -> None:
     """Validate independent historical evidence within the decision's scope."""
+    if (
+        assertion_scope
+        and payload.get("historical_scope_confirmed") is not None
+        and type(payload["historical_scope_confirmed"]) is not bool
+    ):
+        raise ValueError("historical_scope_confirmed must be a boolean")
     supplied = {name for name in SCHOOL_CONTEXT_FIELDS if payload.get(name) is not None}
     if not supplied:
         return
@@ -473,10 +486,16 @@ def accepted_education_ancestor(
 ) -> ReviewEvent | None:
     """Recover attendance evidence retained by a later resolution-only decision.
 
-    An accepted claim supersedes older claims. Rejection stops inheritance; map
-    and research replace resolution only. Competing attendance facts need an
-    explicit acceptance rather than an arbitrary event-order winner.
+    An accepted claim supersedes older claims. Rejection and untagged legacy
+    research stop inheritance; map and tagged research replace resolution only.
+    Competing attendance facts need an explicit acceptance rather than an
+    arbitrary event-order winner.
     """
+    if (
+        event.effective_action == "research"
+        and event.payload.get("resolution_only") is not True
+    ):
+        return None
     by_id = {item.decision_id: item for item in events}
     claims: dict[str, ReviewEvent] = {}
     pending = list(event.supersedes)
@@ -489,7 +508,10 @@ def accepted_education_ancestor(
         parent = by_id[identifier]
         if parent.effective_action == "accept":
             claims[identifier] = parent
-        elif parent.effective_action != "reject":
+        elif parent.effective_action != "reject" and not (
+            parent.effective_action == "research"
+            and parent.payload.get("resolution_only") is not True
+        ):
             pending.extend(parent.supersedes)
     if not claims:
         return None
@@ -498,6 +520,10 @@ def accepted_education_ancestor(
             {
                 "source_url": claim.source_url,
                 "notes": claim.notes,
+                # Legacy acceptance caps attendance confidence by its match.
+                # A reviewed reference and an automatic match can impose
+                # different caps even when the explicit attendance facts agree.
+                "reviewed_confidence_basis": bool(claim.payload.get("institution_ref")),
                 **{
                     name: claim.payload.get(name)
                     for name in (

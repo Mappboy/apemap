@@ -744,7 +744,11 @@ def _project(
             assertions.get(education_review_id(aph_id, raw_name)) if aph_id else None
         )
         if assertion and (
-            assertion.effective_action in {"map", "research"}
+            assertion.effective_action == "map"
+            or (
+                assertion.effective_action == "research"
+                and assertion.payload.get("resolution_only") is True
+            )
             or (
                 assertion.effective_action == "accept"
                 and "relationship_type" in assertion.payload
@@ -792,10 +796,13 @@ def _project(
             and member is None
         ):
             continue  # A pinned cohort can legitimately omit the reviewed member.
-        if event.entity_type == "member_education" and event.effective_action in {
-            "map",
-            "research",
-        }:
+        if event.entity_type == "member_education" and (
+            event.effective_action == "map"
+            or (
+                event.effective_action == "research"
+                and payload.get("resolution_only") is True
+            )
+        ):
             assert member is not None
             recorded = str(payload["recorded_school_name"])
             if not recorded.strip():

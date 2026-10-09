@@ -799,18 +799,24 @@ def create_app(service: ReviewServiceLike) -> Flask:
             if (
                 item["entity_type"] == "member_education"
                 and request.form.get("payload_mode") == "guided"
-                and (replacement_action or action) == "map"
             ):
-                # A populated attendance form can also resolve school identity.
-                # Mapping must never submit changes to its source attendance.
-                for key in (
-                    "attended_status",
-                    "confidence",
-                    "retrieved_at",
-                    "years_attended",
-                    "graduation_year",
-                ):
-                    payload.pop(key, None)
+                outcome = replacement_action or action
+                # The guided disposition controls this research-only marker.
+                # A previous decision's metadata must not change the new action.
+                payload.pop("resolution_only", None)
+                if outcome == "research" and payload.get("recorded_school_name"):
+                    payload["resolution_only"] = True
+                if outcome == "map":
+                    # A populated attendance form can also resolve school identity.
+                    # Mapping must never submit changes to its source attendance.
+                    for key in (
+                        "attended_status",
+                        "confidence",
+                        "retrieved_at",
+                        "years_attended",
+                        "graduation_year",
+                    ):
+                        payload.pop(key, None)
             preview = service.prepare(
                 review_id,
                 action,

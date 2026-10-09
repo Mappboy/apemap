@@ -554,7 +554,12 @@ for fields, verification rules and the effect on exports and analysis.
 
 `uv run apemap release recipe --help` lists the shared local/Actions release path.
 Every build requires an explicit recipe, unused dataset version, fresh database
-and output directory:
+and output directory.
+
+The historical example below uses the retained recipe pinned to package 0.5.0.
+With package 0.6.0, pin a fresh recipe and pass its path to `--recipe`; see
+[Assertion-level resolution](assertion-resolution.md#legacy-defaults-and-migration)
+for the pinning command. Preserve existing recipe and dataset version pins.
 
 ```bash
 uv run apemap release recipe build --recipe data/release-recipes/historical.json --version 0.4.0-rc.1 --db-path data/aped-new-candidate.duckdb --output-dir data/processed/releases/new-candidate

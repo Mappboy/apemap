@@ -127,7 +127,11 @@ def school_member_context(
             event
             if event.effective_action == "accept"
             else accepted_education_ancestor(event, events or [])
-            if event.effective_action in {"map", "research"}
+            if event.effective_action == "map"
+            or (
+                event.effective_action == "research"
+                and event.payload.get("resolution_only") is True
+            )
             else None
         )
         if claim is None:

@@ -24,6 +24,11 @@ def relationship_conflicts(events: list[ReviewEvent]) -> list[dict[str, Any]]:
         name = assertion.payload.get("recorded_school_name", "")
         if not name:
             continue
+        if (
+            assertion.effective_action == "research"
+            and assertion.payload.get("resolution_only") is not True
+        ):
+            continue
         school_id = school_review_id(name)
         default = effective.get(school_id)
         if default is None or default.effective_action not in {"accept", "map"}:
@@ -89,8 +94,13 @@ def resolution_summary(
         scope, status = "school_default", default.status
     if assertion:
         status = assertion.status
-        if assertion.effective_action in {"reject", "research"}:
+        if assertion.effective_action == "reject" or (
+            assertion.effective_action == "research"
+            and assertion.payload.get("resolution_only") is True
+        ):
             reference, relationship, scope = None, "unresolved", "assertion"
+        elif assertion.effective_action == "research":
+            pass  # Legacy withdrawal leaves the original source/default resolution.
         elif assertion.payload.get("institution_ref"):
             reference = assertion.payload["institution_ref"]
             inherits = (

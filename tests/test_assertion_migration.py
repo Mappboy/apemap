@@ -221,7 +221,11 @@ def test_named_assertion_research_preserves_source_attendance_and_rejection_remo
     research = decision(
         "member_education",
         "research",
-        {"aph_id": "PERSON", "recorded_school_name": "Old School"},
+        {
+            "aph_id": "PERSON",
+            "recorded_school_name": "Old School",
+            "resolution_only": True,
+        },
         "assertion-research",
     )
     actual = replay(legacy_source, [school_mapping(), research])["member_education"][0]
@@ -241,8 +245,41 @@ def test_named_assertion_research_preserves_source_attendance_and_rejection_remo
     assert actual["institution_resolution"] == "unresolved"
     assert actual["historical_broad_sector"] is None
     assert actual["historical_context_scope"] == "assertion"
-    rejected = replace(research, action="reject", decision_id="assertion-rejected")
+    rejected = replace(
+        research,
+        action="reject",
+        decision_id="assertion-rejected",
+        payload={
+            key: value
+            for key, value in research.payload.items()
+            if key != "resolution_only"
+        },
+    )
     assert replay(legacy_source, [school_mapping(), rejected])["member_education"] == []
+
+
+@pytest.mark.unit
+def test_untagged_legacy_research_withdraws_manual_acceptance_and_restores_source(
+    legacy_source: tuple[dict[str, list[dict[str, Any]]], SchoolMatcher],
+) -> None:
+    school, attendance = school_mapping(), legacy_accept("acara:2")
+    withdrawn = decision(
+        "member_education",
+        "research",
+        {"aph_id": "PERSON", "recorded_school_name": "Old School"},
+        "legacy-withdrawal",
+    )
+    withdrawn = replace(
+        withdrawn,
+        action="supersede",
+        replacement_action="research",
+        supersedes=[attendance.decision_id],
+    )
+    # Before resolution-only research existed, withdrawing an acceptance
+    # restored source attendance and its ordinary school-wide fallback.
+    assert replay(legacy_source, [school, attendance, withdrawn]) == replay(
+        legacy_source, [school]
+    )
 
 
 @pytest.mark.unit
@@ -265,6 +302,8 @@ def test_split_diagnostics_are_deterministic_and_reference_both_review_items(
     }
     if reference:
         payload.update(institution_ref=reference, relationship_type=relationship)
+    if action == "research":
+        payload["resolution_only"] = True
     assertion = decision("member_education", action, payload, "scoped-relationship")
     conflicts = relationship_conflicts([default, assertion])
     assert conflicts == relationship_conflicts([assertion, default])

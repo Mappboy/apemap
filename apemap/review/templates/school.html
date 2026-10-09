@@ -11,7 +11,7 @@
 <h1>{{ school.name }}</h1>
 <p>{{ school.status | replace('_', ' ') }}{% if school.parliaments %} · Parliaments {{ school.parliaments | join(', ') }}{% endif %}</p>
 {% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
-{% if school.saved_reference %}<p>Saved school-wide default: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }}. This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
+{% if school.saved_reference %}<p>Saved mapping: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }} (school-wide default). This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
 <p>School mappings provide a default for assertions using this recorded name. Explicit assertion resolutions and research decisions take precedence. Review the affected assertions in the preview before saving.</p>
 {% include "assertion-context.html" %}
 <section aria-label="Parliamentarian context"><h2>Parliamentarians using this school name</h2>

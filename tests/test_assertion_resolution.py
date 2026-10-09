@@ -207,7 +207,13 @@ def test_assertion_decisions_override_successor_default_and_clear_its_context(
         historical_broad_sector_source_url="https://example.org/general-sector",
     )
     decision = replace(
-        mapping(), action=action, notes="Target requires member evidence"
+        mapping(),
+        action=action,
+        payload={
+            **mapping().payload,
+            **({"resolution_only": True} if action == "research" else {}),
+        },
+        notes="Target requires member evidence",
     )
     row = project(assertion_sources, [default, decision], assertion_matcher)[
         "member_education"
@@ -245,7 +251,11 @@ def test_research_blocks_exact_fuzzy_and_alias_matching_for_only_the_named_membe
         mapping(),
         action="research",
         review_id=education_review_id("APH-ONE", recorded),
-        payload={"aph_id": "APH-ONE", "recorded_school_name": recorded},
+        payload={
+            "aph_id": "APH-ONE",
+            "recorded_school_name": recorded,
+            "resolution_only": True,
+        },
         notes="Disambiguate the exact register name using attendance evidence",
     )
     projected = project(assertion_sources, [decision], assertion_matcher)
@@ -271,7 +281,11 @@ def test_supersession_replay_is_independent_of_jsonl_order(
         action="supersede",
         replacement_action="research",
         supersedes=[first.decision_id],
-        payload={"aph_id": "APH-ONE", "recorded_school_name": "Saint Central College"},
+        payload={
+            "aph_id": "APH-ONE",
+            "recorded_school_name": "Saint Central College",
+            "resolution_only": True,
+        },
         notes="Identity remains unresolved",
     )
     final = replace(
@@ -318,6 +332,10 @@ def test_resolution_supersession_retains_manually_added_attendance(
         action="supersede",
         replacement_action=replacement,
         supersedes=[accepted.decision_id],
+        payload={
+            **mapping(target="3").payload,
+            **({"resolution_only": True} if replacement == "research" else {}),
+        },
         notes="Review the institution identity",
     )
     before = project(assertion_sources, [accepted], assertion_matcher)[
@@ -410,8 +428,91 @@ def test_resolution_map_cannot_arbitrate_conflicting_attendance_ancestors(
         project(assertion_sources, [other, resolution, first], assertion_matcher)
 
 
-def test_resolution_map_does_not_resurrect_a_rejected_manual_attendance_claim(
+@pytest.mark.parametrize("reviewed_sorts_first", [False, True])
+def test_resolution_merge_cannot_choose_between_legacy_confidence_bases(
+    assertion_sources: Records,
+    assertion_matcher: SchoolMatcher,
+    reviewed_sorts_first: bool,
+) -> None:
+    attendance = {
+        "aph_id": "APH-ONE",
+        "recorded_school_name": "Saint Central College",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "retrieved_at": "2026-10-01T00:00:00+00:00",
+    }
+    automatic = replace(
+        mapping(),
+        decision_id="z-automatic" if reviewed_sorts_first else "a-automatic",
+        action="accept",
+        payload=attendance,
+    )
+    reviewed = replace(
+        automatic,
+        decision_id="a-reviewed" if reviewed_sorts_first else "z-reviewed",
+        payload={**attendance, "institution_ref": "acara:2"},
+    )
+    assert (
+        project(assertion_sources, [automatic], assertion_matcher)["member_education"][
+            0
+        ]["confidence"]
+        == "unconfirmed"
+    )
+    assert (
+        project(assertion_sources, [reviewed], assertion_matcher)["member_education"][
+            0
+        ]["confidence"]
+        == "verified"
+    )
+    resolution = replace(
+        mapping(),
+        decision_id="resolve-confidence-conflict",
+        action="supersede",
+        replacement_action="map",
+        supersedes=[automatic.decision_id, reviewed.decision_id],
+    )
+    with pytest.raises(ValueError, match="conflicting attendance facts"):
+        project(assertion_sources, [reviewed, resolution, automatic], assertion_matcher)
+
+
+def test_resolution_merge_can_change_reviewed_targets_without_changing_attendance(
     assertion_sources: Records, assertion_matcher: SchoolMatcher
+) -> None:
+    accepted = replace(
+        mapping(),
+        action="accept",
+        payload={
+            **mapping().payload,
+            "attended_status": "attended_unspecified",
+            "confidence": "provisional",
+            "retrieved_at": "2026-10-01T00:00:00+00:00",
+        },
+    )
+    other = replace(
+        accepted,
+        decision_id="other-reviewed-target",
+        payload={**accepted.payload, "institution_ref": "acara:1"},
+    )
+    resolution = replace(
+        mapping(target="3"),
+        decision_id="resolve-reviewed-targets",
+        action="supersede",
+        replacement_action="map",
+        supersedes=[accepted.decision_id, other.decision_id],
+    )
+    after = project(
+        assertion_sources, [other, resolution, accepted], assertion_matcher
+    )["member_education"][0]
+    assert after["confidence"] == "provisional"
+    assert after["institution_id"] == "acara-3"
+    assert after["source_url"] == accepted.source_url
+
+
+@pytest.mark.parametrize("withdrawal", ["reject", "research"])
+def test_resolution_map_does_not_resurrect_a_withdrawn_manual_attendance_claim(
+    assertion_sources: Records,
+    assertion_matcher: SchoolMatcher,
+    withdrawal: str,
 ) -> None:
     assertion_sources["member_education"] = []
     accepted = replace(
@@ -428,7 +529,7 @@ def test_resolution_map_does_not_resurrect_a_rejected_manual_attendance_claim(
         mapping(),
         decision_id="reject-claim",
         action="supersede",
-        replacement_action="reject",
+        replacement_action=withdrawal,
         supersedes=[accepted.decision_id],
         notes="Attendance was disproved",
     )
@@ -474,3 +575,52 @@ def test_assertion_map_validates_identity_relationship_and_read_only_claim_field
 def test_assertion_map_requires_relationship_source() -> None:
     with pytest.raises(ValueError, match="source_url must be a nonempty string"):
         validate_event(replace(mapping(), source_url=""))
+
+
+@pytest.mark.parametrize("flag", ["true", 1, None, {}, []])
+def test_resolution_only_research_marker_requires_a_boolean(flag: Any) -> None:
+    with pytest.raises(ValueError, match="resolution_only must be a boolean"):
+        validate_event(
+            replace(
+                mapping(resolution_only=flag),
+                action="research",
+                notes="Resolve the institution only",
+            )
+        )
+
+
+@pytest.mark.parametrize("action", ["accept", "map", "reject"])
+def test_resolution_only_marker_is_reserved_for_education_research(action: str) -> None:
+    with pytest.raises(ValueError, match="only valid for education research"):
+        validate_event(
+            replace(mapping(resolution_only=True), action=action, notes="Fixture note")
+        )
+
+
+def test_resolution_only_research_requires_a_named_attendance_claim() -> None:
+    with pytest.raises(ValueError, match="recorded_school_name must be a nonempty"):
+        validate_event(
+            replace(
+                mapping(recorded_school_name="", resolution_only=True),
+                review_id=education_review_id("APH-ONE", ""),
+                action="research",
+                notes="No recorded school name",
+            )
+        )
+
+
+@pytest.mark.parametrize("flag", ["true", "false", 1, 0, {}, []])
+def test_scoped_historical_confirmation_rejects_non_boolean_values(flag: Any) -> None:
+    with pytest.raises(
+        ValueError, match="historical_scope_confirmed must be a boolean"
+    ):
+        validate_event(
+            mapping(relationship="successor", historical_scope_confirmed=flag)
+        )
+
+
+@pytest.mark.parametrize("flag", [None, False, True])
+def test_scoped_historical_confirmation_allows_optional_boolean_values(
+    flag: Any,
+) -> None:
+    validate_event(mapping(relationship="successor", historical_scope_confirmed=flag))

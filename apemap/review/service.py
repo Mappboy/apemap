@@ -976,7 +976,15 @@ class ReviewService:
             options = self._case_candidates(review_id, events)
             if options:
                 identity = options[0]["payload"]
-        proposed = {**identity, **payload}
+        proposed: dict[str, Any] = {**identity, **payload}
+        if (
+            entity == "member_education"
+            and (replacement_action or action) == "research"
+            and proposed.get("recorded_school_name")
+        ):
+            # Distinguish new resolution research from legacy attendance
+            # withdrawals, whose schema-1 replay must remain unchanged.
+            proposed.setdefault("resolution_only", True)
         if (
             entity == "member_education"
             and review_id.endswith(":missing")
