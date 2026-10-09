@@ -1,7 +1,8 @@
 # Issue #66 acceptance audit
 
 This tracks [issue #66](https://github.com/Mappboy/apemap/issues/66) against the
-unreleased package 0.6.0 work in [PR #75](https://github.com/Mappboy/apemap/pull/75).
+unreleased review work in [PR #75](https://github.com/Mappboy/apemap/pull/75)
+and its package 0.7.0 follow-up.
 The initial PR implemented assertion resolution. The follow-up adds structured
 retained evidence and deterministic scoring. A further follow-up distinguishes
 ambiguous names and unsuitable candidates from rejected attendance, requires
@@ -17,13 +18,38 @@ active assertions. The complete issue remains open.
 | 5 | Deterministic, explainable candidate ranking | Implemented | Versioned advisory scoring, visible dimensions, source deduplication, explicit unknowns, stable reference tie order. |
 | 6 | Scores never automatically change canonical state | Implemented | Ranking is a pure copied presentation; evidence retention does not append decisions or alter attendance confidence. Reviewed mapping remains a separate signed preview/save. |
 | 7 | Compare all assertions sharing recorded text | Implemented | Per-member comparison groups retain source rows and link directly to individual resolution; resolved references and localities distinguish identical institution names. Shared-name completion counts distinct active assertions, excludes withdrawn attendance, and reopens on newly unresolved claims; GUI, CLI and exports use the same progress. |
-| 8 | Bulk/default mapping requires an explicit affected-record preview | Partial | GUI lists affected/protected assertions and disallows saving when that list is unavailable. CLI produces a semantic preview internally, but still supports immediate save; an enforced separate CLI preview approval remains outstanding. |
-| 9 | Assisted search suggests evidence without authoritative writes | Missing | Manual evidence retention and local institution lookup exist. External assisted evidence search, disposable suggestions and explicit suggestion-retention workflow are not implemented. |
+| 8 | Bulk/default mapping requires an explicit affected-record preview | Implemented | GUI affected/protected assertions and separate CLI JSON artifact approval. Exact event bytes, source revisions, inventory and effects bind atomic imports and supersessions; stale or altered previews append nothing. |
+| 9 | Assisted search suggests evidence without authoritative writes | Implemented | Configurable OpenRouter, Gemini and OpenAI provider choices; cited disposable jobs, explicit inspection/edit/evidence preview/retention, then separate mapping review. Mocked HTTP validation; live account/model availability is not established. |
 | 10 | Releases do not require live web/model access | Implemented | Evidence and ledger bytes are frozen in a source snapshot; pinned recipes copy exact inputs and releases export archived evidence. Scoring and replay are offline. |
 | 11 | Preserve append-only and supersession semantics | Implemented | Existing decision bytes remain untouched. Evidence has its own immutable append log; legacy URL provenance is represented deterministically without rewriting events. |
-| 12 | Readiness identifies unresolved cases with analytical impact | Missing | Existing counts and advisory candidate scores do not calculate headline-sector/shared-school impact or provide a release-readiness report. |
+| 12 | Readiness identifies unresolved cases with analytical impact | Implemented | Advisory sector/shared-school top-ten scenarios, ties, joint bounds, evidence scores and unknown candidate coverage. CLI/UI working projections and frozen offline release reports preserve person/attendance grains. |
 | 13 | Migration covers existing mappings and detects ambiguous defaults | Implemented | Retained historical parity, scoped split diagnostics, same-name mappings and independent unresolved states are tested. No reviewed dataset is published by this work. |
-| 14 | Successors use the common evidence/resolution framework | Partial | Successor mappings can reference the same structured records and retain scoped historical claims. Full timing, campus/profile/finance evidence adaptation and release sensitivity preparation remain later integration work. |
+| 14 | Successors use the common evidence/resolution framework | Implemented | Independently selected identity/location/campus/sector/timing/profile/finance evidence roles; copied historical replay adaptation and successor report with separate proxy suitability. Research attendance estimates remain non-authoritative; sector sensitivity retains denominators. |
+
+## Implemented follow-up milestones
+
+The follow-up implements criteria 8, 14, 12 and 9 in that order. School-wide CLI
+changes require a separately approved affected-record preview, including imports
+and supersessions. Successor evidence uses the common retained-source framework
+with independent timing, campus, sector, profile and finance claims. Attendance
+estimates (birth year +12 through +18) are labelled research context only.
+
+Readiness is an advisory, deterministic report of sector and shared-school impact,
+including incomplete candidate coverage and jointly influential unresolved cases.
+Releases compute it from consumed snapshots without network or model access.
+
+Assisted research keeps disposable suggestions separate from authority. The
+reviewer selects OpenRouter, Gemini or OpenAI, inspects sources, previews retained
+evidence and separately previews a decision. Provider requests use environment
+credentials; tests use mocked HTTP and temporary evidence/decision fixtures.
+No real research ledger, historical release or pinned source is refreshed.
+
+Implementation requires focused regression tests, the full available pytest
+suite, Ruff lint/format checks, ty, lock/version checks and a complete branch
+review before a draft PR. Focused fixtures verify these milestones. Provider calls
+use mocked HTTP; implementation does not establish live account availability or
+source correctness. See [assisted research and readiness](review-assisted-search.md)
+for usage and limitations.
 
 ## Verification boundaries
 
@@ -42,9 +68,13 @@ Relevant tests include `test_assertion_resolution.py`,
 `test_assertion_migration.py`, `test_assertion_service.py`,
 `test_review_evidence.py`, `test_review_scoring.py`,
 `test_review_evidence_service.py`, `test_review_evidence_gui.py` and
-`test_review_evidence_replay.py`. The PR records actual validation results; a
+`test_review_evidence_replay.py`. Follow-up fixtures include
+`test_review_cli_approval.py`, `test_review_context_evidence.py`,
+`test_review_research.py` and `test_review_readiness.py`.
+The PR records actual validation results; a
 criterion being implemented does not claim the entire issue is complete.
 
-Package metadata remains at the shared, unpublished **0.6.0** target, previously
-bumped from 0.5.0 for this coherent review-v2 change. No further bump is needed
-within the same PR, and no dataset release version is selected or published.
+The follow-up targets package **0.6.1 → 0.7.0** for new functionality and the
+incompatible separate school-wide CLI approval requirement. Package and root
+lockfile versions must agree before handoff. No dataset release version is selected
+or published; historical dataset contracts remain unchanged.

@@ -1,5 +1,9 @@
 # Retained evidence and advisory scoring
 
+For package 0.7.0 provider selection, disposable source suggestions, successor
+roles, separate CLI approval and analytical impact, see
+[assisted research and readiness](review-assisted-search.md).
+
 Package 0.6.0 supports distinct institution resolutions for education assertions
 sharing recorded school text. On the school page, choose **Resolve this member's
 school** for the member concerned. The institution's reference and locality
