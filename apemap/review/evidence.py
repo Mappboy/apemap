@@ -54,6 +54,11 @@ SCHOOL_CONTEXT_CLAIM_TYPES = frozenset(
         "historical_context",
         "sector",
         "school_type",
+        "original_identity",
+        "campus_continuity",
+        "relationship_timing",
+        "profile_proxy",
+        "finance_proxy",
     }
 )
 
@@ -328,6 +333,8 @@ def validate_evidence_references(
             raise ValueError(f"Conflicting evidence_id: {record.evidence_id}")
         by_id[record.evidence_id] = record
     for event in events:
+        from apemap.review.context_evidence import context_references, resolve_context
+
         refs = event.payload.get("evidence_refs", [])
         if not isinstance(refs, list) or any(
             not isinstance(ref, str) or not ref for ref in refs
@@ -335,6 +342,7 @@ def validate_evidence_references(
             raise ValueError("evidence_refs must be a list of evidence IDs")
         if len(set(refs)) != len(refs):
             raise ValueError("Duplicate evidence_refs")
+        refs = sorted(set(refs + context_references(event.payload)))
         for ref in refs:
             record = by_id.get(ref)
             if record is None:
@@ -362,3 +370,5 @@ def validate_evidence_references(
                 raise ValueError(
                     f"Evidence reference belongs to a different candidate: {ref}"
                 )
+        if event.payload.get("context_evidence_refs"):
+            resolve_context(event, records)

@@ -1134,18 +1134,23 @@ def project_review_records(
     may omit reviewed schools and people, so the projector checks ACARA identity
     when that reference is actually applied, rather than against unrelated events.
     """
+    from apemap.review.context_evidence import expand_context_events
+
+    records = evidence_records
+    if records is None:
+        records = (
+            _review_evidence(events)[2]
+            if isinstance(events, _ReviewEventSnapshot)
+            else legacy_evidence(events)
+        )
+    validate_evidence_references(events, records)
+    expanded = expand_context_events(events, records)
     active_matcher = matcher or SchoolMatcher()
-    configure_review_matcher(active_matcher, events)
-    validate_events(events)
-    if evidence_records is not None:
-        validate_evidence_references(events, evidence_records)
-    elif isinstance(events, _ReviewEventSnapshot):
-        _review_evidence(events)
-    else:
-        validate_evidence_references(events, legacy_evidence(events))
+    configure_review_matcher(active_matcher, expanded)
+    validate_events(expanded)
     return _project(
         _records(conn, source=True),
-        events,
+        expanded,
         active_matcher,
         _source_cohorts(conn),
         _raw_inventory(conn),

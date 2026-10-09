@@ -6,6 +6,13 @@
 <details><summary>Claim and retained provenance</summary><pre>{{ record | json_text }}</pre></details>
 {% endmacro %}
 {% set retained = item.get('retained_evidence', []) %}
+{% if item.entity_type == 'member_education' %}
+<section aria-label="Assisted research"><h2>Find evidence</h2>
+{% if research_providers %}<p>Send this member's public assertion context to the selected external provider. Results remain suggestions until you inspect and retain sources.</p>
+<form method="post" action="{{ url_for('find_evidence', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label>Research provider<select name="provider_id">{% for name, provider in research_providers.items() %}<option value="{{ name }}">{{ name }} · {{ provider.model }} ({{ provider.key_env }})</option>{% endfor %}</select></label><button type="submit">Find evidence</button></form>
+{% else %}<p>Assisted research is unavailable. Start the reviewer with a research provider configuration.</p>{% endif %}</section>
+{% endif %}
+{% if item.context.get('reviewed_context_claims') %}<section aria-label="Reviewed successor claims"><h2>Reviewed successor context</h2><pre>{{ item.context.reviewed_context_claims | json_text }}</pre><p>Profile and finance values describe the contemporary reporting institution. Unknown historical proxy suitability is not verified attendance context.</p></section>{% endif %}
 {% if item.get('ranked_candidates') %}
 <section aria-label="Explained candidate ranking">
 <h2>Candidate institutions and evidence</h2>
@@ -36,13 +43,15 @@
 <p>Retaining evidence records a source and its claim. It changes no attendance assertion or review decision. Select the records that justify your guided decision; complete JSON mode uses only the evidence references in its payload.</p>
 {% for record in retained %}<article class="retained-record">
 <label class="choice"><input type="checkbox" name="evidence_refs" value="{{ record.evidence_id }}" form="{{ decision_form_id }}" {% if record.evidence_id in selected_evidence_refs %}checked{% endif %}>Reference this evidence in the decision</label>
+<label>Reviewed successor role (optional)<select name="context_role:{{ record.evidence_id }}" form="{{ decision_form_id }}"><option value="">Supporting/context evidence only</option>{% for role in context_roles %}<option value="{{ role }}" {% if record.evidence_id in selected_context_refs.get(role, []) %}selected{% endif %}>{{ role | replace('_', ' ') }}</option>{% endfor %}</select></label>
 {{ evidence_source(record) }}
 <p><code>{{ record.evidence_id }}</code></p>
 </article>{% else %}<p>No research evidence has been retained for this case.</p>{% endfor %}
 {% if evidence_error %}<p class="error" role="alert">{{ evidence_error }}</p>{% endif %}
-<details {% if evidence_error %}open{% endif %}><summary>Record a research source</summary>
+<details {% if evidence_error or evidence_values.get('research_job_id') %}open{% endif %}><summary>Record a research source</summary>
 <form method="post" action="{{ url_for('preview_evidence', review_id=item.review_id) }}">
 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% if evidence_values.get('research_job_id') %}<input type="hidden" name="research_job_id" value="{{ evidence_values.research_job_id }}"><input type="hidden" name="research_suggestion_index" value="{{ evidence_values.research_suggestion_index }}"><p>This is an assisted-search draft. Verify the source and edit its claim before retaining evidence.</p><label class="choice"><input type="checkbox" name="source_inspected" value="yes" required>I inspected the source and checked this claim.</label>{% endif %}
 <p>Record sources manually from your research. Links open separately; this interface does not retrieve pages. Use an exact candidate reference when the claim concerns one institution, or leave it blank for case context.</p>
 <label>Candidate institution reference (optional)<input name="evidence_candidate_institution_ref" value="{{ evidence_values.get('evidence_candidate_institution_ref', payload.get('institution_ref', '')) }}" placeholder="acara:123 or manual:school-slug"></label>
 <label>Source title<input name="evidence_source_title" value="{{ evidence_values.get('evidence_source_title', '') }}" required></label>

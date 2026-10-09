@@ -322,6 +322,13 @@ class ReviewService:
         def check_sources() -> None:
             if preview.get("source_revision") != self.source_revision():
                 raise StaleReviewError("Evidence sources changed; preview again")
+            if (
+                preview.get("research_revisions") is not None
+                and preview["research_revisions"] != self.research_revisions()
+            ):
+                raise StaleReviewError(
+                    "Research inputs changed; inspect and preview again"
+                )
             if reference and self.resolve_institution(reference) is None:
                 raise StaleReviewError("Evidence candidate changed; preview again")
             if preview.get("candidate_revision") != self._evidence_candidate_revision(
@@ -483,7 +490,7 @@ class ReviewService:
             dict(row) for _, row in sorted(ranked, key=lambda item: item[0])[:limit]
         ]
 
-    def source_revision(self) -> str:
+    def source_revision(self, *, include_evidence: bool = True) -> str:
         paths = [
             path
             for path in sorted(self.external_dir.glob("school-*.csv"))
@@ -495,7 +502,7 @@ class ReviewService:
         paths.extend(sorted(RAW_WIKIMEDIA_DIR.rglob("*.json")))
         if self.db_path.exists():
             paths.append(self.db_path)
-        if self.evidence_path.exists():
+        if include_evidence and self.evidence_path.exists():
             paths.append(self.evidence_path)
         wal_path = self.db_path.with_suffix(self.db_path.suffix + ".wal")
         if wal_path.exists():
@@ -578,9 +585,13 @@ class ReviewService:
         self, selected: list[ReviewEvent], matcher: SchoolMatcher
     ) -> dict[str, Any]:
         """Validate event/reference integrity without repeating canonical replay."""
+        from apemap.review.context_evidence import expand_context_events
+
+        records = self.evidence_records(selected)
+        expanded = expand_context_events(selected, records)
         refs = [
             e
-            for e in resolve_events(selected).values()
+            for e in resolve_events(expanded).values()
             if e.effective_action in ("accept", "map")
             and any(
                 str(e.payload.get(name, "")).startswith("acara:")
@@ -608,11 +619,11 @@ class ReviewService:
                     ).fetchall()
                 )
         validate_events(
-            selected,
+            expanded,
             acara_ids=set(matcher.acara_id_map),
             member_ids=member_ids if member_ids else None,
         )
-        validate_evidence_references(selected, self.evidence_records(selected))
+        validate_evidence_references(selected, records)
         return {
             "valid": True,
             "events": len(selected),
@@ -795,6 +806,15 @@ class ReviewService:
                     summary["state"] = target.get("state") if target else None
                     summary["suburb"] = target.get("suburb") if target else None
         ranked: list[dict[str, Any]] = []
+        from apemap.review.context_evidence import attendance_period, resolve_context
+
+        for member in context.get("members", []):
+            for assertion in member.get("education", []):
+                assertion["attendance_period"] = attendance_period(member, assertion)
+        if decision and decision.payload.get("relationship_type") == "successor":
+            context["reviewed_context_claims"] = resolve_context(
+                decision, self.evidence_records(events)
+            )[1]
         if entity == "member_education" and name:
             ranked = self.rank_education_candidates(review_id, name, candidates, events)
         return {
@@ -826,6 +846,71 @@ class ReviewService:
             else [],
             "evidence_revision": evidence_revision(self.evidence_path),
         }
+
+    def research_revisions(self) -> dict[str, str]:
+        """New evidence does not discard other suggestions from the same search."""
+        return {
+            "source_revision": self.source_revision(include_evidence=False),
+            "decision_revision": log_revision(self.log_path),
+        }
+
+    def research_context(self, review_id: str) -> dict[str, Any]:
+        if not review_id.startswith("education:") or review_id.endswith(":missing"):
+            raise ValueError("Find evidence for one recorded education assertion")
+        revisions = self.research_revisions()
+        item = self.show(review_id)
+        aph_id = review_id.split(":")[1]
+        member = next(
+            (
+                row
+                for row in item["context"].get("members", [])
+                if str(row.get("aph_id", "")).lower() == aph_id
+            ),
+            None,
+        )
+        if member is None:
+            raise ValueError("Source member context is unavailable; run review build")
+        assertions = [
+            row for row in member["education"] if row.get("review_id") == review_id
+        ]
+        result = {
+            "review_id": review_id,
+            **revisions,
+            "member": {
+                key: member.get(key)
+                for key in ("display_name", "aph_id", "date_of_birth", "services")
+            },
+            "assertions": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "recorded_name",
+                        "years_attended",
+                        "graduation_year",
+                        "attendance_period",
+                        "source_url",
+                    )
+                }
+                for row in assertions
+            ],
+            "candidates": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "institution_ref",
+                        "school_name",
+                        "state",
+                        "suburb",
+                        "country",
+                    )
+                }
+                for row in item["ranked_candidates"]
+            ],
+            "school_relationship": item["context"].get("school_relationship"),
+        }
+        if revisions != self.research_revisions():
+            raise StaleReviewError("Research context changed while loading; retry")
+        return json_value(result)
 
     def rank_education_candidates(
         self,
@@ -875,6 +960,59 @@ class ReviewService:
         ]
         return score_candidates(review_id, proposals, records)
 
+    def readiness(self, parliaments: list[int] | None = None) -> dict[str, Any]:
+        """Project working decisions in memory; never update the source database."""
+        from apemap.db import init_schema
+        from apemap.review.integration import _write_records, project_review_records
+        from apemap.review.readiness import readiness_report
+
+        revisions = self.research_revisions()
+        evidence_hash = evidence_revision(self.evidence_path)
+        events = self.events()
+        records = self.evidence_records(events)
+        with get_connection(self.db_path, read_only=True) as source:
+            projected = project_review_records(
+                source, events, matcher=self.matcher(), evidence_records=records
+            )
+        with duckdb.connect(":memory:") as temporary:
+            init_schema(temporary)
+            _write_records(temporary, projected)
+            selected = (
+                parliaments
+                if parliaments is not None
+                else [
+                    row[0]
+                    for row in temporary.execute(
+                        "SELECT DISTINCT parliament_number FROM parliament_service ORDER BY 1"
+                    ).fetchall()
+                ]
+            )
+            report = readiness_report(
+                temporary,
+                events,
+                records,
+                selected,
+                {
+                    "basis": "working_review_projection",
+                    **revisions,
+                    "evidence_revision": evidence_hash,
+                },
+                extra_institutions=[
+                    {
+                        **row,
+                        "institution_id": row["institution_ref"].replace(
+                            "acara:", "acara-", 1
+                        ),
+                    }
+                    for _, row in self._institution_lookup_rows()
+                ],
+            )
+        if revisions != self.research_revisions() or evidence_hash != evidence_revision(
+            self.evidence_path
+        ):
+            raise StaleReviewError("Readiness inputs changed while computing; retry")
+        return json_value(report)
+
     def status(self) -> dict[str, Any]:
         counts: Counter[tuple[str, str, int | None]] = Counter()
         seen: set[tuple[str, int | None]] = set()
@@ -904,6 +1042,11 @@ class ReviewService:
         self, events: list[ReviewEvent], event: ReviewEvent
     ) -> dict[str, Any]:
         """Display every linked name and attendance before school-wide acceptance."""
+        from apemap.review.context_evidence import expand_context_events
+
+        records = self.evidence_records(events + [event])
+        events = expand_context_events(events, records)
+        event = expand_context_events([event], records)[0]
         payload = event.payload
         reference = payload.get("attended_institution_ref")
         related = [
@@ -1304,6 +1447,12 @@ class ReviewService:
                 *validation_result["warnings"],
             ],
         }
+        if event.payload.get("context_evidence_refs"):
+            from apemap.review.context_evidence import resolve_context
+
+            preview["context_claims"] = resolve_context(
+                event, self.evidence_records(events + [event])
+            )[1]
         progress_id = (
             event.review_id
             if entity == "school"

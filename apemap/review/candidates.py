@@ -145,6 +145,7 @@ def school_member_context(
                 "source_url": claim.source_url,
                 "attended_status": claim.payload["attended_status"],
                 "years_attended": claim.payload.get("years_attended"),
+                "graduation_year": claim.payload.get("graduation_year"),
             }
             existing = source_by_review.get(event.review_id)
             if existing is not None:
@@ -230,6 +231,7 @@ def school_member_context(
                 "source_url": row.get("source_url"),
                 "attended_status": row.get("attended_status"),
                 "years_attended": row.get("years_attended"),
+                "graduation_year": row.get("graduation_year"),
                 "decision": assertion.to_dict() if assertion else None,
                 "current_resolution": summary,
                 "default_relationship": default.to_dict() if default else None,

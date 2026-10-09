@@ -12,6 +12,7 @@
 </section>{% endif %}
 {% endmacro %}
 {% if preview %}
+{% if preview.get('context_claims') %}<section aria-label="Reviewed context preview"><h3>Reviewed successor claims</h3><pre>{{ preview.context_claims | json_text }}</pre><p>These selected retained claims will supply the displayed historical context. Estimates remain research context only.</p></section>{% endif %}
 {% if preview.event.payload.get('resolution_reason') %}<p class="notice" role="status">{{ resolution_reasons.get(preview.event.payload.resolution_reason, preview.event.payload.resolution_reason | replace('_', ' ')) }}. No school-wide target is assigned by this outcome.</p>{% endif %}
 {% if preview.get('individual_resolution') %}
 {{ individual_progress(preview.individual_resolution.get('before'), 'Individual resolution before saving') }}

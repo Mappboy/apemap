@@ -135,6 +135,34 @@ def verify_release(
         elif _file_sha256(retained) != snapshot["evidence_log_sha256"]:
             errors.append("Released evidence differs from the consumed review snapshot")
 
+    # Additive review reports are optional for historical releases, but declared
+    # reports must identify the exact consumed snapshot and advisory contract.
+    for name in ("readiness.json", "successor-context.json"):
+        relative = "review/" + name
+        if relative not in manifest_data.get("files", {}):
+            continue
+        checks_run += 1
+        try:
+            report = json.loads((root / relative).read_text(encoding="utf-8"))
+            if report.get("schema_version") != 1 or not isinstance(
+                report.get("provenance"), dict
+            ):
+                raise ValueError("Invalid report schema or provenance")
+            for key in (
+                "decision_log_sha256",
+                "evidence_log_sha256",
+                "source_manifest_sha256",
+            ):
+                if report["provenance"].get(key) != snapshot.get(key):
+                    raise ValueError("Report differs from consumed snapshot: " + key)
+            if name == "readiness.json" and (
+                report.get("advisory") is not True
+                or not isinstance(report.get("parliaments"), list)
+            ):
+                raise ValueError("Readiness must be advisory with parliament scenarios")
+        except (OSError, ValueError, AttributeError, TypeError) as exc:
+            errors.append(f"Invalid {relative}: {exc}")
+
     # Historical releases declare centrally configured terms and one public layer each.
     if "supported_parliaments" in manifest_data:
         checks_run += 1

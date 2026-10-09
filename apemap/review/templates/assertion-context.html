@@ -3,6 +3,7 @@
 <section aria-label="Assertion relationship comparison">
   <h2>Assertions using this recorded school name</h2>
   <p>Compare the institution resolved for each assertion with the school-wide default. A shared recorded name can refer to different institutions.</p>
+  <details><summary>Attendance periods for research</summary>{% for member in comparison_members %}{% for education in member.get('education', []) %}{% for source in education.source_records %}{% if source.get('attendance_period') %}<p>{{ member.get('display_name', member.get('aph_id')) }} · {{ source.attendance_period.label }}</p>{% endif %}{% endfor %}{% endfor %}{% endfor %}</details>
   {% set school_default = context.get('school_relationship') or {} %}
   {% if school_default %}<p>School-wide default: {{ school_default.get('payload', {}).get('institution_ref', 'No selected target') }} · {{ school_default.get('payload', {}).get('relationship_type', 'Unresolved') }} · {{ school_default.get('replacement_action') or school_default.get('action', '') }}</p>{% endif %}
   <div class="table-wrap"><table>

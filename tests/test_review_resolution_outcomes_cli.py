@@ -63,7 +63,16 @@ def test_cli_previews_and_retains_typed_resolution_reasons(
         assert progress["available"] and progress["unresolved_count"] == 1
         assert progress["status"] == "needs_individual_review"
 
-    saved = runner.invoke(app, command)
+    if entity == "school":
+        artifact = tmp_path / "approved-outcome.json"
+        generated = runner.invoke(app, [*command, "--preview-out", str(artifact)])
+        assert generated.exit_code == 0, generated.output
+        approval = json.loads(generated.output)["sha256"]
+        saved = runner.invoke(
+            app, [*command[:7], "apply-preview", str(artifact), "--approve", approval]
+        )
+    else:
+        saved = runner.invoke(app, command)
     assert saved.exit_code == 0, saved.output
     events = load_events(review_service.log_path)
     assert len(events) == 1 and events[0].payload == proposed

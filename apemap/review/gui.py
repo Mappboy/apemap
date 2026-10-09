@@ -22,6 +22,8 @@ from waitress import serve as waitress_serve
 from apemap.review.store import ReviewBusyError, StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
 from apemap.education_context import SCHOOL_CONTEXT_FIELDS
+from apemap.review.context_evidence import ROLE_TYPES
+from apemap.review.research import ResearchJobs, ResearchProvider
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -71,6 +73,7 @@ def _guided_action(action: str, payload: Mapping[str, Any]) -> str:
 
 
 def _clear_resolution_fields(payload: dict[str, Any]) -> None:
+    payload.pop("context_evidence_refs", None)
     for key in RESOLUTION_FIELDS:
         payload.pop(key, None)
 
@@ -313,6 +316,11 @@ def _sign_evidence_preview(preview: dict[str, Any], secret: bytes) -> str:
             {"candidate_revision": preview["candidate_revision"]}
             if "candidate_revision" in preview
             else {}
+        )
+        | (
+            {"research_revisions": preview["research_revisions"]}
+            if "research_revisions" in preview
+            else {}
         ),
         secret,
     )
@@ -464,7 +472,11 @@ def _comparison_members(item: dict[str, Any]) -> list[dict[str, Any]]:
     return members
 
 
-def create_app(service: ReviewServiceLike) -> Flask:
+def create_app(
+    service: ReviewServiceLike,
+    *,
+    research_providers: dict[str, ResearchProvider] | None = None,
+) -> Flask:
     """Build an isolated Flask app with no separate decision persistence."""
     app = Flask(__name__)
     app.config.update(
@@ -475,6 +487,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
     signing_secret = secrets.token_bytes(32)
     queue_lock = Lock()
     queue_cache: tuple[Any, list[dict[str, Any]]] | None = None
+    research = ResearchJobs(research_providers or {})
+    app.extensions["research_jobs"] = research
     asset_versions = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()[:16]
         for path in Path(app.static_folder or "").glob("*")
@@ -563,11 +577,16 @@ def create_app(service: ReviewServiceLike) -> Flask:
     def response_headers(response: Any) -> Any:
         response.headers["Content-Security-Policy"] = (
             "default-src 'none'; style-src 'self'; script-src 'self'; "
-            "connect-src 'self'; form-action 'self'; "
+            "connect-src 'self'; frame-src 'self'; form-action 'self'; "
             "base-uri 'none'; frame-ancestors 'none'"
         )
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
+        if request.endpoint == "research_search_suggestions":
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; style-src 'unsafe-inline'; img-src https://www.gstatic.com data:; frame-ancestors 'self'; base-uri 'none'; form-action 'none'"
+            )
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
         if request.endpoint == "static":
             response.headers["Cache-Control"] = "private, max-age=3600"
         else:
@@ -603,6 +622,17 @@ def create_app(service: ReviewServiceLike) -> Flask:
             "evidence_error": evidence_error,
             "evidence_values": evidence_values or {},
             "selected_evidence_refs": chosen.get("evidence_refs", []),
+            "context_roles": ROLE_TYPES,
+            "selected_context_refs": chosen.get("context_evidence_refs", {}),
+            "research_providers": {
+                key: {
+                    "model": getattr(provider, "model", "external"),
+                    "key_env": getattr(
+                        provider, "api_key_env", "externally configured"
+                    ),
+                }
+                for key, provider in research.providers.items()
+            },
         }
         if item["entity_type"] == "school":
             school = school_view(item, resolve_reference)
@@ -864,6 +894,14 @@ def create_app(service: ReviewServiceLike) -> Flask:
             return jsonify({"error": str(err), "results": []}), 400
         return jsonify({"query": query, "results": results[:20]})
 
+    @app.get("/readiness")
+    def readiness_page() -> Any:
+        try:
+            report = getattr(service, "readiness")()
+            return render_template("readiness.html", report=report)
+        except (OSError, ValueError) as err:
+            return render_template("error.html", message=str(err)), 400
+
     @app.get("/items/<path:review_id>")
     def detail(review_id: str) -> str:
         try:
@@ -886,7 +924,25 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 raise ValueError(
                     "Research evidence belongs to a school or education assertion"
                 )
-            preview = prepare(review_id, _evidence_payload_from_form())
+            payload = _evidence_payload_from_form()
+            research_id = request.form.get("research_job_id", "")
+            revisions = None
+            if research_id:
+                revisions = getattr(service, "research_revisions")()
+                result = research.result(research_id, review_id, revisions)
+                index = int(request.form.get("research_suggestion_index", "-1"))
+                if result["status"] != "complete" or not 0 <= index < len(
+                    result["suggestions"]
+                ):
+                    raise ValueError("Research suggestion is unavailable")
+                if request.form.get("source_inspected") != "yes":
+                    raise ValueError(
+                        "Inspect the source before previewing retained evidence"
+                    )
+                payload["generated_by"] = "agent-search"
+            preview = prepare(review_id, payload)
+            if revisions is not None:
+                preview["research_revisions"] = revisions
             return item_page(
                 item,
                 draft_values={},
@@ -955,6 +1011,79 @@ def create_app(service: ReviewServiceLike) -> Flask:
         return redirect(
             url_for("detail", review_id=review_id, evidence_saved="1"), code=303
         )
+
+    @app.post("/items/<path:review_id>/research")
+    def find_evidence(review_id: str) -> Any:
+        try:
+            if not research.providers:
+                raise ValueError(
+                    "Configure a research provider when starting the reviewer"
+                )
+            context = getattr(service, "research_context")(review_id)
+            identifier = research.start(request.form.get("provider_id", ""), context)
+            return redirect(
+                url_for("research_detail", review_id=review_id, job_id=identifier),
+                code=303,
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 400
+
+    def research_result(review_id: str, job_id: str) -> dict[str, Any]:
+        return research.result(
+            job_id, review_id, getattr(service, "research_revisions")()
+        )
+
+    @app.get("/items/<path:review_id>/research/<job_id>")
+    def research_detail(review_id: str, job_id: str) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            return render_template(
+                "research.html", review_id=review_id, job_id=job_id, result=result
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 409
+
+    @app.get("/items/<path:review_id>/research/<job_id>/status")
+    def research_status(review_id: str, job_id: str) -> Any:
+        try:
+            return jsonify({"status": research_result(review_id, job_id)["status"]})
+        except ValueError:
+            return jsonify({"status": "stale"}), 409
+
+    @app.get("/items/<path:review_id>/research/<job_id>/search-suggestions")
+    def research_search_suggestions(review_id: str, job_id: str) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            # Sandboxed in its own CSP-protected frame: no scripts, forms or parent access.
+            return app.response_class(
+                result.get("search_entry_point", ""), mimetype="text/html"
+            )
+        except ValueError:
+            abort(409)
+
+    @app.post("/items/<path:review_id>/research/<job_id>/suggestions/<int:index>")
+    def inspect_suggestion(review_id: str, job_id: str, index: int) -> Any:
+        try:
+            result = research_result(review_id, job_id)
+            if result["status"] != "complete" or not 0 <= index < len(
+                result["suggestions"]
+            ):
+                raise ValueError("Research suggestion is unavailable")
+            suggestion = result["suggestions"][index]
+            values = {
+                "evidence_" + key: value if isinstance(value, str) else ""
+                for key, value in suggestion.items()
+            }
+            if not isinstance(suggestion["claim_value"], str):
+                values["evidence_claim_value_json"] = json.dumps(
+                    suggestion["claim_value"]
+                )
+            values.update(research_job_id=job_id, research_suggestion_index=str(index))
+            return item_page(
+                load_item(review_id), draft_values={}, evidence_values=values
+            )
+        except ValueError as err:
+            return render_template("error.html", message=str(err)), 409
 
     @app.get("/new/<entity_type>")
     def new_item(entity_type: str) -> str:
@@ -1131,6 +1260,19 @@ def create_app(service: ReviewServiceLike) -> Flask:
                         "graduation_year",
                     ):
                         payload.pop(key, None)
+            if guided and (replacement_action or action) in {"accept", "map"}:
+                roles: dict[str, list[str]] = {}
+                for key in request.form:
+                    if key.startswith("context_role:") and request.form[key]:
+                        role = request.form[key]
+                        if role not in ROLE_TYPES:
+                            raise ValueError("Unknown reviewed context role")
+                        roles.setdefault(role, []).append(
+                            key.removeprefix("context_role:")
+                        )
+                payload.pop("context_evidence_refs", None)
+                if roles:
+                    payload["context_evidence_refs"] = roles
             preview = service.prepare(
                 review_id,
                 action,
@@ -1312,16 +1454,32 @@ def create_app(service: ReviewServiceLike) -> Flask:
     return app
 
 
-def serve(service: ReviewServiceLike, port: int = 8765, workers: int = 4) -> None:
+def serve(
+    service: ReviewServiceLike,
+    port: int = 8765,
+    workers: int = 4,
+    *,
+    research_providers: dict[str, ResearchProvider] | None = None,
+) -> None:
     """Run a single loopback process with a bounded pool of request threads."""
     if not 1 <= port <= 65535:
         raise ValueError("Port must be between 1 and 65535")
     if workers < 1:
         raise ValueError("Workers must be a positive integer")
-    waitress_serve(
-        create_app(service),
-        host="127.0.0.1",
-        port=port,
-        threads=workers,
-        max_request_body_size=256 * 1024,
+    app = (
+        create_app(service)
+        if research_providers is None
+        else create_app(service, research_providers=research_providers)
     )
+    try:
+        waitress_serve(
+            app,
+            host="127.0.0.1",
+            port=port,
+            threads=workers,
+            max_request_body_size=256 * 1024,
+        )
+    finally:
+        jobs = getattr(app, "extensions", {}).get("research_jobs")
+        if jobs is not None:
+            jobs.close()
