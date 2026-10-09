@@ -2,6 +2,7 @@
 
 from dataclasses import replace
 import hashlib
+from html import unescape
 import json
 from pathlib import Path
 from typing import Any
@@ -797,10 +798,12 @@ def test_exact_manual_resolution_only_accepts_one_active_definition(
 
 
 @pytest.mark.parametrize("source", [SOURCE, ""])
+@pytest.mark.parametrize("recorded_name", [NAME, None, "", "missing-column"])
 def test_readable_canonical_preview_leaves_database_unchanged(
     real_school: tuple[Any, ReviewService],
     database_factory: DatabaseFactory,
     source: str,
+    recorded_name: str | None,
 ) -> None:
     client, service = real_school
     path, conn = database_factory(None)
@@ -816,11 +819,14 @@ def test_readable_canonical_preview_leaves_database_unchanged(
     )
     conn.execute(
         "INSERT INTO member_education (education_id, member_id, institution_id, level, attended_status, source_url, retrieved_at, confidence, school_name_as_recorded, evidence_origin) VALUES ('edu-test', 'aph-test', 'inst-unmatched-clare', 'secondary', 'attended_unspecified', ?, '2026-10-02T00:00:00+10:00', 'verified', ?, 'aph')",
-        [SOURCE, NAME],
+        [SOURCE, recorded_name],
     )
     from apemap.review.integration import capture_review_sources
 
     capture_review_sources(conn)
+    if recorded_name == "missing-column":
+        for table in ("member_education", "review_source_member_education"):
+            conn.execute(f"ALTER TABLE {table} DROP COLUMN school_name_as_recorded")
     conn.close()
     service.db_path = path
     baseline = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -830,6 +836,10 @@ def test_readable_canonical_preview_leaves_database_unchanged(
     html = response.get_data(as_text=True)
     assert response.status_code == 200
     assert "Affected education assertions" in html and "1 updated" in html
+    affected = html.split("<h3>Affected education assertions</h3>", 1)[1].split(
+        "</table>", 1
+    )[0]
+    assert f"<td>{NAME}</td><td>acara-49968</td><td>alias</td>" in unescape(affected)
     assert "acara-49968" in html and "Alternate name" in html
     assert hashlib.sha256(path.read_bytes()).hexdigest() == baseline
     assert len(service.events()) == 1
