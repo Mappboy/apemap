@@ -195,6 +195,8 @@ def test_release_reports_use_consumed_snapshot_offline(
     )
     assert json.loads((output / "review/readiness.json").read_text()) == baseline
     assert (output / "review/successor-context.json").is_file()
+    for filename in ("readiness.json", "successor-context.json"):
+        assert b"\r\n" not in (output / "review" / filename).read_bytes()
     assert verify_release(output)["valid"]
     report = json.loads((output / "review/readiness.json").read_text())
     report["provenance"]["decision_log_sha256"] = "changed"

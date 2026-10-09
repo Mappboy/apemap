@@ -153,6 +153,7 @@ def build_release(
             (review_dir / filename).write_text(
                 json.dumps(report, indent=2, sort_keys=True, default=str) + "\n",
                 encoding="utf-8",
+                newline="\n",
             )
         if retained_evidence is not None:
             review_dir = out_dir / "review"
