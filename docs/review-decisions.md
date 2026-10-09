@@ -230,7 +230,10 @@ not establish where the member attended school. Context is unavailable without
 the local review database; an omitted mapping source URL is explicit in the preview.
 
 **Preview mapping** shows the relationship, replacements and canonical education
-effects when a review database is available. **Save mapping** appends a decision;
+effects when a review database is available. Affected education assertions show
+the recorded school name, falling back to the school review's name for older
+records without that field. This display fallback does not alter attendance data.
+**Save mapping** appends a decision;
 it does not rebuild the database. The saved mapping is applied on the next source
 build. Guided decisions replace all active decisions for the same review item
 while retaining history. An open school form compares its decisions, candidates,
