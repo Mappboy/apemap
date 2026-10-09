@@ -14,6 +14,8 @@ from threading import RLock
 from typing import Any
 from uuid import uuid4
 
+import duckdb
+
 from apemap.constants import (
     DATA_DIR,
     EXTERNAL_DIR,
@@ -55,6 +57,12 @@ from apemap.review.evidence import (
     validate_evidence_references,
 )
 from apemap.review.scoring import score_candidates
+from apemap.review.progress import (
+    annotate_individual_progress,
+    individual_school_ids,
+    school_resolution_progress,
+)
+from apemap.review.resolution import requires_individual_resolution
 
 DEFAULT_REVIEW_DB = DATA_DIR / "aped-review.duckdb"
 REGISTER_FILES = (
@@ -162,7 +170,10 @@ def _school_state(events: list[ReviewEvent], event: ReviewEvent) -> dict[str, An
             head.decision_id
             for alternatives in heads.values()
             for head in alternatives
-            if event.payload.get("historical_scope_confirmed")
+            if (
+                event.payload.get("historical_scope_confirmed")
+                or requires_individual_resolution(event)
+            )
             and head.entity_type == "member_education"
             and (
                 school_review_id(str(head.payload.get("recorded_school_name", "")))
@@ -192,6 +203,7 @@ def _effect_revision(changes: dict[str, Any]) -> str:
             "canonical": effects,
             "relationship_conflicts": changes.get("relationship_conflicts", []),
             "default_applications": changes.get("default_applications", []),
+            "individual_resolutions": changes.get("individual_resolutions", {}),
         }
     )
 
@@ -622,10 +634,16 @@ class ReviewService:
         search: str | None = None,
     ) -> list[dict[str, Any]]:
         items: list[dict[str, Any]] = []
+        events = self.events(allow_conflicts=True)
         if self.db_path.exists():
             with get_connection(self.db_path, read_only=True) as conn:
                 items = build_candidates(conn)
-        items = annotate_candidates(items, self.events(allow_conflicts=True))
+                progress = self._individual_progress(conn, events)
+        else:
+            progress = self._individual_progress(None, events)
+        items = annotate_individual_progress(
+            annotate_candidates(items, events), progress
+        )
         aliases = {
             "schools": "school",
             "members": "member",
@@ -644,6 +662,19 @@ class ReviewService:
                 or search.lower() in json.dumps(item, ensure_ascii=False).lower()
             )
         ]
+
+    def _individual_progress(
+        self,
+        conn: duckdb.DuckDBPyConnection | None,
+        events: list[ReviewEvent],
+        school_ids: set[str] | None = None,
+    ) -> dict[str, dict[str, Any]]:
+        selected = individual_school_ids(events) if school_ids is None else school_ids
+        if not selected:
+            return {}
+        return school_resolution_progress(
+            conn, events, selected, resolve=self.institution_resolver()
+        )
 
     def history(self, review_id: str) -> list[dict[str, Any]]:
         return [
@@ -709,6 +740,10 @@ class ReviewService:
                 if warning["school_review_id"] == school_id
             ]
             context["members"] = []
+            progress_ids = (
+                {school_id} if school_id in individual_school_ids(events) else set()
+            )
+            progress = self._individual_progress(None, events, progress_ids)
             original = (
                 decision.payload.get("attended_institution_ref") if decision else None
             )
@@ -730,6 +765,7 @@ class ReviewService:
             if self.db_path.exists():
                 with get_connection(self.db_path, read_only=True) as conn:
                     context["members"] = school_member_context(conn, school_id, events)
+                    progress = self._individual_progress(conn, events, progress_ids)
                     context["alias_members"] = [
                         {
                             "recorded_name": alias.payload["recorded_name"],
@@ -740,6 +776,10 @@ class ReviewService:
                         for alias in aliases
                         if alias.review_id != review_id
                     ]
+            if school_id in progress:
+                context["individual_resolution"] = progress[school_id]
+                if entity == "school":
+                    candidates = annotate_individual_progress(candidates, progress)
             resolver = self.institution_resolver()
             for member in context["members"]:
                 for education in member["education"]:
@@ -760,6 +800,15 @@ class ReviewService:
         return {
             "review_id": review_id,
             "entity_type": entity,
+            "status": (
+                context["individual_resolution"]["status"]
+                if entity == "school" and "individual_resolution" in context
+                else "conflict"
+                if len(heads) > 1
+                else decision.status
+                if decision
+                else "pending"
+            ),
             "candidates": candidates,
             "decision": decision.to_dict() if decision else None,
             "history": [
@@ -1082,6 +1131,11 @@ class ReviewService:
             ],
             "default_applications": [],
         }
+        progress_ids = school_ids & (
+            individual_school_ids(before) | individual_school_ids(after)
+        )
+        before_progress = self._individual_progress(None, before, progress_ids)
+        after_progress = self._individual_progress(None, after, progress_ids)
         if self.db_path.exists():
             from apemap.review.integration import (
                 compare_review_records,
@@ -1089,6 +1143,8 @@ class ReviewService:
             )
 
             with get_connection(self.db_path, read_only=True) as conn:
+                before_progress = self._individual_progress(conn, before, progress_ids)
+                after_progress = self._individual_progress(conn, after, progress_ids)
                 matcher = matcher or self.matcher()
                 conflicts = [key for key, heads in old_heads.items() if len(heads) > 1]
                 old_records = project_review_records(
@@ -1152,6 +1208,13 @@ class ReviewService:
             result["canonical_unavailable"] = (
                 "Run review build to preview canonical effects"
             )
+        result["individual_resolutions"] = {
+            school_id: {
+                "before": before_progress[school_id],
+                "after": after_progress[school_id],
+            }
+            for school_id in sorted(progress_ids)
+        }
         return json_value(result)
 
     def prepare(
@@ -1177,6 +1240,12 @@ class ReviewService:
             if options:
                 identity = options[0]["payload"]
         proposed: dict[str, Any] = {**identity, **payload}
+        if (
+            entity == "school"
+            and (replacement_action or action) == "research"
+            and proposed.get("resolution_reason") is not None
+        ):
+            proposed.setdefault("requires_individual_resolution", True)
         if (
             entity == "member_education"
             and (replacement_action or action) == "research"
@@ -1235,6 +1304,18 @@ class ReviewService:
                 *validation_result["warnings"],
             ],
         }
+        progress_id = (
+            event.review_id
+            if entity == "school"
+            else school_review_id(event.payload["recorded_school_name"])
+            if entity == "member_education"
+            and event.payload.get("recorded_school_name")
+            else None
+        )
+        if progress_id in changes["individual_resolutions"]:
+            preview["individual_resolution"] = changes["individual_resolutions"][
+                progress_id
+            ]
         if entity == "school":
             if event.effective_action in {"accept", "map"}:
                 preview["default_application"] = next(
@@ -1343,7 +1424,10 @@ class ReviewService:
                     "Ingestion consumed a newer decision log; rebuild before exporting reviews"
                 )
             attach_source_manifest(conn, manifest_path, manifest_bytes=manifest_bytes)
-            items = annotate_candidates(build_candidates(conn), events)
+            items = annotate_individual_progress(
+                annotate_candidates(build_candidates(conn), events),
+                self._individual_progress(conn, events),
+            )
             load_into_duckdb(conn, events, items)
             export_candidates(conn, items, output)
         if log_revision(self.log_path) != before:

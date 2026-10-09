@@ -102,7 +102,10 @@ data or the website.
 Package 0.6.0 adds assertion-specific school resolution. Use **Map** on an
 education assertion to preserve attendance provenance while choosing its
 institution independently of other members with the same recorded school name.
-School relationships remain reusable defaults. See
+School relationships remain reusable defaults. **Ambiguous name** and
+**No suitable candidate** preserve attendance and require separate member
+resolutions; the shared-name case completes when its active assertions are
+individually reviewed. See
 [Assertion-level resolution](docs/assertion-resolution.md) for precedence,
 migration compatibility, [retained evidence and advisory scoring](docs/review-evidence.md),
 and the [issue #66 acceptance audit](docs/issue-66-acceptance.md).

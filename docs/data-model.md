@@ -344,6 +344,15 @@ fields and complete member/parliament service groups. DuckDB projects it into
 `review_decision_events`, `review_effective_decisions`, resolved decision views
 and regeneratable candidate queues under `data/processed/review/`.
 
+Research decisions can retain `resolution_reason` (`ambiguous_name` or
+`no_suitable_candidate`). School `requires_individual_resolution: true` withholds
+unreviewed identities while preserving attendance; named education research uses
+`resolution_only: true`. These are optional payload fields, not new relationship
+types. Disposable school candidate statuses `needs_individual_review` and
+`resolved_individually` describe current assertion progress; decision event status
+and accepted mapping views keep their historical semantics. Completion is derived,
+so new source attendance can reopen a case without rewriting authority.
+
 Private `review_source_*` tables preserve source facts before corrections;
 `review_source_cohorts` records the requested terms, and `review_source_individuals`
 retains APH records for reviewing omitted memberships. `review_build_snapshot` and

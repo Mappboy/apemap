@@ -157,6 +157,11 @@ def school_view(
             "reject": "rejected",
         }.get(action, "pending")
     )
+    progress = item.get("context", {}).get("individual_resolution") or item.get(
+        "individual_resolution"
+    )
+    if progress and status != "conflict":
+        status = progress["status"]
     return SchoolView(
         name=name,
         status=status,

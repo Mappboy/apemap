@@ -37,6 +37,8 @@ STATUSES = (
     "accepted",
     "rejected",
     "needs_research",
+    "needs_individual_review",
+    "resolved_individually",
     "conflict",
     "superseded",
 )
@@ -48,6 +50,30 @@ ACTION_LABELS = {
     "research": "Needs research",
     "supersede": "Supersede earlier decision",
 }
+RESOLUTION_REASONS = {
+    "ambiguous_name": "Ambiguous name—resolve per member",
+    "no_suitable_candidate": "No suitable candidate—resolve per member",
+}
+RESOLUTION_FIELDS = (
+    "institution_ref",
+    "relationship_type",
+    "candidate_id",
+    *SCHOOL_CONTEXT_FIELDS,
+)
+
+
+def _guided_action(action: str, payload: Mapping[str, Any]) -> str:
+    """Reload a typed research outcome without changing the stored event action."""
+    reason = payload.get("resolution_reason")
+    return (
+        str(reason) if action == "research" and reason in RESOLUTION_REASONS else action
+    )
+
+
+def _clear_resolution_fields(payload: dict[str, Any]) -> None:
+    for key in RESOLUTION_FIELDS:
+        payload.pop(key, None)
+
 
 # (name, label, input type, options). Unknown or complex fields stay available
 # through the complete JSON editor, rather than acquiring a second GUI schema.
@@ -511,6 +537,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
             "statuses": STATUSES,
             "actions": ACTIONS,
             "action_labels": ACTION_LABELS,
+            "resolution_reasons": RESOLUTION_REASONS,
+            "resolution_fields": RESOLUTION_FIELDS,
             "evidence_enabled": callable(getattr(service, "prepare_evidence", None))
             and callable(getattr(service, "save_evidence", None)),
         }
@@ -582,7 +610,10 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 decision = item.get("decision") or {}
                 action = decision.get("replacement_action") or decision.get("action")
                 values = {
-                    "action": action if action in {"research", "reject"} else "map",
+                    "action": _guided_action("research", chosen)
+                    if action in {"research", "reject"}
+                    else "map",
+                    "advanced_action": action or "map",
                     "payload_mode": "guided",
                     "source_url": decision.get("source_url", ""),
                     "notes": decision.get("notes", ""),
@@ -601,6 +632,12 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     *SCHOOL_CONTEXT_FIELDS,
                 ):
                     chosen[name] = values.get("field_" + name, chosen.get(name, ""))
+            unresolved = values.get("payload_mode", "guided") == "guided" and (
+                values.get("action") in {"research", "reject", *RESOLUTION_REASONS}
+            )
+            if unresolved:
+                chosen = dict(chosen)
+                _clear_resolution_fields(chosen)
             ref = str(chosen.get("institution_ref", ""))
             selected = resolve_reference(ref) if ref else None
             token = _sign_preview(
@@ -628,6 +665,7 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 retry_token=retry_token,
                 relationships=RELATIONSHIPS,
                 context_fields=FIELDS["school"][3:],
+                resolution_fields_disabled=unresolved,
                 original_selected=resolve_reference(
                     str(chosen.get("attended_institution_ref", ""))
                 )
@@ -664,10 +702,26 @@ def create_app(service: ReviewServiceLike) -> Flask:
             ):
                 action = "map"
             values = {
-                "action": action or "accept",
+                "action": _guided_action(action or "accept", chosen),
                 "source_url": decision.get("source_url", ""),
                 "notes": decision.get("notes", ""),
             }
+        named_education = item["entity_type"] == "member_education" and bool(
+            chosen.get("recorded_school_name")
+        )
+        guided_outcome = (
+            values.get("replacement_action", "accept")
+            if values.get("action") == "supersede"
+            else values.get("action", "accept")
+        )
+        unresolved = (
+            named_education
+            and values.get("payload_mode", "guided") == "guided"
+            and guided_outcome in {"research", "reject", *RESOLUTION_REASONS}
+        )
+        if unresolved:
+            chosen = dict(chosen)
+            _clear_resolution_fields(chosen)
         return render_template(
             "item.html",
             item=item,
@@ -681,6 +735,8 @@ def create_app(service: ReviewServiceLike) -> Flask:
             retry_token=retry_token,
             new_entity_type=new_entity_type,
             form_values=values,
+            named_education=named_education,
+            resolution_fields_disabled=unresolved,
             **evidence_context,
         )
 
@@ -929,9 +985,29 @@ def create_app(service: ReviewServiceLike) -> Flask:
         bound: dict[str, Any] | None = None
         try:
             action = request.form.get("action", "accept")
+            guided = request.form.get("payload_mode") == "guided"
+            school_workflow = (
+                item["entity_type"] == "school"
+                and request.form.get("school_workflow") == "1"
+            )
+            if school_workflow and not guided:
+                action = request.form.get("advanced_action", action)
+            payload = _payload_from_form(item["entity_type"])
+            reason = action if action in RESOLUTION_REASONS else None
+            if (
+                reason
+                and guided
+                and (
+                    school_workflow
+                    or (
+                        item["entity_type"] == "member_education"
+                        and payload.get("recorded_school_name")
+                    )
+                )
+            ):
+                action = "research"
             if action not in ACTIONS:
                 raise ValueError("Unknown review action")
-            payload = _payload_from_form(item["entity_type"])
             if item["entity_type"] == "member_education" and request.form.get(
                 "choose_ref"
             ):
@@ -950,10 +1026,6 @@ def create_app(service: ReviewServiceLike) -> Flask:
                 for value in request.form.get("supersedes", "").split(",")
                 if value.strip()
             ]
-            school_workflow = (
-                item["entity_type"] == "school"
-                and request.form.get("school_workflow") == "1"
-            )
             if school_workflow:
                 bound = _read_preview(
                     request.form.get("form_token", ""), signing_secret
@@ -993,22 +1065,21 @@ def create_app(service: ReviewServiceLike) -> Flask:
                         query, limit=20
                     )
                     return item_page(item, payload=payload, draft_values=draft)
-                if request.form.get("payload_mode") == "json":
-                    action = request.form.get("advanced_action", action)
-                    if action not in ACTIONS:
-                        raise ValueError("Unknown review action")
-                if request.form.get("payload_mode") == "guided":
+                if guided:
                     if action not in {"map", "research", "reject"}:
                         raise ValueError("Choose a school mapping disposition")
                     supersedes = bound["event"]["heads"]
+                    for key in (
+                        "resolution_reason",
+                        "requires_individual_resolution",
+                        "resolution_only",
+                    ):
+                        payload.pop(key, None)
+                    if reason:
+                        payload["resolution_reason"] = reason
+                        payload["requires_individual_resolution"] = True
                     if action in {"research", "reject"}:
-                        for key in (
-                            "institution_ref",
-                            "relationship_type",
-                            "candidate_id",
-                            *SCHOOL_CONTEXT_FIELDS,
-                        ):
-                            payload.pop(key, None)
+                        _clear_resolution_fields(payload)
                     if supersedes:
                         replacement_action, action = action, "supersede"
                     else:
@@ -1025,16 +1096,30 @@ def create_app(service: ReviewServiceLike) -> Flask:
                     if action == "supersede"
                     else None
                 )
-            if (
-                item["entity_type"] == "member_education"
-                and request.form.get("payload_mode") == "guided"
-            ):
+            if item["entity_type"] == "member_education" and guided:
                 outcome = replacement_action or action
+                reason = outcome if outcome in RESOLUTION_REASONS else reason
+                if reason and not payload.get("recorded_school_name"):
+                    raise ValueError(
+                        "Per-member resolution needs a recorded school name"
+                    )
+                if outcome in RESOLUTION_REASONS:
+                    replacement_action = "research"
+                    outcome = "research"
                 # The guided disposition controls this research-only marker.
                 # A previous decision's metadata must not change the new action.
-                payload.pop("resolution_only", None)
+                for key in (
+                    "resolution_only",
+                    "resolution_reason",
+                    "requires_individual_resolution",
+                ):
+                    payload.pop(key, None)
+                if reason:
+                    payload["resolution_reason"] = reason
                 if outcome == "research" and payload.get("recorded_school_name"):
                     payload["resolution_only"] = True
+                if outcome in {"research", "reject"}:
+                    _clear_resolution_fields(payload)
                 if outcome == "map":
                     # A populated attendance form can also resolve school identity.
                     # Mapping must never submit changes to its source attendance.
@@ -1185,6 +1270,9 @@ def create_app(service: ReviewServiceLike) -> Flask:
                                 )
                             },
                         }
+                    )
+                    draft["action"] = _guided_action(
+                        draft["action"], event.get("payload", {})
                     )
                 try:
                     item = load_item(review_id)

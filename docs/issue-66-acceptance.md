@@ -3,17 +3,20 @@
 This tracks [issue #66](https://github.com/Mappboy/apemap/issues/66) against the
 unreleased package 0.6.0 work in [PR #75](https://github.com/Mappboy/apemap/pull/75).
 The initial PR implemented assertion resolution. The follow-up adds structured
-retained evidence and deterministic scoring. The complete issue remains open.
+retained evidence and deterministic scoring. A further follow-up distinguishes
+ambiguous names and unsuitable candidates from rejected attendance, requires
+individual review for those shared names, and derives case completion from the
+active assertions. The complete issue remains open.
 
 | # | Acceptance criterion | Status | Implementation or remaining work |
 | --- | --- | --- | --- |
 | 1 | Identical school text can resolve to different institutions | Implemented | Assertion-scoped mapping overrides; John Paul College split verified read-only on the two real member IDs and deterministic fixtures. |
-| 2 | Reuse school mappings without forcing all assertions to one target | Implemented | School defaults apply only where no overriding assertion resolution exists. Research on one assertion leaves the other resolutions intact. |
+| 2 | Reuse school mappings without forcing all assertions to one target | Implemented | School defaults apply only where no overriding assertion resolution exists. Typed ambiguous/no-candidate school research requires individual reviewed targets, including for exact register matches, while preserving attendance and explicit member resolutions. |
 | 3 | Accepted mappings reference multiple retained evidence items | Implemented | Immutable evidence records and validated decision `evidence_refs`; retained snapshot and release provenance. |
 | 4 | Represent supporting and contradicting evidence | Implemented | `supports`, `contradicts`, `contextual` stances; source cards and explained positive/negative score components. |
 | 5 | Deterministic, explainable candidate ranking | Implemented | Versioned advisory scoring, visible dimensions, source deduplication, explicit unknowns, stable reference tie order. |
 | 6 | Scores never automatically change canonical state | Implemented | Ranking is a pure copied presentation; evidence retention does not append decisions or alter attendance confidence. Reviewed mapping remains a separate signed preview/save. |
-| 7 | Compare all assertions sharing recorded text | Implemented | Per-member comparison groups retain source rows and link directly to individual resolution; resolved references and localities distinguish identical institution names. |
+| 7 | Compare all assertions sharing recorded text | Implemented | Per-member comparison groups retain source rows and link directly to individual resolution; resolved references and localities distinguish identical institution names. Shared-name completion counts distinct active assertions, excludes withdrawn attendance, and reopens on newly unresolved claims; GUI, CLI and exports use the same progress. |
 | 8 | Bulk/default mapping requires an explicit affected-record preview | Partial | GUI lists affected/protected assertions and disallows saving when that list is unavailable. CLI produces a semantic preview internally, but still supports immediate save; an enforced separate CLI preview approval remains outstanding. |
 | 9 | Assisted search suggests evidence without authoritative writes | Missing | Manual evidence retention and local institution lookup exist. External assisted evidence search, disposable suggestions and explicit suggestion-retention workflow are not implemented. |
 | 10 | Releases do not require live web/model access | Implemented | Evidence and ledger bytes are frozen in a source snapshot; pinned recipes copy exact inputs and releases export archived evidence. Scoring and replay are offline. |

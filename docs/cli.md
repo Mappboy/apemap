@@ -545,6 +545,15 @@ research precedence and migration compatibility. See
 [retained evidence and scoring](review-evidence.md) for `retain-evidence`,
 `evidence`, `rank-education`, and mapping payload `evidence_refs`.
 
+`research --payload` can record `resolution_reason: ambiguous_name` or
+`no_suitable_candidate`. School payloads use
+`requires_individual_resolution: true`; named education payloads use
+`resolution_only: true`. These preserve attendance while withholding unreviewed
+school identities. School queues, status summaries and generated candidate exports
+derive `needs_individual_review` or `resolved_individually` from the active
+assertions; event history retains its action-based status. See
+[Resolve a shared name individually](assertion-resolution.md#resolve-a-shared-name-individually).
+
 Successor school payloads also support a separately sourced original institution,
 historical campus and broad/detailed sector evidence. Use `accept --payload`
 with a JSON file or the guided school form; preview the school-wide scope before

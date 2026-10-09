@@ -925,7 +925,7 @@ def test_assertion_mapping_controls_keep_other_entity_actions_scoped(
     assert "optional when accepting attendance" in html
     assert "preserving attendance and its provenance" in html
     assert "Needs research retains attendance" in html
-    assert "Reject removes the attendance claim" in html
+    assert "Reject attendance claim removes the attendance claim" in html
     assert "HTTP(S) evidence source" in html
     assert "Their evidence applies only to this assertion" in html
     for review_id in (

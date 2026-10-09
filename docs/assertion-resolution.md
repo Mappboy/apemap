@@ -99,6 +99,54 @@ attendance claim from effective replay. Use research when the attendance claim
 is retained but its institution identity is uncertain. The append-only source
 baseline and decision history remain available for later correction.
 
+## Resolve a shared name individually
+
+The guided school form offers **Ambiguous name — resolve per member** when the
+same recorded text can identify several institutions, and **No suitable candidate
+— resolve per member** when the current suggestions do not fit. Both outcomes
+preserve attendance and require individual reviewed institution resolutions.
+They do not establish that a member never attended school. On an education form,
+**Reject attendance claim** is the separate action that removes attendance.
+
+These outcomes append research decisions with a structured reason. A school
+payload has this shape:
+
+```json
+{
+  "recorded_name": "John Paul College",
+  "resolution_reason": "ambiguous_name",
+  "requires_individual_resolution": true
+}
+```
+
+Use `no_suitable_candidate` for the other reason. Preview a payload file with:
+
+```powershell
+uv run apemap review research <school-review-id> --payload individual-resolution.json --note "The recorded name needs separate member resolutions" --dry-run
+```
+
+A named education research payload uses `aph_id`, `recorded_school_name`, the
+same `resolution_reason`, and `resolution_only: true`. Keep candidate-specific
+contradictions in retained evidence attached to that member and candidate.
+Relationships remain `direct`, `alias`, `rename` or `successor` for accepted
+mappings; uncertainty is a decision outcome, not another relationship.
+
+For a school requiring individual resolution, replay leaves every unreviewed
+assertion unresolved, including an automatic exact register match. Explicit
+member mappings survive. Attendance facts, provenance and confidence are retained;
+school relationship and historical context cannot supply the missing identity.
+Historical school research and rejection without the new marker keep their
+previous replay behavior.
+
+The school queue derives `needs_individual_review` or `resolved_individually`
+from the current attendance inventory. Each distinct member/name assertion counts
+once. Explicit accepted or mapped institution references satisfy individual
+review; automatic matches, inherited defaults, research and conflicts do not.
+Withdrawn attendance is excluded and reported separately. Unavailable source
+context cannot establish completion. New attendance or a withdrawn mapping
+reopens the case automatically. The research event and its original reason remain
+in the append-only history; completion does not create a new authority event.
+
 ## Legacy defaults and migration
 
 An assertion relationship takes precedence over a school-wide default. General
@@ -165,3 +213,18 @@ identities, schema upgrade and successor interpretation. Run:
 uv run pytest tests/test_assertion_migration.py tests/test_assertion_resolution.py tests/test_education_context.py
 uv lock --check
 ```
+
+The individual-resolution follow-up also checks strict outcome markers, exact
+match suppression, attendance confidence, completion and reopening, shared queue
+exports, signed previews, and guided-form retries:
+
+```powershell
+uv run pytest tests/test_review_resolution_policy.py tests/test_review_individual_progress.py tests/test_review_resolution_outcomes_gui.py tests/test_review_resolution_outcomes_cli.py
+```
+
+A subsequent read-only comparison against checkpoint `b57b64d` used the current
+`data/aped.duckdb` source inventory and ledger SHA-256
+`649d2b564114543b740d693ab3636ca3d522b73e00fd3eaba50899202e02221c`.
+All fields matched for 335 members, 705 service rows, 11,250 institutions and
+470 attendance rows. The existing ledger remained byte-for-byte unchanged;
+typed outcomes were exercised only in deterministic private fixtures.
