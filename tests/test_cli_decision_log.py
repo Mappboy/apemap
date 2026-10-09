@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from functools import partial
 import os
 from pathlib import Path
 from typing import Any
 
 import pytest
+from rich.console import Console
+from rich.text import Text
 from typer.testing import CliRunner
 
 from apemap.cli import app
@@ -23,12 +26,23 @@ COMMANDS = [
 @pytest.mark.unit
 @pytest.mark.parametrize("command", COMMANDS)
 @pytest.mark.parametrize("invalid_kind", ["missing", "directory", "unreadable"])
+@pytest.mark.parametrize("force_color", [False, True])
 def test_explicit_decision_log_is_validated_before_ingestion(
     command: list[str],
     invalid_kind: str,
+    force_color: bool,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    # Typer freezes this switch at import from CI and color environment variables.
+    monkeypatch.setattr("typer.rich_utils.FORCE_TERMINAL", force_color)
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    if force_color:
+        # Exercise ANSI output on Windows too, matching Rich rendering in CI.
+        monkeypatch.setattr("typer.rich_utils.COLOR_SYSTEM", "standard")
+        monkeypatch.setattr(
+            "typer.rich_utils.Console", partial(Console, legacy_windows=False)
+        )
     ledger = tmp_path / "review.jsonl"
     if invalid_kind == "directory":
         ledger.mkdir()
@@ -54,14 +68,19 @@ def test_explicit_decision_log_is_validated_before_ingestion(
     ):
         monkeypatch.setattr(f"apemap.cli.{name}", unexpected_ingestion)
 
-    result = CliRunner().invoke(app, [*command, "--decision-log", str(ledger)])
+    result = CliRunner().invoke(
+        app, [*command, "--decision-log", str(ledger)], color=force_color
+    )
     assert result.exit_code == 2, result.output
-    assert "--decision-log" in result.output
+    if force_color:
+        assert "\x1b[" in result.output
+    output = Text.from_ansi(result.output).plain
+    assert "--decision-log" in output
     assert {
         "missing": "does not exist",
         "directory": "is a directory",
         "unreadable": "is not readable",
-    }[invalid_kind] in result.output
+    }[invalid_kind] in output
 
 
 @pytest.mark.unit
