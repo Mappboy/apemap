@@ -127,6 +127,11 @@ and sector evidence, map markers, counting rules and the sensitivity comparison.
 
 ## Documentation
 
+The local reviewer provides [Members to review](http://127.0.0.1:8765/members)
+and [Unmatched schools](http://127.0.0.1:8765/schools/unmatched), with workload
+counts on its home page. See [reviewer setup and inclusion rules](docs/review-decisions.md)
+for server commands, filters and decision history.
+
 Comprehensive guides, specifications, and methodologies are available in the [`docs/`](docs/README.md) directory:
 
 | Guide | Description |

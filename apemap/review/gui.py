@@ -13,7 +13,7 @@ import secrets
 import time
 from pathlib import Path
 from threading import Lock
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 from urllib.parse import urlsplit
 
 from flask import Flask, abort, g, jsonify, redirect, render_template, request, url_for
@@ -21,6 +21,7 @@ from waitress import serve as waitress_serve
 
 from apemap.review.store import ReviewBusyError, StaleReviewError
 from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
+from apemap.review.members import MemberFieldDraft, group_member_rows
 from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 from apemap.review.context_evidence import ROLE_TYPES
 from apemap.review.research import ResearchJobs, ResearchProvider
@@ -44,6 +45,15 @@ STATUSES = (
     "conflict",
     "superseded",
 )
+OPEN_MEMBER_STATUSES = ("conflict", "pending", "needs_research")
+UNMATCHED_SCHOOL_STATUSES = (
+    "conflict",
+    "needs_individual_review",
+    "pending",
+    "needs_research",
+    "rejected",
+    "superseded",
+)
 ACTIONS = ("accept", "map", "reject", "research", "supersede")
 ACTION_LABELS = {
     "accept": "Accept",
@@ -62,6 +72,70 @@ RESOLUTION_FIELDS = (
     "candidate_id",
     *SCHOOL_CONTEXT_FIELDS,
 )
+
+
+def _open_member(row: Mapping[str, Any]) -> bool:
+    return row["entity_type"] == "member" and row["status"] in OPEN_MEMBER_STATUSES
+
+
+def _unmatched_school(row: Mapping[str, Any]) -> bool:
+    return row["entity_type"] == "school" and row["status"] not in (
+        "accepted",
+        "resolved_individually",
+    )
+
+
+def _queue_order(
+    row: Mapping[str, Any], statuses: tuple[str, ...]
+) -> tuple[int, str, str]:
+    name = row["school"].name if "school" in row else row["display_name"]
+    return statuses.index(row["status"]), str(name).casefold(), str(row["review_id"])
+
+
+def _member_preview_rows(
+    member: Mapping[str, Any], preview: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """Present the signed projection, including retained and conflicting values."""
+    canonical = preview.get("changes", {}).get("canonical") or {}
+    difference = canonical.get("after", {}).get("members", {})
+    projected = next(
+        (
+            row
+            for row in difference.get("after", [])
+            if row["aph_id"] == member["aph_id"]
+        ),
+        None,
+    )
+    rows = []
+    fields = {field["field"]: field for field in member["fields"]}
+    for event in preview["events"]:
+        name = event["payload"]["field"]
+        field = fields[name]
+        action = event.get("replacement_action") or event["action"]
+        value = (
+            projected.get(name)
+            if projected is not None
+            else event["payload"].get("value")
+            if action == "accept"
+            else field["source_value"]
+            if canonical.get("baseline") == "source"
+            else field["effective_value"]
+        )
+        rows.append(
+            {
+                "field": name,
+                "before": field["effective_value"],
+                "conflict": bool(field["conflicts"]),
+                "after": value,
+                "action": action,
+                "label": {
+                    "accept": "Accept",
+                    "reject": "Reject proposal",
+                    "research": "Needs research",
+                }[action],
+            }
+        )
+    return rows
 
 
 def _guided_action(action: str, payload: Mapping[str, Any]) -> str:
@@ -248,6 +322,12 @@ class ReviewServiceLike(Protocol):
 
     def save(self, preview: dict[str, Any]) -> Any: ...
 
+    def member(self, aph_id: str) -> dict[str, Any]: ...
+
+    def prepare_batch(self, aph_id: str, drafts: list[Any]) -> dict[str, Any]: ...
+
+    def save_batch(self, preview: dict[str, Any]) -> list[Any]: ...
+
 
 def json_text(value: Any) -> str:
     """Show full evidence and semantic diffs as escaped readable JSON."""
@@ -324,6 +404,22 @@ def _sign_evidence_preview(preview: dict[str, Any], secret: bytes) -> str:
         ),
         secret,
     )
+
+
+def _sign_member_batch_preview(preview: dict[str, Any], secret: bytes) -> str:
+    commit = {
+        "kind": "member_batch",
+        "aph_id": preview["aph_id"],
+        "drafts": preview["drafts"],
+        "events": preview["events"],
+        "event_ids": preview["event_ids"],
+        "revision": preview["revision"],
+        "source_revision": preview["source_revision"],
+        "effects": preview["effects"],
+        "changes": preview["changes"],
+        "validation_outcome": preview["validation_outcome"],
+    }
+    return _sign_commit(commit, secret)
 
 
 def _sign_commit(commit: dict[str, Any], secret: bytes) -> str:
@@ -771,7 +867,7 @@ def create_app(
         )
 
     def build_queue_rows() -> list[dict[str, Any]]:
-        all_rows = group_school_rows(service.candidates())
+        all_rows = group_school_rows(group_member_rows(service.candidates()))
         decisions = service.school_decisions()
         metadata_cache: dict[str, dict[str, Any] | None] = {}
 
@@ -810,9 +906,22 @@ def create_app(
                 queue_cache = (revision, rows)
             return rows
 
-    @app.get("/")
-    def queue() -> str:
-        entity_type = request.args.get("entity_type") or None
+    def render_queue(view: Literal["all", "members", "schools"] = "all") -> str:
+        endpoint = {
+            "all": "queue",
+            "members": "member_queue",
+            "schools": "unmatched_school_queue",
+        }[view]
+        entity_type = {"members": "member", "schools": "school"}.get(view)
+        if view == "all":
+            entity_type = request.args.get("entity_type") or None
+        statuses = (
+            OPEN_MEMBER_STATUSES
+            if view == "members"
+            else UNMATCHED_SCHOOL_STATUSES
+            if view == "schools"
+            else STATUSES
+        )
         status = request.args.get("status") or None
         try:
             parliament = (
@@ -825,14 +934,21 @@ def create_app(
             abort(400, "Parliament and page must be integers")
         if entity_type and entity_type not in ENTITY_LABELS:
             abort(400, "Unknown review type")
-        if status and status not in STATUSES:
+        if status and status not in statuses:
             abort(400, "Unknown status")
         search = request.args.get("q") or None
+        unmatched_schools = view == "schools" or (
+            view == "all" and request.args.get("unmatched_schools") == "1"
+        )
         all_rows = queue_rows()
+        base_rows = [
+            row for row in all_rows if not unmatched_schools or _unmatched_school(row)
+        ]
         rows = [
             row
-            for row in all_rows
+            for row in base_rows
             if (not entity_type or row["entity_type"] == entity_type)
+            and (view != "members" or _open_member(row))
             and (not status or row["status"] == status)
             and (parliament is None or parliament in row["parliaments"])
             and (
@@ -841,7 +957,9 @@ def create_app(
                 in json.dumps(row, default=str, ensure_ascii=False).casefold()
             )
         ]
-        totals = Counter(row.get("status", "pending") for row in all_rows)
+        if view != "all":
+            rows.sort(key=lambda row: _queue_order(row, statuses))
+        totals = Counter(row.get("status", "pending") for row in rows)
         pages = max(1, (len(rows) + PAGE_SIZE - 1) // PAGE_SIZE)
         page = min(page, pages)
         filters = {
@@ -849,24 +967,57 @@ def create_app(
             "status": status or "",
             "parliament": parliament or "",
             "q": search or "",
+            "unmatched_schools": unmatched_schools,
         }
 
         def page_url(number: int) -> str:
-            return url_for(
-                "queue",
-                entity_type=entity_type or "",
-                status=status or "",
-                parliament=parliament or "",
-                q=search or "",
-                page=number,
-            )
+            values: dict[str, Any] = {
+                "status": status or "",
+                "parliament": parliament or "",
+                "q": search or "",
+                "page": number,
+            }
+            if view == "all":
+                values.update(
+                    entity_type=entity_type or "",
+                    unmatched_schools="1" if unmatched_schools else "",
+                )
+            return url_for(endpoint, **values)
 
         return render_template(
             "queue.html",
+            queue_view=view,
+            queue_endpoint=endpoint,
+            page_title={
+                "all": "Review queues",
+                "members": "Members to review",
+                "schools": "Unmatched schools",
+            }[view],
+            page_description={
+                "all": "",
+                "members": "Members with pending corrections, research tasks or conflicts. Completed decisions remain available in the general queue and member history.",
+                "schools": "Schools awaiting a reviewed resolution, including those with suggested institutions. Accepted mappings and fully resolved individual reviews are excluded.",
+            }[view],
+            empty_message={
+                "all": "No candidates match these filters.",
+                "members": "No members require review",
+                "schools": "No unmatched schools match these filters.",
+            }[view],
+            statuses=statuses,
+            workload_counts={
+                "members": sum(_open_member(row) for row in all_rows),
+                "schools": sum(_unmatched_school(row) for row in all_rows),
+            }
+            if view == "all"
+            else {},
             rows=rows[(page - 1) * PAGE_SIZE : page * PAGE_SIZE],
             totals=totals,
             total=len(rows),
-            queue_label="school mappings"
+            queue_label="members"
+            if view == "members"
+            else "unmatched schools"
+            if view == "schools"
+            else "school mappings"
             if entity_type == "school"
             else "review entries",
             page=page,
@@ -875,6 +1026,18 @@ def create_app(
             previous_url=page_url(page - 1) if page > 1 else None,
             next_url=page_url(page + 1) if page < pages else None,
         )
+
+    @app.get("/")
+    def queue() -> str:
+        return render_queue()
+
+    @app.get("/members")
+    def member_queue() -> str:
+        return render_queue("members")
+
+    @app.get("/schools/unmatched")
+    def unmatched_school_queue() -> str:
+        return render_queue("schools")
 
     @app.get("/open")
     def open_item() -> Any:
@@ -902,8 +1065,181 @@ def create_app(
         except (OSError, ValueError) as err:
             return render_template("error.html", message=str(err)), 400
 
+    def member_page(
+        member_view: dict[str, Any],
+        *,
+        preview: dict[str, Any] | None = None,
+        error: str | None = None,
+        form_values: Mapping[str, Any] | None = None,
+    ) -> str:
+        values = request.form if form_values is None else form_values
+        preview_token = (
+            _sign_member_batch_preview(preview, signing_secret) if preview else None
+        )
+        return render_template(
+            "member.html",
+            member=member_view,
+            preview=preview,
+            preview_rows=_member_preview_rows(member_view, preview) if preview else [],
+            preview_token=preview_token,
+            error=error,
+            form_values=values,
+        )
+
+    @app.get("/members/<aph_id>")
+    def member_detail(aph_id: str) -> str:
+        try:
+            member_view = service.member(aph_id)
+        except (KeyError, ValueError) as err:
+            abort(404, str(err))
+        return member_page(member_view)
+
+    @app.post("/members/<aph_id>/preview")
+    def preview_member_batch(aph_id: str) -> str:
+        try:
+            member_view = service.member(aph_id)
+        except (KeyError, ValueError) as err:
+            abort(404, str(err))
+        drafts: list[MemberFieldDraft] = []
+        for field in ("gender", "date_of_birth", "wikidata_id"):
+            action = request.form.get(f"action_{field}", "unchanged").strip()
+            if action != "unchanged":
+                val = request.form.get(f"value_{field}", "").strip() or None
+                source_url = request.form.get(f"source_url_{field}", "").strip()
+                notes = request.form.get(f"notes_{field}", "").strip()
+                reviewer = (
+                    request.form.get(f"reviewer_{field}", "").strip()
+                    or request.form.get("reviewer", "").strip()
+                    or None
+                )
+                drafts.append(
+                    MemberFieldDraft(
+                        field=field,
+                        action=action,
+                        value=val,
+                        source_url=source_url,
+                        notes=notes,
+                        reviewer=reviewer,
+                        candidate_id=request.form.get(f"candidate_id_{field}") or None,
+                        retained_decision_id=request.form.get(
+                            f"retained_decision_id_{field}"
+                        )
+                        or None,
+                    )
+                )
+        try:
+            preview = service.prepare_batch(aph_id, drafts)
+            return member_page(member_view, preview=preview, form_values=request.form)
+        except (ValueError, OSError) as err:
+            return member_page(member_view, error=str(err), form_values=request.form)
+
+    @app.post("/members/<aph_id>/save")
+    def save_member_batch(aph_id: str) -> Any:
+        try:
+            member_view = service.member(aph_id)
+        except (KeyError, ValueError) as err:
+            abort(404, str(err))
+        token = request.form.get("preview_token", "").strip()
+        if not token:
+            return member_page(
+                member_view,
+                error="Preview the changes before saving",
+                form_values=request.form,
+            )
+        try:
+            preview = _read_preview(token, signing_secret)
+        except ValueError as err:
+            return member_page(member_view, error=str(err), form_values=request.form)
+
+        if (
+            preview.get("kind") != "member_batch"
+            or preview.get("aph_id") != member_view["aph_id"]
+        ):
+            return member_page(
+                member_view,
+                error="Preview token does not match this member batch",
+                form_values=request.form,
+            )
+
+        submitted_drafts: list[dict[str, Any]] = []
+        for field in ("gender", "date_of_birth", "wikidata_id"):
+            action = request.form.get(f"action_{field}", "unchanged").strip()
+            if action != "unchanged":
+                val = request.form.get(f"value_{field}", "").strip() or None
+                source_url = request.form.get(f"source_url_{field}", "").strip()
+                notes = request.form.get(f"notes_{field}", "").strip()
+                reviewer = (
+                    request.form.get(f"reviewer_{field}", "").strip()
+                    or request.form.get("reviewer", "").strip()
+                    or None
+                )
+                submitted_drafts.append(
+                    MemberFieldDraft(
+                        field=field,
+                        action=action,
+                        value=val,
+                        source_url=source_url,
+                        notes=notes,
+                        reviewer=reviewer,
+                        candidate_id=request.form.get(f"candidate_id_{field}") or None,
+                        retained_decision_id=request.form.get(
+                            f"retained_decision_id_{field}"
+                        )
+                        or None,
+                    ).to_dict()
+                )
+
+        preview_drafts = [
+            d for d in preview.get("drafts", []) if d.get("action") != "unchanged"
+        ]
+
+        def _draft_key(d: dict[str, Any]) -> tuple[Any, ...]:
+            return (
+                d.get("field"),
+                d.get("action"),
+                d.get("value"),
+                d.get("source_url"),
+                d.get("notes"),
+                d.get("reviewer"),
+                d.get("candidate_id"),
+                d.get("retained_decision_id"),
+            )
+
+        if [_draft_key(d) for d in submitted_drafts] != [
+            _draft_key(d) for d in preview_drafts
+        ]:
+            return member_page(
+                member_view,
+                error="Draft inputs changed after preview was generated; preview again before saving.",
+                form_values=request.form,
+            )
+
+        try:
+            service.save_batch(preview)
+            return redirect(url_for("member_detail", aph_id=aph_id))
+        except (ValueError, OSError) as err:
+            message = (
+                str(err)
+                if not isinstance(err, OSError)
+                else "The save could not be confirmed because of a file error. Check history before retrying. Your draft is retained."
+            )
+            return member_page(
+                member_view,
+                preview=preview if isinstance(err, ReviewBusyError) else None,
+                error=message,
+                form_values=request.form,
+            )
+
     @app.get("/items/<path:review_id>")
-    def detail(review_id: str) -> str:
+    def detail(review_id: str) -> Any:
+        if review_id.startswith("member:"):
+            parts = review_id.split(":")
+            if len(parts) >= 3:
+                return redirect(
+                    url_for("member_detail", aph_id=parts[1]) + f"#field-{parts[2]}"
+                )
+            if len(parts) == 2:
+                return redirect(url_for("member_detail", aph_id=parts[1]))
         try:
             item = load_item(review_id)
         except ValueError as err:

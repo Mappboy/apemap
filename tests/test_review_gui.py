@@ -33,6 +33,7 @@ from apemap.review.model import (
 )
 from apemap.review.store import StaleReviewError, encode_event
 from apemap.review.service import ReviewService
+from apemap.review.members import MemberFieldDraft
 from tests.test_review_service import review_service as review_service
 
 SCHOOL_ID = school_review_id("Fixture School")
@@ -221,6 +222,118 @@ class FixtureService:
                 row["status"] = event.status
         return event
 
+    def member(self, aph_id: str) -> dict[str, Any]:
+        candidates = [
+            row
+            for row in self.rows
+            if row.get("entity_type") == "member"
+            and row.get("payload", {}).get("aph_id", "").lower() == aph_id.lower()
+        ]
+        fields = []
+        for field in ("gender", "date_of_birth", "wikidata_id"):
+            rev_id = member_review_id(aph_id, field)
+            c = next(
+                (row for row in candidates if row["payload"].get("field") == field),
+                None,
+            )
+            events = [e.to_dict() for e in self.saved if e.review_id == rev_id]
+            fields.append(
+                {
+                    "field": field,
+                    "review_id": rev_id,
+                    "source_value": c["evidence"].get("source_value") if c else None,
+                    "effective_value": c["evidence"].get("effective_value")
+                    if c
+                    else None,
+                    "proposed_value": c["evidence"].get("proposed_value")
+                    if c
+                    else None,
+                    "comparison": c["evidence"].get("comparison", "different")
+                    if c
+                    else "different",
+                    "normalized_effective_value": None,
+                    "normalized_proposed_value": None,
+                    "status": c.get("status", "pending") if c else "pending",
+                    "decision": events[-1] if events else None,
+                    "conflicts": [],
+                    "history": events,
+                    "retained_decision_id": None,
+                    "evidence": c.get("evidence", {}) if c else {},
+                    "alternatives": [],
+                    "matching": False,
+                    "is_suppressed": False,
+                    "order": 1,
+                }
+            )
+        return {
+            "aph_id": aph_id,
+            "name": "Fixture Member",
+            "status": "pending",
+            "actionable_count": len(fields),
+            "parliaments": [47],
+            "ambiguous": False,
+            "field_statuses": {f["field"]: f["status"] for f in fields},
+            "fields": fields,
+            "education": [],
+            "services": [],
+        }
+
+    def prepare_batch(self, aph_id: str, drafts: list[Any]) -> dict[str, Any]:
+        events = []
+        for d in drafts:
+            draft = (
+                d if isinstance(d, MemberFieldDraft) else MemberFieldDraft.from_dict(d)
+            )
+            if draft.action == "unchanged":
+                continue
+            rev_id = member_review_id(aph_id, draft.field)
+            event = ReviewEvent(
+                decision_id=f"gui-event-{len(self.saved) + len(events) + 1}",
+                review_id=rev_id,
+                entity_type="member",
+                action=draft.action,
+                payload={
+                    "aph_id": aph_id,
+                    "field": draft.field,
+                    "value": draft.value,
+                },
+                source_url=draft.source_url,
+                reviewer=draft.reviewer or "Git Reviewer",
+                notes=draft.notes,
+                reviewed_at="2026-10-05",
+                recorded_at="2026-10-05T00:00:00+00:00",
+                supersedes=[],
+            )
+            events.append(event)
+        preview = {
+            "kind": "member_batch",
+            "aph_id": aph_id,
+            "drafts": [
+                d.to_dict() if isinstance(d, MemberFieldDraft) else d for d in drafts
+            ],
+            "events": [e.to_dict() for e in events],
+            "event_ids": [e.decision_id for e in events],
+            "revision": self.revision,
+            "source_revision": self.source_revision,
+            "changes": {
+                "before": None,
+                "after": {},
+                "affected_assertions": len(events),
+            },
+            "effects": "batch-effects-1",
+            "unresolved_fields": [],
+            "validation": ["Batch payload validated"],
+            "validation_outcome": {"valid": True},
+        }
+        self.prepared.append(preview)
+        return preview
+
+    def save_batch(self, preview: dict[str, Any]) -> list[ReviewEvent]:
+        events = [ReviewEvent.from_dict(e) for e in preview["events"]]
+        self.saved.extend(events)
+        self.revision = str(len(self.saved))
+        return events
+
 
 @pytest.fixture
 def gui() -> tuple[Any, FixtureService]:
@@ -250,7 +363,7 @@ def test_queue_resolves_institutions_once_per_request(
 
 
 def form(client: Any, review_id: str = SCHOOL_ID, **overrides: Any) -> dict[str, Any]:
-    response = client.get(f"/items/{review_id}")
+    response = client.get(f"/items/{review_id}", follow_redirects=True)
     values = Inputs(response.get_data(as_text=True)).values
     return {
         "csrf_token": values["csrf_token"],
@@ -773,13 +886,12 @@ def test_real_service_manual_and_missing_education_preview_leave_database_unchan
     external.mkdir()
     monkeypatch.setattr(service_module, "RAW_APH_DIR", tmp_path / "aph")
     monkeypatch.setattr(service_module, "RAW_WIKIMEDIA_DIR", tmp_path / "wiki")
-    monkeypatch.setattr(
-        service_module,
-        "build_candidates",
-        lambda connection, **kwargs: build_candidates(
-            connection, cache_dir=tmp_path / "cache", **kwargs
-        ),
-    )
+
+    def cached_candidates(connection: Any, **kwargs: Any) -> list[dict[str, Any]]:
+        kwargs["cache_dir"] = tmp_path / "cache"
+        return build_candidates(connection, **kwargs)
+
+    monkeypatch.setattr(service_module, "build_candidates", cached_candidates)
     log = tmp_path / "decisions.jsonl"
     service = ReviewService(log_path=log, db_path=db_path, external_dir=external)
     client = create_app(service).test_client()

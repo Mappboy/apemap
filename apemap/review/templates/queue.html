@@ -1,27 +1,58 @@
 {% extends "base.html" %}
-{% block title %}Review queues{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
 {% block content %}
-<h1>Review queues</h1>
-<div class="totals" aria-label="All queue dispositions">
+<h1>{{ page_title }}</h1>
+{% if queue_view == 'all' %}
+<section class="queue-workloads" aria-label="Review lists">
+  <a class="workload-card" href="{{ url_for('member_queue') }}"><strong>{{ workload_counts.members }}</strong><span>Members to review</span><small>Pending corrections, research tasks and conflicts</small></a>
+  <a class="workload-card" href="{{ url_for('unmatched_school_queue') }}"><strong>{{ workload_counts.schools }}</strong><span>Unmatched schools</span><small>Schools awaiting a reviewed resolution</small></a>
+</section>
+{% else %}<p>{{ page_description }}</p>{% endif %}
+<div class="totals" aria-label="Filtered queue dispositions">
 {% for status in statuses %}<p><strong>{{ totals.get(status, 0) }}</strong> {{ status | replace('_', ' ') }}</p>{% endfor %}
 </div>
-<form method="get" action="{{ url_for('queue') }}" class="filters">
+<form method="get" action="{{ url_for(queue_endpoint) }}" class="filters">
+  {% if queue_view == 'all' %}
   <label>Review type<select name="entity_type"><option value="">All types</option>{% for key, label in entity_labels.items() %}<option value="{{ key }}" {% if filters.entity_type == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  {% endif %}
   <label>Status<select name="status"><option value="">All statuses</option>{% for status in statuses %}<option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status | replace('_', ' ') }}</option>{% endfor %}</select></label>
   <label>Parliament<input name="parliament" type="number" min="42" max="48" value="{{ filters.parliament }}"></label>
   <label>School, member or identifier<input name="q" type="search" value="{{ filters.q }}"></label>
-  <button type="submit">Filter</button><a href="{{ url_for('queue') }}">Clear filters</a>
+  {% if queue_view == 'all' %}<label class="choice"><input type="checkbox" name="unmatched_schools" value="1" {% if filters.unmatched_schools %}checked{% endif %}> Unmatched schools</label>{% endif %}
+  <button type="submit">Filter</button><a href="{{ url_for(queue_endpoint) }}">Clear filters</a>
 </form>
 <p>{{ total }} matching {{ queue_label }} · page {{ page }} of {{ pages }}</p>
 <div class="table-wrap"><table>
-  <caption>School mapping items and other evidence candidates with their current review disposition</caption>
-  <thead><tr><th scope="col">Review item</th><th scope="col">Type</th><th scope="col">Parliaments</th><th scope="col">Status</th><th scope="col">Candidate evidence</th></tr></thead>
+  <caption>{% if queue_view == 'members' %}Open member corrections grouped by APH identifier{% elif queue_view == 'schools' %}Unresolved school mappings with suggested institutions and evidence leads{% else %}School mapping items and other evidence candidates with their current review disposition{% endif %}</caption>
+  <thead><tr><th scope="col">{% if queue_view == 'members' %}Member{% elif queue_view == 'schools' %}School{% else %}Review item{% endif %}</th>{% if queue_view == 'all' %}<th scope="col">Type</th>{% endif %}<th scope="col">Parliaments</th><th scope="col">Status</th><th scope="col">{% if queue_view == 'members' %}Correction fields{% else %}Candidate evidence{% endif %}</th></tr></thead>
   <tbody>{% for row in rows %}<tr>
-    <th scope="row"><a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.school.name if row.school is defined else row.review_id }}</a>{% if row.school is not defined %}<small>{{ row.candidate_id }}</small>{% endif %}</th>
-    <td>{{ entity_labels.get(row.entity_type, row.entity_type) }}</td>
-    <td>{{ (row.parliaments or []) | join(', ') }}</td><td>{{ row.status | replace('_', ' ') }}</td>
-    <td>{% if row.school is defined %}{{ row.school.targets | length }} possible targets · {{ row.school.leads | length }} unresolved evidence leads{% if row.school.saved_reference %}<small>Saved mapping: {{ row.school.saved_reference }}</small>{% endif %}{% else %}<details><summary>Inspect evidence</summary><pre>{{ row.get('evidence', row.get('payload', {})) | json_text }}</pre></details>{% endif %}</td>
-  </tr>{% else %}<tr><td colspan="5">No candidates match these filters.</td></tr>{% endfor %}</tbody>
+    <th scope="row">
+      {% if row.entity_type == 'member' %}
+        <a href="{{ url_for('member_detail', aph_id=row.aph_id) }}">{{ row.display_name }}</a>
+        <small>{{ row.aph_id }}</small>
+        {% if row.ambiguous %}<span class="ambiguity-badge" title="Identity ambiguity detected">Ambiguous</span>{% endif %}
+      {% elif row.school is defined %}
+        <a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.school.name }}</a>
+      {% else %}
+        <a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.review_id }}</a>
+        <small>{{ row.candidate_id }}</small>
+      {% endif %}
+    </th>
+    {% if queue_view == 'all' %}<td>{{ entity_labels.get(row.entity_type, row.entity_type) }}</td>{% endif %}
+    <td>{{ (row.parliaments or []) | join(', ') }}</td><td><span class="status-badge status-{{ row.status }}">{{ row.status | replace('_', ' ') }}</span></td>
+    <td>
+      {% if row.entity_type == 'member' %}
+        {{ row.actionable_count }} {% if queue_view == 'members' %}correction{% else %}actionable{% endif %} field{% if row.actionable_count != 1 %}s{% endif %}
+        {% if row.field_statuses %}
+          <small class="queue-field-states">{% for f, st in row.field_statuses.items() %}<span>{{ f | replace('_', ' ') }}: <span class="status-badge status-{{ st }}">{{ st | replace('_', ' ') }}</span></span>{% endfor %}</small>
+        {% endif %}
+      {% elif row.school is defined %}
+        {{ row.school.targets | length }} possible targets · {{ row.school.leads | length }} unresolved evidence leads{% if row.school.saved_reference %}<small>Saved mapping: {{ row.school.saved_reference }}</small>{% endif %}
+      {% else %}
+        <details><summary>Inspect evidence</summary><pre>{{ row.get('evidence', row.get('payload', {})) | json_text }}</pre></details>
+      {% endif %}
+    </td>
+  </tr>{% else %}<tr><td colspan="{{ 5 if queue_view == 'all' else 4 }}">{{ empty_message }}</td></tr>{% endfor %}</tbody>
 </table></div>
 <nav aria-label="Queue pages">{% if previous_url %}<a href="{{ previous_url }}">Previous page</a>{% endif %}{% if next_url %}<a href="{{ next_url }}">Next page</a>{% endif %}</nav>
 <section><h2>Add sourced evidence</h2><p>Add an institution outside the ACARA register or record an additional education assertion. Both use the same validation and history as queued reviews.</p>

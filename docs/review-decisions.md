@@ -234,6 +234,70 @@ The server defaults to `http://127.0.0.1:8765` and four workers. Saving decision
 updates the ledger immediately; the database and release retain their consumed
 snapshot until rebuilt. Close the server before replacing its database.
 
+The home page and shared navigation link to two dedicated lists:
+
+- **Members to review** at `/members` includes one row per APH member whose
+  aggregate field disposition is `conflict`, `pending` or `needs_research`.
+  Members with only completed decisions remain in the general queue and history.
+  Open the member name to review its correction fields at `/members/<APH_ID>`.
+- **Unmatched schools** at `/schools/unmatched` includes unresolved school
+  review cases even when suggested institutions exist. Accepted mappings and
+  `resolved_individually` cases are excluded. Open the school name to use its
+  existing mapping review form.
+
+Both lists offer search, parliament and applicable status filters, with 50 rows
+per page. Their scope stays fixed; clearing filters returns to the same list.
+Counts reflect unique grouped cases after filtering, before pagination. Home
+cards show the full workload independently of general-queue filters. Member
+priority is conflict, pending, then research; school priority is conflict,
+individual review, pending, research, rejected, then superseded. Within each
+status, names sort without case sensitivity, with stable identifiers breaking
+ties. Saved decisions refresh list membership through the existing queue cache
+revision. Reading lists does not modify the database or decision ledger.
+
+Package 0.8.0 groups demographic and identity candidates into one queue row and
+one page per APH member. Gender aliases, valid ISO birth dates and Wikidata IDs
+are compared against the effective reviewed value, with the preserved APH value
+shown separately. Matching proposals and absent proposals against populated
+values appear only as collapsed context. Empty fields without proposals remain
+research tasks; invalid proposals and identity conflicts remain reviewable.
+Every available identity/name cache, its alternatives, query, retrieval date and
+field decision history can be inspected on the member page. Education and service
+records link to their existing separate review forms.
+
+Choose an action independently for each actionable field: accept, reject, needs
+research or leave unchanged. Select the proposal evidence when several caches
+exist. Ambiguous identities require an explicit valid value before acceptance;
+rejecting or researching conflicting decision heads requires an explicit accepted
+ancestor to retain. **Preview batch** shows the exact field events, combined
+decision/canonical changes, validation and remaining research tasks. A compact
+comparison table and status badges summarize the member before the field cards.
+The preview describes each accepted or retained value in plain language; exact
+events, combined changes, history and candidate alternatives remain available
+under **Technical details**. **Save all
+decisions** appends all selected events atomically. A review database is required
+to compute the canonical preview. Edits invalidate the preview, and a changed
+ledger, source/candidate evidence, projected effects or validation outcome rejects
+the complete save. A busy writer permits retrying the same preview; after a stale
+preview, review the retained draft and preview again. After a file error, check
+history before retrying because the commit may already have reached disk.
+
+Member batch rejection/research events use `proposal_only: true` and
+`retained_decision_id` to preserve an accepted ancestor, including explicit nulls,
+through subsequent proposal reviews. Without an accepted correction they retain
+the source baseline. Existing withdrawal events and single-field CLI withdrawals
+keep their source-fallback semantics. Events also retain reviewed candidate IDs
+and the selected proposal evidence; new evidence returns to pending instead of
+inheriting an earlier proposal's disposition. Queue regeneration suppresses
+satisfied cases without appending cleanup events or changing historical events.
+CLI/export candidates and ledger events retain their field-level formats.
+
+The **Unmatched schools** checkbox intersects with type, status, parliament and
+search filters. It excludes effective accepted mappings and individually resolved
+schools, retaining unresolved and conflicting cases. Counts reflect the filtered
+grouped rows before pagination. Applying or clearing filters does not change
+decisions or school resolution semantics.
+
 Package 0.7.0 accepts `serve --research-config <providers.json>`
 for optional assisted research. Select a configured provider, inspect suggestions,
 preview and explicitly retain evidence, then separately preview/save a decision.

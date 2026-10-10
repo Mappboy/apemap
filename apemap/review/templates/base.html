@@ -8,7 +8,15 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to review</a>
-  <header><a href="{{ url_for('queue') }}">APEMAP evidence review</a> · <a href="{{ url_for('readiness_page') }}">Review readiness</a><p>Local review · decisions take effect on the next source build</p></header>
+  <header><a href="{{ url_for('queue') }}">APEMAP evidence review</a>
+    <nav aria-label="Review workflows">
+      <a href="{{ url_for('queue') }}" {% if request.endpoint == 'queue' %}aria-current="page"{% endif %}>All review items</a>
+      <a href="{{ url_for('member_queue') }}" {% if request.endpoint == 'member_queue' %}aria-current="page"{% endif %}>Members to review</a>
+      <a href="{{ url_for('unmatched_school_queue') }}" {% if request.endpoint == 'unmatched_school_queue' %}aria-current="page"{% endif %}>Unmatched schools</a>
+      <a href="{{ url_for('readiness_page') }}" {% if request.endpoint == 'readiness_page' %}aria-current="page"{% endif %}>Review readiness</a>
+    </nav>
+    <p>Local review · decisions take effect on the next source build</p>
+  </header>
   <main id="main">{% block content %}{% endblock %}</main>
   {% block scripts %}{% endblock %}
 </body>

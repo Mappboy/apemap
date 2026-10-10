@@ -308,6 +308,24 @@ def validate_event(event: ReviewEvent) -> None:
                 raise ValueError(
                     "Member correction requires value (null clears a field)"
                 )
+        if "proposal_only" in payload:
+            if (
+                type(payload["proposal_only"]) is not bool
+                or payload["proposal_only"] is not True
+            ):
+                raise ValueError("proposal_only must be true")
+            if action not in ("reject", "research"):
+                raise ValueError(
+                    "proposal_only is only valid for member rejection or research"
+                )
+            if "retained_decision_id" in payload:
+                ret_id = payload["retained_decision_id"]
+                if ret_id is not None:
+                    _text(ret_id, "retained_decision_id")
+                    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9:_-]{0,127}", ret_id):
+                        raise ValueError("Invalid retained_decision_id")
+        elif "retained_decision_id" in payload:
+            raise ValueError("retained_decision_id requires proposal_only: true")
     elif event.entity_type == "member_education":
         aph_id = _text(payload.get("aph_id"), "aph_id")
         name = payload.get("recorded_school_name", "")
@@ -639,6 +657,48 @@ def resolve_events(
     return effective
 
 
+def member_value_provider(
+    event: ReviewEvent, events: list[ReviewEvent]
+) -> ReviewEvent | None:
+    """Find the accepted fact retained by a member disposition, validating ancestry."""
+    if event.entity_type != "member":
+        raise ValueError("Expected a member decision")
+    if event.effective_action == "accept":
+        return event
+    if event.payload.get("proposal_only") is not True:
+        return None
+    retained_id = event.payload.get("retained_decision_id")
+    if retained_id is None:
+        return None
+    by_id = {item.decision_id: item for item in events}
+    retained = by_id.get(retained_id)
+    if retained is None:
+        raise ValueError(f"Missing retained decision {retained_id}")
+    if (
+        retained.review_id != event.review_id
+        or retained.entity_type != "member"
+        or retained.payload.get("field") != event.payload.get("field")
+        or retained.effective_action != "accept"
+    ):
+        raise ValueError(
+            f"Retained decision {retained_id} must be an accepted ancestor for {event.review_id}"
+        )
+    pending = list(event.supersedes)
+    visited: set[str] = set()
+    while pending:
+        identifier = pending.pop()
+        if identifier == retained_id:
+            return retained
+        if identifier not in visited:
+            visited.add(identifier)
+            parent = by_id.get(identifier)
+            if parent is not None:
+                pending.extend(parent.supersedes)
+    raise ValueError(
+        f"Retained decision {retained_id} is not an ancestor of {event.decision_id}"
+    )
+
+
 def validate_events(
     events: list[ReviewEvent],
     *,
@@ -654,7 +714,24 @@ def validate_events(
         and event.effective_action == "accept"
     }
     qids: dict[str, str] = {}
+    for event in events:
+        if event.entity_type == "member":
+            member_value_provider(event, events)
     for event in effective.values():
+        if event.entity_type == "member":
+            aph_id = event.payload["aph_id"]
+            if member_ids is not None and aph_id.lower() not in {
+                item.lower() for item in member_ids
+            }:
+                raise ValueError(f"{event.review_id}: Unknown member {aph_id}")
+            provider = member_value_provider(event, events)
+            if provider is not None and event.payload["field"] == "wikidata_id":
+                qid = provider.payload["value"]
+                if qid and qid in qids and qids[qid] != aph_id.lower():
+                    raise ValueError(f"Conflicting member Wikidata ID {qid}")
+                if qid:
+                    qids[qid] = aph_id.lower()
+            continue
         if event.effective_action not in ("accept", "map"):
             continue
         for field_name in ("institution_ref", "attended_institution_ref"):
@@ -677,12 +754,6 @@ def validate_events(
             and aph_id.lower() not in {x.lower() for x in member_ids}
         ):
             raise ValueError(f"{event.review_id}: Unknown member {aph_id}")
-        if event.entity_type == "member" and event.payload["field"] == "wikidata_id":
-            qid = event.payload["value"]
-            if qid and qid in qids and qids[qid] != str(aph_id).lower():
-                raise ValueError(f"Conflicting member Wikidata ID {qid}")
-            if qid:
-                qids[qid] = str(aph_id).lower()
 
 
 def active_heads(events: list[ReviewEvent]) -> dict[str, list[ReviewEvent]]:
