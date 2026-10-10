@@ -71,6 +71,7 @@ def test_member_prepare_and_save_batch_mixed_decisions(
             reviewer="Reviewer",
         ),
         MemberFieldDraft(
+            reviewer="Reviewer",
             field="gender",
             action="unchanged",
         ),
@@ -232,7 +233,9 @@ def test_prepare_batch_requires_review_db(review_service: ReviewService) -> None
     # Set non-existent db_path
     service.db_path = service.db_path.parent / "nonexistent.duckdb"
     drafts = [
-        MemberFieldDraft(field="gender", action="accept", value="Male"),
+        MemberFieldDraft(
+            reviewer="Reviewer", field="gender", action="accept", value="Male"
+        ),
     ]
     with pytest.raises(ValueError, match="Review database required"):
         service.prepare_batch("TEST", drafts)
@@ -249,6 +252,7 @@ def test_member_uses_preserved_baseline_after_withdrawal(
             "TEST",
             [
                 MemberFieldDraft(
+                    reviewer="Reviewer",
                     field="gender",
                     action="accept",
                     value="Female",
@@ -266,6 +270,7 @@ def test_member_uses_preserved_baseline_after_withdrawal(
             {"aph_id": "TEST", "field": "gender", "value": None},
             notes="Withdraw correction",
             supersedes=[accepted.decision_id],
+            reviewer="Reviewer",
         )
     )
     field = next(
@@ -309,6 +314,7 @@ def test_refreshed_proposal_returns_to_pending_and_retention_chains(
             "TEST",
             [
                 MemberFieldDraft(
+                    reviewer="Reviewer",
                     field="date_of_birth",
                     action="accept",
                     value="1971-02-03",
@@ -322,7 +328,10 @@ def test_refreshed_proposal_returns_to_pending_and_retention_chains(
             "TEST",
             [
                 MemberFieldDraft(
-                    field="date_of_birth", action=action, notes="Retain corrected date"
+                    reviewer="Reviewer",
+                    field="date_of_birth",
+                    action=action,
+                    notes="Retain corrected date",
                 )
             ],
         )
@@ -365,7 +374,14 @@ def test_suppressed_fields_have_no_batch_controls(
         with pytest.raises(ValueError, match="Suppressed field"):
             review_service.prepare_batch(
                 "TEST",
-                [MemberFieldDraft(field=field, action="research", notes="Research")],
+                [
+                    MemberFieldDraft(
+                        reviewer="Reviewer",
+                        field=field,
+                        action="research",
+                        notes="Research",
+                    )
+                ],
             )
 
 
@@ -378,7 +394,12 @@ def test_changed_batch_conclusions_never_append(
 ) -> None:
     service = review_service
     preview = service.prepare_batch(
-        "TEST", [MemberFieldDraft(field="gender", action="research", notes="Research")]
+        "TEST",
+        [
+            MemberFieldDraft(
+                reviewer="Reviewer", field="gender", action="research", notes="Research"
+            )
+        ],
     )
     before = log_revision(service.log_path)
     if changed == "validation":
@@ -407,7 +428,14 @@ def test_changed_batch_conclusions_never_append(
     if changed == "source":
         fresh = service.prepare_batch(
             "TEST",
-            [MemberFieldDraft(field="gender", action="research", notes="Research")],
+            [
+                MemberFieldDraft(
+                    reviewer="Reviewer",
+                    field="gender",
+                    action="research",
+                    notes="Research",
+                )
+            ],
         )
         service.save_batch(fresh)
         assert len(service.events()) == 1
@@ -420,12 +448,14 @@ def test_invalid_one_field_prevents_entire_batch(review_service: ReviewService) 
             "TEST",
             [
                 MemberFieldDraft(
+                    reviewer="Reviewer",
                     field="gender",
                     action="accept",
                     value="Female",
                     source_url="https://example.org/bio",
                 ),
                 MemberFieldDraft(
+                    reviewer="Reviewer",
                     field="date_of_birth",
                     action="accept",
                     value="1970-02-31",
@@ -447,6 +477,7 @@ def test_conflicting_heads_require_explicit_retention(
             "TEST",
             [
                 MemberFieldDraft(
+                    reviewer="Reviewer",
                     field="gender",
                     action="accept",
                     value="Female",
@@ -466,7 +497,10 @@ def test_conflicting_heads_require_explicit_retention(
             "TEST",
             [
                 MemberFieldDraft(
-                    field="gender", action="research", notes="Resolve identity"
+                    reviewer="Reviewer",
+                    field="gender",
+                    action="research",
+                    notes="Resolve identity",
                 )
             ],
         )
@@ -474,6 +508,7 @@ def test_conflicting_heads_require_explicit_retention(
         "TEST",
         [
             MemberFieldDraft(
+                reviewer="Reviewer",
                 field="gender",
                 action="research",
                 notes="Retain accepted value",
