@@ -234,6 +234,27 @@ The server defaults to `http://127.0.0.1:8765` and four workers. Saving decision
 updates the ledger immediately; the database and release retain their consumed
 snapshot until rebuilt. Close the server before replacing its database.
 
+The home page and shared navigation link to two dedicated lists:
+
+- **Members to review** at `/members` includes one row per APH member whose
+  aggregate field disposition is `conflict`, `pending` or `needs_research`.
+  Members with only completed decisions remain in the general queue and history.
+  Open the member name to review its correction fields at `/members/<APH_ID>`.
+- **Unmatched schools** at `/schools/unmatched` includes unresolved school
+  review cases even when suggested institutions exist. Accepted mappings and
+  `resolved_individually` cases are excluded. Open the school name to use its
+  existing mapping review form.
+
+Both lists offer search, parliament and applicable status filters, with 50 rows
+per page. Their scope stays fixed; clearing filters returns to the same list.
+Counts reflect unique grouped cases after filtering, before pagination. Home
+cards show the full workload independently of general-queue filters. Member
+priority is conflict, pending, then research; school priority is conflict,
+individual review, pending, research, rejected, then superseded. Within each
+status, names sort without case sensitivity, with stable identifiers breaking
+ties. Saved decisions refresh list membership through the existing queue cache
+revision. Reading lists does not modify the database or decision ledger.
+
 Package 0.8.0 groups demographic and identity candidates into one queue row and
 one page per APH member. Gender aliases, valid ISO birth dates and Wikidata IDs
 are compared against the effective reviewed value, with the preserved APH value

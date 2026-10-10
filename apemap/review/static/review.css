@@ -4,6 +4,13 @@ header, main { max-width: 1400px; margin: auto; padding: 1.4rem 2rem; }
 header { border-bottom: 1px solid #c9d2c7; }
 header > a { font-weight: 700; }
 header p { margin-bottom: 0; }
+header nav { flex-wrap: wrap; gap: .5rem 1.5rem; }
+header nav [aria-current="page"] { font-weight: 700; }
+.queue-workloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.workload-card { display: block; padding: 1rem 1.3rem; border: 1px solid #9ebba1; border-radius: .4rem; background: white; text-decoration: none; }
+.workload-card:hover { background: #edf4ea; }
+.workload-card strong { display: block; font-size: 2rem; line-height: 1.2; }
+.workload-card span { font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
 a { color: #23653b; text-underline-offset: .2em; overflow-wrap: anywhere; }
 h1, h2, h3 { line-height: 1.2; }
 section { margin-top: 2rem; }

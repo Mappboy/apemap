@@ -13,7 +13,7 @@ import secrets
 import time
 from pathlib import Path
 from threading import Lock
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 from urllib.parse import urlsplit
 
 from flask import Flask, abort, g, jsonify, redirect, render_template, request, url_for
@@ -45,6 +45,15 @@ STATUSES = (
     "conflict",
     "superseded",
 )
+OPEN_MEMBER_STATUSES = ("conflict", "pending", "needs_research")
+UNMATCHED_SCHOOL_STATUSES = (
+    "conflict",
+    "needs_individual_review",
+    "pending",
+    "needs_research",
+    "rejected",
+    "superseded",
+)
 ACTIONS = ("accept", "map", "reject", "research", "supersede")
 ACTION_LABELS = {
     "accept": "Accept",
@@ -63,6 +72,24 @@ RESOLUTION_FIELDS = (
     "candidate_id",
     *SCHOOL_CONTEXT_FIELDS,
 )
+
+
+def _open_member(row: Mapping[str, Any]) -> bool:
+    return row["entity_type"] == "member" and row["status"] in OPEN_MEMBER_STATUSES
+
+
+def _unmatched_school(row: Mapping[str, Any]) -> bool:
+    return row["entity_type"] == "school" and row["status"] not in (
+        "accepted",
+        "resolved_individually",
+    )
+
+
+def _queue_order(
+    row: Mapping[str, Any], statuses: tuple[str, ...]
+) -> tuple[int, str, str]:
+    name = row["school"].name if "school" in row else row["display_name"]
+    return statuses.index(row["status"]), str(name).casefold(), str(row["review_id"])
 
 
 def _member_preview_rows(
@@ -879,9 +906,22 @@ def create_app(
                 queue_cache = (revision, rows)
             return rows
 
-    @app.get("/")
-    def queue() -> str:
-        entity_type = request.args.get("entity_type") or None
+    def render_queue(view: Literal["all", "members", "schools"] = "all") -> str:
+        endpoint = {
+            "all": "queue",
+            "members": "member_queue",
+            "schools": "unmatched_school_queue",
+        }[view]
+        entity_type = {"members": "member", "schools": "school"}.get(view)
+        if view == "all":
+            entity_type = request.args.get("entity_type") or None
+        statuses = (
+            OPEN_MEMBER_STATUSES
+            if view == "members"
+            else UNMATCHED_SCHOOL_STATUSES
+            if view == "schools"
+            else STATUSES
+        )
         status = request.args.get("status") or None
         try:
             parliament = (
@@ -894,24 +934,21 @@ def create_app(
             abort(400, "Parliament and page must be integers")
         if entity_type and entity_type not in ENTITY_LABELS:
             abort(400, "Unknown review type")
-        if status and status not in STATUSES:
+        if status and status not in statuses:
             abort(400, "Unknown status")
         search = request.args.get("q") or None
-        unmatched_schools = request.args.get("unmatched_schools") == "1"
+        unmatched_schools = view == "schools" or (
+            view == "all" and request.args.get("unmatched_schools") == "1"
+        )
         all_rows = queue_rows()
         base_rows = [
-            row
-            for row in all_rows
-            if not unmatched_schools
-            or (
-                row["entity_type"] == "school"
-                and row["status"] not in ("accepted", "resolved_individually")
-            )
+            row for row in all_rows if not unmatched_schools or _unmatched_school(row)
         ]
         rows = [
             row
             for row in base_rows
             if (not entity_type or row["entity_type"] == entity_type)
+            and (view != "members" or _open_member(row))
             and (not status or row["status"] == status)
             and (parliament is None or parliament in row["parliaments"])
             and (
@@ -920,6 +957,8 @@ def create_app(
                 in json.dumps(row, default=str, ensure_ascii=False).casefold()
             )
         ]
+        if view != "all":
+            rows.sort(key=lambda row: _queue_order(row, statuses))
         totals = Counter(row.get("status", "pending") for row in rows)
         pages = max(1, (len(rows) + PAGE_SIZE - 1) // PAGE_SIZE)
         page = min(page, pages)
@@ -932,22 +971,53 @@ def create_app(
         }
 
         def page_url(number: int) -> str:
-            return url_for(
-                "queue",
-                entity_type=entity_type or "",
-                status=status or "",
-                parliament=parliament or "",
-                q=search or "",
-                unmatched_schools="1" if unmatched_schools else "",
-                page=number,
-            )
+            values: dict[str, Any] = {
+                "status": status or "",
+                "parliament": parliament or "",
+                "q": search or "",
+                "page": number,
+            }
+            if view == "all":
+                values.update(
+                    entity_type=entity_type or "",
+                    unmatched_schools="1" if unmatched_schools else "",
+                )
+            return url_for(endpoint, **values)
 
         return render_template(
             "queue.html",
+            queue_view=view,
+            queue_endpoint=endpoint,
+            page_title={
+                "all": "Review queues",
+                "members": "Members to review",
+                "schools": "Unmatched schools",
+            }[view],
+            page_description={
+                "all": "",
+                "members": "Members with pending corrections, research tasks or conflicts. Completed decisions remain available in the general queue and member history.",
+                "schools": "Schools awaiting a reviewed resolution, including those with suggested institutions. Accepted mappings and fully resolved individual reviews are excluded.",
+            }[view],
+            empty_message={
+                "all": "No candidates match these filters.",
+                "members": "No members require review",
+                "schools": "No unmatched schools match these filters.",
+            }[view],
+            statuses=statuses,
+            workload_counts={
+                "members": sum(_open_member(row) for row in all_rows),
+                "schools": sum(_unmatched_school(row) for row in all_rows),
+            }
+            if view == "all"
+            else {},
             rows=rows[(page - 1) * PAGE_SIZE : page * PAGE_SIZE],
             totals=totals,
             total=len(rows),
-            queue_label="school mappings"
+            queue_label="members"
+            if view == "members"
+            else "unmatched schools"
+            if view == "schools"
+            else "school mappings"
             if entity_type == "school"
             else "review entries",
             page=page,
@@ -956,6 +1026,18 @@ def create_app(
             previous_url=page_url(page - 1) if page > 1 else None,
             next_url=page_url(page + 1) if page < pages else None,
         )
+
+    @app.get("/")
+    def queue() -> str:
+        return render_queue()
+
+    @app.get("/members")
+    def member_queue() -> str:
+        return render_queue("members")
+
+    @app.get("/schools/unmatched")
+    def unmatched_school_queue() -> str:
+        return render_queue("schools")
 
     @app.get("/open")
     def open_item() -> Any:
