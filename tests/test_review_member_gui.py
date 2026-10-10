@@ -82,6 +82,58 @@ class MemberPresentation(HTMLParser):
         return " ".join(" ".join(self.prose).split())
 
 
+@pytest.mark.parametrize("unrelated", ["school", "other_member_conflict"])
+def test_member_page_scopes_decision_annotation_to_its_own_fields(
+    review_service: ReviewService, unrelated: str
+) -> None:
+    from dataclasses import replace
+
+    from apemap.review.model import member_review_id
+    from apemap.review.store import encode_event
+    from tests.test_review_model import school_event
+
+    accepted = review_service.save_batch(
+        review_service.prepare_batch(
+            "TEST",
+            [
+                MemberFieldDraft(
+                    field="gender",
+                    action="accept",
+                    value="Other",
+                    source_url="https://example.org/bio",
+                    reviewer="Reviewer",
+                )
+            ],
+        )
+    )[0]
+    before = review_service.member("TEST")
+    if unrelated == "school":
+        other_events = [school_event()]
+    else:
+        other_events = [
+            replace(
+                accepted,
+                decision_id=f"other-{index}",
+                review_id=member_review_id("OTHER", "gender"),
+                payload={**accepted.payload, "aph_id": "OTHER", "value": value},
+            )
+            for index, value in enumerate(("Male", "Female"))
+        ]
+    with review_service.log_path.open("ab") as stream:
+        for event in other_events:
+            stream.write(encode_event(event))
+    before_log = review_service.log_path.read_bytes()
+    before_db = hashlib.sha256(review_service.db_path.read_bytes()).hexdigest()
+    response = create_app(review_service).test_client().get("/members/TEST")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "Member comparison" in html and "Test Person" in html
+    assert accepted.decision_id in html
+    assert review_service.member("TEST") == before
+    assert review_service.log_path.read_bytes() == before_log
+    assert hashlib.sha256(review_service.db_path.read_bytes()).hexdigest() == before_db
+
+
 def test_member_batch_preview_save_and_matching_history(
     review_service: ReviewService,
 ) -> None:

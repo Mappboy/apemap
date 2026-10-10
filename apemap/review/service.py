@@ -43,6 +43,7 @@ from apemap.review.model import (
     active_heads,
     education_review_id,
     entity_for_review_id,
+    member_review_id,
     service_review_id,
     parse_events,
     resolve_events,
@@ -984,6 +985,11 @@ class ReviewService:
         actual_aph_id = str(member_row.get("aph_id") or norm_aph_id)
 
         parliaments = sorted({int(row["parliament_number"]) for row in services})
+        # Whole-ledger annotation adds decision-only rows for unrelated cases,
+        # which do not carry demographic comparison evidence.
+        member_review_ids = {
+            member_review_id(actual_aph_id, field) for field in MEMBER_FIELDS
+        }
         options = annotate_candidates(
             member_candidates(
                 member_row,
@@ -992,7 +998,7 @@ class ReviewService:
                 RAW_WIKIMEDIA_DIR,
                 include_suppressed=True,
             ),
-            events,
+            [event for event in events if event.review_id in member_review_ids],
         )
         is_ambiguous = any(
             row["evidence"]["comparison"] == "ambiguous" for row in options
