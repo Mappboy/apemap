@@ -65,6 +65,52 @@ RESOLUTION_FIELDS = (
 )
 
 
+def _member_preview_rows(
+    member: Mapping[str, Any], preview: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """Present the signed projection, including retained and conflicting values."""
+    canonical = preview.get("changes", {}).get("canonical") or {}
+    difference = canonical.get("after", {}).get("members", {})
+    projected = next(
+        (
+            row
+            for row in difference.get("after", [])
+            if row["aph_id"] == member["aph_id"]
+        ),
+        None,
+    )
+    rows = []
+    fields = {field["field"]: field for field in member["fields"]}
+    for event in preview["events"]:
+        name = event["payload"]["field"]
+        field = fields[name]
+        action = event.get("replacement_action") or event["action"]
+        value = (
+            projected.get(name)
+            if projected is not None
+            else event["payload"].get("value")
+            if action == "accept"
+            else field["source_value"]
+            if canonical.get("baseline") == "source"
+            else field["effective_value"]
+        )
+        rows.append(
+            {
+                "field": name,
+                "before": field["effective_value"],
+                "conflict": bool(field["conflicts"]),
+                "after": value,
+                "action": action,
+                "label": {
+                    "accept": "Accept",
+                    "reject": "Reject proposal",
+                    "research": "Needs research",
+                }[action],
+            }
+        )
+    return rows
+
+
 def _guided_action(action: str, payload: Mapping[str, Any]) -> str:
     """Reload a typed research outcome without changing the stored event action."""
     reason = payload.get("resolution_reason")
@@ -952,6 +998,7 @@ def create_app(
             "member.html",
             member=member_view,
             preview=preview,
+            preview_rows=_member_preview_rows(member_view, preview) if preview else [],
             preview_token=preview_token,
             error=error,
             form_values=values,

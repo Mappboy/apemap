@@ -249,7 +249,11 @@ research or leave unchanged. Select the proposal evidence when several caches
 exist. Ambiguous identities require an explicit valid value before acceptance;
 rejecting or researching conflicting decision heads requires an explicit accepted
 ancestor to retain. **Preview batch** shows the exact field events, combined
-decision/canonical changes, validation and remaining research tasks. **Save all
+decision/canonical changes, validation and remaining research tasks. A compact
+comparison table and status badges summarize the member before the field cards.
+The preview describes each accepted or retained value in plain language; exact
+events, combined changes, history and candidate alternatives remain available
+under **Technical details**. **Save all
 decisions** appends all selected events atomically. A review database is required
 to compute the canonical preview. Edits invalidate the preview, and a changed
 ledger, source/candidate evidence, projected effects or validation outcome rejects

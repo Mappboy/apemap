@@ -16,6 +16,7 @@ pytest.importorskip("flask")
 pytest.importorskip("waitress")
 
 from apemap.review.gui import create_app
+from apemap.review.members import MemberFieldDraft
 from apemap.review.service import ReviewService
 from apemap.review.store import ReviewBusyError, log_revision
 from tests.test_review_member_batch import member_cache as member_cache
@@ -52,6 +53,35 @@ class MemberForm(HTMLParser):
             self.select = None
 
 
+class MemberPresentation(HTMLParser):
+    """Inspect reviewer prose separately from collapsed technical JSON."""
+
+    def __init__(self, html: str) -> None:
+        super().__init__()
+        self.details: list[bool] = []
+        self.prose: list[str] = []
+        self.feed(html)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        values = dict(attrs)
+        if tag == "details":
+            self.details.append("technical-details" in (values.get("class") or ""))
+            assert "open" not in values
+        if tag == "pre":
+            assert any(self.details), "Raw JSON must be under Technical details"
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "details":
+            self.details.pop()
+
+    def handle_data(self, data: str) -> None:
+        if not any(self.details):
+            self.prose.append(data)
+
+    def text(self) -> str:
+        return " ".join(" ".join(self.prose).split())
+
+
 def test_member_batch_preview_save_and_matching_history(
     review_service: ReviewService,
 ) -> None:
@@ -77,6 +107,11 @@ def test_member_batch_preview_save_and_matching_history(
     assert "preview_token" in parsed.values
     assert "wikidata_id" in html and "Unresolved fields remaining" in html
     assert "Selected decisions and combined effects" in html
+    prose = MemberPresentation(html).text()
+    assert "Gender: Male → Female — Accept" in prose
+    assert "Birth date: Retain 1970-01-01 — Reject proposal" in prose
+    assert "Wikidata ID: Unresolved; no value recorded — Needs research" in prose
+    assert "Member comparison" in prose and "Current reviewed" in prose
     assert 'src="/static/member.js?v=' in html and "<script>" not in html
     assert 'style="' not in html
     assert "script-src 'self'" in response.headers["Content-Security-Policy"]
@@ -93,6 +128,79 @@ def test_member_batch_preview_save_and_matching_history(
     assert 'name="action_gender"' not in html
     assert gender.decision_id in html
     assert "Decision history" in html
+    assert "Accepted · Female · Reviewer" in MemberPresentation(html).text()
+
+
+@pytest.mark.parametrize("action", ["reject", "research"])
+def test_readable_preview_retains_reviewed_value_when_resolving_conflict(
+    review_service: ReviewService, action: str
+) -> None:
+    from dataclasses import replace
+
+    from apemap.review.store import encode_event
+
+    first = review_service.save_batch(
+        review_service.prepare_batch(
+            "TEST",
+            [
+                MemberFieldDraft(
+                    field="gender",
+                    action="accept",
+                    value="Other",
+                    source_url="https://example.org/bio",
+                    reviewer="Reviewer",
+                )
+            ],
+        )
+    )[0]
+    parallel = replace(
+        first,
+        decision_id="parallel-ui-head",
+        payload={**first.payload, "value": "Female"},
+    )
+    review_service.log_path.write_bytes(encode_event(first) + encode_event(parallel))
+    client = create_app(review_service).test_client()
+    draft = MemberForm(client.get("/members/TEST").get_data(as_text=True)).values
+    draft.update(
+        action_gender=action,
+        retained_decision_id_gender=first.decision_id,
+        reviewer="Reviewer",
+        notes_gender="Keep reviewed value",
+    )
+    html = client.post("/members/TEST/preview", data=draft).get_data(as_text=True)
+    prose = MemberPresentation(html).text()
+    label = "Reject proposal" if action == "reject" else "Needs research"
+    assert f"Gender: Resolve conflicting decisions; retain Other — {label}" in prose
+    assert "preview_token" in MemberForm(html).values
+    assert len(review_service.events(allow_conflicts=True)) == 2
+
+
+def test_candidate_alternatives_are_readable_and_escape_untrusted_text(
+    review_service: ReviewService, member_cache: Path
+) -> None:
+    data = json.loads(member_cache.read_text())
+    data["status"] = "ambiguous"
+    data["candidates"] = [
+        {
+            "qid": "Q123",
+            "gender": "Female",
+            "dob": "1972-02-03",
+            "article": "https://example.org/bio",
+        },
+        {"qid": "<script>bad()</script>", "bindings": [{"raw": "retained details"}]},
+    ]
+    member_cache.write_text(json.dumps(data))
+    html = (
+        create_app(review_service)
+        .test_client()
+        .get("/members/TEST")
+        .get_data(as_text=True)
+    )
+    prose = MemberPresentation(html).text()
+    assert "Q123 · Gender: Female · Birth date: 1972-02-03" in prose
+    assert "retained details" not in prose and "retained details" in html
+    assert "<script>bad()</script>" not in html
+    assert "comparison-ambiguous" in html and "alert-warning" in html
 
 
 @pytest.mark.parametrize(

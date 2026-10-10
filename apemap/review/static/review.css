@@ -62,7 +62,51 @@ button:disabled { opacity: .6; cursor: default; }
 .score-components dd { margin: 0; font-weight: 600; }
 @media (max-width: 800px) { header, main { padding: 1rem; } .detail-grid { grid-template-columns: 1fr; } }
 
-.member-fields-review fieldset { margin-bottom: 2rem; padding: 1rem; }
-.member-fields-review table { width: 100%; margin-bottom: 1rem; }
-#save-disabled-msg { color: #a00; font-weight: bold; }
-.member-context-section { margin-top: 2rem; }
+.status-badge, .comparison-badge, .ambiguity-badge { display: inline-block; padding: .15rem .55rem; border: 1px solid #c0c9bf; border-radius: 1rem; font-size: .85rem; font-weight: 600; line-height: 1.5; background: #edf0eb; color: #354535; margin: .15rem 0; }
+.status-pending, .comparison-different { background: #fdf1d4; border-color: #dbbd70; color: #634500; }
+.status-accepted, .status-resolved_individually, .comparison-matches { background: #e1efe2; border-color: #9ebba1; color: #24522d; }
+.status-rejected, .status-superseded, .comparison-proposed_missing { background: #eef0ed; border-color: #bfc6bc; color: #4f594b; }
+.status-needs_research, .status-needs_individual_review { background: #e3edf5; border-color: #a0b8ca; color: #234e6b; }
+.status-conflict, .comparison-ambiguous, .comparison-proposed_invalid, .ambiguity-badge { background: #f9e4de; border-color: #c3806d; color: #842e1c; }
+.ambiguity-badge { border-radius: .3rem; border-width: 2px; }
+.alert { padding: .9rem 1rem; margin: 1rem 0; border-radius: .3rem; border-left: .3rem solid; }
+.alert-warning, .alert-danger { color: #742b1c; background: #fbece6; border-color: #a6472c; }
+.alert-info { color: #234e6b; background: #eaf1f7; border-color: #648cac; }
+.member-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; }
+.member-meta p { margin: .2rem 0; }
+.member-meta .alert { flex-basis: 100%; }
+.member-summary table { min-width: 640px; }
+.queue-field-states { display: flex; flex-wrap: wrap; gap: .3rem .8rem; margin-top: .5rem; }
+.filters label.choice { flex: 0 1 auto; gap: .5rem; min-height: 2.7rem; }
+.member-fields-review .field-card { background: white; padding: 1rem 1.3rem; margin-bottom: 1.5rem; border-radius: .5rem; box-shadow: 0 2px 5px #17251d0a; min-width: 0; }
+.field-card legend { padding: 0 .5rem; }
+.field-card legend h3 { margin: 0; font-size: 1.25rem; }
+.field-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+.field-comparison > div { padding: .8rem 1rem; background: #f4f6f3; border: 1px solid #d4ddd1; border-radius: .3rem; }
+.field-comparison .proposed-value { background: #edf4ea; border-color: #b2c6aa; }
+.field-comparison dt { font-size: .85rem; color: #4c604f; }
+.field-comparison dd { margin: .3rem 0 0; font-size: 1.15rem; font-weight: 600; overflow-wrap: anywhere; }
+.field-action { max-width: 38rem; padding: .2rem .8rem; background: #edf4ea; border-left: .25rem solid #245937; }
+.field-controls > label { max-width: 50rem; }
+.secondary-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; border-top: 1px solid #d4ddd1; margin-top: 1rem; padding-top: .3rem; font-size: .9rem; }
+.secondary-controls label:last-child { grid-column: 1 / -1; }
+.evidence-context { padding-top: .5rem; border-top: 1px solid #d4ddd1; font-size: .9rem; overflow-wrap: anywhere; }
+.evidence-context summary { font-weight: 600; }
+.evidence-record { border-bottom: 1px solid #d4ddd1; padding: .5rem 0; }
+.decision-history li { padding: .5rem 0; }
+.decision-history p { margin: .3rem 0; }
+.technical-details { font-size: .9rem; }
+.technical-details summary { color: #4c604f; font-weight: 400; }
+.preview-panel { padding: 1.3rem; background: white; border: 2px solid #8ca78a; border-top: .35rem solid #245937; border-radius: .5rem; }
+.preview-panel h2 { margin-top: 0; }
+.preview-decisions { list-style: none; padding: 0; }
+.preview-decisions li { padding: .8rem 0; border-bottom: 1px solid #d4ddd1; overflow-wrap: anywhere; }
+.decision-label { font-weight: 600; color: #245937; }
+.validation-box { font-size: .9rem; padding: .5rem .8rem; background: #edf4ea; border-radius: .3rem; }
+.validation-box h3 { font-size: 1rem; margin: .3rem 0; }
+.validation-box ul { margin: .5rem 0; padding-left: 1.3rem; }
+.batch-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+button.secondary-button { color: #245937; background: white; border-color: #245937; }
+button.secondary-button:hover { background: #edf4ea; }
+#save-disabled-msg { color: #842e1c; font-weight: 600; }
+@media (max-width: 600px) { .field-comparison, .secondary-controls { grid-template-columns: 1fr; } .secondary-controls label:last-child { grid-column: auto; } .member-fields-review .field-card { padding: .8rem; } .preview-panel { padding: 1rem; } }

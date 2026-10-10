@@ -10,7 +10,7 @@
   <label>Status<select name="status"><option value="">All statuses</option>{% for status in statuses %}<option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status | replace('_', ' ') }}</option>{% endfor %}</select></label>
   <label>Parliament<input name="parliament" type="number" min="42" max="48" value="{{ filters.parliament }}"></label>
   <label>School, member or identifier<input name="q" type="search" value="{{ filters.q }}"></label>
-  <label><input type="checkbox" name="unmatched_schools" value="1" {% if filters.unmatched_schools %}checked{% endif %}> Unmatched schools</label>
+  <label class="choice"><input type="checkbox" name="unmatched_schools" value="1" {% if filters.unmatched_schools %}checked{% endif %}> Unmatched schools</label>
   <button type="submit">Filter</button><a href="{{ url_for('queue') }}">Clear filters</a>
 </form>
 <p>{{ total }} matching {{ queue_label }} · page {{ page }} of {{ pages }}</p>
@@ -22,7 +22,7 @@
       {% if row.entity_type == 'member' %}
         <a href="{{ url_for('member_detail', aph_id=row.aph_id) }}">{{ row.display_name }}</a>
         <small>{{ row.aph_id }}</small>
-        {% if row.ambiguous %}<span class="ambiguity-badge" title="Identity ambiguity detected">⚠️ Ambiguous</span>{% endif %}
+        {% if row.ambiguous %}<span class="ambiguity-badge" title="Identity ambiguity detected">Ambiguous</span>{% endif %}
       {% elif row.school is defined %}
         <a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.school.name }}</a>
       {% else %}
@@ -31,12 +31,12 @@
       {% endif %}
     </th>
     <td>{{ entity_labels.get(row.entity_type, row.entity_type) }}</td>
-    <td>{{ (row.parliaments or []) | join(', ') }}</td><td>{{ row.status | replace('_', ' ') }}</td>
+    <td>{{ (row.parliaments or []) | join(', ') }}</td><td><span class="status-badge status-{{ row.status }}">{{ row.status | replace('_', ' ') }}</span></td>
     <td>
       {% if row.entity_type == 'member' %}
         {{ row.actionable_count }} actionable field{% if row.actionable_count != 1 %}s{% endif %}
         {% if row.field_statuses %}
-          <small>{% for f, st in row.field_statuses.items() %}{{ f }}: {{ st | replace('_', ' ') }}{% if not loop.last %} · {% endif %}{% endfor %}</small>
+          <small class="queue-field-states">{% for f, st in row.field_statuses.items() %}<span>{{ f | replace('_', ' ') }}: <span class="status-badge status-{{ st }}">{{ st | replace('_', ' ') }}</span></span>{% endfor %}</small>
         {% endif %}
       {% elif row.school is defined %}
         {{ row.school.targets | length }} possible targets · {{ row.school.leads | length }} unresolved evidence leads{% if row.school.saved_reference %}<small>Saved mapping: {{ row.school.saved_reference }}</small>{% endif %}

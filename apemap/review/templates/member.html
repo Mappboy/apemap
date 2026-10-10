@@ -1,14 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Member review: {{ member.name }}{% endblock %}
+{% macro field_name(name) %}{% if name == 'date_of_birth' %}Birth date{% elif name == 'wikidata_id' %}Wikidata ID{% else %}{{ name | replace('_', ' ') | title }}{% endif %}{% endmacro %}
+{% macro display_value(value) %}{{ value if value is not none and value != '' else 'Not recorded' }}{% endmacro %}
 {% macro context(field) %}
-<details><summary>Evidence, alternatives and decision history</summary>
+<details class="evidence-context"><summary>Evidence, alternatives and decision history</summary>
 {% for candidate in field.candidates %}
+<div class="evidence-record">
 <p><strong>{{ candidate.evidence.match_method }}</strong> · {{ candidate.evidence.cache_file or 'No cache' }} · Proposed: {{ candidate.evidence.proposed_value }} · {{ candidate.evidence.comparison }}</p>
 <p>Source: {% if candidate.evidence.source_url | source_link %}<a href="{{ candidate.evidence.source_url | source_link }}" rel="noopener noreferrer">{{ candidate.evidence.source_url }}</a>{% else %}None{% endif %} · Retrieved: {{ candidate.evidence.retrieved_at or 'None' }}</p>
 <p>Query: {{ candidate.evidence.source_query or 'None' }} · Notes: {{ candidate.evidence.notes or 'None' }}</p>
-{% if candidate.evidence.alternatives %}<pre>{{ candidate.evidence.alternatives | json_text }}</pre>{% endif %}
+{% if candidate.evidence.alternatives %}
+<h4>Candidate alternatives</h4>
+<ul>{% for alternative in candidate.evidence.alternatives %}<li>
+{% if alternative is mapping %}
+<strong>{{ alternative.get('qid', alternative.get('wikidata_id', alternative.get('id', 'Unidentified candidate'))) }}</strong>
+{% if alternative.get('gender') %} · Gender: {{ alternative.gender }}{% endif %}
+{% if alternative.get('dob', alternative.get('date_of_birth')) %} · Birth date: {{ alternative.get('dob', alternative.get('date_of_birth')) }}{% endif %}
+{% if alternative.get('article') | source_link %} · <a href="{{ alternative.article | source_link }}" rel="noopener noreferrer">Source article</a>{% endif %}
+{% else %}{{ alternative }}{% endif %}
+</li>{% endfor %}</ul>
+<details class="technical-details"><summary>Technical details: candidate alternatives</summary><pre>{{ candidate.evidence.alternatives | json_text }}</pre></details>
+{% endif %}
+</div>
 {% endfor %}
-{% if field.history %}<h4>Decision history</h4><pre>{{ field.history | json_text }}</pre>{% endif %}
+{% if field.history %}
+<h4>Decision history</h4>
+<ol class="decision-history">{% for event in field.history %}
+{% set action = event.replacement_action or event.action %}
+<li><strong>{{ {'accept': 'Accepted', 'reject': 'Rejected proposal', 'research': 'Needs research', 'supersede': 'Superseded'}.get(action, action | title) }}</strong>
+{% if action == 'accept' %} · {{ display_value(event.payload.get('value')) }}{% endif %}
+ · {{ event.reviewer }} · {{ event.reviewed_at }}
+{% if event.notes %}<p>{{ event.notes }}</p>{% endif %}
+{% if event.source_url | source_link %}<a href="{{ event.source_url | source_link }}" rel="noopener noreferrer">Evidence source</a>{% endif %}
+</li>{% endfor %}</ol>
+<details class="technical-details"><summary>Technical details: decision history</summary><pre>{{ field.history | json_text }}</pre></details>
+{% endif %}
 </details>
 {% endmacro %}
 {% block content %}
@@ -22,7 +48,7 @@
   <p><strong>Actionable fields:</strong> {{ member.actionable_count }}</p>
   {% if member.ambiguous %}
   <div class="alert alert-warning" role="alert">
-    <strong>⚠️ Ambiguous Identity:</strong> Conflicting identities, alternatives or decision heads were detected across data sources for this member.
+    <strong>Ambiguous identity or conflicting decisions:</strong> Check the evidence and resolve conflicting values before accepting a proposal.
   </div>
   {% endif %}
 </div>
@@ -33,12 +59,35 @@
 </div>
 {% endif %}
 
+<section class="member-summary" aria-labelledby="comparison-heading">
+<h2 id="comparison-heading">Member comparison</h2>
+<div class="table-wrap"><table>
+<caption>Compare all fields before reviewing individual decisions.</caption>
+<thead><tr><th scope="col">Field</th><th scope="col">Source</th><th scope="col">Current reviewed</th><th scope="col">Proposed</th><th scope="col">Status</th></tr></thead>
+<tbody>{% for field in member.fields %}<tr>
+<th scope="row"><a href="#field-{{ field.field }}">{{ field_name(field.field) }}</a></th>
+<td>{{ display_value(field.source_value) }}</td><td>{{ display_value(field.effective_value) }}</td><td>{{ display_value(field.proposed_value) }}</td>
+<td><span class="status-badge status-{{ field.status }}">{{ field.status | replace('_', ' ') }}</span><br><span class="comparison-badge comparison-{{ field.comparison }}">{{ field.comparison | replace('_', ' ') }}</span></td>
+</tr>{% endfor %}</tbody>
+</table></div>
+</section>
+
 <form method="post" action="{{ url_for('preview_member_batch', aph_id=member.aph_id) }}" id="member-batch-form">
 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 {% if preview %}
 <input type="hidden" name="preview_token" value="{{ preview_token }}">
 <section class="preview-panel">
-  <h2>Batch Preview</h2>
+  <h2>Batch preview</h2>
+  <p>Review these {{ preview_rows | length }} decisions, then save them together.</p>
+  <h3>Selected decisions and combined effects</h3>
+  <ul class="preview-decisions">{% for row in preview_rows %}
+  <li><strong>{{ field_name(row.field) }}:</strong>
+  {% if row.action == 'accept' %}{{ 'Conflicting decisions' if row.conflict else display_value(row.before) }} → {{ display_value(row.after) }}
+  {% elif row.conflict %}Resolve conflicting decisions; retain {{ display_value(row.after) }}
+  {% elif row.after is none %}Unresolved; no value recorded
+  {% else %}Retain {{ display_value(row.after) }}{% endif %}
+  <span class="decision-label">— {{ row.label }}</span></li>
+  {% endfor %}</ul>
   <div class="validation-box">
     <h3>Validation</h3>
     <ul>
@@ -50,21 +99,15 @@
 
   {% if preview.unresolved_fields %}
   <div class="alert alert-info">
-    <strong>Unresolved fields remaining:</strong> {{ preview.unresolved_fields | join(', ') }}
+    <strong>Unresolved fields remaining:</strong> {% for field in preview.unresolved_fields %}{{ field_name(field) }}{% if not loop.last %}, {% endif %}{% endfor %}
   </div>
   {% endif %}
 
-  {% if preview.changes and preview.changes.canonical %}
-  <div class="canonical-changes">
-    <h3>Projected Canonical Changes</h3>
-    <pre>{{ preview.changes.canonical | json_text }}</pre>
-  </div>
-  {% endif %}
-
-  <h3>Selected decisions and combined effects</h3>
+  <details class="technical-details"><summary>Technical details: exact events and combined changes</summary>
   <pre>{{ preview.events | json_text }}</pre>
   <pre>{{ preview.changes | json_text }}</pre>
-  <p><button type="submit" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" id="save-batch-btn">Save all decisions</button>
+  </details>
+  <p class="batch-actions"><button type="submit" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" id="save-batch-btn">Save all decisions</button>
   <span id="save-disabled-msg" hidden>Draft inputs changed after preview. Preview again to enable saving.</span></p>
 </section>
 {% endif %}
@@ -74,29 +117,18 @@
 
     {% for field in member.fields if not field.is_suppressed or form_values.get('action_' + field.field, 'unchanged') != 'unchanged' %}
     <fieldset class="field-card" id="field-{{ field.field }}">
-      <legend><h3>{{ field.field | replace('_', ' ') | title }}</h3></legend>
+      <legend><h3>{{ field_name(field.field) }}</h3></legend>
       <p>
-        <strong>Comparison:</strong> <span class="comparison-badge">{{ field.comparison | replace('_', ' ') }}</span> ·
-        <strong>Status:</strong> <span class="status-badge">{{ field.status | replace('_', ' ') }}</span>
+        <span class="comparison-badge comparison-{{ field.comparison }}">{{ field.comparison | replace('_', ' ') }}</span>
+        <span class="status-badge status-{{ field.status }}">{{ field.status | replace('_', ' ') }}</span>
       </p>
       {% if field.is_suppressed %}<p>This field now requires no decision. Leave unchanged before previewing again.</p>{% endif %}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Source value</th>
-            <th>Effective reviewed value</th>
-            <th>Proposed value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ field.source_value if field.source_value is not none else 'None' }}</td>
-            <td>{{ field.effective_value if field.effective_value is not none else 'None' }}</td>
-            <td>{{ field.proposed_value if field.proposed_value is not none else 'None' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <dl class="field-comparison">
+        <div><dt>Source</dt><dd>{{ display_value(field.source_value) }}</dd></div>
+        <div><dt>Current reviewed</dt><dd>{{ display_value(field.effective_value) }}</dd></div>
+        <div class="proposed-value"><dt>Proposed</dt><dd>{{ display_value(field.proposed_value) }}</dd></div>
+      </dl>
 
       {% if field.conflicts %}
       <div class="alert alert-warning">
@@ -109,8 +141,17 @@
       </div>
       {% endif %}
 
-      {{ context(field) }}
       <div class="field-controls">
+        <div class="field-action">
+          <label><strong>Action:</strong>
+            <select name="action_{{ field.field }}">
+              <option value="unchanged" {% if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}selected{% endif %}>Leave unchanged</option>
+              <option value="accept" {% if form_values.get('action_' + field.field) == 'accept' %}selected{% endif %}>Accept proposal</option>
+              <option value="reject" {% if form_values.get('action_' + field.field) == 'reject' %}selected{% endif %}>Reject proposal (retains reviewed value)</option>
+              <option value="research" {% if form_values.get('action_' + field.field) == 'research' %}selected{% endif %}>Needs research (retains reviewed value)</option>
+            </select>
+          </label>
+        </div>
         <label>Proposal evidence:
           <select name="candidate_id_{{ field.field }}">
           {% for candidate in field.candidates %}
@@ -128,32 +169,19 @@
           </select>
         </label>
         {% endif %}
-        <p>
-          <label><strong>Action:</strong>
-            <select name="action_{{ field.field }}">
-              <option value="unchanged" {% if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}selected{% endif %}>Leave unchanged</option>
-              <option value="accept" {% if form_values.get('action_' + field.field) == 'accept' %}selected{% endif %}>Accept proposal</option>
-              <option value="reject" {% if form_values.get('action_' + field.field) == 'reject' %}selected{% endif %}>Reject proposal (retains reviewed value)</option>
-              <option value="research" {% if form_values.get('action_' + field.field) == 'research' %}selected{% endif %}>Needs research (retains reviewed value)</option>
-            </select>
-          </label>
-        </p>
-        <p>
+        <div class="secondary-controls">
           <label>Value override (optional):
             <input type="text" name="value_{{ field.field }}" value="{{ form_values.get('value_' + field.field, '') }}" placeholder="{{ field.normalized_proposed_value or '' }}">
           </label>
-        </p>
-        <p>
           <label>Evidence URL:
             <input type="url" name="source_url_{{ field.field }}" value="{{ form_values.get('source_url_' + field.field, field.evidence.source_url or '') }}">
           </label>
-        </p>
-        <p>
           <label>Notes:
             <input type="text" name="notes_{{ field.field }}" value="{{ form_values.get('notes_' + field.field, '') }}">
           </label>
-        </p>
+        </div>
       </div>
+      {{ context(field) }}
     </fieldset>
     {% endfor %}
 
@@ -163,7 +191,7 @@
       <summary><strong>Fields requiring no decision ({{ matching_fields | length }})</strong> - Context only; no review required</summary>
       {% for field in matching_fields if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}
       <div id="field-{{ field.field }}">
-        <h4>{{ field.field | replace('_', ' ') | title }}</h4>
+        <h4>{{ field_name(field.field) }}</h4>
         <p>Source: <code>{{ field.source_value }}</code> · Effective: <code>{{ field.effective_value }}</code> · Proposed: <code>{{ field.proposed_value }}</code> · {{ field.comparison }}.</p>
         {{ context(field) }}
         {% if field.evidence.source_url | source_link %}
@@ -178,7 +206,7 @@
       <label>Reviewer name: <input type="text" name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
     </p>
     <p>
-      <button type="submit" id="preview-batch-btn">Preview batch</button>
+      <button type="submit" id="preview-batch-btn" {% if preview %}class="secondary-button"{% endif %}>{% if preview %}Preview again{% else %}Preview batch{% endif %}</button>
     </p>
 </section>
 </form>
