@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Member review: {{ member.name }}{% endblock %}
+{% macro context(field) %}
+<details><summary>Evidence, alternatives and decision history</summary>
+{% for candidate in field.candidates %}
+<p><strong>{{ candidate.evidence.match_method }}</strong> · {{ candidate.evidence.cache_file or 'No cache' }} · Proposed: {{ candidate.evidence.proposed_value }} · {{ candidate.evidence.comparison }}</p>
+<p>Source: {% if candidate.evidence.source_url | source_link %}<a href="{{ candidate.evidence.source_url | source_link }}" rel="noopener noreferrer">{{ candidate.evidence.source_url }}</a>{% else %}None{% endif %} · Retrieved: {{ candidate.evidence.retrieved_at or 'None' }}</p>
+<p>Query: {{ candidate.evidence.source_query or 'None' }} · Notes: {{ candidate.evidence.notes or 'None' }}</p>
+{% if candidate.evidence.alternatives %}<pre>{{ candidate.evidence.alternatives | json_text }}</pre>{% endif %}
+{% endfor %}
+{% if field.history %}<h4>Decision history</h4><pre>{{ field.history | json_text }}</pre>{% endif %}
+</details>
+{% endmacro %}
+{% block content %}
+<p><a href="{{ url_for('queue') }}">← Back to queue</a></p>
+
+<h1>Member review: {{ member.name }}</h1>
+<div class="member-meta">
+  <p><strong>APH ID:</strong> {{ member.aph_id }}</p>
+  <p><strong>Aggregate status:</strong> <span class="status-badge status-{{ member.status }}">{{ member.status | replace('_', ' ') }}</span></p>
+  <p><strong>Parliaments:</strong> {{ member.parliaments | join(', ') if member.parliaments else 'None' }}</p>
+  <p><strong>Actionable fields:</strong> {{ member.actionable_count }}</p>
+  {% if member.ambiguous %}
+  <div class="alert alert-warning" role="alert">
+    <strong>⚠️ Ambiguous Identity:</strong> Conflicting identities, alternatives or decision heads were detected across data sources for this member.
+  </div>
+  {% endif %}
+</div>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+  <strong>Error:</strong> {{ error }}
+</div>
+{% endif %}
+
+<form method="post" action="{{ url_for('preview_member_batch', aph_id=member.aph_id) }}" id="member-batch-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% if preview %}
+<input type="hidden" name="preview_token" value="{{ preview_token }}">
+<section class="preview-panel">
+  <h2>Batch Preview</h2>
+  <div class="validation-box">
+    <h3>Validation</h3>
+    <ul>
+      {% for msg in preview.validation %}
+      <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% if preview.unresolved_fields %}
+  <div class="alert alert-info">
+    <strong>Unresolved fields remaining:</strong> {{ preview.unresolved_fields | join(', ') }}
+  </div>
+  {% endif %}
+
+  {% if preview.changes and preview.changes.canonical %}
+  <div class="canonical-changes">
+    <h3>Projected Canonical Changes</h3>
+    <pre>{{ preview.changes.canonical | json_text }}</pre>
+  </div>
+  {% endif %}
+
+  <h3>Selected decisions and combined effects</h3>
+  <pre>{{ preview.events | json_text }}</pre>
+  <pre>{{ preview.changes | json_text }}</pre>
+  <p><button type="submit" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" id="save-batch-btn">Save all decisions</button>
+  <span id="save-disabled-msg" hidden>Draft inputs changed after preview. Preview again to enable saving.</span></p>
+</section>
+{% endif %}
+
+<section class="member-fields-review">
+  <h2>Field Decisions</h2>
+
+    {% for field in member.fields if not field.is_suppressed or form_values.get('action_' + field.field, 'unchanged') != 'unchanged' %}
+    <fieldset class="field-card" id="field-{{ field.field }}">
+      <legend><h3>{{ field.field | replace('_', ' ') | title }}</h3></legend>
+      <p>
+        <strong>Comparison:</strong> <span class="comparison-badge">{{ field.comparison | replace('_', ' ') }}</span> ·
+        <strong>Status:</strong> <span class="status-badge">{{ field.status | replace('_', ' ') }}</span>
+      </p>
+      {% if field.is_suppressed %}<p>This field now requires no decision. Leave unchanged before previewing again.</p>{% endif %}
+
+      <table>
+        <thead>
+          <tr>
+            <th>Source value</th>
+            <th>Effective reviewed value</th>
+            <th>Proposed value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ field.source_value if field.source_value is not none else 'None' }}</td>
+            <td>{{ field.effective_value if field.effective_value is not none else 'None' }}</td>
+            <td>{{ field.proposed_value if field.proposed_value is not none else 'None' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {% if field.conflicts %}
+      <div class="alert alert-warning">
+        <strong>Conflicting active decisions:</strong>
+        <ul>
+          {% for c in field.conflicts %}
+          <li>{{ c.action }} ({{ c.reviewed_at }}) - ID: {{ c.decision_id }} - Value: {{ c.payload.get('value') }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {{ context(field) }}
+      <div class="field-controls">
+        <label>Proposal evidence:
+          <select name="candidate_id_{{ field.field }}">
+          {% for candidate in field.candidates %}
+          <option value="{{ candidate.candidate_id }}" {% if form_values.get('candidate_id_' + field.field, field.candidate_id) == candidate.candidate_id %}selected{% endif %}>{{ candidate.evidence.match_method }} · {{ candidate.evidence.cache_file or 'No cache' }} · {{ candidate.evidence.proposed_value }}</option>
+          {% endfor %}
+          </select>
+        </label>
+        {% if field.conflicts %}
+        <label>Accepted decision to retain for reject/research:
+          <select name="retained_decision_id_{{ field.field }}">
+          <option value="">Select explicitly</option>
+          {% for event in field.history if event.action == 'accept' or event.replacement_action == 'accept' %}
+          <option value="{{ event.decision_id }}" {% if form_values.get('retained_decision_id_' + field.field) == event.decision_id %}selected{% endif %}>{{ event.payload.value }} · {{ event.decision_id }}</option>
+          {% endfor %}
+          </select>
+        </label>
+        {% endif %}
+        <p>
+          <label><strong>Action:</strong>
+            <select name="action_{{ field.field }}">
+              <option value="unchanged" {% if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}selected{% endif %}>Leave unchanged</option>
+              <option value="accept" {% if form_values.get('action_' + field.field) == 'accept' %}selected{% endif %}>Accept proposal</option>
+              <option value="reject" {% if form_values.get('action_' + field.field) == 'reject' %}selected{% endif %}>Reject proposal (retains reviewed value)</option>
+              <option value="research" {% if form_values.get('action_' + field.field) == 'research' %}selected{% endif %}>Needs research (retains reviewed value)</option>
+            </select>
+          </label>
+        </p>
+        <p>
+          <label>Value override (optional):
+            <input type="text" name="value_{{ field.field }}" value="{{ form_values.get('value_' + field.field, '') }}" placeholder="{{ field.normalized_proposed_value or '' }}">
+          </label>
+        </p>
+        <p>
+          <label>Evidence URL:
+            <input type="url" name="source_url_{{ field.field }}" value="{{ form_values.get('source_url_' + field.field, field.evidence.source_url or '') }}">
+          </label>
+        </p>
+        <p>
+          <label>Notes:
+            <input type="text" name="notes_{{ field.field }}" value="{{ form_values.get('notes_' + field.field, '') }}">
+          </label>
+        </p>
+      </div>
+    </fieldset>
+    {% endfor %}
+
+    {% set matching_fields = member.fields | selectattr('is_suppressed') | list %}
+    {% if matching_fields %}
+    <details class="matching-context">
+      <summary><strong>Fields requiring no decision ({{ matching_fields | length }})</strong> - Context only; no review required</summary>
+      {% for field in matching_fields if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}
+      <div id="field-{{ field.field }}">
+        <h4>{{ field.field | replace('_', ' ') | title }}</h4>
+        <p>Source: <code>{{ field.source_value }}</code> · Effective: <code>{{ field.effective_value }}</code> · Proposed: <code>{{ field.proposed_value }}</code> · {{ field.comparison }}.</p>
+        {{ context(field) }}
+        {% if field.evidence.source_url | source_link %}
+        <p><small>Evidence: <a href="{{ field.evidence.source_url | source_link }}" target="_blank" rel="noopener noreferrer">{{ field.evidence.source_url }}</a></small></p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </details>
+    {% endif %}
+
+    <p>
+      <label>Reviewer name: <input type="text" name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
+    </p>
+    <p>
+      <button type="submit" id="preview-batch-btn">Preview batch</button>
+    </p>
+</section>
+</form>
+
+<section class="member-context-section">
+  <h3>Related Records</h3>
+  <h4>Education Assertions</h4>
+  {% if member.education %}
+  <ul>
+    {% for edu in member.education %}
+    <li>
+      <strong>{{ edu.recorded_school_name }}</strong> · Status: {{ edu.status | replace('_', ' ') }}
+      · <a href="{{ url_for('detail', review_id=edu.review_id) }}">Review assertion</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No secondary education assertions recorded for this member.</p>
+  {% endif %}
+
+  <h4>Parliament Service</h4>
+  {% if member.services %}
+  <ul>
+    {% for s in member.services %}
+    <li>
+      {{ s.parliament_number }}th Parliament · {{ s.chamber }} ({{ s.electorate or s.state_or_territory }}) · {{ s.status }} · <a href="{{ url_for('detail', review_id=s.review_id) }}">Review service</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No parliament service intervals recorded.</p>
+  {% endif %}
+</section>
+
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='member.js') }}" defer></script>{% endblock %}

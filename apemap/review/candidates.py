@@ -23,6 +23,12 @@ from apemap.review.model import (
     school_review_id,
     service_review_id,
 )
+from apemap.review.member_comparison import (
+    check_identity_ambiguity,
+    compare_member_proposal,
+    effective_member_value,
+    is_member_candidate_suppressed,
+)
 from apemap.review.resolution import relationship_conflicts, resolution_summary
 
 
@@ -38,11 +44,21 @@ def candidate(
     parliaments: list[int],
 ) -> dict[str, Any]:
     evidence = json_value(evidence)
-    # Retrieval timestamps do not make identical facts a new alternative.
+    # Retrieval timestamps and comparison metadata do not make identical facts a new alternative.
     identity = {
         key: value
         for key, value in evidence.items()
-        if key not in ("retrieved_at", "generated_at")
+        if key
+        not in (
+            "retrieved_at",
+            "generated_at",
+            "comparison",
+            "source_value",
+            "effective_value",
+            "normalized_proposed_value",
+            "normalized_effective_value",
+            "retained_decision_id",
+        )
     }
     digest = hashlib.sha256(
         json.dumps(
@@ -252,11 +268,94 @@ def school_member_context(
     )
 
 
+def member_candidates(
+    member: dict[str, Any],
+    parliaments: list[int],
+    events: list[ReviewEvent],
+    cache_dir: Path,
+    *,
+    review_id: str | None = None,
+    include_suppressed: bool = False,
+) -> list[dict[str, Any]]:
+    """Share source baselines and every cached alternative across queue and detail."""
+    aph_id = str(member["aph_id"])
+    result: dict[str, dict[str, Any]] = {}
+    member_cache = cache_dir / "members"
+    identity_path = member_cache / f"{aph_id}.json"
+    if not identity_path.exists():
+        identity_path = member_cache / f"{aph_id.lower()}.json"
+    name_key = re.sub(r"[^A-Za-z0-9_-]", "_", member["display_name"].lower())[:120]
+    name_path = member_cache / f"name_{name_key or 'unknown'}.json"
+    sources = [
+        (path, kind)
+        for path, kind in ((identity_path, "aph_id"), (name_path, "name"))
+        if path.exists()
+    ]
+    caches: list[tuple[str | None, str, dict[str, Any]]] = [
+        (path.name, kind, _cache_object(path)) for path, kind in sources
+    ]
+    if not caches:
+        caches = [(None, "aph_id", {})]
+    is_ambiguous_member = check_identity_ambiguity(caches, events or [], aph_id)
+    for filename, kind, cached in caches:
+        for member_field in ("date_of_birth", "gender", "wikidata_id"):
+            case_id = member_review_id(aph_id, member_field)
+            if review_id is not None and review_id != case_id:
+                continue
+            source_val = member.get(member_field)
+            effective_val, providing_event, is_explicit_null = effective_member_value(
+                events or [], aph_id, member_field, source_val
+            )
+            retained_id = providing_event.decision_id if providing_event else None
+            proposed = cached.get(member_field)
+            comparison, norm_eff, norm_prop = compare_member_proposal(
+                member_field,
+                effective_val,
+                proposed,
+                is_ambiguous=is_ambiguous_member,
+                is_explicit_null=is_explicit_null,
+            )
+            if not include_suppressed and is_member_candidate_suppressed(
+                comparison, effective_val, is_explicit_null=is_explicit_null
+            ):
+                continue
+            evidence = {
+                "display_name": member["display_name"],
+                "aph_value": source_val,
+                "source_value": source_val,
+                "effective_value": effective_val,
+                "proposed_value": proposed,
+                "comparison": comparison,
+                "normalized_proposed_value": norm_prop,
+                "normalized_effective_value": norm_eff,
+                "retained_decision_id": retained_id,
+                "source_url": cached.get("source_url"),
+                "source_query": cached.get("source_query"),
+                "status": cached.get("status"),
+                "notes": cached.get("notes"),
+                "match_method": kind,
+                "cache_file": filename,
+                "retrieved_at": cached.get("retrieved_at"),
+                "alternatives": cached.get("candidates", []),
+                "cache_missing": not bool(cached),
+            }
+            item = candidate(
+                case_id,
+                "member",
+                {"aph_id": aph_id, "field": member_field},
+                evidence,
+                parliaments,
+            )
+            result[item["candidate_id"]] = item
+    return list(result.values())
+
+
 def build_candidates(
     conn: duckdb.DuckDBPyConnection,
     *,
     cache_dir: Path = RAW_WIKIMEDIA_DIR,
     review_id: str | None = None,
+    events: list[ReviewEvent] | None = None,
 ) -> list[dict[str, Any]]:
     """Generate cases from canonical source snapshots and cached evidence only."""
     members = _rows(conn, "members")
@@ -331,55 +430,10 @@ def build_candidates(
             result[item["candidate_id"]] = item
         if review_id is not None and not review_id.startswith("member:"):
             continue
-        member_cache = cache_dir / "members"
-        identity_path = member_cache / f"{aph_id}.json"
-        if not identity_path.exists():
-            identity_path = member_cache / f"{aph_id.lower()}.json"
-        name_key = re.sub(r"[^A-Za-z0-9_-]", "_", member["display_name"].lower())[:120]
-        name_path = member_cache / f"name_{name_key or 'unknown'}.json"
-        sources = [
-            (path, kind)
-            for path, kind in ((identity_path, "aph_id"), (name_path, "name"))
-            if path.exists()
-        ]
-        caches = [(path.name, kind, _cache_object(path)) for path, kind in sources]
-        if not caches:
-            caches = [(None, "aph_id", {})]
-        for filename, kind, cached in caches:
-            for member_field in ("date_of_birth", "gender", "wikidata_id"):
-                case_id = member_review_id(aph_id, member_field)
-                if review_id is not None and review_id != case_id:
-                    continue
-                proposed = cached.get(member_field)
-                if (
-                    proposed is None
-                    and member.get(member_field) is not None
-                    and not cached.get("candidates")
-                    and cached.get("status") != "conflict"
-                ):
-                    continue
-                evidence = {
-                    "display_name": member["display_name"],
-                    "aph_value": member.get(member_field),
-                    "proposed_value": proposed,
-                    "source_url": cached.get("source_url"),
-                    "source_query": cached.get("source_query"),
-                    "status": cached.get("status"),
-                    "notes": cached.get("notes"),
-                    "match_method": kind,
-                    "cache_file": filename,
-                    "retrieved_at": cached.get("retrieved_at"),
-                    "alternatives": cached.get("candidates", []),
-                    "cache_missing": not bool(cached),
-                }
-                item = candidate(
-                    case_id,
-                    "member",
-                    {"aph_id": aph_id, "field": member_field},
-                    evidence,
-                    parliaments,
-                )
-                result[item["candidate_id"]] = item
+        for item in member_candidates(
+            member, parliaments, events or [], cache_dir, review_id=review_id
+        ):
+            result[item["candidate_id"]] = item
     grouped_services: dict[tuple[str, int], list[dict[str, Any]]] = {}
     for row in services:
         member = member_index.get(row["member_id"])
@@ -437,7 +491,9 @@ def annotate_candidates(
     known = {item["review_id"] for item in result}
     for review_id, alternatives in heads.items():
         event = alternatives[0]
-        if review_id not in known:
+        if review_id not in known and (
+            event.entity_type != "member" or len(alternatives) > 1
+        ):
             result.append(
                 candidate(
                     review_id,
@@ -452,10 +508,21 @@ def annotate_candidates(
     for item in result:
         alternatives = heads.get(item["review_id"], [])
         decision = alternatives[0] if len(alternatives) == 1 else None
+        reviewed = bool(
+            decision
+            and (
+                item["entity_type"] != "member"
+                or item["candidate_id"] in decision.payload.get("candidate_ids", [])
+                or decision.payload.get("candidate_id") == item["candidate_id"]
+            )
+        )
         item["status"] = (
             "conflict"
             if len(alternatives) > 1
-            else (decision.status if decision else "pending")
+            or item["evidence"].get("comparison") == "ambiguous"
+            else decision.status
+            if reviewed and decision
+            else "pending"
         )
         item["conflicts"] = (
             [event.decision_id for event in alternatives]

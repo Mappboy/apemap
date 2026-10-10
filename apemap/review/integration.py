@@ -31,6 +31,7 @@ from apemap.review.model import (
     accepted_education_ancestor,
     education_review_id,
     load_events,
+    member_value_provider,
     parse_events,
     resolve_events,
     school_digest,
@@ -971,15 +972,18 @@ def _project(
                     == key
                 )
             ]
-        if event not in accepted:
-            continue
         if event.entity_type == "member":
             assert member is not None
-            value = payload["value"]
-            if payload["field"] == "date_of_birth" and value is not None:
-                value = date.fromisoformat(value)
-            member[str(payload["field"])] = value
-        elif event.entity_type == "member_education":
+            provider = member_value_provider(event, events)
+            if provider is not None:
+                value = provider.payload["value"]
+                if payload["field"] == "date_of_birth" and value is not None:
+                    value = date.fromisoformat(value)
+                member[str(payload["field"])] = value
+            continue
+        if event not in accepted:
+            continue
+        if event.entity_type == "member_education":
             assert member is not None
             recorded = str(payload["recorded_school_name"])
             school = schools.get(school_key(recorded))

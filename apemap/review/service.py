@@ -6,7 +6,7 @@ import hashlib
 import json
 import subprocess
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from copy import copy, deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +27,8 @@ from apemap.constants import (
 from apemap.db import get_connection
 from apemap.ingest.matching import SchoolMatcher, normalize_school_key
 from apemap.review.candidates import (
+    _rows,
+    member_candidates,
     annotate_candidates,
     build_candidates,
     export_candidates,
@@ -36,14 +38,28 @@ from apemap.review.candidates import (
 )
 from apemap.review.model import (
     DEFAULT_LOG_PATH,
+    MEMBER_FIELDS,
     ReviewEvent,
     active_heads,
     education_review_id,
     entity_for_review_id,
+    service_review_id,
     parse_events,
     resolve_events,
     school_review_id,
     validate_events,
+)
+from apemap.review.members import (
+    MemberFieldDraft,
+    aggregate_member_status,
+    field_presentation_order,
+)
+from apemap.review.member_comparison import (
+    MATCHES,
+    PROPOSED_INVALID,
+    PROPOSED_MISSING,
+    is_member_candidate_suppressed,
+    normalize_member_value,
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
 from apemap.review.resolution import relationship_conflicts
@@ -114,6 +130,61 @@ def default_reviewer() -> str:
     if not reviewer:
         raise ValueError("Supply --reviewer or configure git user.name")
     return reviewer
+
+
+def build_review_event(
+    review_id: str,
+    action: str,
+    payload: dict[str, Any],
+    *,
+    source_url: str = "",
+    reviewer: str | None = None,
+    notes: str = "",
+    supersedes: list[str] | None = None,
+    replacement_action: str | None = None,
+) -> ReviewEvent:
+    entity = entity_for_review_id(review_id)
+    proposed = dict(payload)
+    if (
+        entity == "school"
+        and (replacement_action or action) == "research"
+        and proposed.get("resolution_reason") is not None
+    ):
+        proposed.setdefault("requires_individual_resolution", True)
+    if (
+        entity == "member_education"
+        and (replacement_action or action) == "research"
+        and proposed.get("recorded_school_name")
+    ):
+        # Distinguish new resolution research from legacy attendance
+        # withdrawals, whose schema-1 replay must remain unchanged.
+        proposed.setdefault("resolution_only", True)
+    if (
+        entity == "member_education"
+        and review_id.endswith(":missing")
+        and proposed.get("recorded_school_name")
+    ):
+        review_id = education_review_id(
+            proposed["aph_id"], proposed["recorded_school_name"]
+        )
+    parents = list(supersedes or [])
+    if parents and action != "supersede":
+        replacement_action, action = action, "supersede"
+    now = datetime.now(timezone.utc)
+    return ReviewEvent(
+        decision_id=str(uuid4()),
+        review_id=review_id,
+        entity_type=entity,
+        action=action,
+        payload=proposed,
+        source_url=source_url,
+        reviewer=reviewer or default_reviewer(),
+        notes=notes,
+        reviewed_at=now.date().isoformat(),
+        recorded_at=now.isoformat(),
+        supersedes=parents,
+        replacement_action=replacement_action,
+    )
 
 
 def file_digest(path: Path) -> str:
@@ -648,7 +719,9 @@ class ReviewService:
         events = self.events(allow_conflicts=True)
         if self.db_path.exists():
             with get_connection(self.db_path, read_only=True) as conn:
-                items = build_candidates(conn)
+                items = build_candidates(
+                    conn, events=events, cache_dir=RAW_WIKIMEDIA_DIR
+                )
                 progress = self._individual_progress(conn, events)
         else:
             progress = self._individual_progress(None, events)
@@ -703,7 +776,12 @@ class ReviewService:
         items: list[dict[str, Any]] = []
         if self.db_path.exists():
             with get_connection(self.db_path, read_only=True) as conn:
-                items = build_candidates(conn, review_id=review_id)
+                items = build_candidates(
+                    conn,
+                    review_id=review_id,
+                    events=events,
+                    cache_dir=RAW_WIKIMEDIA_DIR,
+                )
         return [
             item
             for item in annotate_candidates(items, events)
@@ -845,6 +923,205 @@ class ReviewService:
             if entity in {"school", "member_education"}
             else [],
             "evidence_revision": evidence_revision(self.evidence_path),
+        }
+
+    def member(self, aph_id: str) -> dict[str, Any]:
+        norm_aph_id = aph_id.strip()
+        events = self.events(allow_conflicts=True)
+        member_row: dict[str, Any] = {}
+        services: list[dict[str, Any]] = []
+        educations: list[dict[str, Any]] = []
+        if self.db_path.exists():
+            with get_connection(self.db_path, read_only=True) as conn:
+                member_row = next(
+                    (
+                        row
+                        for row in _rows(conn, "members")
+                        if str(row.get("aph_id", "")).lower() == norm_aph_id.lower()
+                    ),
+                    {},
+                )
+                mid = member_row.get("member_id")
+                if mid:
+                    services = [
+                        row
+                        for row in _rows(conn, "parliament_service")
+                        if row["member_id"] == mid
+                    ]
+                    educations = [
+                        row
+                        for row in _rows(conn, "member_education")
+                        if row["member_id"] == mid
+                    ]
+        if not member_row:
+            aph_path = RAW_APH_DIR / "individuals.json"
+            if aph_path.exists():
+                raw = json.loads(aph_path.read_text(encoding="utf-8"))
+                for row in raw:
+                    if str(row.get("PHID", "")).lower() == norm_aph_id.lower():
+                        from dataclasses import asdict
+                        from apemap.ingest.aph import parse_individual
+
+                        parsed = parse_individual(row)
+                        if parsed is not None:
+                            member_row = asdict(parsed.demographics)
+                        break
+        if not member_row:
+            for e in events:
+                if (
+                    e.entity_type == "member"
+                    and str(e.payload.get("aph_id", "")).lower() == norm_aph_id.lower()
+                ):
+                    member_row = {
+                        "aph_id": e.payload["aph_id"],
+                        "display_name": e.payload["aph_id"],
+                    }
+                    break
+        if not member_row:
+            raise KeyError(f"Member '{aph_id}' not found")
+
+        display_name = member_row.get("display_name") or norm_aph_id
+        actual_aph_id = str(member_row.get("aph_id") or norm_aph_id)
+
+        parliaments = sorted({int(row["parliament_number"]) for row in services})
+        options = annotate_candidates(
+            member_candidates(
+                member_row,
+                parliaments,
+                events,
+                RAW_WIKIMEDIA_DIR,
+                include_suppressed=True,
+            ),
+            events,
+        )
+        is_ambiguous = any(
+            row["evidence"]["comparison"] == "ambiguous" for row in options
+        )
+        fields_data: list[dict[str, Any]] = []
+        field_statuses: dict[str, str] = {}
+        heads_by_id = active_heads(events)
+        for field_name in MEMBER_FIELDS:
+            field_options = [
+                row for row in options if row["payload"]["field"] == field_name
+            ]
+            actionable = [
+                row
+                for row in field_options
+                if not is_member_candidate_suppressed(
+                    row["evidence"]["comparison"],
+                    row["evidence"]["effective_value"],
+                    is_explicit_null=bool(
+                        row["evidence"].get("retained_decision_id")
+                        and row["evidence"]["effective_value"] is None
+                    ),
+                )
+            ]
+            primary = (actionable or field_options)[0]
+            evidence = primary["evidence"]
+            rev_id = primary["review_id"]
+            heads = heads_by_id.get(rev_id, [])
+            status = (
+                aggregate_member_status([row["status"] for row in actionable])
+                if actionable
+                else (heads[0].status if len(heads) == 1 else "accepted")
+            )
+            field_statuses[field_name] = status
+            fields_data.append(
+                {
+                    **evidence,
+                    "field": field_name,
+                    "review_id": rev_id,
+                    "status": status,
+                    "candidate_id": primary["candidate_id"],
+                    "candidates": field_options,
+                    "decision": heads[0].to_dict() if len(heads) == 1 else None,
+                    "conflicts": [head.to_dict() for head in heads]
+                    if len(heads) > 1
+                    else [],
+                    "history": [
+                        event.to_dict() for event in events if event.review_id == rev_id
+                    ],
+                    "evidence": evidence,
+                    "matching": evidence["comparison"] == MATCHES,
+                    "is_suppressed": not actionable,
+                    "order": field_presentation_order(evidence["comparison"]),
+                }
+            )
+
+        fields_data.sort(key=lambda f: f["order"])
+        parliaments = sorted(
+            {
+                int(s["parliament_number"])
+                for s in services
+                if s.get("parliament_number")
+            }
+        )
+
+        education_items = []
+        for edu in educations:
+            rec_school = edu.get("school_name_as_recorded", "")
+            edu_rev_id = education_review_id(actual_aph_id, rec_school)
+            edu_heads = active_heads(events).get(edu_rev_id, [])
+            edu_status = (
+                "conflict"
+                if len(edu_heads) > 1
+                else edu_heads[0].status
+                if edu_heads
+                else "pending"
+            )
+            education_items.append(
+                {
+                    "recorded_school_name": rec_school,
+                    "review_id": edu_rev_id,
+                    "status": edu_status,
+                    "attended_status": edu.get("attended_status"),
+                    "years_attended": edu.get("years_attended"),
+                }
+            )
+
+        if not education_items:
+            review_id = education_review_id(actual_aph_id, "")
+            heads = active_heads(events).get(review_id, [])
+            education_items.append(
+                {
+                    "recorded_school_name": "No education assertion",
+                    "review_id": review_id,
+                    "status": "conflict"
+                    if len(heads) > 1
+                    else heads[0].status
+                    if heads
+                    else "pending",
+                }
+            )
+        for row in services:
+            row["review_id"] = service_review_id(
+                actual_aph_id, int(row["parliament_number"])
+            )
+            heads = active_heads(events).get(row["review_id"], [])
+            row["status"] = (
+                "conflict"
+                if len(heads) > 1
+                else heads[0].status
+                if heads
+                else "pending"
+            )
+
+        actionable_count = sum(not f["is_suppressed"] for f in fields_data)
+        agg_status = aggregate_member_status(
+            list(field_statuses.values()), is_ambiguous=is_ambiguous
+        )
+
+        return {
+            "aph_id": actual_aph_id,
+            "name": display_name,
+            "status": agg_status,
+            "actionable_count": actionable_count,
+            "parliaments": parliaments,
+            "ambiguous": is_ambiguous,
+            "field_statuses": field_statuses,
+            "fields": fields_data,
+            "education": education_items,
+            "services": services,
         }
 
     def research_revisions(self) -> dict[str, str]:
@@ -1382,45 +1659,14 @@ class ReviewService:
             options = self._case_candidates(review_id, events)
             if options:
                 identity = options[0]["payload"]
-        proposed: dict[str, Any] = {**identity, **payload}
-        if (
-            entity == "school"
-            and (replacement_action or action) == "research"
-            and proposed.get("resolution_reason") is not None
-        ):
-            proposed.setdefault("requires_individual_resolution", True)
-        if (
-            entity == "member_education"
-            and (replacement_action or action) == "research"
-            and proposed.get("recorded_school_name")
-        ):
-            # Distinguish new resolution research from legacy attendance
-            # withdrawals, whose schema-1 replay must remain unchanged.
-            proposed.setdefault("resolution_only", True)
-        if (
-            entity == "member_education"
-            and review_id.endswith(":missing")
-            and proposed.get("recorded_school_name")
-        ):
-            review_id = education_review_id(
-                proposed["aph_id"], proposed["recorded_school_name"]
-            )
-        parents = list(supersedes or [])
-        if parents and action != "supersede":
-            replacement_action, action = action, "supersede"
-        now = datetime.now(timezone.utc)
-        event = ReviewEvent(
-            decision_id=str(uuid4()),
-            review_id=review_id,
-            entity_type=entity,
-            action=action,
-            payload=proposed,
+        event = build_review_event(
+            review_id,
+            action,
+            {**identity, **payload},
             source_url=source_url,
-            reviewer=reviewer or default_reviewer(),
+            reviewer=reviewer,
             notes=notes,
-            reviewed_at=now.date().isoformat(),
-            recorded_at=now.isoformat(),
-            supersedes=parents,
+            supersedes=supersedes,
             replacement_action=replacement_action,
         )
         matcher = self.matcher()
@@ -1535,6 +1781,220 @@ class ReviewService:
         )
         return event
 
+    def prepare_batch(
+        self, aph_id: str, drafts: Sequence[MemberFieldDraft | dict[str, Any]]
+    ) -> dict[str, Any]:
+        if not self.db_path.exists():
+            raise ValueError(
+                "Review database required for canonical member previews; run review build"
+            )
+        raw_log = self.log_path.read_bytes() if self.log_path.exists() else b""
+        revision = hashlib.sha256(raw_log).hexdigest()
+        source_revision = self.source_revision()
+        events = parse_events(raw_log, allow_conflicts=True)
+        member_data = self.member(aph_id)
+        field_map = {f["field"]: f for f in member_data["fields"]}
+
+        normalized_drafts: list[MemberFieldDraft] = []
+        seen_fields: set[str] = set()
+        for d in drafts:
+            draft = MemberFieldDraft.from_dict(
+                d.to_dict() if isinstance(d, MemberFieldDraft) else d
+            )
+            if draft.field not in MEMBER_FIELDS:
+                raise ValueError(f"Unsupported member field: {draft.field}")
+            if draft.field in seen_fields:
+                raise ValueError(f"Duplicate decision for field: {draft.field}")
+            seen_fields.add(draft.field)
+            if draft.action not in ("unchanged", "accept", "reject", "research"):
+                raise ValueError(f"Invalid draft action: {draft.action}")
+            normalized_drafts.append(draft)
+
+        new_events: list[ReviewEvent] = []
+        decided_fields: set[str] = set()
+
+        for draft in normalized_drafts:
+            if draft.action == "unchanged":
+                continue
+            field_info = field_map[draft.field]
+            if field_info.get("is_suppressed"):
+                raise ValueError(
+                    f"Suppressed field '{draft.field}' has no decision controls"
+                )
+            if draft.proposal_only is not True:
+                raise ValueError("Member batches must preserve reviewed values")
+            selected = next(
+                (
+                    row
+                    for row in field_info["candidates"]
+                    if row["candidate_id"]
+                    == (draft.candidate_id or field_info["candidate_id"])
+                ),
+                None,
+            )
+            if selected is None:
+                raise ValueError("Candidate does not belong to this member field")
+            proposal = selected["evidence"]
+            field_rev_id = field_info["review_id"]
+            heads = active_heads(events).get(field_rev_id, [])
+            supersedes = [h.decision_id for h in heads]
+            retained_id = field_info["retained_decision_id"]
+            if draft.supersedes and set(draft.supersedes) != set(supersedes):
+                raise ValueError("Draft supersedes must match all current field heads")
+            if len(heads) > 1 and draft.action != "accept":
+                if not draft.retained_decision_id:
+                    raise ValueError(
+                        "Select an accepted value to retain when resolving conflicting heads"
+                    )
+                retained_id = draft.retained_decision_id
+            elif (
+                draft.retained_decision_id and draft.retained_decision_id != retained_id
+            ):
+                raise ValueError(
+                    "Retained decision does not match the effective reviewed value"
+                )
+
+            if draft.action == "accept":
+                if draft.value is not None:
+                    val = normalize_member_value(draft.field, draft.value)
+                else:
+                    if proposal["comparison"] in (
+                        PROPOSED_INVALID,
+                        PROPOSED_MISSING,
+                        "ambiguous",
+                    ):
+                        raise ValueError(
+                            f"Cannot accept invalid or missing proposal for {draft.field}"
+                        )
+                    val = proposal["normalized_proposed_value"]
+                    if val is None:
+                        raise ValueError(
+                            f"Cannot accept missing proposed value for {draft.field}"
+                        )
+                payload = {
+                    "aph_id": member_data["aph_id"],
+                    "field": draft.field,
+                    "value": val,
+                }
+                action_to_use = "accept"
+                source_url = draft.source_url or proposal.get("source_url") or ""
+            elif draft.action in ("reject", "research"):
+                payload = {
+                    "aph_id": member_data["aph_id"],
+                    "field": draft.field,
+                    "value": None,
+                    "proposal_only": True,
+                    "retained_decision_id": retained_id,
+                }
+                action_to_use = draft.action
+                source_url = draft.source_url
+            else:
+                continue
+
+            payload.update(
+                candidate_id=selected["candidate_id"],
+                candidate_ids=[row["candidate_id"] for row in field_info["candidates"]],
+                proposal_evidence=proposal,
+            )
+            event = build_review_event(
+                review_id=field_rev_id,
+                action=action_to_use,
+                payload=payload,
+                source_url=source_url,
+                reviewer=draft.reviewer,
+                notes=draft.notes,
+                supersedes=supersedes,
+                replacement_action=action_to_use if supersedes else None,
+            )
+            new_events.append(event)
+            decided_fields.add(draft.field)
+
+        if not new_events:
+            raise ValueError("No field decisions selected in batch")
+
+        from apemap.review.preview import evaluate_batch
+
+        validation_result, changes = evaluate_batch(self, events, new_events)
+        if (
+            self.source_revision() != source_revision
+            or log_revision(self.log_path) != revision
+        ):
+            raise StaleReviewError("Review inputs changed while previewing; retry")
+
+        unresolved_fields = [
+            f["field"]
+            for f in member_data["fields"]
+            if (
+                any(
+                    d.field == f["field"] and d.action == "research"
+                    for d in normalized_drafts
+                )
+                or (
+                    f["field"] not in decided_fields
+                    and not f.get("is_suppressed")
+                    and f["status"] in ("pending", "needs_research", "conflict")
+                )
+            )
+        ]
+
+        return {
+            "kind": "member_batch",
+            "aph_id": member_data["aph_id"],
+            "drafts": [draft.to_dict() for draft in normalized_drafts],
+            "events": [e.to_dict() for e in new_events],
+            "event_ids": [e.decision_id for e in new_events],
+            "revision": revision,
+            "source_revision": source_revision,
+            "changes": changes,
+            "effects": _effect_revision(changes),
+            "unresolved_fields": unresolved_fields,
+            "validation": [
+                "Event, available source references and effective state validated",
+                "Canonical projection validated",
+                *validation_result["warnings"],
+            ],
+            "validation_outcome": validation_result,
+        }
+
+    def save_batch(self, preview: dict[str, Any]) -> list[ReviewEvent]:
+        if preview.get("kind") != "member_batch":
+            raise ValueError("Expected a member batch preview")
+        events = [ReviewEvent.from_dict(e) for e in preview["events"]]
+        if not events or [event.decision_id for event in events] != preview.get(
+            "event_ids"
+        ):
+            raise ValueError("Batch event IDs do not match the preview")
+        if any(
+            event.entity_type != "member"
+            or str(event.payload["aph_id"]).lower()
+            != str(preview.get("aph_id", "")).lower()
+            for event in events
+        ):
+            raise ValueError("Batch events must belong to the preview member")
+        if len({event.review_id for event in events}) != len(events):
+            raise ValueError("Batch contains duplicate member fields")
+
+        def check_sources() -> None:
+            if preview.get("source_revision") != self.source_revision():
+                raise StaleReviewError("Source/candidate data changed; preview again")
+            current = self.events(allow_conflicts=True)
+            if preview.get("revision") != log_revision(self.log_path):
+                raise StaleReviewError("Decision history changed; preview again")
+            from apemap.review.preview import verify_batch_effects
+
+            changes = verify_batch_effects(self, current, events, preview)
+            if _effect_revision(changes) != preview.get("effects"):
+                raise StaleReviewError("Batch effects changed; preview again")
+
+        append_events(
+            self.log_path,
+            events,
+            expected_revision=preview["revision"],
+            validator=lambda proposed: self.check(proposed),
+            source_check=check_sources,
+        )
+        return events
+
     def build(
         self, *, inputs_manifest: Path | None = None, output_dir: Path | None = None
     ) -> dict[str, Any]:
@@ -1574,7 +2034,10 @@ class ReviewService:
                 )
             attach_source_manifest(conn, manifest_path, manifest_bytes=manifest_bytes)
             items = annotate_individual_progress(
-                annotate_candidates(build_candidates(conn), events),
+                annotate_candidates(
+                    build_candidates(conn, events=events, cache_dir=RAW_WIKIMEDIA_DIR),
+                    events,
+                ),
                 self._individual_progress(conn, events),
             )
             load_into_duckdb(conn, events, items)

@@ -20,11 +20,38 @@ def requires_approval(events: list[ReviewEvent]) -> bool:
     return any(event.entity_type == "school" for event in events)
 
 
+def evaluate_batch(
+    service: ReviewService, current: list[ReviewEvent], events: list[ReviewEvent]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Evaluate the combined state once with the same resolver for both clients."""
+    matcher = service.matcher()
+    validation = service._check_references(current + events, matcher)
+    changes = service.semantic_diff(current, current + events, matcher=matcher)
+    return json_value(validation), json_value(changes)
+
+
+def verify_batch_effects(
+    service: ReviewService,
+    current: list[ReviewEvent],
+    events: list[ReviewEvent],
+    preview: dict[str, Any],
+) -> dict[str, Any]:
+    """Recheck exact validation and conclusions inside the authority append lock."""
+    try:
+        validation, changes = evaluate_batch(service, current, events)
+    except ValueError as exc:
+        raise StaleReviewError("Batch validation changed; preview again") from exc
+    if changes != preview.get("changes"):
+        raise StaleReviewError("Batch effects changed; preview again")
+    if "validation_outcome" in preview and validation != preview["validation_outcome"]:
+        raise StaleReviewError("Batch validation changed; preview again")
+    return changes
+
+
 def prepare_batch(service: ReviewService, events: list[ReviewEvent]) -> dict[str, Any]:
     revision, source = log_revision(service.log_path), service.source_revision()
     current = service.events(allow_conflicts=True)
-    service.check(current + events)
-    changes = service.semantic_diff(current, current + events)
+    validation, changes = evaluate_batch(service, current, events)
     # Withdrawals have no new default, but their source assertions still matter.
     inventories = {
         event.review_id: service.show(event.review_id)["context"].get("members", [])
@@ -44,6 +71,7 @@ def prepare_batch(service: ReviewService, events: list[ReviewEvent]) -> dict[str
         "source_revision": source,
         "changes": changes,
         "school_assertions": json_value(inventories),
+        "validation_outcome": validation,
     }
 
 
@@ -101,9 +129,7 @@ def apply_preview(service: ReviewService, path: Path, approval: str) -> dict[str
         current = service.events(allow_conflicts=True)
         if preview.get("revision") != log_revision(service.log_path):
             raise StaleReviewError("Decision history changed; preview again")
-        changes = service.semantic_diff(current, current + events)
-        if changes != preview.get("changes"):
-            raise StaleReviewError("Mapping effects changed; preview again")
+        changes = verify_batch_effects(service, current, events, preview)
         inventories = {
             event.review_id: service.show(event.review_id)["context"].get("members", [])
             for event in events
