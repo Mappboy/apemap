@@ -17,7 +17,7 @@ from apemap.review.research import (
     load_providers,
     validate_result,
 )
-from apemap.review.model import education_review_id, member_review_id
+from apemap.review.model import education_review_id, member_review_id, school_digest
 from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError
 from tests.test_review_service import review_service as review_service
@@ -201,6 +201,177 @@ def test_validation_ignores_provider_and_suggestion_timestamps() -> None:
     assert output["suggestions"][0]["retrieved_at"] == output["retrieved_at"]
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("gender", " female "),
+        ("date_of_birth", "1972-02-03"),
+        ("wikidata_id", "https://www.wikidata.org/wiki/Q123"),
+    ],
+)
+def test_member_research_validates_exact_normalized_field_claim(
+    field: str, value: str
+) -> None:
+    review_id = member_review_id("TEST", field)
+    context = {
+        "review_id": review_id,
+        "member_field": field,
+        "candidates": [{"candidate_id": "candidate-1"}],
+    }
+    claim = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": None,
+                "source_url": URL,
+                "claim_type": "member_value",
+                "claim_value": {"field": field, "value": value},
+                "stance": "supports",
+                "excerpt_or_note": "Cited biographical source",
+            }
+        ],
+    }
+    output = validate_result(context, claim)
+    expected = {
+        "gender": "Female",
+        "date_of_birth": "1972-02-03",
+        "wikidata_id": "Q123",
+    }[field]
+    assert output["suggestions"][0]["claim_value"] == {
+        "field": field,
+        "value": expected,
+    }
+    assert output["suggestions"][0]["candidate_institution_ref"] is None
+
+
+@pytest.mark.parametrize(
+    "claim_value",
+    [
+        {"field": "gender", "value": "1972-02-03"},
+        {"field": "date_of_birth", "value": "not a date"},
+        {"field": "wikidata_id", "value": "Q0"},
+        {"field": "gender", "value": "Female", "extra": True},
+    ],
+)
+def test_member_research_rejects_mismatched_or_invalid_values(
+    claim_value: dict[str, Any],
+) -> None:
+    field = (
+        "date_of_birth"
+        if claim_value["field"] == "gender" and "1972" in str(claim_value)
+        else claim_value["field"]
+    )
+    context = {"review_id": member_review_id("TEST", field), "member_field": field}
+    value = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": None,
+                "source_url": URL,
+                "claim_type": "member_value",
+                "claim_value": claim_value,
+                "stance": "supports",
+                "excerpt_or_note": "Claim",
+            }
+        ],
+    }
+    with pytest.raises(ValueError):
+        validate_result(context, value)
+
+
+def test_member_research_disallows_candidate_refs_and_unsupported_types() -> None:
+    context = {
+        "review_id": member_review_id("TEST", "gender"),
+        "member_field": "gender",
+    }
+    value = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": "acara:1",
+                "source_url": URL,
+                "claim_type": "member_context",
+                "claim_value": {"note": "Biographical detail"},
+                "stance": "contextual",
+                "excerpt_or_note": "Claim",
+            }
+        ],
+    }
+    with pytest.raises(ValueError):
+        validate_result(context, value)
+
+
+@pytest.mark.parametrize("field", ["gender", "date_of_birth", "wikidata_id"])
+def test_member_research_context_is_scoped_to_one_exact_field(
+    review_service: ReviewService, field: str
+) -> None:
+    context = review_service.research_context(member_review_id("TEST", field))
+    assert context["review_id"] == member_review_id("TEST", field)
+    assert context["member_field"] == field
+    assert set(context["assertion"]) == {
+        "field",
+        "source_value",
+        "effective_value",
+        "proposed_value",
+        "comparison",
+        "source_url",
+    }
+    assert all("aph_id" not in row for row in context["conflicts"])
+    assert len(context["candidates"]) <= 10
+
+
+def test_school_research_context_preserves_school_identity_and_local_candidates(
+    review_service: ReviewService,
+) -> None:
+    context = review_service.research_context(
+        "school:" + school_digest("Test High School")
+    )
+    assert context["assertion"]["recorded_school_name"] == "Test High School"
+    assert context["candidates"]
+    assert all(row.get("institution_ref") for row in context["candidates"])
+
+
+def test_member_evidence_retention_and_copy_are_exact_and_read_only(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    case = member_review_id("TEST", "gender")
+    payload = {
+        "source_title": "Official biography",
+        "source_type": "biography",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "claim_type": "member_value",
+        "claim_value": {"field": "gender", "value": "Female"},
+        "stance": "supports",
+        "excerpt_or_note": "The biography identifies the member as female.",
+        "generated_by": "manual",
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    assert service.copy_member_evidence_value(case, record.evidence_id) == "Female"
+    with pytest.raises(ValueError, match="different|exact|field"):
+        service.copy_member_evidence_value(
+            member_review_id("TEST", "date_of_birth"), record.evidence_id
+        )
+    invalid = {
+        **payload,
+        "claim_value": {"field": "date_of_birth", "value": "1972-02-03"},
+    }
+    with pytest.raises(ValueError, match="exact field"):
+        service.prepare_evidence(case, invalid)
+
+
+def test_school_research_context_includes_selected_candidates(
+    review_service: ReviewService,
+) -> None:
+    case = "school:" + school_digest("Test High School")
+    context = review_service.research_context(case, candidate_id="acara:1")
+    assert context["selected_candidate"]["institution_ref"] == "acara:1"
+    assert "postcode" in context["selected_candidate"]
+    with pytest.raises(ValueError, match="Selected candidate"):
+        review_service.research_context(case, candidate_id="acara:404")
+
+
 def test_network_errors_are_redacted_and_offline_does_not_call(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -294,9 +465,14 @@ def test_ui_provider_choice_inspection_preview_and_retention(
         output = client.get(path)
         assert output.status_code == 200
         assert "&lt;script&gt;" in output.get_data(as_text=True)
-        assert client.get(path + "/status").get_json() == {"status": "complete"}
-        draft = client.post(path + "/suggestions/0", data={"csrf_token": token})
-        assert draft.status_code == 200
+        status = client.get(path + "/status").get_json()
+        assert status["status"] == "complete"
+        assert status["suggestions"][0]["source_url"] == URL
+        draft = client.post(
+            path + "/suggestions/0",
+            data={"csrf_token": token, "source_inspected": "yes"},
+        )
+        assert draft.status_code == 200, draft.get_data(as_text=True)
         assert not service.evidence_path.exists() and not service.log_path.exists()
         suggestion = manager.result(identifier, CASE, service.research_revisions())[
             "suggestions"

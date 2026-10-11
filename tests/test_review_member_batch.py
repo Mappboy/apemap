@@ -527,3 +527,55 @@ def test_conflicting_heads_require_explicit_retention(
         if row["field"] == "gender"
     )
     assert field["effective_value"] == "Female"
+
+
+def test_member_batch_references_only_retained_same_field_evidence(
+    review_service: ReviewService,
+) -> None:
+    def retain(field: str, value: str) -> str:
+        case = member_review_id("TEST", field)
+        preview = review_service.prepare_evidence(
+            case,
+            {
+                "source_title": "Official biography",
+                "source_type": "biography",
+                "source_url": "https://example.org/member",
+                "retrieved_at": "2026-10-10T00:00:00+00:00",
+                "claim_type": "member_value",
+                "claim_value": {"field": field, "value": value},
+                "stance": "supports",
+                "excerpt_or_note": "Biography states this value.",
+                "generated_by": "manual",
+            },
+        )
+        return review_service.save_evidence(preview).evidence_id
+
+    gender_ref = retain("gender", "Female")
+    preview = review_service.prepare_batch(
+        "TEST",
+        [
+            MemberFieldDraft(
+                field="gender",
+                action="accept",
+                value="Female",
+                reviewer="Reviewer",
+                evidence_refs=[gender_ref],
+            )
+        ],
+    )
+    assert preview["events"][0]["payload"]["evidence_refs"] == [gender_ref]
+
+    date_ref = retain("date_of_birth", "1972-02-03")
+    with pytest.raises(ValueError, match="exact field"):
+        review_service.prepare_batch(
+            "TEST",
+            [
+                MemberFieldDraft(
+                    field="gender",
+                    action="accept",
+                    value="Female",
+                    reviewer="Reviewer",
+                    evidence_refs=[date_ref],
+                )
+            ],
+        )

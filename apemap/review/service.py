@@ -344,9 +344,10 @@ class ReviewService:
         self, review_id: str, payload: dict[str, Any]
     ) -> dict[str, Any]:
         """Preview a separately retained evidence record, never a review decision."""
-        if entity_for_review_id(review_id) not in {"school", "member_education"}:
+        entity = entity_for_review_id(review_id)
+        if entity not in {"school", "member_education", "member"}:
             raise ValueError(
-                "Retain institution evidence for a school or education assertion"
+                "Retain evidence for a school or exact member field assertion"
             )
         revision = evidence_revision(self.evidence_path)
         source = self.source_revision()
@@ -354,9 +355,33 @@ class ReviewService:
         if proposed.get("review_id", review_id) != review_id:
             raise ValueError("Evidence belongs to another review item")
         proposed["review_id"] = review_id
+        if entity == "member":
+            proposed.setdefault("candidate_institution_ref", None)
         proposed.setdefault("generated_by", "manual")
         proposed.setdefault("retrieved_at", datetime.now(timezone.utc).isoformat())
         record = EvidenceRecord.from_dict(proposed)
+        if entity == "member":
+            field_name = review_id.rsplit(":", 1)[-1]
+            if record.candidate_institution_ref is not None:
+                raise ValueError("Member evidence cannot reference an institution")
+            if record.claim_type not in {
+                "member_value",
+                "member_identity",
+                "member_context",
+            }:
+                raise ValueError("Invalid evidence claim type for a member field")
+            if record.claim_type == "member_value":
+                claim = record.to_dict().get("claim_value")
+                if (
+                    not isinstance(claim, dict)
+                    or set(claim) != {"field", "value"}
+                    or claim.get("field") != field_name
+                ):
+                    raise ValueError("Member evidence must match the exact field")
+        elif record.claim_type in {"member_value", "member_identity", "member_context"}:
+            raise ValueError(
+                "Member evidence cannot be attached to an institution case"
+            )
         reference = record.candidate_institution_ref
         if reference and self.resolve_institution(reference) is None:
             raise ValueError(
@@ -417,6 +442,33 @@ class ReviewService:
             source_check=check_sources,
         )
         return record
+
+    def copy_member_evidence_value(self, review_id: str, evidence_id: str) -> Any:
+        """Read a retained same-field value for a reviewer to copy into a draft."""
+        if entity_for_review_id(review_id) != "member":
+            raise ValueError("Evidence value copying requires one member field")
+        field_name = review_id.rsplit(":", 1)[-1]
+        record = next(
+            (
+                item
+                for item in self.evidence_records()
+                if item.evidence_id == evidence_id
+            ),
+            None,
+        )
+        if record is None or record.review_id != review_id:
+            raise ValueError("Retained evidence does not belong to this member field")
+        if record.claim_type != "member_value":
+            raise ValueError("Selected evidence does not contain a member field value")
+        if record.stance != "supports":
+            raise ValueError("Only supporting member evidence values can be copied")
+        claim = record.to_dict().get("claim_value")
+        if not isinstance(claim, dict) or claim.get("field") != field_name:
+            raise ValueError("Retained evidence has an incompatible member field")
+        value = normalize_member_value(field_name, claim.get("value"))
+        if value is None:
+            raise ValueError("Retained evidence value is empty")
+        return value
 
     def _evidence_candidate_revision(self, reference: str | None) -> str:
         """Bind candidate facts and manual-definition heads without unrelated reviews."""
@@ -518,6 +570,21 @@ class ReviewService:
                             )
                             if has_current_register
                             else "unknown",
+                            "postcode": _register_text(ref.get("postcode")),
+                            "latitude": ref.get("latitude"),
+                            "longitude": ref.get("longitude"),
+                            "historical_names": sorted(
+                                {
+                                    str(value).strip()
+                                    for value in matcher.registered_names.get(
+                                        aid, {name}
+                                    )
+                                    if _register_text(value)
+                                }
+                            )[:20],
+                            "myschool_id": _register_text(
+                                ref.get("myschool_id") or ref.get("my_school_id")
+                            ),
                         },
                     )
                 )
@@ -896,6 +963,8 @@ class ReviewService:
             )[1]
         if entity == "member_education" and name:
             ranked = self.rank_education_candidates(review_id, name, candidates, events)
+        elif entity == "school" and name:
+            ranked = self.rank_school_candidates(review_id, name, candidates, events)
         return {
             "review_id": review_id,
             "entity_type": entity,
@@ -990,6 +1059,12 @@ class ReviewService:
         member_review_ids = {
             member_review_id(actual_aph_id, field) for field in MEMBER_FIELDS
         }
+        retained_member_evidence: dict[str, list[dict[str, Any]]] = {}
+        for record in self.evidence_records(events):
+            if record.review_id in member_review_ids:
+                retained_member_evidence.setdefault(record.review_id, []).append(
+                    record.to_dict()
+                )
         options = annotate_candidates(
             member_candidates(
                 member_row,
@@ -1044,6 +1119,7 @@ class ReviewService:
                     "conflicts": [head.to_dict() for head in heads]
                     if len(heads) > 1
                     else [],
+                    "retained_evidence": retained_member_evidence.get(rev_id, []),
                     "history": [
                         event.to_dict() for event in events if event.review_id == rev_id
                     ],
@@ -1137,10 +1213,22 @@ class ReviewService:
             "decision_revision": log_revision(self.log_path),
         }
 
-    def research_context(self, review_id: str) -> dict[str, Any]:
-        if not review_id.startswith("education:") or review_id.endswith(":missing"):
-            raise ValueError("Find evidence for one recorded education assertion")
+    def research_context(
+        self, review_id: str, *, candidate_id: str | None = None
+    ) -> dict[str, Any]:
+        entity = entity_for_review_id(review_id)
+        if entity == "member":
+            return self._member_research_context(review_id, candidate_id=candidate_id)
+        if entity == "school":
+            return self._school_research_context(review_id, candidate_id=candidate_id)
+        if entity not in {"school", "member_education"} or (
+            entity == "member_education" and review_id.endswith(":missing")
+        ):
+            raise ValueError(
+                "Find evidence for a school or recorded education assertion"
+            )
         revisions = self.research_revisions()
+        ledger_revision = evidence_revision(self.evidence_path)
         item = self.show(review_id)
         aph_id = review_id.split(":")[1]
         member = next(
@@ -1159,6 +1247,17 @@ class ReviewService:
         result = {
             "review_id": review_id,
             **revisions,
+            "evidence_revision": ledger_revision,
+            "assertion": {
+                "recorded_school_name": item["context"].get("recorded_school_name")
+                or item["context"].get("recorded_name"),
+                "years_attended": assertions[0].get("years_attended")
+                if assertions
+                else None,
+                "graduation_year": assertions[0].get("graduation_year")
+                if assertions
+                else None,
+            },
             "member": {
                 key: member.get(key)
                 for key in ("display_name", "aph_id", "date_of_birth", "services")
@@ -1185,13 +1284,179 @@ class ReviewService:
                         "state",
                         "suburb",
                         "country",
+                        "postcode",
+                        "latitude",
+                        "longitude",
+                        "historical_names",
+                        "myschool_id",
                     )
                 }
-                for row in item["ranked_candidates"]
+                for row in item["ranked_candidates"][:20]
             ],
             "school_relationship": item["context"].get("school_relationship"),
+            "decision": item.get("decision"),
+            "conflicts": item.get("conflicts", [])[:10],
         }
-        if revisions != self.research_revisions():
+        if candidate_id is not None:
+            matching = [
+                row
+                for row in item.get("ranked_candidates", [])
+                if row.get("institution_ref") == candidate_id
+            ]
+            if not matching:
+                raise ValueError(
+                    "Selected candidate does not belong to this review item"
+                )
+            result["selected_candidate"] = {
+                key: matching[0].get(key)
+                for key in (
+                    "institution_ref",
+                    "school_name",
+                    "state",
+                    "suburb",
+                    "country",
+                    "postcode",
+                    "latitude",
+                    "longitude",
+                    "historical_names",
+                    "myschool_id",
+                )
+            }
+        if (
+            revisions != self.research_revisions()
+            or ledger_revision != evidence_revision(self.evidence_path)
+        ):
+            raise StaleReviewError("Research context changed while loading; retry")
+        return json_value(result)
+
+    def _member_research_context(
+        self, review_id: str, *, candidate_id: str | None = None
+    ) -> dict[str, Any]:
+        """Return bounded evidence for one exact member field, never other people."""
+        _kind, aph_id, field_name = review_id.split(":", 2)
+        if field_name not in MEMBER_FIELDS:
+            raise ValueError("Unsupported member research field")
+        revisions = self.research_revisions()
+        ledger_revision = evidence_revision(self.evidence_path)
+        member = self.member(aph_id)
+        field = next(
+            (row for row in member["fields"] if row.get("field") == field_name), None
+        )
+        if field is None or field.get("review_id") != review_id:
+            raise ValueError("Member field is unavailable; run review build")
+        candidates = field.get("candidates", [])
+        selected = (
+            next(
+                (row for row in candidates if row.get("candidate_id") == candidate_id),
+                None,
+            )
+            if candidate_id
+            else (candidates[0] if candidates else None)
+        )
+        if candidate_id and selected is None:
+            raise ValueError("Selected candidate does not belong to this member field")
+        evidence = (selected or {}).get("evidence", {})
+        alternatives = evidence.get("alternatives", [])
+        conflicts = field.get("conflicts", [])
+        result = {
+            "review_id": review_id,
+            **revisions,
+            "evidence_revision": ledger_revision,
+            "member_field": field_name,
+            "member": {"aph_id": member["aph_id"], "display_name": member["name"]},
+            "assertion": {
+                "field": field_name,
+                "source_value": field.get("source_value"),
+                "effective_value": field.get("effective_value"),
+                "proposed_value": evidence.get("proposed_value"),
+                "comparison": evidence.get("comparison"),
+                "source_url": evidence.get("source_url"),
+            },
+            "selected_candidate": {
+                "candidate_id": (selected or {}).get("candidate_id"),
+                "value": evidence.get("proposed_value"),
+                "source_url": evidence.get("source_url"),
+            },
+            "candidates": [
+                {
+                    "candidate_id": row.get("candidate_id"),
+                    "value": row.get("evidence", {}).get("proposed_value"),
+                    "comparison": row.get("evidence", {}).get("comparison"),
+                    "source_url": row.get("evidence", {}).get("source_url"),
+                }
+                for row in candidates[:10]
+            ],
+            "alternatives": alternatives[:10] if isinstance(alternatives, list) else [],
+            "conflicts": conflicts[:10],
+            "retained_evidence": [
+                record for record in self.retained_evidence(review_id)[:20]
+            ],
+        }
+        if (
+            revisions != self.research_revisions()
+            or ledger_revision != evidence_revision(self.evidence_path)
+        ):
+            raise StaleReviewError("Research context changed while loading; retry")
+        return json_value(result)
+
+    def _school_research_context(
+        self, review_id: str, *, candidate_id: str | None = None
+    ) -> dict[str, Any]:
+        """Return one bounded school identity case and its local alternatives."""
+        revisions = self.research_revisions()
+        ledger_revision = evidence_revision(self.evidence_path)
+        item = self.show(review_id)
+        name = item["context"].get("recorded_name", "")
+        if not name:
+            raise ValueError("School identity is unavailable in this review case")
+        decision = item.get("decision") or {}
+        decision_ref = decision.get("payload", {}).get("institution_ref")
+        ranked = item["ranked_candidates"]
+        refs = {row.get("institution_ref") for row in ranked}
+        selected_ref = candidate_id or decision_ref
+        if candidate_id and candidate_id not in refs:
+            raise ValueError("Selected candidate does not belong to this school case")
+        result = {
+            "review_id": review_id,
+            **revisions,
+            "evidence_revision": ledger_revision,
+            "assertion": {"recorded_school_name": name},
+            "selected_candidate": next(
+                (row for row in ranked if row.get("institution_ref") == selected_ref),
+                None,
+            ),
+            "candidates": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "institution_ref",
+                        "school_name",
+                        "state",
+                        "suburb",
+                        "country",
+                        "acara_id",
+                        "institution_status",
+                        "score",
+                        "score_band",
+                        "reasons",
+                        "evidence_ids",
+                        "postcode",
+                        "latitude",
+                        "longitude",
+                        "historical_names",
+                        "myschool_id",
+                    )
+                }
+                for row in ranked[:20]
+            ],
+            "conflicts": item.get("conflicts", [])[:10],
+            "history": item.get("history", [])[-10:],
+            "retained_evidence": self.retained_evidence(review_id)[:20],
+        }
+        if (
+            revisions != self.research_revisions()
+            or ledger_revision != evidence_revision(self.evidence_path)
+        ):
             raise StaleReviewError("Research context changed while loading; retry")
         return json_value(result)
 
@@ -1231,6 +1496,51 @@ class ReviewService:
                 references.add(head.payload["institution_ref"])
         for reference in sorted(references):
             metadata = resolver(reference)
+            if metadata is not None:
+                institutions[reference] = {**metadata, "institution_ref": reference}
+        proposals = [
+            {
+                **row,
+                "institution_name": row.get("school_name"),
+                "recorded_name": recorded_name,
+            }
+            for row in institutions.values()
+        ]
+        return score_candidates(review_id, proposals, records)
+
+    def rank_school_candidates(
+        self,
+        review_id: str,
+        recorded_name: str,
+        source_candidates: list[dict[str, Any]] | None = None,
+        events: list[ReviewEvent] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Rank local and already-referenced institutions for one school identity."""
+        if entity_for_review_id(review_id) != "school":
+            raise ValueError("School candidate ranking requires a school identity")
+        selected = self.events(allow_conflicts=True) if events is None else events
+        records = self.evidence_records(selected)
+        institutions = {
+            row["institution_ref"]: row
+            for row in self.lookup_institutions(recorded_name, limit=50)
+        }
+        references = {
+            record.candidate_institution_ref
+            for record in records
+            if record.review_id == review_id and record.candidate_institution_ref
+        }
+        for candidate in source_candidates or []:
+            value = candidate.get("evidence", {}).get("institution_id")
+            if value and str(value).startswith("acara-"):
+                references.add(str(value).replace("acara-", "acara:", 1))
+            elif value and str(value).startswith("manual:"):
+                references.add(str(value))
+        for head in active_heads(selected).get(review_id, []):
+            reference = head.payload.get("institution_ref")
+            if reference:
+                references.add(reference)
+        for reference in sorted(references):
+            metadata = self.resolve_institution(reference)
             if metadata is not None:
                 institutions[reference] = {**metadata, "institution_ref": reference}
         proposals = [
@@ -1800,6 +2110,9 @@ class ReviewService:
         events = parse_events(raw_log, allow_conflicts=True)
         member_data = self.member(aph_id)
         field_map = {f["field"]: f for f in member_data["fields"]}
+        evidence_by_id = {
+            record.evidence_id: record for record in self.evidence_records(events)
+        }
 
         normalized_drafts: list[MemberFieldDraft] = []
         seen_fields: set[str] = set()
@@ -1840,6 +2153,14 @@ class ReviewService:
             )
             if selected is None:
                 raise ValueError("Candidate does not belong to this member field")
+            for evidence_ref in draft.evidence_refs:
+                record = evidence_by_id.get(evidence_ref)
+                if record is None or record.review_id != field_info["review_id"]:
+                    raise ValueError(
+                        "Member evidence must be retained for this exact field"
+                    )
+                if record.candidate_institution_ref is not None:
+                    raise ValueError("Member evidence cannot reference an institution")
             proposal = selected["evidence"]
             field_rev_id = field_info["review_id"]
             heads = active_heads(events).get(field_rev_id, [])
@@ -1902,6 +2223,8 @@ class ReviewService:
                 candidate_ids=[row["candidate_id"] for row in field_info["candidates"]],
                 proposal_evidence=proposal,
             )
+            if draft.evidence_refs:
+                payload["evidence_refs"] = list(draft.evidence_refs)
             event = build_review_event(
                 review_id=field_rev_id,
                 action=action_to_use,

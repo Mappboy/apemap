@@ -135,6 +135,37 @@ class EvidenceRecord:
             raise ValueError("Invalid evidence review_id")
         if self.candidate_institution_ref is not None:
             institution_reference(self.candidate_institution_ref)
+        if self.review_id.startswith("member:") and self.claim_type in {
+            "member_value",
+            "member_identity",
+            "member_context",
+        }:
+            if self.candidate_institution_ref is not None:
+                raise ValueError("Member evidence cannot reference an institution")
+            if self.claim_type == "member_value":
+                field_name = self.review_id.rsplit(":", 1)[-1]
+                if (
+                    not isinstance(self.claim_value, dict)
+                    or set(self.claim_value) != {"field", "value"}
+                    or self.claim_value.get("field") != field_name
+                ):
+                    raise ValueError(
+                        "Member value evidence must identify its exact field"
+                    )
+                from apemap.review.member_comparison import normalize_member_value
+
+                try:
+                    normalized = normalize_member_value(
+                        field_name, self.claim_value["value"]
+                    )
+                except ValueError as exc:
+                    raise ValueError(
+                        "Member evidence contains an invalid field value"
+                    ) from exc
+                if normalized is None or normalized != self.claim_value["value"]:
+                    raise ValueError(
+                        "Member evidence value must be normalized and nonempty"
+                    )
         evidence_url(self.source_url)
         _timestamp(self.retrieved_at, "retrieved_at")
         if self.stance not in STANCES:
@@ -351,6 +382,11 @@ def validate_evidence_references(
                 raise ValueError(
                     f"Evidence reference belongs to a different case: {ref}"
                 )
+            if (
+                event.entity_type == "member"
+                and record.candidate_institution_ref is not None
+            ):
+                raise ValueError("Member evidence cannot reference an institution")
             target = event.payload.get("institution_ref")
             accepted = event.effective_action in {"accept", "map"}
             if (
