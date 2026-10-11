@@ -186,3 +186,5 @@ data/processed/review/
 .ruff_cache/
 
 notebooks/*/__marimo__/
+
+.research-providers.json
