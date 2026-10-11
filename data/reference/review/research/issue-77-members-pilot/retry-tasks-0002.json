@@ -1,0 +1,378 @@
+{
+  "batch_id": "issue-77-members-pilot",
+  "cases": [
+    {
+      "prior_proposal": {
+        "alternatives": [],
+        "attempts": [
+          {
+            "gaps": [
+              "No verified Wikidata entity found within budget.",
+              "Direct APH page open failed except official Grierson search result."
+            ],
+            "model": "gpt-6-luna",
+            "searches": 3,
+            "source_opens": 3,
+            "status": "unresolved",
+            "token_usage": null
+          }
+        ],
+        "eligibility_reasons": [
+          "No valid matched Wikidata ID",
+          "Name does not match the local member or a recorded alias",
+          "Supporting official parliamentary and exact Wikidata sources required",
+          "Need a sourced exact APH link or two matching non-name identity facts"
+        ],
+        "evidence": [
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "member_context",
+            "claim_value": {
+              "aph_id": null,
+              "date_of_birth": "1959-04-28",
+              "name": "Luke Hartsuyker"
+            },
+            "evidence_id": "evidence:4a84ed7bb1b3336ac7579d088e38ae47b9d59653e3fb915d7c49b2e0d4488283",
+            "excerpt_or_note": "Searches did not establish an exact entity and identifier match; lookup trail only.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:41:41Z",
+            "review_id": "member:00amm:wikidata_id",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Wikidata entity / lookup",
+            "source_type": "guided-research",
+            "source_url": "https://www.wikidata.org/wiki/Special:Search?search=Luke%20Hartsuyker",
+            "stance": "contextual",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "member_identity",
+            "claim_value": {
+              "date_of_birth": "1959-04-28",
+              "electorate": "Cowper",
+              "name": "Luke Hartsuyker",
+              "party": "National Party of Australia",
+              "service_years": "2008–2019"
+            },
+            "evidence_id": "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425",
+            "excerpt_or_note": "Task context supplies APH name, DOB, Cowper, National Party, NSW, House and 2008–2019 service; direct APH page open failed.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:41:41Z",
+            "review_id": "member:00amm:wikidata_id",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Parliament of Australia member record",
+            "source_type": "guided-research",
+            "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMM",
+            "stance": "contextual",
+            "temporal_relevance": null
+          }
+        ],
+        "identity": {
+          "date_of_birth": "1959-04-28",
+          "evidence_refs": {
+            "date_of_birth": [
+              "evidence:4a84ed7bb1b3336ac7579d088e38ae47b9d59653e3fb915d7c49b2e0d4488283",
+              "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425"
+            ],
+            "name": [
+              "evidence:4a84ed7bb1b3336ac7579d088e38ae47b9d59653e3fb915d7c49b2e0d4488283",
+              "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425"
+            ],
+            "party": [
+              "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425"
+            ],
+            "service": [
+              "evidence:4a84ed7bb1b3336ac7579d088e38ae47b9d59653e3fb915d7c49b2e0d4488283",
+              "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425"
+            ]
+          },
+          "name": "Luke Hartsuyker",
+          "party": "National Party of Australia",
+          "service": {
+            "chamber": "representatives",
+            "electorate": "Cowper",
+            "end": "2019",
+            "start": "2008"
+          }
+        },
+        "manual_institutions": [],
+        "outcome": "unresolved",
+        "payload": null,
+        "proposal_id": "proposal:6bb27bb965ff31c139602385b39cd7617978646277ad45480fdbc940b46cf13a",
+        "reasoning": "APH identity context is present, but no exact Wikidata entity could be verified against P10020 or DOB, seat, chamber and service within the search limit. Preserve unresolved.",
+        "review_id": "member:00amm:wikidata_id",
+        "value": null
+      },
+      "task": {
+        "context": {
+          "alternatives": [],
+          "assertion": {
+            "comparison": "proposed_missing",
+            "effective_value": null,
+            "field": "wikidata_id",
+            "proposed_value": null,
+            "source_url": null,
+            "source_value": null
+          },
+          "candidates": [
+            {
+              "candidate_id": "candidate:6e705fedfa8c0d68283c326ec1b4097436d292d49c6dab89f4bc085d50c05a82",
+              "comparison": "proposed_missing",
+              "source_url": null,
+              "value": null
+            }
+          ],
+          "conflicts": [],
+          "decision_revision": "e3afb6b64be76f32fd5c293f18255f6f4d687f077b1f652121ddacde3743baa7",
+          "evidence_revision": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "member": {
+            "aliases": [
+              "the Hon. Luke HARTSUYKER"
+            ],
+            "aph_id": "00AMM",
+            "date_of_birth": "1959-04-28",
+            "display_name": "HARTSUYKER, the Hon. Luke"
+          },
+          "member_field": "wikidata_id",
+          "retained_evidence": [],
+          "review_id": "member:00amm:wikidata_id",
+          "selected_candidate": {
+            "candidate_id": "candidate:6e705fedfa8c0d68283c326ec1b4097436d292d49c6dab89f4bc085d50c05a82",
+            "source_url": null,
+            "value": null
+          },
+          "services": [
+            {
+              "chamber": "representatives",
+              "electorate": "Cowper",
+              "parliament_number": 43,
+              "party": "The Nationals",
+              "service_end": "2013-08-05",
+              "service_start": "2010-09-28",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+              "state_or_territory": "NSW"
+            },
+            {
+              "chamber": "representatives",
+              "electorate": "Cowper",
+              "parliament_number": 45,
+              "party": "The Nationals",
+              "service_end": "2019-04-11",
+              "service_start": "2016-08-30",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+              "state_or_territory": "NSW"
+            },
+            {
+              "chamber": "representatives",
+              "electorate": "Cowper",
+              "parliament_number": 44,
+              "party": "The Nationals",
+              "service_end": "2016-05-09",
+              "service_start": "2013-11-12",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+              "state_or_territory": "NSW"
+            },
+            {
+              "chamber": "representatives",
+              "electorate": "Cowper",
+              "parliament_number": 42,
+              "party": "The Nationals",
+              "service_end": "2010-07-19",
+              "service_start": "2008-02-12",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+              "state_or_territory": "NSW"
+            }
+          ],
+          "source_revision": "13e9a8cc6356c814959f512f8390b6922028c7170e9c1f79884180a440737799"
+        },
+        "decision_heads": [],
+        "review_id": "member:00amm:wikidata_id"
+      }
+    },
+    {
+      "prior_proposal": {
+        "alternatives": [],
+        "attempts": [
+          {
+            "gaps": [
+              "No verified Wikidata entity found within budget.",
+              "Direct APH page open failed except official Grierson search result."
+            ],
+            "model": "gpt-6-luna",
+            "searches": 3,
+            "source_opens": 3,
+            "status": "unresolved",
+            "token_usage": null
+          }
+        ],
+        "eligibility_reasons": [
+          "No valid matched Wikidata ID",
+          "Supporting official parliamentary and exact Wikidata sources required",
+          "Need a sourced exact APH link or two matching non-name identity facts"
+        ],
+        "evidence": [
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "member_context",
+            "claim_value": {
+              "aph_id": null,
+              "date_of_birth": "1951-05-04",
+              "name": "Sharon Joy Grierson"
+            },
+            "evidence_id": "evidence:b5049bf31733f1a9e94610d158d7c6855f24992543ee87de7f3b3b16c5fc27a0",
+            "excerpt_or_note": "Searches did not establish exact entity and identifier match; lookup trail only.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:41:41Z",
+            "review_id": "member:00amp:wikidata_id",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Wikidata entity / lookup",
+            "source_type": "guided-research",
+            "source_url": "https://www.wikidata.org/wiki/Special:Search?search=Sharon%20Grierson",
+            "stance": "contextual",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "member_identity",
+            "claim_value": {
+              "date_of_birth": "1951-05-04",
+              "electorate": "Newcastle",
+              "name": "Sharon Joy Grierson",
+              "party": "Australian Labor Party",
+              "service_years": "2008–2013"
+            },
+            "evidence_id": "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179",
+            "excerpt_or_note": "Official APH search result gives DOB 4 May 1951, House, Australian Labor Party, Newcastle, retirement before 2013 election.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:41:41Z",
+            "review_id": "member:00amp:wikidata_id",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Parliament of Australia member record",
+            "source_type": "guided-research",
+            "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMP",
+            "stance": "supports",
+            "temporal_relevance": null
+          }
+        ],
+        "identity": {
+          "date_of_birth": "1951-05-04",
+          "evidence_refs": {
+            "date_of_birth": [
+              "evidence:b5049bf31733f1a9e94610d158d7c6855f24992543ee87de7f3b3b16c5fc27a0",
+              "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179"
+            ],
+            "name": [
+              "evidence:b5049bf31733f1a9e94610d158d7c6855f24992543ee87de7f3b3b16c5fc27a0",
+              "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179"
+            ],
+            "party": [
+              "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179"
+            ],
+            "service": [
+              "evidence:b5049bf31733f1a9e94610d158d7c6855f24992543ee87de7f3b3b16c5fc27a0",
+              "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179"
+            ]
+          },
+          "name": "Sharon Joy Grierson",
+          "party": "Australian Labor Party",
+          "service": {
+            "chamber": "representatives",
+            "electorate": "Newcastle",
+            "end": "2013",
+            "start": "2008"
+          }
+        },
+        "manual_institutions": [],
+        "outcome": "unresolved",
+        "payload": null,
+        "proposal_id": "proposal:5691692a35cfbee6f7e08285a4434d2017ae8fdbeee20aa6ed1623de77cf577e",
+        "reasoning": "APH identity context is present, but no exact Wikidata entity could be verified against P10020 or DOB, seat, chamber and service within the search limit. Preserve unresolved.",
+        "review_id": "member:00amp:wikidata_id",
+        "value": null
+      },
+      "task": {
+        "context": {
+          "alternatives": [],
+          "assertion": {
+            "comparison": "proposed_missing",
+            "effective_value": null,
+            "field": "wikidata_id",
+            "proposed_value": null,
+            "source_url": null,
+            "source_value": null
+          },
+          "candidates": [
+            {
+              "candidate_id": "candidate:75d5694378a75c1349ee5ad8e1331f744a9667ee29f174993cbb56edfa959bb8",
+              "comparison": "proposed_missing",
+              "source_url": null,
+              "value": null
+            }
+          ],
+          "conflicts": [],
+          "decision_revision": "e3afb6b64be76f32fd5c293f18255f6f4d687f077b1f652121ddacde3743baa7",
+          "evidence_revision": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "member": {
+            "aliases": [
+              "Sharon Joy GRIERSON"
+            ],
+            "aph_id": "00AMP",
+            "date_of_birth": "1951-05-04",
+            "display_name": "GRIERSON, Sharon Joy"
+          },
+          "member_field": "wikidata_id",
+          "retained_evidence": [],
+          "review_id": "member:00amp:wikidata_id",
+          "selected_candidate": {
+            "candidate_id": "candidate:75d5694378a75c1349ee5ad8e1331f744a9667ee29f174993cbb56edfa959bb8",
+            "source_url": null,
+            "value": null
+          },
+          "services": [
+            {
+              "chamber": "representatives",
+              "electorate": "Newcastle",
+              "parliament_number": 43,
+              "party": "Australian Labor Party",
+              "service_end": "2013-08-05",
+              "service_start": "2010-09-28",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMP'",
+              "state_or_territory": "NSW"
+            },
+            {
+              "chamber": "representatives",
+              "electorate": "Newcastle",
+              "parliament_number": 42,
+              "party": "Australian Labor Party",
+              "service_end": "2010-07-19",
+              "service_start": "2008-02-12",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMP'",
+              "state_or_territory": "NSW"
+            }
+          ],
+          "source_revision": "13e9a8cc6356c814959f512f8390b6922028c7170e9c1f79884180a440737799"
+        },
+        "decision_heads": [],
+        "review_id": "member:00amp:wikidata_id"
+      }
+    }
+  ],
+  "content_sha256": "3ba8898108d6562ef496406b4caf30262de9d2b66dd21580bab5a1aae45e0d5b",
+  "max_workers": 2,
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "searches_per_case": 2,
+  "source_opens_per_case": 4
+}

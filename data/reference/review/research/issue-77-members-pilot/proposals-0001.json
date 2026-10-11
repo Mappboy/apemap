@@ -1,0 +1,772 @@
+{
+  "content_sha256": "ea666d6d3e89d16e461b4c0bc44a21dec99b6ac3a9a4ab27bfb1b962590753d9",
+  "imported_at": "2026-10-11T22:46:43.472536+00:00",
+  "proposals": [
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 2,
+          "source_opens": 2,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008CH",
+            "name": "DANIEL, Zoe"
+          },
+          "evidence_id": "evidence:113c03139a32ed6cb51b80249261f08c2e1f8452da0509c89a70450e67b873df",
+          "excerpt_or_note": "Official Parliament of Australia profile search result identifies Ms Zoe Daniel MP; Wikidata item states birth 28 November 1972 and Parliament of Australia MP ID 008CH.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008CH",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008CH",
+            "date_of_birth": "1972-11-28",
+            "name": "DANIEL, Zoe"
+          },
+          "evidence_id": "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538",
+          "excerpt_or_note": "Wikidata item labels this entity “Zoe Daniel”; it states date of birth 28 November 1972 and Parliament of Australia MP ID 008CH.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "DANIEL, Zoe (Q65628647)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q65628647",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Goldstein",
+                "party": "Independent",
+                "service_end": "2025-03-28",
+                "service_start": "2022-07-26"
+              }
+            ]
+          },
+          "evidence_id": "evidence:8ee7bc9bd3d820e4ebf72e60c731bdf61f24825a48685343d4054eb4107b8465",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008CH'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "aph_id": "008CH",
+        "date_of_birth": "1972-11-28",
+        "evidence_refs": {
+          "aph_id": [
+            "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538"
+          ],
+          "date_of_birth": [
+            "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538"
+          ],
+          "name": [
+            "evidence:113c03139a32ed6cb51b80249261f08c2e1f8452da0509c89a70450e67b873df",
+            "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538"
+          ],
+          "service": [
+            "evidence:8ee7bc9bd3d820e4ebf72e60c731bdf61f24825a48685343d4054eb4107b8465"
+          ],
+          "wikidata_id": [
+            "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538"
+          ]
+        },
+        "name": "DANIEL, Zoe",
+        "service": [
+          {
+            "chamber": "representatives",
+            "electorate": "Goldstein",
+            "party": "Independent",
+            "service_end": "2025-03-28",
+            "service_start": "2022-07-26"
+          }
+        ]
+      },
+      "manual_institutions": [],
+      "outcome": "matched",
+      "payload": null,
+      "proposal_id": "proposal:c7539c5f95ee6dc456b179de787af00dab28daf4d57623924b4534c8a5d8466c",
+      "reasoning": "Exact Wikidata entity https://www.wikidata.org/wiki/Q65628647 matches the member name and date of birth; its Parliament of Australia MP ID matches the official APH profile ID 008CH. APH service context corroborates the member identity.",
+      "review_id": "member:008ch:wikidata_id",
+      "value": "Q65628647"
+    },
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 2,
+          "source_opens": 2,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008K0",
+            "name": "BYRNE, the Hon. Anthony Michael"
+          },
+          "evidence_id": "evidence:607a211cf2defa52e14081ff12c73ef34ee2f5ef485e9539e46ce18523a5e23a",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Hon Anthony Byrne, Australian Labor Party, House of Representatives, elected for Holt; Wikidata item states Anthony Michael Byrne, DOB 1 December 1962.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008K0",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008K0",
+            "date_of_birth": "1962-12-01",
+            "name": "BYRNE, the Hon. Anthony Michael"
+          },
+          "evidence_id": "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6",
+          "excerpt_or_note": "Wikidata item labels this entity “Anthony Byrne”, gives full name Anthony Michael Byrne and DOB 1 December 1962; service is for Holt and Australian Labor Party.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "BYRNE, the Hon. Anthony Michael (Q4772190)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q4772190",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2016-05-09",
+                "service_start": "2013-11-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2022-04-11",
+                "service_start": "2019-07-02"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2019-04-11",
+                "service_start": "2016-08-30"
+              }
+            ]
+          },
+          "evidence_id": "evidence:b193846b15dd645670254f6e9d02a13c2469420580af5cbc0430e21c8d8f0153",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "aph_id": "008K0",
+        "date_of_birth": "1962-12-01",
+        "evidence_refs": {
+          "aph_id": [
+            "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6"
+          ],
+          "date_of_birth": [
+            "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6"
+          ],
+          "name": [
+            "evidence:607a211cf2defa52e14081ff12c73ef34ee2f5ef485e9539e46ce18523a5e23a",
+            "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6"
+          ],
+          "service": [
+            "evidence:b193846b15dd645670254f6e9d02a13c2469420580af5cbc0430e21c8d8f0153"
+          ],
+          "wikidata_id": [
+            "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6"
+          ]
+        },
+        "name": "BYRNE, the Hon. Anthony Michael",
+        "service": [
+          {
+            "chamber": "representatives",
+            "electorate": "Holt",
+            "party": "Australian Labor Party",
+            "service_end": "2013-08-05",
+            "service_start": "2010-09-28"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Holt",
+            "party": "Australian Labor Party",
+            "service_end": "2016-05-09",
+            "service_start": "2013-11-12"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Holt",
+            "party": "Australian Labor Party",
+            "service_end": "2022-04-11",
+            "service_start": "2019-07-02"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Holt",
+            "party": "Australian Labor Party",
+            "service_end": "2010-07-19",
+            "service_start": "2008-02-12"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Holt",
+            "party": "Australian Labor Party",
+            "service_end": "2019-04-11",
+            "service_start": "2016-08-30"
+          }
+        ]
+      },
+      "manual_institutions": [],
+      "outcome": "matched",
+      "payload": null,
+      "proposal_id": "proposal:6f725a062657d35f40c1030934fdb9ed37d6e0bed06adfaee9593cc8f0e51553",
+      "reasoning": "Exact Wikidata entity https://www.wikidata.org/wiki/Q4772190 matches the member name and date of birth; its Parliament of Australia MP ID matches the official APH profile ID 008K0. APH service context corroborates the member identity.",
+      "review_id": "member:008k0:wikidata_id",
+      "value": "Q4772190"
+    },
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 2,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008W7",
+            "name": "BRANDIS, the Hon. George Henry, KC"
+          },
+          "evidence_id": "evidence:78c77d07c1e5d4d5964ac3b6701d93f9d08c40334d52801811343200406fde7a",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies former Senator George Brandis KC, Liberal Party, Senate; Wikidata item states George Henry Brandis, DOB 22 June 1957.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008W7",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008W7",
+            "date_of_birth": "1957-06-22",
+            "name": "BRANDIS, the Hon. George Henry, KC"
+          },
+          "evidence_id": "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787",
+          "excerpt_or_note": "Wikidata item labels this entity “George Brandis”, gives full name George Henry Brandis and DOB 22 June 1957; service is as Queensland senator.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "BRANDIS, the Hon. George Henry, KC (Q5537216)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q5537216",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2018-02-07",
+                "service_start": "2016-08-30"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2016-05-09",
+                "service_start": "2013-11-12"
+              }
+            ]
+          },
+          "evidence_id": "evidence:e56cdaeb75f8f1e94a9dd4e7a3d1106afad9d5bb7e543dd9d14709f7ab37609c",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "aph_id": "008W7",
+        "date_of_birth": "1957-06-22",
+        "evidence_refs": {
+          "aph_id": [
+            "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787"
+          ],
+          "date_of_birth": [
+            "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787"
+          ],
+          "name": [
+            "evidence:78c77d07c1e5d4d5964ac3b6701d93f9d08c40334d52801811343200406fde7a",
+            "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787"
+          ],
+          "service": [
+            "evidence:e56cdaeb75f8f1e94a9dd4e7a3d1106afad9d5bb7e543dd9d14709f7ab37609c"
+          ],
+          "wikidata_id": [
+            "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787"
+          ]
+        },
+        "name": "BRANDIS, the Hon. George Henry, KC",
+        "service": [
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "party": "Liberal Party of Australia",
+            "service_end": "2018-02-07",
+            "service_start": "2016-08-30"
+          },
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "party": "Liberal Party of Australia",
+            "service_end": "2013-08-05",
+            "service_start": "2010-09-28"
+          },
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "party": "Liberal Party of Australia",
+            "service_end": "2010-07-19",
+            "service_start": "2008-02-12"
+          },
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "party": "Liberal Party of Australia",
+            "service_end": "2016-05-09",
+            "service_start": "2013-11-12"
+          }
+        ]
+      },
+      "manual_institutions": [],
+      "outcome": "matched",
+      "payload": null,
+      "proposal_id": "proposal:fc1ab99cec400bff17e0504f3e89ae3b071818ee05fef0938bbb0a019455d7fe",
+      "reasoning": "Exact Wikidata entity https://www.wikidata.org/wiki/Q5537216 matches the member name and date of birth; its Parliament of Australia MP ID matches the official APH profile ID 008W7. APH service context corroborates the member identity.",
+      "review_id": "member:008w7:wikidata_id",
+      "value": "Q5537216"
+    },
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 2,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008Z0",
+            "name": "PHELPS, Kerryn Lyndel, AM"
+          },
+          "evidence_id": "evidence:a411f05d69c214af8845e9037216e34ed74445098950c7a424a024b4b3a96d16",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Dr Kerryn Phelps AM, Independent, House of Representatives; states Born 14.12.1957 and service for Wentworth 20.10.2018–18.05.2019.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008Z0",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008Z0",
+            "date_of_birth": "1957-12-14",
+            "name": "PHELPS, Kerryn Lyndel, AM"
+          },
+          "evidence_id": "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228",
+          "excerpt_or_note": "Wikidata item labels this entity “Kerryn Phelps”; official APH profile corroborates the matching name, DOB and Wentworth service.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "PHELPS, Kerryn Lyndel, AM (Q6394699)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q6394699",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Wentworth",
+                "party": "Independent",
+                "service_end": "2019-04-11",
+                "service_start": "2018-10-20"
+              }
+            ]
+          },
+          "evidence_id": "evidence:1c8a8dd7d727fa840b9c688a1b7b3d15cde2f275ae119a66a8e1b04b1bf20e9a",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008Z0'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "aph_id": "008Z0",
+        "date_of_birth": "1957-12-14",
+        "evidence_refs": {
+          "aph_id": [
+            "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228"
+          ],
+          "date_of_birth": [
+            "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228"
+          ],
+          "name": [
+            "evidence:a411f05d69c214af8845e9037216e34ed74445098950c7a424a024b4b3a96d16",
+            "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228"
+          ],
+          "service": [
+            "evidence:1c8a8dd7d727fa840b9c688a1b7b3d15cde2f275ae119a66a8e1b04b1bf20e9a"
+          ],
+          "wikidata_id": [
+            "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228"
+          ]
+        },
+        "name": "PHELPS, Kerryn Lyndel, AM",
+        "service": [
+          {
+            "chamber": "representatives",
+            "electorate": "Wentworth",
+            "party": "Independent",
+            "service_end": "2019-04-11",
+            "service_start": "2018-10-20"
+          }
+        ]
+      },
+      "manual_institutions": [],
+      "outcome": "matched",
+      "payload": null,
+      "proposal_id": "proposal:560bff39ccac48f4644f266dbb3fbb71773c021cba61d81c5eea2f29e3d2bcb0",
+      "reasoning": "Exact Wikidata entity https://www.wikidata.org/wiki/Q6394699 matches the member name and date of birth; its Parliament of Australia MP ID matches the official APH profile ID 008Z0. APH service context corroborates the member identity.",
+      "review_id": "member:008z0:wikidata_id",
+      "value": "Q6394699"
+    },
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 2,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "009LP",
+            "name": "WINDSOR, Antony (Tony) Harold Curties, AM"
+          },
+          "evidence_id": "evidence:98d10f9fa8f363520a56e935ce43f239872c17213c24c90721aa4564ccd48439",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Mr Tony Windsor AM; Wikidata item states Tony Windsor, DOB 2 September 1950, service for New England 10 November 2001–5 August 2013, and Parliament of Australia MP ID 009LP.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=009LP",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "009LP",
+            "date_of_birth": "1950-09-02",
+            "name": "WINDSOR, Antony (Tony) Harold Curties, AM"
+          },
+          "evidence_id": "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a",
+          "excerpt_or_note": "Wikidata item labels this entity “Tony Windsor”; it states DOB 2 September 1950, New England House service 10 November 2001–5 August 2013, and MP ID 009LP.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "WINDSOR, Antony (Tony) Harold Curties, AM (Q7823688)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q7823688",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "New England",
+                "party": "Independent",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "New England",
+                "party": "Independent",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              }
+            ]
+          },
+          "evidence_id": "evidence:3a48aef3dca6da9a7b44ec23c0c68e06fa4b0f1fbe41b7fcfbecda64fe39ece3",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '009LP'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "aph_id": "009LP",
+        "date_of_birth": "1950-09-02",
+        "evidence_refs": {
+          "aph_id": [
+            "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a"
+          ],
+          "date_of_birth": [
+            "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a"
+          ],
+          "name": [
+            "evidence:98d10f9fa8f363520a56e935ce43f239872c17213c24c90721aa4564ccd48439",
+            "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a"
+          ],
+          "service": [
+            "evidence:3a48aef3dca6da9a7b44ec23c0c68e06fa4b0f1fbe41b7fcfbecda64fe39ece3"
+          ],
+          "wikidata_id": [
+            "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a"
+          ]
+        },
+        "name": "WINDSOR, Antony (Tony) Harold Curties, AM",
+        "service": [
+          {
+            "chamber": "representatives",
+            "electorate": "New England",
+            "party": "Independent",
+            "service_end": "2010-07-19",
+            "service_start": "2008-02-12"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "New England",
+            "party": "Independent",
+            "service_end": "2013-08-05",
+            "service_start": "2010-09-28"
+          }
+        ]
+      },
+      "manual_institutions": [],
+      "outcome": "matched",
+      "payload": null,
+      "proposal_id": "proposal:2d564ed95f95c256be38ce0a922da995dd1a94f07bac4414d08c4b8bd67b6b92",
+      "reasoning": "Exact Wikidata entity https://www.wikidata.org/wiki/Q7823688 matches the member name and date of birth; its Parliament of Australia MP ID matches the official APH profile ID 009LP. APH service context corroborates the member identity.",
+      "review_id": "member:009lp:wikidata_id",
+      "value": "Q7823688"
+    }
+  ],
+  "revision": 1,
+  "sample": [
+    "proposal:2d564ed95f95c256be38ce0a922da995dd1a94f07bac4414d08c4b8bd67b6b92",
+    "proposal:6f725a062657d35f40c1030934fdb9ed37d6e0bed06adfaee9593cc8f0e51553",
+    "proposal:fc1ab99cec400bff17e0504f3e89ae3b071818ee05fef0938bbb0a019455d7fe",
+    "proposal:c7539c5f95ee6dc456b179de787af00dab28daf4d57623924b4534c8a5d8466c",
+    "proposal:560bff39ccac48f4644f266dbb3fbb71773c021cba61d81c5eea2f29e3d2bcb0"
+  ],
+  "schema_version": 1
+}

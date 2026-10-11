@@ -1,0 +1,134 @@
+{
+  "content_sha256": "92078b1d3aa9b673400bb9f3cfb7535ca2009cdfc5a6990a625b3d8512198db6",
+  "imported_at": "2026-10-11T22:46:51.399687+00:00",
+  "proposals": [
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [
+            "Catholic Education Melbourne history page is on a UAT subdomain; independently verify the formal historical name change during human review."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 4,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "attendance",
+          "claim_value": {
+            "member": "Joanne Ryan",
+            "recorded_school_name": "MacKillop College"
+          },
+          "evidence_id": "evidence:e8ecc8dbe4c1ddd9897d608f03285d6c04718c61e991297620228d7f8472dc43",
+          "excerpt_or_note": "Ryan states: “School for me was St Andrews and then MacKillop College”. This directly supports the recorded attendance name; no attendance dates are inferred.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "First Speech to Parliament - Joanne Ryan MP",
+          "source_type": "parliamentary_speech",
+          "source_url": "https://www.joanneryan.com.au/first_speech_to_parliament",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "rename",
+          "claim_value": {
+            "address": "1 Russell Street, Werribee VIC 3030",
+            "current_registered_name": "MacKillop Catholic Regional College",
+            "former_name": "MacKillop College",
+            "name_change_date": "1978-10-01",
+            "opened": 1970,
+            "school_enumber": "E1272"
+          },
+          "evidence_id": "evidence:8f5b12c6b8a89570a47bdd14309e894fc5e0de9c1c86b64aacc725f19d522249",
+          "excerpt_or_note": "Profile identifies MacKillop Catholic Regional College, Werribee (E1272), says it opened as MacKillop College in 1970, and says its name officially changed on 1 October 1978. URL is on the organization’s UAT subdomain, so inspect this evidence before accepting the historical date.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "MacKillop Catholic Regional College, Werribee - Catholic Education Melbourne",
+          "source_type": "catholic_education_school_profile",
+          "source_url": "https://www-cem-uat.dxau.digital/SchoolInformation?School_ENumber=E1272",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "location",
+          "claim_value": {
+            "address": "Russell Street, Werribee VIC 3030",
+            "campus": "Werribee",
+            "school_name": "MacKillop College"
+          },
+          "evidence_id": "evidence:4d0ca3f2a31dd9b85b22ca276f13c4fdbe805ca6306a634204ed23ab448315c6",
+          "excerpt_or_note": "College describes Werribee as a campus at the heart of MacKillop College and locates it on Russell Street, Werribee.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Werribee Campus - MacKillop College",
+          "source_type": "school_website",
+          "source_url": "https://www.mackillop.vic.edu.au/campuses/werribee-campus",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "evidence_refs": {
+          "attendance_name": [
+            "evidence:e8ecc8dbe4c1ddd9897d608f03285d6c04718c61e991297620228d7f8472dc43"
+          ],
+          "current_campus_location": [
+            "evidence:4d0ca3f2a31dd9b85b22ca276f13c4fdbe805ca6306a634204ed23ab448315c6"
+          ],
+          "school_rename": [
+            "evidence:8f5b12c6b8a89570a47bdd14309e894fc5e0de9c1c86b64aacc725f19d522249"
+          ]
+        },
+        "locality": "Werribee, VIC",
+        "name": "MacKillop College"
+      },
+      "manual_institutions": [],
+      "outcome": "rename",
+      "payload": {
+        "institution_ref": "acara:46002",
+        "legacy": {
+          "canonical_acara_id": "46002",
+          "canonical_name": "MacKillop Catholic Regional College",
+          "notes": "MacKillop College (Werribee, VIC); Catholic Education Melbourne profile documents the 1978 formal rename. The profile URL is on a UAT subdomain and needs human inspection.",
+          "school_type": "Sec",
+          "sector": "Catholic",
+          "state": "VIC"
+        },
+        "recorded_name": "MacKillop College",
+        "relationship_type": "rename"
+      },
+      "proposal_id": "proposal:1392e7b1767f5d7ccfa0012be8f74ab60e6fd93d28aa1a5572458f190b6c28b2",
+      "reasoning": "Joanne Ryan’s own parliamentary speech confirms attendance at MacKillop College. The Werribee college’s profile identifies the same school lineage under its formal registered name, MacKillop Catholic Regional College (ACARA 46002), while the current college site identifies the Werribee campus. Proposed rename mapping to the current ACARA record; the historical profile is on Catholic Education Melbourne’s UAT subdomain and should be human-inspected before approval. No attendance dates or graduation year are inferred.",
+      "review_id": "school:09051859847a101d",
+      "value": null
+    }
+  ],
+  "revision": 1,
+  "sample": [],
+  "schema_version": 1
+}
