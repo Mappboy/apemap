@@ -2184,7 +2184,7 @@ def create_app(
                 workspace_draft_token=draft_token,
                 research_evidence={parts[-1]: {"values": {"evidence_saved": "1"}}},
             )
-        if review_id.startswith(("school:", "education:")):
+        if draft_token and review_id.startswith(("school:", "education:")):
             return item_page(
                 load_item(review_id),
                 draft_values=draft,

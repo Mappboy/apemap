@@ -60,6 +60,11 @@ def test_lookup_keeps_same_name_ids_and_ranks_matches(
         "sector": "Government",
         "school_type": "Secondary",
         "institution_status": "current",
+        "myschool_id": None,
+        "latitude": None,
+        "longitude": None,
+        "postcode": None,
+        "historical_names": ["Earlier School", "Fairfield School"],
     }
     assert results[1]["state"] == "VIC"
     assert (

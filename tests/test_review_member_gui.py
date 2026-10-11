@@ -68,8 +68,10 @@ class MemberPresentation(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
         if tag == "details":
-            self.details.append("technical-details" in (values.get("class") or ""))
-            assert "open" not in values
+            is_technical = "technical-details" in (values.get("class") or "")
+            self.details.append(is_technical)
+            if is_technical:
+                assert "open" not in values
         if tag == "pre":
             assert any(self.details), "Raw JSON must be under Technical details"
 

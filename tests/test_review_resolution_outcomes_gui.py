@@ -465,24 +465,28 @@ def test_browser_unresolved_choices_clear_mapping_fields_without_editing_json() 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const action = {value:'map'};
-const replacement = {value:'accept'};
-const mode = {value:'guided'};
-const reference = {value:'acara:123', disabled:false, type:'text'};
-const relationship = {value:'successor', disabled:false, type:'select-one'};
-const context = {value:'acara:456', disabled:false, type:'text'};
-const confirmation = {value:'1', checked:true, disabled:false, type:'checkbox'};
+const action = {value:'map', addEventListener(){}};
+const replacement = {value:'accept', addEventListener(){}};
+const mode = {value:'guided', addEventListener(){}};
+const reference = {value:'acara:123', disabled:false, type:'text', addEventListener(){}};
+const relationship = {value:'successor', disabled:false, type:'select-one', addEventListener(){}};
+const context = {value:'acara:456', disabled:false, type:'text', addEventListener(){}};
+const confirmation = {value:'1', checked:true, disabled:false, type:'checkbox', addEventListener(){}};
 const payload = {value:'{"institution_ref":"acara:123","historical_scope_confirmed":true}'};
 const originalJson = payload.value;
 let change;
 const fields = [reference,relationship,context,confirmation];
 const form = {
+  id:'review-decision', dataset:{resolutionOutcomes:''},
   elements:{namedItem(name){return {action,replacement_action:replacement,payload_mode:mode}[name];}},
   querySelectorAll(selector){assert.equal(selector,'[data-resolution-field]'); return fields;},
   querySelector(){return null;},
   addEventListener(name,handler){assert.equal(name,'change'); change=handler;},
 };
-global.document = {querySelector(selector){return selector==='[data-resolution-outcomes]'?form:null;}};
+global.document = {
+  querySelector(selector){return selector==='[data-resolution-outcomes]'?form:null;},
+  querySelectorAll(selector){assert.equal(selector,'[form="review-decision"][data-resolution-field]'); return [];},
+};
 vm.runInThisContext(fs.readFileSync(process.argv[1], 'utf8'));
 assert.equal(relationship.disabled,false);
 for (const outcome of ['ambiguous_name','no_suitable_candidate','research','reject']) {
