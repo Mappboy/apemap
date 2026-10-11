@@ -427,6 +427,27 @@ Rebuild the review database separately when ready to apply saved decisions.
 uv run apemap review --db-path data/aped-review.duckdb serve --port 8765 --workers 4
 ```
 
+`review serve` writes timestamped diagnostics to the terminal (stderr) by
+default. Startup shows the loopback URL and worker count. Requests show their
+endpoint, HTTP status and elapsed time; normal static-file requests and research
+status polls stay quiet. Requests and service stages taking at least one second
+produce warnings. Work still running after five seconds reports progress every
+five seconds until it finishes, so a long wait identifies file hashing, queue
+building, waiting for the queue lock, register loading or canonical preview
+validation. Queue rebuilds also report their row count. These diagnostics help
+locate delays; they do not change validation or speed up those operations.
+
+Background research reports when a job is queued, starts, completes or fails,
+even if its browser tab is closed. Errors include their exception type and stack
+locations. Arbitrary exception messages, request paths, query strings, submitted
+forms and provider responses are omitted to keep credentials and signed previews
+out of the logs. Inspect the browser's error message alongside the logged code
+location for details. To retain diagnostics, redirect stderr, for example:
+
+```powershell
+uv run apemap review --db-path data/aped-review.duckdb serve 2> review-server.log
+```
+
 `WARNING:waitress.queue:Task queue depth is 1` means a request briefly waited
 while every worker was busy. It does not mean a decision was lost. Sustained
 warnings can occur when several clients preview at once; `--workers 8` provides
