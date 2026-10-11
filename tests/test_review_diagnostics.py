@@ -11,6 +11,8 @@ import pytest
 from apemap.review.diagnostics import Operation, operation, terminal_logging, timed
 from apemap.review.research import ResearchJobs
 
+pytestmark = pytest.mark.unit
+
 
 def test_terminal_logging_flushes_and_restores_configuration(
     capsys: pytest.CaptureFixture[str],
