@@ -5,6 +5,7 @@ import hashlib
 from html import unescape
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 import pytest
@@ -241,7 +242,8 @@ def test_guided_mapping_replaces_earlier_event_after_read_only_preview(
     assert head.action == "supersede" and head.effective_action == "map"
     assert head.supersedes == ["earlier"] and head.payload["provenance"] == "retained"
     updated = client.get(saved.headers["Location"]).get_data(as_text=True)
-    assert "Saved mapping:" in updated and 'value="alias" selected' in updated
+    assert "<strong>Current:</strong> acara:49968" in updated
+    assert 'value="alias" selected' in updated
 
 
 def test_guided_successor_original_and_historical_fields_are_scoped_and_clearable(
@@ -381,7 +383,9 @@ def test_mapping_without_source_previews_and_saves_append_only(
     )
     html = response.get_data(as_text=True)
     assert response.status_code == 200 and "No source URL supplied." in html
-    assert "Evidence source URL (optional)" in html
+    assert "Optional source and notes" in html
+    source_input = re.search(r'<input\b[^>]*name="source_url"[^>]*>', html)
+    assert source_input is not None and " required" not in source_input.group(0)
     assert service.log_path.read_bytes() == baseline
     values = Inputs(html).values
     saved = client.post(

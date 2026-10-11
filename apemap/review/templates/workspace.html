@@ -1,0 +1,27 @@
+{# Reusable presentation macros. Inputs are plain dictionaries from workspace.py. #}
+{% macro workspace_header(title, position=None, actions=[]) -%}
+<section class="workspace-header" data-review-workspace aria-label="Focused review workspace">
+  <div><h1>{{ title }}</h1>{% if position %}<p class="workspace-position" data-queue-position>{% if position.in_queue %}{{ position.position }} of {{ position.total }}{% else %}Outside the filtered queue{% endif %}</p>{% endif %}</div>
+  <nav class="workspace-actions" aria-label="Review navigation">
+    {% for action in actions %}<a class="button" data-workspace-action="{{ action.key }}" href="{{ action.href }}">{{ action.label }}</a>{% endfor %}
+  </nav>
+</section>
+{%- endmacro %}
+
+{% macro status_badge(status, label=None) -%}
+<span class="status-badge status-{{ status }}" data-status="{{ status }}">{{ label or status|replace('_', ' ') }}</span>
+{%- endmacro %}
+
+{% macro comparison_table(rows) -%}
+<div class="workspace-comparison" data-comparison-table><table><thead><tr><th>Field</th><th>Source</th><th>Reviewed</th><th>Proposed</th><th>Comparison</th></tr></thead><tbody>
+{% for row in rows %}<tr data-comparison="{{ row.comparison|default('unknown') }}"><th>{{ row.field|replace('_', ' ')|title }}</th><td>{{ row.source if row.source is not none and row.source != '' else 'Unknown' }}</td><td>{{ row.reviewed if row.reviewed is not none and row.reviewed != '' else 'Unknown' }}</td><td>{{ row.proposed if row.proposed is not none and row.proposed != '' else 'Unknown' }}</td><td><span class="comparison-badge comparison-{{ row.comparison|default('unknown') }}">{{ row.comparison|default('unknown')|title }}</span> · Evidence: {{ row.summary }}</td></tr>{% else %}<tr><td colspan="5">No comparison fields available.</td></tr>{% endfor %}
+</tbody></table></div>
+{%- endmacro %}
+
+{% macro evidence_summary(records, unknown_gaps=[]) -%}
+{% set supports = records|selectattr('stance', 'equalto', 'supports')|list %}{% set conflicts = records|selectattr('stance', 'equalto', 'contradicts')|list %}{% set contextual = records|selectattr('stance', 'equalto', 'contextual')|list %}
+<details class="workspace-evidence" data-evidence-summary><summary>Evidence: {{ supports|length }} supports · {{ conflicts|length }} conflicts · {{ contextual|length }} contextual{% if unknown_gaps %} · {{ unknown_gaps|length }} unknown gaps{% endif %}</summary>
+{% for stance, matching in [('supports', supports), ('contradicts', conflicts), ('contextual', contextual)] %}{% if matching %}<div class="evidence-group evidence-{{ stance }}"><h3>{{ {'supports':'Supports','contradicts':'Conflicts','contextual':'Context'}[stance] }} · {{ matching|length }}</h3><ul>{% for item in matching %}<li data-evidence-stance="{{ stance }}">{% if item.summary or item.claim or item.claim_value or item.excerpt_or_note %}<p>{{ item.summary or item.claim or item.claim_value or item.excerpt_or_note }}</p>{% endif %}{% if item.source_title %}<strong>{{ item.source_title }}</strong>{% endif %}{% if item.source_url|source_link %}<a href="{{ item.source_url|source_link }}" rel="noopener noreferrer">{{ item.source_title or item.source_url }}</a>{% endif %}{% if item.retrieved_at %}<small> · {{ item.retrieved_at }}</small>{% endif %}<details class="technical-details"><summary>Full evidence provenance</summary><pre>{{ item|tojson(indent=2) }}</pre></details></li>{% endfor %}</ul></div>{% endif %}{% endfor %}
+<div class="evidence-gaps"><h3>Unknown or incomplete evidence</h3>{% if unknown_gaps %}<ul>{% for gap in unknown_gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% else %}<p>Absence of recorded conflict is not evidence of support.</p>{% endif %}</div>
+</details>
+{%- endmacro %}

@@ -254,9 +254,9 @@ def validate_event(event: ReviewEvent) -> None:
             raise ValueError("Individual school review requires a resolution_reason")
     if "evidence_refs" in payload:
         references = payload["evidence_refs"]
-        if event.entity_type not in {"school", "member_education"}:
+        if event.entity_type not in {"school", "member_education", "member"}:
             raise ValueError(
-                "Institution evidence references require a school or education assertion"
+                "Evidence references require a school, education assertion or member field"
             )
         if (
             not isinstance(references, list)

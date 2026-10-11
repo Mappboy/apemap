@@ -4,7 +4,8 @@
 <h1>Assisted evidence suggestions</h1>
 <p><a href="{{ url_for('detail', review_id=review_id) }}">Return to the assertion</a></p>
 <p>Provider: {{ result.provider_id }} · {{ result.status }}. Suggestions are disposable and have changed no evidence or decisions.</p>
-{% if result.status == 'running' %}<p id="research-status" data-status-url="{{ url_for('research_status', review_id=review_id, job_id=job_id) }}" role="status">Searching public sources. This page updates when the job finishes.</p>{% endif %}
+<div id="research-results">
+{% if result.status == 'running' %}<p id="research-status" data-status-url="{{ url_for('research_status', review_id=review_id, job_id=job_id) }}" data-detail-url="{{ url_for('research_detail', review_id=review_id, job_id=job_id) }}" role="status">Searching public sources. This page updates when the job finishes.</p>{% endif %}
 {% if result.status == 'failed' %}<p class="error" role="alert">{{ result.error }}</p>{% endif %}
 {% for suggestion in result.get('suggestions', []) %}
 <article class="candidate-card"><h2>{{ suggestion.source_title }}</h2>
@@ -15,5 +16,6 @@
 {% else %}{% if result.status == 'complete' %}<p>No credible evidence suggestions were returned.</p>{% endif %}{% endfor %}
 {% if result.get('sources') %}<h2>Provider source citations</h2><ul>{% for source in result.sources %}<li><a href="{{ source.url | source_link }}" target="_blank" rel="noopener noreferrer">{{ source.title }}</a></li>{% endfor %}</ul>{% endif %}
 {% if result.get('search_entry_point') %}<iframe title="Google Search suggestions" sandbox="allow-popups allow-popups-to-escape-sandbox" src="{{ url_for('research_search_suggestions', review_id=review_id, job_id=job_id) }}"></iframe>{% endif %}
+</div>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='research.js') }}" defer></script>{% endblock %}

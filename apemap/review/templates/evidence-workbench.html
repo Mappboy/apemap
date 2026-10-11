@@ -15,7 +15,10 @@
 {% if item.context.get('reviewed_context_claims') %}<section aria-label="Reviewed successor claims"><h2>Reviewed successor context</h2><pre>{{ item.context.reviewed_context_claims | json_text }}</pre><p>Profile and finance values describe the contemporary reporting institution. Unknown historical proxy suitability is not verified attendance context.</p></section>{% endif %}
 {% if item.get('ranked_candidates') %}
 <section aria-label="Explained candidate ranking">
-<h2>Candidate institutions and evidence</h2>
+<h2>Candidate review</h2>
+<p>{{ item.ranked_candidates | length }} institutions were compared. Ranking remains advisory and does not change the decision draft.</p>
+{% if item.ranked_candidates %}<p>Highest-ranked local candidate: <strong>{{ item.ranked_candidates[0].get('school_name') or item.ranked_candidates[0].get('institution_name') or item.ranked_candidates[0].institution_ref }}</strong> · {{ item.ranked_candidates[0].score }} / 100.</p>{% endif %}
+<details><summary>Candidate ranking and supporting sources</summary>
 <p>Scores are advisory and do not verify attendance or select an institution. Name similarity contributes at most 40 points; explicit research assessments contribute at most 60. Unknown assessments contribute no points. Parliamentary state is not school-location evidence.</p>
 <div class="candidate-cards">
 {% for candidate in item.ranked_candidates %}
@@ -35,12 +38,14 @@
 </article>
 {% endfor %}
 </div>
+</details>
 </section>
 {% endif %}
 {% if evidence_enabled %}
 <section aria-label="Retained research evidence">
-<h2>Retained research evidence</h2>
+<h2>Retained research evidence · {{ retained | length }}</h2>
 <p>Retaining evidence records a source and its claim. It changes no attendance assertion or review decision. Select the records that justify your guided decision; complete JSON mode uses only the evidence references in its payload.</p>
+<details><summary>Full retention controls and source provenance</summary>
 {% for record in retained %}<article class="retained-record">
 <label class="choice"><input type="checkbox" name="evidence_refs" value="{{ record.evidence_id }}" form="{{ decision_form_id }}" {% if record.evidence_id in selected_evidence_refs %}checked{% endif %}>Reference this evidence in the decision</label>
 <label>Reviewed successor role (optional)<select name="context_role:{{ record.evidence_id }}" form="{{ decision_form_id }}"><option value="">Supporting/context evidence only</option>{% for role in context_roles %}<option value="{{ role }}" {% if record.evidence_id in selected_context_refs.get(role, []) %}selected{% endif %}>{{ role | replace('_', ' ') }}</option>{% endfor %}</select></label>
@@ -71,5 +76,6 @@
 </form>
 </details>
 {% if evidence_preview %}<section id="evidence-preview" aria-label="Validated evidence preview"><h3>Validated evidence preview</h3><p>This preview has not changed any file. Retaining this record will append research provenance; it will not save a decision.</p>{{ evidence_source(evidence_preview.record) }}{% for message in evidence_preview.validation %}<p>{{ message }}</p>{% endfor %}<form method="post" action="{{ url_for('save_evidence', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="evidence_preview_token" value="{{ evidence_preview_token }}"><button type="submit">Retain this evidence record</button></form><p>The preview expires after 15 minutes. Changed sources or retained evidence require another preview.</p></section>{% endif %}
+</details>
 </section>
 {% endif %}

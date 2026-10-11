@@ -28,6 +28,7 @@ class MemberFieldDraft:
     retained_decision_id: str | None = None
     proposal_only: bool = True
     candidate_id: str | None = None
+    evidence_refs: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -52,6 +53,13 @@ class MemberFieldDraft:
             not isinstance(parent, str) for parent in parents
         ):
             raise ValueError("Draft supersedes must be a list of decision IDs")
+        evidence_refs = data.get("evidence_refs", [])
+        if (
+            not isinstance(evidence_refs, list)
+            or any(not isinstance(ref, str) or not ref.strip() for ref in evidence_refs)
+            or len(evidence_refs) != len(set(evidence_refs))
+        ):
+            raise ValueError("Draft evidence_refs must be unique evidence IDs")
         if not isinstance(data.get("proposal_only", True), bool):
             raise ValueError("Draft proposal_only must be boolean")
         return cls(
@@ -67,6 +75,7 @@ class MemberFieldDraft:
             else None,
             proposal_only=data.get("proposal_only", True),
             candidate_id=data.get("candidate_id"),
+            evidence_refs=list(evidence_refs),
         )
 
 

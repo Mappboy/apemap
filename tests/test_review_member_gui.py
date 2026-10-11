@@ -38,6 +38,9 @@ class MemberForm(HTMLParser):
         if tag == "form":
             self.forms += 1
         if tag == "input" and values.get("name"):
+            input_type = values.get("type", "text")
+            if input_type in {"radio", "checkbox"} and "checked" not in values:
+                return
             self.values[str(values["name"])] = values.get("value") or ""
         if tag == "select":
             self.select = values.get("name")
@@ -65,8 +68,10 @@ class MemberPresentation(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
         if tag == "details":
-            self.details.append("technical-details" in (values.get("class") or ""))
-            assert "open" not in values
+            is_technical = "technical-details" in (values.get("class") or "")
+            self.details.append(is_technical)
+            if is_technical:
+                assert "open" not in values
         if tag == "pre":
             assert any(self.details), "Raw JSON must be under Technical details"
 
@@ -157,13 +162,14 @@ def test_member_batch_preview_save_and_matching_history(
     parsed = MemberForm(html)
     assert parsed.forms == 1
     assert "preview_token" in parsed.values
+    assert 'id="save-batch-btn"' in html and 'id="save-next-btn"' in html
     assert "wikidata_id" in html and "Unresolved fields remaining" in html
     assert "Selected decisions and combined effects" in html
     prose = MemberPresentation(html).text()
     assert "Gender: Male → Female — Accept" in prose
     assert "Birth date: Retain 1970-01-01 — Reject proposal" in prose
     assert "Wikidata ID: Unresolved; no value recorded — Needs research" in prose
-    assert "Member comparison" in prose and "Current reviewed" in prose
+    assert all(label in prose for label in ("Source", "Reviewed", "Proposed"))
     assert 'src="/static/member.js?v=' in html and "<script>" not in html
     assert 'style="' not in html
     assert "script-src 'self'" in response.headers["Content-Security-Policy"]
@@ -253,6 +259,8 @@ def test_candidate_alternatives_are_readable_and_escape_untrusted_text(
     assert "retained details" not in prose and "retained details" in html
     assert "<script>bad()</script>" not in html
     assert "comparison-ambiguous" in html and "alert-warning" in html
+    assert '<details class="advanced-field-details" open>' in html
+    assert '<details class="evidence-context" open>' in html
 
 
 @pytest.mark.parametrize(
@@ -437,12 +445,13 @@ def test_member_script_disables_save_on_draft_edits(event: str) -> None:
     script = Path(__file__).parents[1] / "apemap/review/static/member.js"
     harness = """
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const listeners = {}, button = {disabled:false}, message = {hidden:true};
+const listeners = {}, button = {disabled:false}, next = {disabled:false}, message = {hidden:true};
 const form = {addEventListener: (event, callback) => listeners[event] = callback};
-const elements = {'member-batch-form':form, 'save-batch-btn':button, 'save-disabled-msg':message};
-vm.runInNewContext(fs.readFileSync(process.argv[1], 'utf8'), {document: {getElementById: id => elements[id]}});
+const elements = {'member-batch-form':form, 'save-batch-btn':button, 'save-next-btn':next, 'save-disabled-msg':message};
+const document = {getElementById: id => elements[id], addEventListener: (event, callback) => listeners[`document:${event}`] = callback};
+vm.runInNewContext(fs.readFileSync(process.argv[1], 'utf8'), {document, Event: class { constructor(type, options) { this.type = type; this.bubbles = options.bubbles; } }});
 listeners[process.argv[2]]();
-assert.equal(button.disabled, true); assert.equal(message.hidden, false);
+assert.equal(button.disabled, true); assert.equal(next.disabled, true); assert.equal(message.hidden, false);
 """
     result = subprocess.run(
         [node, "-e", harness, str(script), event],

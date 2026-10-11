@@ -1,0 +1,92 @@
+{% set review_id = review_id|default(research_case.get('review_id') if research_case else '') %}
+<section class="research-panel" data-research-panel aria-label="Cited research suggestions" data-review-id="{{ review_id }}">
+<details data-research-disclosure>
+  <summary data-research-open>Find cited evidence{% if research_case and research_case.get('member_field') %} for {{ research_case.member_field | replace('_', ' ') }}{% elif research_case and research_case.get('assertion', {}).get('recorded_school_name') %} for {{ research_case.assertion.recorded_school_name }}{% endif %}</summary>
+  <h2>Find cited evidence</h2>
+  <p>Suggestions are temporary. Inspect the cited source and retain a record before referencing it in a decision draft.</p>
+  {% if research_providers %}
+  {% if decision_form_id %}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}" form="{{ decision_form_id }}">
+  <input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}" form="{{ decision_form_id }}">
+  <label>Research provider<select name="{% if research_case and research_case.get('member_field') %}research_provider_id_{{ research_case.member_field }}{% else %}research_provider_id{% endif %}" data-research-provider form="{{ decision_form_id }}" required>
+    {% for name, provider in research_providers.items() %}<option value="{{ name }}">{{ name }} · {{ provider.model }}</option>{% endfor %}
+  </select></label>
+  <button type="submit" form="{{ decision_form_id }}" formaction="{{ url_for('find_evidence', review_id=review_id) }}" formmethod="post" formnovalidate data-research-start data-research-review-id="{{ review_id }}">Find sources</button>
+  {% else %}
+  <form method="post" action="{{ url_for('find_evidence', review_id=review_id) }}" data-research-start>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}">
+    <label>Research provider<select name="provider_id" required>
+      {% for name, provider in research_providers.items() %}<option value="{{ name }}">{{ name }} · {{ provider.model }}</option>{% endfor %}
+    </select></label>
+    <button type="submit">Find sources</button>
+  </form>
+  {% endif %}
+  {% else %}<p>Assisted research is unavailable because no provider is configured.</p>{% endif %}
+  <p class="notice" data-research-status role="status" aria-live="polite"></p>
+  <div data-research-results>
+  {% if research_result %}
+      {% if research_result.status == 'failed' %}<p class="error" role="alert">{{ research_result.error }}</p>{% endif %}
+      {% if research_result.status == 'running' and research_case.get('job_id') %}<p>Research is running. <a href="{{ url_for('research_detail', review_id=review_id, job_id=research_case.job_id, workspace_draft_token=workspace_draft_token) }}">Refresh cited results</a>.</p>{% endif %}
+      {% for suggestion in research_result.get('suggestions', []) %}
+      <article class="candidate-card" data-suggestion>
+        <h3>{{ suggestion.get('source_title') or 'Cited source' }}</h3>
+        {% set source = suggestion.get('source_url') | source_link %}
+        <p>{% if source %}<a href="{{ source }}" target="_blank" rel="noopener noreferrer">Inspect source</a>{% endif %} · Retrieved {{ suggestion.get('retrieved_at', 'date unknown') }}</p>
+        <p>{{ suggestion.get('stance', 'contextual') | capitalize }} · {{ suggestion.get('claim_type', 'Claim') }}{% if suggestion.get('candidate_institution_ref') %} · {{ suggestion.candidate_institution_ref }}{% endif %}</p>
+        <p>{{ suggestion.get('excerpt_or_note', '') }}</p>
+        <details class="technical-details"><summary>Suggested claim and provenance</summary><pre>{{ suggestion.get('claim_value') | json_text }}</pre></details>
+        {% if decision_form_id %}
+          <input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}" form="{{ decision_form_id }}">
+          <label class="choice"><input type="checkbox" form="{{ decision_form_id }}" name="source_inspected" value="yes" required>I inspected this source</label>
+          <button type="submit" form="{{ decision_form_id }}" formaction="{{ url_for('inspect_suggestion', review_id=review_id, job_id=research_case.get('job_id', ''), index=loop.index0) }}" formmethod="post" formnovalidate>Review evidence draft</button>
+        {% else %}
+          <form method="post" action="{{ url_for('inspect_suggestion', review_id=review_id, job_id=research_case.get('job_id', ''), index=loop.index0) }}" data-research-inspect>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label class="choice"><input type="checkbox" name="source_inspected" value="yes" required>I inspected this source</label>
+            <button type="submit">Review evidence draft</button>
+          </form>
+        {% endif %}
+        <button type="button" data-dismiss-suggestion>Dismiss suggestion</button>
+      </article>
+      {% else %}{% if research_result.status == 'complete' %}<p>No cited suggestions were returned.</p>{% endif %}{% endfor %}
+    {% endif %}
+  </div>
+  {% if research_evidence_values %}
+  <form method="post" action="{{ url_for('preview_evidence', review_id=review_id) }}" class="nojs-evidence-editor">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}">
+    <input type="hidden" name="research_job_id" value="{{ research_evidence_values.get('research_job_id', '') }}"><input type="hidden" name="research_suggestion_index" value="{{ research_evidence_values.get('research_suggestion_index', '') }}"><input type="hidden" name="source_inspected" value="yes">
+    {% for key in ['source_title', 'source_type', 'source_url', 'retrieved_at', 'claim_type', 'stance', 'excerpt_or_note', 'candidate_institution_ref'] %}<label>{{ key|replace('_', ' ')|title }}<input name="evidence_{{ key }}" value="{{ research_evidence_values.get('evidence_' ~ key, '') }}"></label>{% endfor %}
+    {% if research_evidence_values.get('evidence_claim_value_json') %}<label>Claim value JSON<textarea name="evidence_claim_value_json">{{ research_evidence_values.get('evidence_claim_value_json') }}</textarea></label>{% else %}<label>Claim value<textarea name="evidence_claim_value">{{ research_evidence_values.get('evidence_claim_value', '') }}</textarea></label>{% endif %}
+    <button type="submit">Preview evidence record</button>
+  </form>
+  {% endif %}
+  {% if evidence_error %}<p class="error" role="alert">{{ evidence_error }}</p>{% endif %}
+  {% if evidence_preview %}<section class="preview-panel"><h3>Evidence retention preview</h3><p>This creates a cited source record only; it does not make a member decision.</p><p><strong>{{ evidence_preview.record.source_title or 'Cited source' }}</strong> · {{ evidence_preview.record.stance|capitalize }} {{ evidence_preview.record.claim_type|replace('_', ' ') }} claim{% if evidence_preview.record.excerpt_or_note %}: {{ evidence_preview.record.excerpt_or_note }}{% endif %}</p>{% if evidence_preview.record.source_url|source_link %}<p><a href="{{ evidence_preview.record.source_url|source_link }}" rel="noopener noreferrer">Inspect source</a></p>{% endif %}<details class="technical-details"><summary>Full retention record</summary><pre>{{ evidence_preview.record | json_text }}</pre></details><form method="post" action="{{ url_for('save_evidence', review_id=review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}"><input type="hidden" name="evidence_preview_token" value="{{ evidence_preview_token }}"><button type="submit">Retain cited evidence</button></form></section>{% endif %}
+  <div data-evidence-editor hidden></div>
+  <div data-evidence-feedback role="status" aria-live="polite"></div>
+  {% if research_case and research_case.get('member_field') %}
+  <details class="retained-records"><summary>Retained evidence for {{ research_case.member_field | replace('_', ' ') }} ({{ research_case.get('retained_evidence', []) | length }})</summary>
+    {% for record in research_case.get('retained_evidence', []) %}
+    <article class="retained-record"><p><strong>{{ record.get('stance', 'contextual') | capitalize }}</strong> · {{ record.get('claim_type', 'Claim') }} · {{ record.get('source_title', 'Source title unavailable') }}</p>
+      {% set retained_url = record.get('source_url') | source_link %}{% if retained_url %}<p><a href="{{ retained_url }}" target="_blank" rel="noopener noreferrer">Inspect retained source</a> · Retrieved {{ record.get('retrieved_at', 'date unknown') }}</p>{% endif %}
+      <p>{{ record.get('excerpt_or_note', '') }}</p>
+      <label class="choice"><input type="checkbox" name="evidence_refs_{{ research_case.member_field }}" value="{{ record.evidence_id }}" form="member-batch-form" {% if record.evidence_id in form_values.get('evidence_refs_' ~ research_case.member_field, []) %}checked{% endif %}>Reference this retained source in the member decision draft</label>
+      {% if record.get('claim_type') == 'member_value' and record.get('stance') == 'supports' and record.get('claim_value', {}).get('field') == research_case.member_field %}<button type="button" data-copy-evidence="{{ record.evidence_id }}">Copy retained value to member draft</button><noscript><button type="submit" form="member-batch-form" formaction="{{ url_for('copy_member_evidence', review_id=review_id, evidence_id=record.evidence_id) }}" formmethod="post" formnovalidate>Copy value to member draft</button></noscript>{% endif %}
+      <details class="technical-details"><summary>Full retained claim and provenance</summary><pre>{{ record | json_text }}</pre></details>
+    </article>
+    {% else %}<p>No retained evidence for this field.</p>{% endfor %}
+  </details>
+  {% elif decision_form_id %}
+  <details class="retained-records"><summary>Retained evidence ({{ research_case.get('retained_evidence', []) | length }})</summary>
+    {% for record in research_case.get('retained_evidence', []) %}
+    <article class="retained-record"><p><strong>{{ record.get('stance', 'contextual') | capitalize }}</strong> · {{ record.get('claim_type', 'Claim') }} · {{ record.get('source_title', 'Source title unavailable') }}</p>
+      {% set retained_url = record.get('source_url') | source_link %}{% if retained_url %}<p><a href="{{ retained_url }}" target="_blank" rel="noopener noreferrer">Inspect retained source</a></p>{% endif %}<p>{{ record.get('excerpt_or_note', '') }}</p>
+      {% if item.entity_type in ['school', 'member_education'] %}<label class="choice"><input type="checkbox" name="evidence_refs" value="{{ record.evidence_id }}" form="{{ decision_form_id }}" {% if record.evidence_id in form_values.get('evidence_refs', []) %}checked{% endif %}>Reference this source in the review decision</label>{% endif %}
+      {% if record.get('stance') == 'supports' and record.get('claim_type') == 'identity' and record.get('candidate_institution_ref') %}<button type="button" data-copy-evidence="{{ record.evidence_id }}">Copy institution to draft</button><noscript><button type="submit" form="{{ decision_form_id }}" formaction="{{ url_for('copy_member_evidence', review_id=review_id, evidence_id=record.evidence_id) }}" formmethod="post" formnovalidate>Copy institution to draft</button></noscript>{% endif %}
+      <details class="technical-details"><summary>Full evidence provenance</summary><pre>{{ record | json_text }}</pre></details>
+    </article>
+    {% else %}<p>No retained evidence for this case.</p>{% endfor %}
+  </details>
+  {% endif %}
+</details>
+</section>

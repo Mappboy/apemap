@@ -17,9 +17,15 @@ from apemap.review.research import (
     load_providers,
     validate_result,
 )
-from apemap.review.model import education_review_id, member_review_id
+from apemap.review.model import (
+    ReviewEvent,
+    education_review_id,
+    member_review_id,
+    school_digest,
+    school_review_id,
+)
 from apemap.review.service import ReviewService
-from apemap.review.store import StaleReviewError
+from apemap.review.store import StaleReviewError, encode_event
 from tests.test_review_service import review_service as review_service
 
 CASE = education_review_id("TEST", "Test High School")
@@ -201,6 +207,326 @@ def test_validation_ignores_provider_and_suggestion_timestamps() -> None:
     assert output["suggestions"][0]["retrieved_at"] == output["retrieved_at"]
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("gender", " female "),
+        ("date_of_birth", "1972-02-03"),
+        ("wikidata_id", "https://www.wikidata.org/wiki/Q123"),
+    ],
+)
+def test_member_research_validates_exact_normalized_field_claim(
+    field: str, value: str
+) -> None:
+    review_id = member_review_id("TEST", field)
+    context = {
+        "review_id": review_id,
+        "member_field": field,
+        "candidates": [{"candidate_id": "candidate-1"}],
+    }
+    claim = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": None,
+                "source_url": URL,
+                "claim_type": "member_value",
+                "claim_value": {"field": field, "value": value},
+                "stance": "supports",
+                "excerpt_or_note": "Cited biographical source",
+            }
+        ],
+    }
+    output = validate_result(context, claim)
+    expected = {
+        "gender": "Female",
+        "date_of_birth": "1972-02-03",
+        "wikidata_id": "Q123",
+    }[field]
+    assert output["suggestions"][0]["claim_value"] == {
+        "field": field,
+        "value": expected,
+    }
+    assert output["suggestions"][0]["candidate_institution_ref"] is None
+
+
+@pytest.mark.parametrize(
+    "claim_value",
+    [
+        {"field": "gender", "value": "1972-02-03"},
+        {"field": "date_of_birth", "value": "not a date"},
+        {"field": "wikidata_id", "value": "Q0"},
+        {"field": "gender", "value": "Female", "extra": True},
+    ],
+)
+def test_member_research_rejects_mismatched_or_invalid_values(
+    claim_value: dict[str, Any],
+) -> None:
+    field = (
+        "date_of_birth"
+        if claim_value["field"] == "gender" and "1972" in str(claim_value)
+        else claim_value["field"]
+    )
+    context = {"review_id": member_review_id("TEST", field), "member_field": field}
+    value = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": None,
+                "source_url": URL,
+                "claim_type": "member_value",
+                "claim_value": claim_value,
+                "stance": "supports",
+                "excerpt_or_note": "Claim",
+            }
+        ],
+    }
+    with pytest.raises(ValueError):
+        validate_result(context, value)
+
+
+def test_member_research_disallows_candidate_refs_and_unsupported_types() -> None:
+    context = {
+        "review_id": member_review_id("TEST", "gender"),
+        "member_field": "gender",
+    }
+    value = {
+        **result(),
+        "suggestions": [
+            {
+                "candidate_institution_ref": "acara:1",
+                "source_url": URL,
+                "claim_type": "member_context",
+                "claim_value": {"note": "Biographical detail"},
+                "stance": "contextual",
+                "excerpt_or_note": "Claim",
+            }
+        ],
+    }
+    with pytest.raises(ValueError):
+        validate_result(context, value)
+
+
+@pytest.mark.parametrize("field", ["gender", "date_of_birth", "wikidata_id"])
+def test_member_research_context_is_scoped_to_one_exact_field(
+    review_service: ReviewService, field: str
+) -> None:
+    context = review_service.research_context(member_review_id("TEST", field))
+    assert context["review_id"] == member_review_id("TEST", field)
+    assert context["member_field"] == field
+    assert set(context["assertion"]) == {
+        "field",
+        "source_value",
+        "effective_value",
+        "proposed_value",
+        "comparison",
+        "source_url",
+    }
+    assert all("aph_id" not in row for row in context["conflicts"])
+    assert len(context["candidates"]) <= 10
+
+
+def test_school_research_context_preserves_school_identity_and_local_candidates(
+    review_service: ReviewService,
+) -> None:
+    context = review_service.research_context(
+        "school:" + school_digest("Test High School")
+    )
+    assert context["assertion"]["recorded_school_name"] == "Test High School"
+    assert context["candidates"]
+    assert all(row.get("institution_ref") for row in context["candidates"])
+
+
+def test_member_evidence_retention_and_copy_are_exact_and_read_only(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    case = member_review_id("TEST", "gender")
+    payload = {
+        "source_title": "Official biography",
+        "source_type": "biography",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "claim_type": "member_value",
+        "claim_value": {"field": "gender", "value": "Female"},
+        "stance": "supports",
+        "excerpt_or_note": "The biography identifies the member as female.",
+        "generated_by": "manual",
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    assert service.copy_member_evidence_value(case, record.evidence_id) == "Female"
+    with pytest.raises(ValueError, match="different|exact|field"):
+        service.copy_member_evidence_value(
+            member_review_id("TEST", "date_of_birth"), record.evidence_id
+        )
+    invalid = {
+        **payload,
+        "claim_value": {"field": "date_of_birth", "value": "1972-02-03"},
+    }
+    with pytest.raises(ValueError, match="exact field"):
+        service.prepare_evidence(case, invalid)
+
+
+@pytest.mark.parametrize(
+    "case",
+    ["school:" + school_digest("Test High School"), CASE],
+)
+def test_school_identity_evidence_copy_is_exact_and_read_only(
+    review_service: ReviewService, case: str
+) -> None:
+    service = review_service
+    payload = {
+        "source_title": "Local school history",
+        "source_type": "school-register",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "candidate_institution_ref": "acara:1",
+        "claim_type": "identity",
+        "claim_value": "The source identifies Test High School as this institution.",
+        "stance": "supports",
+        "excerpt_or_note": "Identity claim",
+        "generated_by": "manual",
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    decision_revision = service.review_revision()
+    assert service.copy_school_evidence_value(case, record.evidence_id) == "acara:1"
+    assert service.review_revision() == decision_revision
+    with pytest.raises(ValueError, match="belong to this review case"):
+        service.copy_school_evidence_value(
+            "school:" + school_digest("Other School"), record.evidence_id
+        )
+
+
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"stance": "contradicts"}, "supporting"),
+        ({"stance": "contextual"}, "supporting"),
+        ({"claim_type": "location"}, "identity claim"),
+        ({"candidate_institution_ref": None}, "no institution reference"),
+        ({"local_target_missing": True}, "unavailable locally"),
+    ],
+)
+def test_school_identity_copy_rejects_untrusted_or_non_supporting_claims(
+    review_service: ReviewService,
+    changes: dict[str, Any],
+    message: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    service = review_service
+    case = "school:" + school_digest("Test High School")
+    local_target_missing = changes.get("local_target_missing", False)
+    evidence_changes = {
+        key: value for key, value in changes.items() if key != "local_target_missing"
+    }
+    payload = {
+        "source_title": "School source",
+        "source_type": "school-register",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "candidate_institution_ref": "acara:1",
+        "claim_type": "identity",
+        "claim_value": {"institution": "Test High School"},
+        "stance": "supports",
+        "excerpt_or_note": "Evidence",
+        "generated_by": "manual",
+        **evidence_changes,
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    decision_revision = service.review_revision()
+    if local_target_missing:
+        monkeypatch.setattr(service, "resolve_institution", lambda _reference: None)
+    with pytest.raises(ValueError, match=message):
+        service.copy_school_evidence_value(case, record.evidence_id)
+    assert service.review_revision() == decision_revision
+
+
+def test_school_research_context_includes_selected_candidates(
+    review_service: ReviewService,
+) -> None:
+    case = "school:" + school_digest("Test High School")
+    context = review_service.research_context(case, candidate_id="acara:1")
+    assert context["selected_candidate"]["institution_ref"] == "acara:1"
+    assert "postcode" in context["selected_candidate"]
+    with pytest.raises(ValueError, match="Selected candidate"):
+        review_service.research_context(case, candidate_id="acara:404")
+
+
+@pytest.mark.parametrize(
+    "case",
+    ["school:" + school_digest("Test High School"), CASE],
+)
+def test_research_context_includes_selected_local_alternative(
+    review_service: ReviewService, case: str
+) -> None:
+    # This is a legitimate local lookup result for a different query, but it is
+    # not among the top scored candidates for the reviewed recorded name.
+    context = review_service.research_context(case, candidate_id="acara:2")
+    assert context["selected_candidate"]["institution_ref"] == "acara:2"
+    assert any(row["institution_ref"] == "acara:2" for row in context["candidates"])
+    assert context["selected_candidate"]["score"] is not None
+    with pytest.raises(ValueError, match="Selected candidate"):
+        review_service.research_context(case, candidate_id="acara:404")
+
+
+def test_school_research_context_includes_effective_reviewed_target(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    case = school_review_id("Test High School")
+    event = ReviewEvent.from_dict(
+        {
+            "decision_id": "school-map-test",
+            "review_id": case,
+            "entity_type": "school",
+            "action": "map",
+            "payload": {
+                "recorded_name": "Test High School",
+                "institution_ref": "acara:1",
+                "relationship_type": "direct",
+            },
+            "source_url": URL,
+            "reviewer": "Reviewer",
+            "reviewed_at": "2026-10-10",
+            "recorded_at": "2026-10-10T00:00:00+00:00",
+        }
+    )
+    service.log_path.write_bytes(encode_event(event))
+    context = service.research_context(case, candidate_id="acara:2")
+    assert context["assertion"]["effective_institution_ref"] == "acara:1"
+    assert context["decision"]["payload"]["institution_ref"] == "acara:1"
+    assert context["selected_candidate"]["institution_ref"] == "acara:2"
+
+
+def test_assertion_research_context_does_not_duplicate_default_selected_target(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    event = ReviewEvent.from_dict(
+        {
+            "decision_id": "education-map-test",
+            "review_id": CASE,
+            "entity_type": "member_education",
+            "action": "map",
+            "payload": {
+                "aph_id": "TEST",
+                "recorded_school_name": "Test High School",
+                "institution_ref": "acara:1",
+                "relationship_type": "direct",
+            },
+            "source_url": URL,
+            "reviewer": "Reviewer",
+            "reviewed_at": "2026-10-10",
+            "recorded_at": "2026-10-10T00:00:00+00:00",
+        }
+    )
+    service.log_path.write_bytes(encode_event(event))
+    context = service.research_context(CASE)
+    references = [row["institution_ref"] for row in context["candidates"]]
+    assert references.count("acara:1") == 1
+    assert len(references) == len(set(references))
+
+
 def test_network_errors_are_redacted_and_offline_does_not_call(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -286,17 +612,23 @@ def test_ui_provider_choice_inspection_preview_and_retention(
         started = client.post(
             f"/items/{CASE}/research",
             data={"csrf_token": token, "provider_id": "second"},
+            headers={"Accept": "application/json"},
         )
-        assert started.status_code == 303
-        path = started.headers["Location"]
+        assert started.status_code == 200
+        path = started.get_json()["detail_url"]
         identifier = path.rsplit("/", 1)[-1]
         manager.get(identifier, CASE).future.result(timeout=5)
         output = client.get(path)
         assert output.status_code == 200
         assert "&lt;script&gt;" in output.get_data(as_text=True)
-        assert client.get(path + "/status").get_json() == {"status": "complete"}
-        draft = client.post(path + "/suggestions/0", data={"csrf_token": token})
-        assert draft.status_code == 200
+        status = client.get(path + "/status").get_json()
+        assert status["status"] == "complete"
+        assert status["suggestions"][0]["source_url"] == URL
+        draft = client.post(
+            path + "/suggestions/0",
+            data={"csrf_token": token, "source_inspected": "yes"},
+        )
+        assert draft.status_code == 200, draft.get_data(as_text=True)
         assert not service.evidence_path.exists() and not service.log_path.exists()
         suggestion = manager.result(identifier, CASE, service.research_revisions())[
             "suggestions"

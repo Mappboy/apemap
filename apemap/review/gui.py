@@ -20,11 +20,24 @@ from flask import Flask, abort, g, jsonify, redirect, render_template, request, 
 from waitress import serve as waitress_serve
 
 from apemap.review.store import ReviewBusyError, StaleReviewError
-from apemap.review.schools import RELATIONSHIPS, group_school_rows, school_view
+from apemap.review.schools import (
+    RELATIONSHIPS,
+    evidence_links,
+    group_school_rows,
+    school_comparison,
+    school_view,
+)
 from apemap.review.members import MemberFieldDraft, group_member_rows
+from apemap.review.navigation import (
+    choose_successor,
+    normalize_queue_context,
+    queue_position,
+)
+from apemap.review.workspace import compare_values, extract_queue, summarize_evidence
 from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 from apemap.review.context_evidence import ROLE_TYPES
 from apemap.review.research import ResearchJobs, ResearchProvider
+from apemap.review.scoring import score_candidates
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -418,6 +431,7 @@ def _sign_member_batch_preview(preview: dict[str, Any], secret: bytes) -> str:
         "effects": preview["effects"],
         "changes": preview["changes"],
         "validation_outcome": preview["validation_outcome"],
+        "unresolved_fields": preview.get("unresolved_fields", []),
     }
     return _sign_commit(commit, secret)
 
@@ -599,10 +613,102 @@ def create_app(
     app.jinja_env.filters["json_text"] = json_text
     app.jinja_env.filters["source_link"] = source_link
 
+    @app.url_defaults
+    def preserve_queue_context(endpoint: str, values: dict[str, Any]) -> None:
+        context = getattr(g, "queue_navigation_context", {})
+        if not context:
+            return
+        for key, value in context.items():
+            values.setdefault("queue_" + key, value)
+
     def resolve_reference(reference: str) -> dict[str, Any] | None:
         if "institution_resolver" not in g:
             g.institution_resolver = service.institution_resolver()
         return g.institution_resolver(reference)
+
+    def sign_workspace_draft(review_id: str, form: Any) -> str:
+        allowed = (
+            "action",
+            "advanced_action",
+            "payload",
+            "payload_mode",
+            "school_workflow",
+            "source_url",
+            "notes",
+            "reviewer",
+            "supersedes",
+            "replacement_action",
+            "clear_value",
+            "field_",
+            "action_",
+            "value_",
+            "notes_",
+            "source_url_",
+            "candidate_id_",
+            "retained_decision_id_",
+            "evidence_refs_",
+            "evidence_refs",
+            "evidence_selection",
+            "context_role:",
+        )
+        values: dict[str, Any] = {}
+        if callable(getattr(form, "getlist", None)):
+            values = {
+                key: form.getlist(key)
+                for key in form
+                if key != "csrf_token"
+                and any(key == prefix or key.startswith(prefix) for prefix in allowed)
+            }
+        elif isinstance(form, Mapping):
+            values = {
+                key: value
+                for key, value in form.items()
+                if key != "csrf_token"
+                and any(key == prefix or key.startswith(prefix) for prefix in allowed)
+            }
+        return _sign_commit(
+            {
+                "kind": "workspace_draft",
+                "review_id": review_id,
+                "values": values,
+                "context": dict(getattr(g, "queue_navigation_context", {})),
+            },
+            signing_secret,
+        )
+
+    def normalized_form_values(form: Any) -> dict[str, Any]:
+        """Keep repeated evidence-reference controls as lists and other fields singular."""
+        values: dict[str, Any] = {}
+        for key in form:
+            entries = form.getlist(key)
+            values[key] = (
+                entries
+                if key == "evidence_refs"
+                or key.startswith("evidence_refs_")
+                or len(entries) != 1
+                else entries[0]
+            )
+        return values
+
+    def read_workspace_draft(review_id: str, token: str) -> dict[str, Any]:
+        if not token:
+            return {}
+        value = _read_preview(token, signing_secret)
+        if (
+            value.get("kind") != "workspace_draft"
+            or value.get("review_id") != review_id
+            or not isinstance(value.get("values"), dict)
+        ):
+            raise ValueError("Workspace draft does not match this review item")
+        g.queue_navigation_context = normalize_queue_context(value.get("context", {}))
+        return {
+            key: vals
+            if key == "evidence_refs"
+            or key.startswith("evidence_refs_")
+            or len(vals) != 1
+            else vals[0]
+            for key, vals in value["values"].items()
+        }
 
     def load_item(review_id: str) -> dict[str, Any]:
         if not review_id.startswith("school:"):
@@ -648,6 +754,7 @@ def create_app(
             "actions": ACTIONS,
             "action_labels": ACTION_LABELS,
             "resolution_reasons": RESOLUTION_REASONS,
+            "relationships": RELATIONSHIPS,
             "resolution_fields": RESOLUTION_FIELDS,
             "evidence_enabled": callable(getattr(service, "prepare_evidence", None))
             and callable(getattr(service, "save_evidence", None)),
@@ -655,6 +762,15 @@ def create_app(
 
     @app.before_request
     def protect_writes() -> None:
+        raw_context = {
+            key.removeprefix("queue_"): value
+            for key, value in request.args.items()
+            if key.startswith("queue_")
+        }
+        try:
+            g.queue_navigation_context = normalize_queue_context(raw_context)
+        except ValueError as err:
+            abort(400, str(err))
         if request.method != "POST":
             return
         token = request.form.get("csrf_token", "")
@@ -702,6 +818,10 @@ def create_app(
         evidence_preview: dict[str, Any] | None = None,
         evidence_error: str | None = None,
         evidence_values: Mapping[str, Any] | None = None,
+        research_case: Mapping[str, Any] | None = None,
+        research_result_data: Mapping[str, Any] | None = None,
+        workspace_draft_token: str | None = None,
+        evidence_saved: bool = False,
     ) -> str:
         chosen = _initial_payload(item) if payload is None else payload
         values: Mapping[str, Any] = (
@@ -729,6 +849,14 @@ def create_app(
                 }
                 for key, provider in research.providers.items()
             },
+            "research_case": research_case
+            or {
+                "review_id": item.get("review_id", ""),
+                "retained_evidence": item.get("retained_evidence", []),
+                "job_id": request.args.get("job_id", ""),
+            },
+            "research_result": research_result_data,
+            "workspace_draft_token": workspace_draft_token or "",
         }
         if item["entity_type"] == "school":
             school = school_view(item, resolve_reference)
@@ -766,6 +894,15 @@ def create_app(
                 _clear_resolution_fields(chosen)
             ref = str(chosen.get("institution_ref", ""))
             selected = resolve_reference(ref) if ref else None
+            navigation = workspace_navigation(item["review_id"], "school")
+            evidence_records = [
+                candidate.get("evidence", {})
+                for candidate in item.get("candidates", [])
+                if candidate.get("evidence", {}).get("stance")
+            ] + list(item.get("retained_evidence", []))
+            evidence_view = summarize_evidence(
+                evidence_records, ("identity", "temporal", "geographic")
+            )
             token = _sign_preview(
                 {
                     "event": form_state(item),
@@ -782,6 +919,14 @@ def create_app(
                 form_values=values,
                 form_token=token,
                 selected=selected,
+                workspace_rows=school_comparison(asdict(school), selected),
+                workspace_evidence=evidence_records,
+                workspace_unknown_gaps=evidence_view["unknown_gaps"],
+                workspace_position=navigation["position"],
+                workspace_actions=navigation["actions"],
+                navigation_token=navigation["token"]
+                if navigation["in_queue"]
+                else None,
                 preview=preview,
                 preview_token=_sign_preview(preview, signing_secret)
                 if preview
@@ -848,6 +993,129 @@ def create_app(
         if unresolved:
             chosen = dict(chosen)
             _clear_resolution_fields(chosen)
+        navigation = (
+            workspace_navigation(item.get("review_id", ""), item.get("entity_type", ""))
+            if item.get("review_id")
+            else {"position": {"in_queue": False}, "actions": [], "token": None}
+        )
+        evidence_records = [
+            candidate.get("evidence", {})
+            for candidate in item.get("candidates", [])
+            if candidate.get("evidence", {}).get("stance")
+        ]
+        evidence_view = summarize_evidence(evidence_records)
+        decision_payload = (item.get("decision") or {}).get("payload", {})
+        effective_assertion_metadata: dict[str, Any] | None = None
+        effective_assertion_ref = ""
+        if item.get("entity_type") == "member_education":
+            source_payload = next(
+                (
+                    candidate.get("payload", {})
+                    for candidate in item.get("candidates", [])
+                    if candidate.get("payload", {}).get("recorded_school_name")
+                ),
+                {},
+            )
+            school_name = source_payload.get("recorded_school_name") or item.get(
+                "context", {}
+            ).get("recorded_school_name", "")
+            exact_sources = [
+                education
+                for member in item.get("context", {}).get("members", [])
+                for education in member.get("education", [])
+                if education.get("review_id") == item.get("review_id")
+            ]
+            exact_resolutions = {
+                resolution.get("institution_ref", "")
+                for education in exact_sources
+                if (resolution := education.get("current_resolution") or {}).get(
+                    "institution_ref"
+                )
+            }
+            decision_action = (item.get("decision") or {}).get(
+                "replacement_action"
+            ) or (item.get("decision") or {}).get("action")
+            if decision_action in {"research", "reject", *RESOLUTION_REASONS}:
+                current_ref = ""
+            elif len(exact_resolutions) == 1:
+                current_ref = next(iter(exact_resolutions))
+            elif len(exact_resolutions) > 1:
+                current_ref = ""
+            else:
+                current_ref = decision_payload.get("institution_ref", "")
+            proposed_ref = chosen.get("institution_ref", "")
+            current_metadata = resolve_reference(current_ref) if current_ref else None
+            proposed_metadata = (
+                resolve_reference(proposed_ref) if proposed_ref else None
+            )
+            effective_assertion_metadata = current_metadata
+            effective_assertion_ref = current_ref
+            evidence_view_records = [
+                candidate.get("evidence", {})
+                for candidate in item.get("candidates", [])
+            ] + list(item.get("retained_evidence", []))
+            source_records = [
+                candidate.get("payload", {})
+                for candidate in item.get("candidates", [])
+                if candidate.get("payload")
+            ] + [
+                source
+                for education in exact_sources
+                for source in education.get("source_records", [education])
+            ]
+            synthetic_school = {
+                "name": school_name,
+                "source_records": source_records,
+                "saved_reference": current_ref,
+                "targets": [
+                    {
+                        "reference": current_ref,
+                        "metadata": current_metadata or {},
+                    }
+                ]
+                if current_ref
+                else [],
+            }
+            comparison_rows = school_comparison(synthetic_school, proposed_metadata)
+            summary_rows = [
+                compare_values(
+                    row["field"],
+                    row.get("source"),
+                    row.get("reviewed"),
+                    row.get("proposed"),
+                    provenance=evidence_view_records,
+                )
+                for row in comparison_rows
+            ]
+            comparison_rows = summary_rows
+            evidence_view = summarize_evidence(
+                evidence_view_records,
+                ("identity", "temporal", "geographic"),
+            )
+            evidence_records = [
+                record for record in evidence_view_records if record.get("stance")
+            ]
+        else:
+            source_payload = next(
+                (
+                    candidate.get("payload", {})
+                    for candidate in item.get("candidates", [])
+                    if candidate.get("payload")
+                ),
+                {},
+            )
+            comparison_rows = [
+                {
+                    "field": name,
+                    "source": source_payload.get(name),
+                    "reviewed": decision_payload.get(name),
+                    "proposed": chosen.get(name),
+                    "comparison": "unknown",
+                    "summary": "Unknown",
+                }
+                for name in set(source_payload) | set(decision_payload) | set(chosen)
+                if name not in {"legacy"}
+            ]
         return render_template(
             "item.html",
             item=item,
@@ -863,12 +1131,25 @@ def create_app(
             form_values=values,
             named_education=named_education,
             resolution_fields_disabled=unresolved,
+            workspace_rows=comparison_rows,
+            workspace_evidence=evidence_records,
+            workspace_unknown_gaps=evidence_view["unknown_gaps"],
+            effective_assertion_metadata=effective_assertion_metadata,
+            effective_assertion_ref=effective_assertion_ref,
+            workspace_position=navigation["position"],
+            workspace_actions=navigation["actions"],
+            navigation_token=navigation["token"]
+            if navigation["position"].get("in_queue")
+            else None,
+            evidence_saved=evidence_saved,
             **evidence_context,
         )
 
     def build_queue_rows() -> list[dict[str, Any]]:
         all_rows = group_school_rows(group_member_rows(service.candidates()))
         decisions = service.school_decisions()
+        records_reader = getattr(service, "evidence_records", None)
+        retained_records = records_reader() if callable(records_reader) else []
         metadata_cache: dict[str, dict[str, Any] | None] = {}
 
         def resolve(reference: str) -> dict[str, Any] | None:
@@ -888,6 +1169,85 @@ def create_app(
                     resolve,
                 )
                 row["status"] = row["school"].status
+                evidence = [
+                    candidate.get("evidence", {})
+                    for candidate in row.get("candidates", [])
+                ] + row["school"].source_records
+                has_source = any(evidence_links(part) for part in evidence)
+                ambiguity_reason = any(
+                    (head.get("payload") or {}).get("resolution_reason")
+                    == "ambiguous_name"
+                    for head in heads
+                )
+                row["ambiguous"] = (
+                    row["status"] == "conflict"
+                    or bool(row.get("conflicts"))
+                    or ambiguity_reason
+                )
+                score_inputs = [
+                    {
+                        **target.metadata,
+                        "institution_ref": target.reference,
+                        "institution_name": target.name,
+                        "recorded_name": row["school"].name,
+                    }
+                    for target in row["school"].targets
+                ]
+                scored = (
+                    score_candidates(row["review_id"], score_inputs, retained_records)
+                    if score_inputs
+                    else []
+                )
+                bands = [
+                    str(candidate.get("score_band", "insufficient"))
+                    for candidate in scored
+                ]
+                row["evidence_bands"] = bands
+                row["evidence_band"] = bands[0] if bands else "insufficient"
+                row["low_evidence"] = (
+                    row["evidence_band"] in {"low", "name_only", "insufficient"}
+                    or not has_source
+                )
+                scored_ties = any(
+                    candidate.get("tied") and candidate.get("score_band") == "strong"
+                    for candidate in scored
+                )
+                retained_conflict = any(
+                    getattr(
+                        record,
+                        "stance",
+                        record.get("stance") if isinstance(record, Mapping) else None,
+                    )
+                    in {"contradicts", "conflicts"}
+                    and getattr(
+                        record,
+                        "review_id",
+                        record.get("review_id")
+                        if isinstance(record, Mapping)
+                        else None,
+                    )
+                    == row["review_id"]
+                    and getattr(
+                        record,
+                        "claim_type",
+                        record.get("claim_type")
+                        if isinstance(record, Mapping)
+                        else None,
+                    )
+                    == "identity"
+                    for record in retained_records
+                )
+                row["ambiguous"] = (
+                    row.get("ambiguous", False) or scored_ties or retained_conflict
+                )
+                row["unknown_evidence_dimensions"] = sorted(
+                    {
+                        dimension
+                        for candidate in scored
+                        for dimension, value in candidate.get("components", {}).items()
+                        if dimension != "name_match" and value == 0
+                    }
+                )
         return all_rows
 
     def queue_rows() -> list[dict[str, Any]]:
@@ -905,6 +1265,221 @@ def create_app(
             if revision_reader() == revision:
                 queue_cache = (revision, rows)
             return rows
+
+    def workspace_navigation(current_id: str, entity: str) -> dict[str, Any]:
+        context = dict(getattr(g, "queue_navigation_context", {}))
+        view = context.get("view") or (
+            "members"
+            if entity == "member"
+            else "schools"
+            if entity == "school"
+            else "all"
+        )
+        context["view"] = view
+        valid_statuses = (
+            OPEN_MEMBER_STATUSES
+            if view == "members"
+            else UNMATCHED_SCHOOL_STATUSES
+            if view == "schools"
+            else STATUSES
+        )
+        try:
+            context = normalize_queue_context(context, statuses=valid_statuses)
+        except ValueError as err:
+            abort(400, str(err))
+        queue = extract_queue(
+            queue_rows(),
+            view=view,
+            entity=context.get("entity"),
+            status=context.get("status") or None,
+            parliament=int(context["parliament"])
+            if context.get("parliament")
+            else None,
+            q=context.get("q", ""),
+            unmatched_schools=context.get("unmatched_schools") == "1"
+            or view == "schools",
+            preset=context.get("preset") or None,
+            page=int(context.get("page", "1")),
+            per_page=PAGE_SIZE,
+        )
+        position = queue_position(queue["ids"], current_id)
+        successors = (
+            queue["ids"][queue["ids"].index(current_id) + 1 :]
+            if position["in_queue"]
+            else []
+        )
+        nav_token = _sign_commit(
+            {
+                "kind": "queue_navigation",
+                "context": context,
+                "current_id": current_id,
+                "successors": successors,
+            },
+            signing_secret,
+        )
+
+        def action(
+            key: str, label: str, target_id: str | None
+        ) -> dict[str, str] | None:
+            if not target_id:
+                return None
+            target = next(
+                (row for row in queue["all_rows"] if row.get("review_id") == target_id),
+                {},
+            )
+            query: dict[str, Any] = {
+                "queue_" + name: value for name, value in context.items()
+            }
+            if target.get("entity_type") == "member":
+                href = url_for(
+                    "member_detail",
+                    aph_id=target.get("aph_id", ""),
+                    **query,
+                )
+            else:
+                href = url_for(
+                    "detail",
+                    review_id=target_id,
+                    **query,
+                )
+            return {"key": key, "label": label, "href": href}
+
+        actions = [
+            value
+            for value in (
+                action("previous", "Previous", position["previous_id"]),
+                action("next", "Next", position["next_id"]),
+            )
+            if value
+        ]
+        if position["in_queue"]:
+            skipped = action("skip", "Skip", position["next_id"])
+            actions.append(
+                skipped or {"key": "skip", "label": "Skip", "href": queue_href(context)}
+            )
+        actions.append(
+            {
+                "key": "queue",
+                "label": "Back to filtered queue",
+                "href": queue_href(context),
+            }
+        )
+        return {
+            "position": position,
+            "actions": actions,
+            "token": nav_token,
+            "context": context,
+            "in_queue": position["in_queue"],
+        }
+
+    def queue_href(context: Mapping[str, str]) -> str:
+        endpoints = {
+            "all": "queue",
+            "members": "member_queue",
+            "schools": "unmatched_school_queue",
+        }
+        view = context.get("view", "all")
+        values: dict[str, Any] = {
+            "status": context.get("status", ""),
+            "parliament": context.get("parliament", ""),
+            "q": context.get("q", ""),
+            "page": context.get("page", "1"),
+            "preset": context.get("preset", ""),
+        }
+        if view == "all":
+            values["entity_type"] = context.get("entity", "")
+            values["unmatched_schools"] = context.get("unmatched_schools", "")
+        return url_for(endpoints.get(view, "queue"), **values)
+
+    def submitted_navigation(token: str, current_id: str) -> dict[str, Any]:
+        if not token:
+            raise ValueError(
+                "Queue navigation expired; return to the queue before advancing"
+            )
+        value = _read_preview(token, signing_secret)
+        if (
+            value.get("kind") != "queue_navigation"
+            or value.get("current_id") != current_id
+            or not isinstance(value.get("successors"), list)
+            or any(not isinstance(item, str) for item in value.get("successors", []))
+        ):
+            raise ValueError("Queue navigation does not match this review item")
+        value["context"] = normalize_queue_context(value.get("context", {}))
+        return value
+
+    def advance_redirect(
+        nav: dict[str, Any],
+        current_id: str,
+        entity: str,
+        *,
+        saved_count: int = 1,
+        remaining_count: int = 0,
+        saved_member: str = "",
+    ) -> Any:
+        context = nav["context"]
+        post_save = extract_queue(
+            queue_rows(),
+            view=context.get("view", "all"),
+            entity=context.get("entity") or None,
+            status=context.get("status") or None,
+            parliament=int(context["parliament"])
+            if context.get("parliament")
+            else None,
+            q=context.get("q", ""),
+            unmatched_schools=context.get("unmatched_schools") == "1"
+            or context.get("view") == "schools",
+            preset=context.get("preset") or None,
+            per_page=PAGE_SIZE,
+        )
+        target_id = choose_successor(
+            [current_id, *nav["successors"]], post_save["ids"], current_id
+        )
+        query: dict[str, Any] = {
+            "queue_" + key: value for key, value in context.items()
+        }
+        query["saved"] = "1"
+        query["saved_count"] = str(saved_count)
+        query["remaining_count"] = str(remaining_count)
+        if saved_member:
+            query["saved_member"] = saved_member
+        if target_id:
+            target = next(
+                row
+                for row in post_save["all_rows"]
+                if row.get("review_id") == target_id
+            )
+            if target.get("entity_type") == "member":
+                return redirect(
+                    url_for("member_detail", aph_id=target.get("aph_id", ""), **query),
+                    code=303,
+                )
+            return redirect(url_for("detail", review_id=target_id, **query), code=303)
+        queue_query: dict[str, Any] = {
+            "status": context.get("status", ""),
+            "parliament": context.get("parliament", ""),
+            "q": context.get("q", ""),
+            "page": context.get("page", "1"),
+            "preset": context.get("preset", ""),
+            "saved": "1",
+            "saved_count": str(saved_count),
+            "remaining_count": str(remaining_count),
+        }
+        if context.get("view") == "all":
+            queue_query["entity_type"] = context.get("entity", "")
+            queue_query["unmatched_schools"] = context.get("unmatched_schools", "")
+        if saved_member:
+            queue_query["saved_member"] = saved_member
+        return redirect(
+            url_for(
+                {
+                    "all": "queue",
+                    "members": "member_queue",
+                    "schools": "unmatched_school_queue",
+                }.get(context.get("view"), "queue"),
+                **queue_query,
+            ),
+            code=303,
+        )
 
     def render_queue(view: Literal["all", "members", "schools"] = "all") -> str:
         endpoint = {
@@ -937,28 +1512,36 @@ def create_app(
         if status and status not in statuses:
             abort(400, "Unknown status")
         search = request.args.get("q") or None
+        preset = request.args.get("preset") or None
+        if preset and preset not in {
+            "ambiguous_schools",
+            "member_identity_conflicts",
+            "needs_research",
+            "low_evidence",
+            "unresolved",
+            "member_corrections",
+        }:
+            abort(400, "Unknown review preset")
         unmatched_schools = view == "schools" or (
             view == "all" and request.args.get("unmatched_schools") == "1"
         )
         all_rows = queue_rows()
-        base_rows = [
-            row for row in all_rows if not unmatched_schools or _unmatched_school(row)
-        ]
-        rows = [
-            row
-            for row in base_rows
-            if (not entity_type or row["entity_type"] == entity_type)
-            and (view != "members" or _open_member(row))
-            and (not status or row["status"] == status)
-            and (parliament is None or parliament in row["parliaments"])
-            and (
-                not search
-                or search.casefold()
-                in json.dumps(row, default=str, ensure_ascii=False).casefold()
+        try:
+            queue_result = extract_queue(
+                all_rows,
+                view=view,
+                entity=entity_type,
+                status=status,
+                parliament=parliament,
+                q=search or "",
+                unmatched_schools=unmatched_schools,
+                preset=preset,
+                page=page,
+                per_page=PAGE_SIZE,
             )
-        ]
-        if view != "all":
-            rows.sort(key=lambda row: _queue_order(row, statuses))
+        except ValueError as err:
+            abort(400, str(err))
+        rows = queue_result["all_rows"]
         totals = Counter(row.get("status", "pending") for row in rows)
         pages = max(1, (len(rows) + PAGE_SIZE - 1) // PAGE_SIZE)
         page = min(page, pages)
@@ -968,7 +1551,23 @@ def create_app(
             "parliament": parliament or "",
             "q": search or "",
             "unmatched_schools": unmatched_schools,
+            "preset": preset or "",
         }
+        # Carry the queue's active filters to detail links and the workspace
+        # return action using the same normalized whitelist as signed navigation.
+        g.queue_navigation_context = normalize_queue_context(
+            {
+                "view": view,
+                "entity": entity_type or "",
+                "status": status or "",
+                "parliament": str(parliament or ""),
+                "q": search or "",
+                "unmatched_schools": "1" if unmatched_schools else "",
+                "page": str(page),
+                "preset": preset or "",
+            },
+            statuses=statuses,
+        )
 
         def page_url(number: int) -> str:
             values: dict[str, Any] = {
@@ -976,6 +1575,7 @@ def create_app(
                 "parliament": parliament or "",
                 "q": search or "",
                 "page": number,
+                "preset": preset or "",
             }
             if view == "all":
                 values.update(
@@ -1010,7 +1610,7 @@ def create_app(
             }
             if view == "all"
             else {},
-            rows=rows[(page - 1) * PAGE_SIZE : page * PAGE_SIZE],
+            rows=queue_result["rows"],
             totals=totals,
             total=len(rows),
             queue_label="members"
@@ -1020,8 +1620,8 @@ def create_app(
             else "school mappings"
             if entity_type == "school"
             else "review entries",
-            page=page,
-            pages=pages,
+            page=queue_result["page"],
+            pages=queue_result["pages"],
             filters=filters,
             previous_url=page_url(page - 1) if page > 1 else None,
             next_url=page_url(page + 1) if page < pages else None,
@@ -1071,10 +1671,50 @@ def create_app(
         preview: dict[str, Any] | None = None,
         error: str | None = None,
         form_values: Mapping[str, Any] | None = None,
+        research_jobs: Mapping[str, str] | None = None,
+        research_results: Mapping[str, dict[str, Any]] | None = None,
+        workspace_draft_token: str | None = None,
+        research_evidence: Mapping[str, Any] | None = None,
     ) -> str:
         values = request.form if form_values is None else form_values
         preview_token = (
             _sign_member_batch_preview(preview, signing_secret) if preview else None
+        )
+        current_id = f"member:{str(member_view.get('aph_id', '')).strip().lower()}"
+        navigation = workspace_navigation(current_id, "member")
+        actionable = [
+            field
+            for field in member_view.get("fields", [])
+            if field.get("status") in {"conflict", "pending", "needs_research"}
+        ]
+        workspace_rows = []
+        for field in actionable:
+            field_evidence = [
+                candidate.get("evidence", {})
+                for candidate in field.get("candidates", [])
+                if candidate.get("evidence", {}).get("stance")
+            ] + list(field.get("retained_evidence", []))
+            workspace_rows.append(
+                compare_values(
+                    str(field.get("field", "value")),
+                    field.get("source_value"),
+                    field.get("effective_value"),
+                    field.get("proposed_value"),
+                    provenance=field_evidence,
+                )
+            )
+        evidence_records = [
+            candidate.get("evidence", {})
+            for field in member_view.get("fields", [])
+            for candidate in field.get("candidates", [])
+            if candidate.get("evidence", {}).get("stance")
+        ] + [
+            record
+            for field in member_view.get("fields", [])
+            for record in field.get("retained_evidence", [])
+        ]
+        evidence_view = summarize_evidence(
+            evidence_records, [str(field.get("field")) for field in actionable]
         )
         return render_template(
             "member.html",
@@ -1084,6 +1724,33 @@ def create_app(
             preview_token=preview_token,
             error=error,
             form_values=values,
+            workspace_rows=workspace_rows,
+            workspace_evidence=evidence_records,
+            workspace_unknown_gaps=evidence_view["unknown_gaps"],
+            workspace_position=navigation["position"],
+            workspace_actions=navigation["actions"],
+            navigation_token=navigation["token"]
+            if navigation["position"]["in_queue"]
+            else None,
+            research_jobs=research_jobs or {},
+            research_results=research_results or {},
+            workspace_draft_token=workspace_draft_token or "",
+            research_evidence=research_evidence or {},
+            related_unresolved_count=sum(
+                row.get("status")
+                in {
+                    "pending",
+                    "conflict",
+                    "needs_research",
+                    "needs_individual_resolution",
+                }
+                for row in member_view.get("education", [])
+                + member_view.get("services", [])
+            ),
+            research_providers={
+                key: {"model": getattr(provider, "model", "external")}
+                for key, provider in research.providers.items()
+            },
         )
 
     @app.get("/members/<aph_id>")
@@ -1125,6 +1792,7 @@ def create_app(
                             f"retained_decision_id_{field}"
                         )
                         or None,
+                        evidence_refs=request.form.getlist(f"evidence_refs_{field}"),
                     )
                 )
         try:
@@ -1139,6 +1807,17 @@ def create_app(
             member_view = service.member(aph_id)
         except (KeyError, ValueError) as err:
             abort(404, str(err))
+        navigation = None
+        if request.form.get("advance") == "next":
+            try:
+                navigation = submitted_navigation(
+                    request.form.get("navigation_token", ""),
+                    f"member:{str(member_view.get('aph_id', aph_id)).strip().lower()}",
+                )
+            except ValueError as err:
+                return member_page(
+                    member_view, error=str(err), form_values=request.form
+                ), 400
         token = request.form.get("preview_token", "").strip()
         if not token:
             return member_page(
@@ -1186,6 +1865,7 @@ def create_app(
                             f"retained_decision_id_{field}"
                         )
                         or None,
+                        evidence_refs=request.form.getlist(f"evidence_refs_{field}"),
                     ).to_dict()
                 )
 
@@ -1203,6 +1883,7 @@ def create_app(
                 d.get("reviewer"),
                 d.get("candidate_id"),
                 d.get("retained_decision_id"),
+                d.get("evidence_refs", []),
             )
 
         if [_draft_key(d) for d in submitted_drafts] != [
@@ -1216,7 +1897,16 @@ def create_app(
 
         try:
             service.save_batch(preview)
-            return redirect(url_for("member_detail", aph_id=aph_id))
+            if navigation:
+                return advance_redirect(
+                    navigation,
+                    f"member:{str(member_view.get('aph_id', aph_id)).strip().lower()}",
+                    "member",
+                    saved_count=len(submitted_drafts),
+                    remaining_count=len(preview.get("unresolved_fields", [])),
+                    saved_member=str(member_view.get("aph_id", aph_id)),
+                )
+            return redirect(url_for("member_detail", aph_id=aph_id, saved="1"))
         except (ValueError, OSError) as err:
             message = (
                 str(err)
@@ -1246,6 +1936,81 @@ def create_app(
             abort(404, str(err))
         return item_page(item)
 
+    @app.get("/items/<path:review_id>/comparison")
+    def school_comparison_json(review_id: str) -> Any:
+        try:
+            item = load_item(review_id)
+            if item.get("entity_type") not in {"school", "member_education"}:
+                abort(404)
+            candidate_ref = request.args.get("candidate_ref", "").strip()
+            selected = resolve_reference(candidate_ref) if candidate_ref else None
+            if candidate_ref and selected is None:
+                return jsonify({"error": "Selected candidate is unavailable"}), 400
+            if item.get("entity_type") == "school":
+                school = school_view(item, resolve_reference)
+                rows = school_comparison(asdict(school), selected)
+                evidence = [
+                    row.get("evidence", {})
+                    for row in item.get("candidates", [])
+                    if row.get("evidence", {}).get("stance")
+                ] + list(item.get("retained_evidence", []))
+            else:
+                source = next(
+                    (
+                        education
+                        for member in item.get("context", {}).get("members", [])
+                        for education in member.get("education", [])
+                        if education.get("review_id") == review_id
+                    ),
+                    {},
+                )
+                decision = item.get("decision") or {}
+                action = decision.get("replacement_action") or decision.get("action")
+                resolution = source.get("current_resolution") or {}
+                current_ref = ""
+                if action not in {"research", "reject", *RESOLUTION_REASONS}:
+                    if resolution.get("institution_ref"):
+                        current_ref = resolution["institution_ref"]
+                    elif not resolution.get("conflicts"):
+                        current_ref = decision.get("payload", {}).get(
+                            "institution_ref", ""
+                        )
+                name = source.get("recorded_name") or item.get("context", {}).get(
+                    "recorded_school_name", ""
+                )
+                sources = source.get("source_records", [source])
+                current = resolve_reference(current_ref) if current_ref else None
+                rows = school_comparison(
+                    {
+                        "name": name,
+                        "source_records": sources,
+                        "saved_reference": current_ref,
+                        "targets": [
+                            {"reference": current_ref, "metadata": current or {}}
+                        ]
+                        if current_ref
+                        else [],
+                    },
+                    selected,
+                )
+                evidence = [
+                    row.get("evidence", {})
+                    for row in item.get("candidates", [])
+                    if row.get("evidence", {}).get("stance")
+                ] + list(item.get("retained_evidence", []))
+            summary = summarize_evidence(
+                evidence, ("identity", "temporal", "geographic")
+            )
+            return jsonify(
+                {
+                    "rows": rows,
+                    "evidence": evidence,
+                    "unknown_gaps": summary["unknown_gaps"],
+                }
+            )
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
+
     @app.post("/items/<path:review_id>/evidence/preview")
     def preview_evidence(review_id: str) -> Any:
         prepare = getattr(service, "prepare_evidence", None)
@@ -1256,9 +2021,9 @@ def create_app(
         except ValueError as err:
             abort(404, str(err))
         try:
-            if item["entity_type"] not in {"school", "member_education"}:
+            if item["entity_type"] not in {"school", "member_education", "member"}:
                 raise ValueError(
-                    "Research evidence belongs to a school or education assertion"
+                    "Research evidence belongs to a school, education assertion, or exact member field"
                 )
             payload = _evidence_payload_from_form()
             research_id = request.form.get("research_job_id", "")
@@ -1279,18 +2044,63 @@ def create_app(
             preview = prepare(review_id, payload)
             if revisions is not None:
                 preview["research_revisions"] = revisions
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify(
+                    {
+                        "evidence_preview_token": _sign_evidence_preview(
+                            preview, signing_secret
+                        ),
+                        "record": preview.get("record"),
+                        "validation": preview.get("validation_outcome", "valid"),
+                    }
+                )
+            draft_token = request.form.get("workspace_draft_token", "")
+            draft = read_workspace_draft(review_id, draft_token) if draft_token else {}
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                return member_page(
+                    service.member(parts[1]),
+                    form_values={**draft, **normalized_form_values(request.form)},
+                    workspace_draft_token=draft_token,
+                    research_evidence={
+                        parts[-1]: {
+                            "preview": preview,
+                            "values": request.form,
+                            "preview_token": _sign_evidence_preview(
+                                preview, signing_secret
+                            ),
+                        }
+                    },
+                )
             return item_page(
                 item,
-                draft_values={},
+                draft_values={**draft, **normalized_form_values(request.form)},
                 evidence_preview=preview,
                 evidence_values=request.form,
+                workspace_draft_token=draft_token,
             )
         except ValueError as err:
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), 400
+            draft_token = request.form.get("workspace_draft_token", "")
+            draft = read_workspace_draft(review_id, draft_token) if draft_token else {}
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                return member_page(
+                    service.member(parts[1]),
+                    error=str(err),
+                    form_values={**draft, **normalized_form_values(request.form)},
+                    workspace_draft_token=draft_token,
+                    research_evidence={
+                        parts[-1]: {"values": request.form, "error": str(err)}
+                    },
+                ), 400
             return item_page(
                 item,
-                draft_values={},
+                draft_values={**draft, **normalized_form_values(request.form)},
                 evidence_error=str(err),
                 evidence_values=request.form,
+                workspace_draft_token=draft_token,
             ), 400
 
     @app.post("/items/<path:review_id>/evidence/save")
@@ -1314,6 +2124,10 @@ def create_app(
                 raise ValueError("Evidence preview belongs to a different review item")
             save(preview)
         except (OSError, ValueError) as err:
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), 409 if isinstance(
+                    err, StaleReviewError
+                ) else 400
             try:
                 item = load_item(review_id)
             except ValueError:
@@ -1332,17 +2146,50 @@ def create_app(
                 if isinstance(err, OSError)
                 else f"{err}. Nothing was retained; review and preview the evidence again."
             )
-            return item_page(
-                item,
-                draft_values={},
-                evidence_error=message,
-                evidence_values=values,
-            ), (
+            draft_token = request.form.get("workspace_draft_token", "")
+            draft = read_workspace_draft(review_id, draft_token) if draft_token else {}
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                response = member_page(
+                    service.member(parts[1]),
+                    error=message,
+                    form_values=draft,
+                    workspace_draft_token=draft_token,
+                    research_evidence={parts[-1]: {"values": values, "error": message}},
+                )
+            else:
+                response = item_page(
+                    item,
+                    draft_values=draft,
+                    evidence_error=message,
+                    evidence_values=values,
+                    workspace_draft_token=draft_token,
+                )
+            return response, (
                 503
                 if isinstance(err, (OSError, ReviewBusyError))
                 else 409
                 if isinstance(err, StaleReviewError)
                 else 400
+            )
+        if request.accept_mimetypes.best == "application/json":
+            return jsonify({"record": preview["record"]})
+        draft_token = request.form.get("workspace_draft_token", "")
+        draft = read_workspace_draft(review_id, draft_token) if draft_token else {}
+        if review_id.startswith("member:"):
+            parts = review_id.split(":")
+            return member_page(
+                service.member(parts[1]),
+                form_values=draft,
+                workspace_draft_token=draft_token,
+                research_evidence={parts[-1]: {"values": {"evidence_saved": "1"}}},
+            )
+        if draft_token and review_id.startswith(("school:", "education:")):
+            return item_page(
+                load_item(review_id),
+                draft_values=draft,
+                workspace_draft_token=draft_token,
+                evidence_saved=True,
             )
         return redirect(
             url_for("detail", review_id=review_id, evidence_saved="1"), code=303
@@ -1355,14 +2202,96 @@ def create_app(
                 raise ValueError(
                     "Configure a research provider when starting the reviewer"
                 )
-            context = getattr(service, "research_context")(review_id)
-            identifier = research.start(request.form.get("provider_id", ""), context)
+            member_parts = review_id.split(":")
+            member_field = (
+                member_parts[-1]
+                if len(member_parts) == 3 and member_parts[0] == "member"
+                else None
+            )
+            provider_id = request.form.get("provider_id", "")
+            if member_field:
+                provider_id = request.form.get(
+                    f"research_provider_id_{member_field}", provider_id
+                )
+            else:
+                provider_id = request.form.get("research_provider_id", provider_id)
+            candidate_id = request.form.get("candidate_id") or (
+                request.form.get(f"candidate_id_{member_field}")
+                if member_field
+                else None
+            )
+            if review_id.startswith("school:"):
+                candidate_id = request.form.get("field_institution_ref") or candidate_id
+            elif not member_field:
+                candidate_id = request.form.get("field_institution_ref") or candidate_id
+            context = getattr(service, "research_context")(
+                review_id, candidate_id=candidate_id or None
+            )
+            identifier = research.start(provider_id, context)
+            draft_token = sign_workspace_draft(review_id, request.form)
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify(
+                    {
+                        "job_id": identifier,
+                        "detail_url": url_for(
+                            "research_detail", review_id=review_id, job_id=identifier
+                        ),
+                        "status_url": url_for(
+                            "research_status", review_id=review_id, job_id=identifier
+                        ),
+                        "workspace_draft_token": draft_token,
+                    }
+                )
+            if member_field:
+                member_view = service.member(member_parts[1])
+                return member_page(
+                    member_view,
+                    form_values=normalized_form_values(request.form),
+                    research_jobs={member_field: identifier},
+                    research_results={
+                        member_field: research_result(review_id, identifier)
+                    },
+                    workspace_draft_token=draft_token,
+                )
+            if not member_field:
+                item = load_item(review_id)
+                return item_page(
+                    item,
+                    draft_values=normalized_form_values(request.form),
+                    research_case={
+                        "review_id": review_id,
+                        "job_id": identifier,
+                        "retained_evidence": item.get("retained_evidence", []),
+                    },
+                    research_result_data=research_result(review_id, identifier),
+                    workspace_draft_token=draft_token,
+                )
             return redirect(
                 url_for("research_detail", review_id=review_id, job_id=identifier),
                 code=303,
             )
         except ValueError as err:
-            return render_template("error.html", message=str(err)), 400
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), 400
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                token = sign_workspace_draft(review_id, request.form)
+                return member_page(
+                    service.member(parts[1]),
+                    error=str(err),
+                    form_values=normalized_form_values(request.form),
+                    workspace_draft_token=token,
+                ), 400
+            try:
+                item = load_item(review_id)
+            except (KeyError, ValueError):
+                return render_template("error.html", message=str(err)), 400
+            return item_page(
+                item,
+                error=str(err),
+                draft_values=normalized_form_values(request.form),
+                workspace_draft_token=sign_workspace_draft(review_id, request.form),
+            ), 400
 
     def research_result(review_id: str, job_id: str) -> dict[str, Any]:
         return research.result(
@@ -1373,6 +2302,31 @@ def create_app(
     def research_detail(review_id: str, job_id: str) -> Any:
         try:
             result = research_result(review_id, job_id)
+            token = request.args.get("workspace_draft_token", "")
+            if token and review_id.startswith("member:"):
+                draft = read_workspace_draft(review_id, token)
+                parts = review_id.split(":")
+                return member_page(
+                    service.member(parts[1]),
+                    form_values=draft,
+                    research_jobs={parts[-1]: job_id},
+                    research_results={parts[-1]: result},
+                    workspace_draft_token=token,
+                )
+            if token:
+                draft = read_workspace_draft(review_id, token)
+                item = load_item(review_id)
+                return item_page(
+                    item,
+                    draft_values=draft,
+                    research_case={
+                        "review_id": review_id,
+                        "job_id": job_id,
+                        "retained_evidence": item.get("retained_evidence", []),
+                    },
+                    research_result_data=result,
+                    workspace_draft_token=token,
+                )
             return render_template(
                 "research.html", review_id=review_id, job_id=job_id, result=result
             )
@@ -1382,9 +2336,9 @@ def create_app(
     @app.get("/items/<path:review_id>/research/<job_id>/status")
     def research_status(review_id: str, job_id: str) -> Any:
         try:
-            return jsonify({"status": research_result(review_id, job_id)["status"]})
-        except ValueError:
-            return jsonify({"status": "stale"}), 409
+            return jsonify(research_result(review_id, job_id))
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 409
 
     @app.get("/items/<path:review_id>/research/<job_id>/search-suggestions")
     def research_search_suggestions(review_id: str, job_id: str) -> Any:
@@ -1400,6 +2354,10 @@ def create_app(
     @app.post("/items/<path:review_id>/research/<job_id>/suggestions/<int:index>")
     def inspect_suggestion(review_id: str, job_id: str, index: int) -> Any:
         try:
+            if request.form.get("source_inspected") != "yes":
+                raise ValueError(
+                    "Inspect the cited source before reviewing its evidence"
+                )
             result = research_result(review_id, job_id)
             if result["status"] != "complete" or not 0 <= index < len(
                 result["suggestions"]
@@ -1415,11 +2373,148 @@ def create_app(
                     suggestion["claim_value"]
                 )
             values.update(research_job_id=job_id, research_suggestion_index=str(index))
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"evidence_values": values, "suggestion": suggestion})
+            token = request.form.get("workspace_draft_token", "")
+            saved_draft = read_workspace_draft(review_id, token) if token else {}
+            saved_draft.update(
+                {
+                    key: request.form.getlist(key)
+                    for key in request.form
+                    if key != "csrf_token"
+                }
+            )
+            token = sign_workspace_draft(review_id, request.form)
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                member_view = service.member(parts[1])
+                field = parts[-1]
+                return member_page(
+                    member_view,
+                    form_values={**saved_draft, **normalized_form_values(request.form)},
+                    research_jobs={field: job_id},
+                    research_results={field: result},
+                    workspace_draft_token=token,
+                    research_evidence={field: {"values": values}},
+                )
             return item_page(
-                load_item(review_id), draft_values={}, evidence_values=values
+                load_item(review_id),
+                draft_values={**saved_draft, **normalized_form_values(request.form)},
+                evidence_values=values,
+                research_case={"review_id": review_id, "job_id": job_id},
+                research_result_data=result,
+                workspace_draft_token=token,
             )
         except ValueError as err:
-            return render_template("error.html", message=str(err)), 409
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), 409
+            token = request.form.get("workspace_draft_token", "")
+            draft = read_workspace_draft(review_id, token) if token else {}
+            draft.update(normalized_form_values(request.form))
+            if review_id.startswith("member:"):
+                parts = review_id.split(":")
+                return member_page(
+                    service.member(parts[1]),
+                    error=str(err),
+                    form_values=draft,
+                    workspace_draft_token=token,
+                ), 409
+            return item_page(
+                load_item(review_id),
+                error=str(err),
+                draft_values=draft,
+                workspace_draft_token=token,
+            ), 409
+
+    @app.post("/items/<path:review_id>/evidence/<evidence_id>/copy")
+    def copy_member_evidence(review_id: str, evidence_id: str) -> Any:
+        try:
+            is_member_field = review_id.startswith("member:")
+            value = getattr(
+                service,
+                "copy_member_evidence_value"
+                if is_member_field
+                else "copy_school_evidence_value",
+            )(review_id, evidence_id)
+            record = next(
+                (
+                    row
+                    for row in getattr(service, "retained_evidence")(review_id)
+                    if row.get("evidence_id") == evidence_id
+                ),
+                None,
+            )
+            if record is None:
+                raise ValueError("Retained evidence is no longer available")
+            if request.accept_mimetypes.best == "application/json":
+                result = {
+                    "value": value,
+                    "evidence_id": evidence_id,
+                    "source_url": record.get("source_url", ""),
+                }
+                if is_member_field:
+                    result["field"] = review_id.rsplit(":", 1)[-1]
+                else:
+                    result["institution_ref"] = value
+                return jsonify(result)
+            if is_member_field:
+                parts = review_id.split(":")
+                draft_token = request.form.get("workspace_draft_token", "")
+                draft = (
+                    read_workspace_draft(review_id, draft_token) if draft_token else {}
+                )
+                draft.update(normalized_form_values(request.form))
+                field = parts[-1]
+                draft[f"value_{field}"] = value
+                draft[f"source_url_{field}"] = record.get("source_url", "")
+                refs = list(draft.get(f"evidence_refs_{field}", []))
+                if evidence_id not in refs:
+                    refs.append(evidence_id)
+                draft[f"evidence_refs_{field}"] = refs
+                return member_page(
+                    service.member(parts[1]),
+                    form_values=draft,
+                    workspace_draft_token=sign_workspace_draft(review_id, draft),
+                )
+            draft_token = request.form.get("workspace_draft_token", "")
+            draft = read_workspace_draft(review_id, draft_token) if draft_token else {}
+            draft.update(normalized_form_values(request.form))
+            draft["field_institution_ref"] = value
+            draft["source_url"] = record.get("source_url", "")
+            refs = list(draft.get("evidence_refs", []))
+            if evidence_id not in refs:
+                refs.append(evidence_id)
+            draft["evidence_refs"] = refs
+            draft["evidence_selection"] = "1"
+            item = load_item(review_id)
+            return item_page(
+                item,
+                draft_values=draft,
+                workspace_draft_token=sign_workspace_draft(review_id, draft),
+            )
+        except (KeyError, ValueError) as err:
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), 409
+            token = request.form.get("workspace_draft_token", "")
+            try:
+                draft = read_workspace_draft(review_id, token) if token else {}
+            except ValueError:
+                draft = {}
+            draft.update(normalized_form_values(request.form))
+            if review_id.startswith("member:"):
+                _, aph_id, _field = review_id.split(":", 2)
+                return member_page(
+                    service.member(aph_id),
+                    error=str(err),
+                    form_values=draft,
+                    workspace_draft_token=sign_workspace_draft(review_id, draft),
+                ), 409
+            return item_page(
+                load_item(review_id),
+                error=str(err),
+                draft_values=draft,
+                workspace_draft_token=sign_workspace_draft(review_id, draft),
+            ), 409
 
     @app.get("/new/<entity_type>")
     def new_item(entity_type: str) -> str:
@@ -1629,7 +2724,12 @@ def create_app(
             # A discovered school for a missing-education case receives its own
             # immutable identity in the shared service before it is recorded.
             item = {**item, "review_id": preview["event"]["review_id"]}
-            return item_page(item, payload=payload, preview=preview)
+            return item_page(
+                item,
+                payload=payload,
+                preview=preview,
+                workspace_draft_token=sign_workspace_draft(review_id, request.form),
+            )
         except ValueError as err:
             error = err
             if isinstance(err, StaleReviewError) and item["entity_type"] == "school":
@@ -1650,9 +2750,13 @@ def create_app(
                 error = StaleReviewError(
                     "Decisions changed. Nothing was saved; review the current decisions and preview again"
                 )
-            return item_page(item, payload=payload, error=str(error)), (
-                409 if isinstance(error, StaleReviewError) else 400
-            )
+            return item_page(
+                item,
+                payload=payload,
+                error=str(error),
+                draft_values=normalized_form_values(request.form),
+                workspace_draft_token=sign_workspace_draft(review_id, request.form),
+            ), (409 if isinstance(error, StaleReviewError) else 400)
 
     @app.post("/items/<path:review_id>/preview")
     def preview_item(review_id: str) -> Any:
@@ -1700,10 +2804,19 @@ def create_app(
     @app.post("/items/<path:review_id>/save")
     def save_item(review_id: str) -> Any:
         preview: dict[str, Any] | None = None
+        navigation = None
+        saved_draft: dict[str, Any] = {}
         try:
+            draft_token = request.form.get("workspace_draft_token", "")
+            if draft_token:
+                saved_draft = read_workspace_draft(review_id, draft_token)
             preview = _read_preview(
                 request.form.get("preview_token", ""), signing_secret
             )
+            if request.form.get("advance") == "next":
+                navigation = submitted_navigation(
+                    request.form.get("navigation_token", ""), review_id
+                )
             if preview.get("kind") == "evidence":
                 raise ValueError("Evidence retention cannot save a review decision")
             if preview.get("default_application_available") is False:
@@ -1716,10 +2829,14 @@ def create_app(
                 raise ValueError("Preview belongs to a different review item")
             service.save(preview)
         except (OSError, ValueError) as err:
-            if isinstance(err, (StaleReviewError, OSError)):
+            if isinstance(err, (StaleReviewError, OSError)) or saved_draft:
                 retryable = isinstance(err, (ReviewBusyError, OSError))
                 event = preview["event"] if preview else {}
                 draft = {
+                    **saved_draft,
+                    **normalized_form_values(request.form),
+                }
+                fallback = {
                     "payload_mode": "json",
                     "payload": json_text(event.get("payload", {})),
                     "action": event.get("action", "accept"),
@@ -1729,29 +2846,32 @@ def create_app(
                     "supersedes": ", ".join(event.get("supersedes", [])),
                     "replacement_action": event.get("replacement_action") or "accept",
                 }
+                for key, value in fallback.items():
+                    draft.setdefault(key, value)
                 if event.get("entity_type") == "school":
-                    draft.update(
-                        {
-                            "school_workflow": "1",
-                            "payload_mode": "guided",
-                            "action": event.get("replacement_action")
-                            or event.get("action", "map"),
-                            **{
-                                "field_" + key: str(
-                                    event.get("payload", {}).get(key, "")
-                                )
-                                for key in (
-                                    "recorded_name",
-                                    "institution_ref",
-                                    "relationship_type",
-                                    *SCHOOL_CONTEXT_FIELDS,
-                                )
-                            },
-                        }
-                    )
-                    draft["action"] = _guided_action(
-                        draft["action"], event.get("payload", {})
-                    )
+                    if not saved_draft:
+                        draft.update(
+                            {
+                                "school_workflow": "1",
+                                "payload_mode": "guided",
+                                "action": event.get("replacement_action")
+                                or event.get("action", "map"),
+                                **{
+                                    "field_" + key: str(
+                                        event.get("payload", {}).get(key, "")
+                                    )
+                                    for key in (
+                                        "recorded_name",
+                                        "institution_ref",
+                                        "relationship_type",
+                                        *SCHOOL_CONTEXT_FIELDS,
+                                    )
+                                },
+                            }
+                        )
+                        draft["action"] = _guided_action(
+                            draft["action"], event.get("payload", {})
+                        )
                 try:
                     item = load_item(review_id)
                 except (ValueError, OSError):
@@ -1774,6 +2894,7 @@ def create_app(
                     payload=event.get("payload"),
                     error=message,
                     draft_values=draft,
+                    workspace_draft_token=sign_workspace_draft(review_id, draft),
                     retry_preview=preview if retryable else None,
                     retry_token=request.form.get("preview_token")
                     if retryable
@@ -1785,6 +2906,14 @@ def create_app(
                     else (response, 409)
                 )
             return render_template("error.html", message=str(err)), 400
+        if navigation:
+            return advance_redirect(
+                navigation,
+                review_id,
+                preview.get("event", {}).get("entity_type", ""),
+                saved_count=1,
+                remaining_count=0,
+            )
         return redirect(url_for("detail", review_id=review_id, saved="1"), code=303)
 
     return app

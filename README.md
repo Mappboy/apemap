@@ -101,6 +101,10 @@ views; decisions live in `data/reference/review/decisions.jsonl`. Install
 concurrent school reviews through four local request workers. Decisions save
 immediately to the ledger. See
 [Review decisions](docs/review-decisions.md) for evidence, imports and replay.
+The optional local reviewer also provides focused school, assertion and member
+review workspaces; see [Focused review workspaces](docs/focused-review-workspaces.md)
+for queue navigation, independent member-field decisions, research and retained
+evidence workflow.
 After saving decisions, follow [Decisions to a new release](docs/decisions-to-release.md)
 to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released

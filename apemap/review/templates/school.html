@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "workspace.html" import workspace_header, status_badge, comparison_table, evidence_summary %}
 {% block title %}{{ school.name }}{% endblock %}
 {% macro metadata(target) %}
 <p class="school-metadata">{{ target.reference }} · {{ target.metadata.get('suburb') or 'Locality unknown' }} · {{ target.metadata.get('state') or target.metadata.get('country') or 'State unknown' }} · {{ target.metadata.get('sector') or 'Sector unknown' }} · {{ target.metadata.get('school_type') or 'Type unknown' }}</p>
@@ -6,38 +7,54 @@
 {% macro sources(links) %}
 {% for link in links %}<div class="school-source"><a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ link }}</a><button name="use_source" value="{{ link }}" data-use-source="{{ link }}" formnovalidate>Use this source</button></div>{% endfor %}
 {% endmacro %}
+{% macro candidate_option(candidate) %}
+<li class="candidate-card"><strong>{{ candidate.get('school_name', candidate.get('institution_name', candidate.get('institution_ref'))) }}</strong><p>{{ candidate.get('institution_ref') }} · {{ candidate.get('suburb') or 'Locality unknown' }} · {{ candidate.get('state') or 'State unknown' }} · {{ candidate.get('sector') or 'Sector unknown' }} · {{ candidate.get('school_type') or 'Type unknown' }}</p><p>{{ candidate.get('score_band', 'unscored') | replace('_', ' ') }} · {{ candidate.get('score', 'No score') }} advisory points{% if candidate.get('tied') %} · Tied candidate{% endif %}{% if candidate.get('score_band') == 'name_only' %} · Name match only, not identity evidence{% endif %}</p>{% set reasons = candidate.get('reasons', []) %}{% if reasons %}<ul aria-label="Candidate score reasons">{% for reason in reasons if reason.get('stance') == 'contradicts' %}<li class="error">Conflicting evidence: {{ reason.get('note', 'A retained source contradicts this candidate') }}{% if reason.get('source_url') %} · {{ reason.source_url }}{% endif %}</li>{% endfor %}{% for reason in reasons[:1] %}<li>{{ reason.get('note', 'Name match evidence') }}</li>{% endfor %}</ul>{% endif %}{% if candidate.get('tied') %}<p class="notice">This candidate is tied; the score cannot distinguish it from the alternatives.</p>{% endif %}<button type="submit" name="choose_ref" value="{{ candidate.get('institution_ref', '') }}" data-choose-school="{{ candidate.get('institution_ref', '') }}" data-school-name="{{ candidate.get('school_name', candidate.get('institution_name', '')) }}" data-use-candidate form="school-draft" formnovalidate>Select candidate</button></li>
+{% endmacro %}
 {% block content %}
-<a href="{{ url_for('queue', entity_type='school') }}">School mappings</a>
-<h1>{{ school.name }}</h1>
-<p>{{ school.status | replace('_', ' ') }}{% if school.parliaments %} · Parliaments {{ school.parliaments | join(', ') }}{% endif %}</p>
-{% if request.args.get('saved') %}<p class="notice" role="status">Decision saved. It will be applied on the next source build.</p>{% endif %}
-{% if request.args.get('evidence_saved') %}<p class="notice" role="status">Research evidence retained. Review its effect on candidate scores, then preview a decision separately.</p>{% endif %}
-{% if school.saved_reference %}<p>Saved mapping: <strong>{{ school.saved_reference }}</strong> · {{ relationships.get(school.saved_relationship, school.saved_relationship) }} (school-wide default). This decision is replayed on source builds; the displayed database may still reflect an earlier build.</p>{% endif %}
-<p>School mappings provide a default for assertions using this recorded name. Explicit assertion resolutions and research decisions take precedence. Review the affected assertions in the preview before saving.</p>
+{{ workspace_header('School review: ' ~ school.name, workspace_position | default(none), workspace_actions | default([])) }}
+<p>{{ status_badge(school.status) }}{% if school.parliaments %} · {{ school.parliaments | length }} member(s){% endif %}{% if request.args.get('saved') %} · Decision saved for the next source build{% endif %}{% if request.args.get('evidence_saved') %} · Research evidence retained; preview a decision separately{% endif %}</p>
+<section class="review-workspace school-workspace" aria-label="School comparison and decision">
+<div class="workspace-content"><p class="school-identity-summary"><strong>Recorded:</strong> {{ school.name }} · <strong>Current:</strong> {% if school.saved_reference %}{{ school.saved_reference }} · {{ relationships.get(school.saved_relationship, school.saved_relationship) }}{% else %}No school-wide mapping{% endif %}</p>
+<p data-selected-school role="status" aria-live="polite">{% if payload.get('institution_ref') %}Selected candidate: {{ selected.get('school_name') if selected else 'Unresolved reference' }} · {{ payload.institution_ref }}{% else %}No school selected.{% endif %}</p>
+<h2>Candidate schools <small>Advisory only · review ties and conflicts</small></h2>
+{% set ranked_candidates = item.get('ranked_candidates', []) %}
+<ol class="candidate-cards" aria-label="School candidates">{% for candidate in ranked_candidates[:3] %}{{ candidate_option(candidate) }}{% else %}{% for target in school.targets[:3] %}<li class="candidate-card"><strong>{{ target.name }}</strong><p>{{ target.reference }} · {{ target.metadata.get('suburb') or 'Locality unknown' }} · {{ target.metadata.get('state') or 'State unknown' }} · {{ target.metadata.get('sector') or 'Sector unknown' }} · {{ target.metadata.get('school_type') or 'Type unknown' }}</p><button type="submit" name="choose_ref" value="{{ target.reference }}" data-choose-school="{{ target.reference }}" data-school-name="{{ target.name }}" data-use-candidate form="school-draft" formnovalidate>Select candidate</button></li>{% else %}<li>No confirmed candidate. Search the local register in the detailed tools below.</li>{% endfor %}{% endfor %}</ol>
+{% if ranked_candidates | length > 3 %}<details><summary>More candidate alternatives ({{ ranked_candidates | length - 3 }})</summary><ol class="candidate-cards">{% for candidate in ranked_candidates[3:] %}{{ candidate_option(candidate) }}{% endfor %}</ol></details>{% endif %}
+{% set comparison_rows = workspace_rows | default([]) %}{% set partition = namespace(primary=[], additional=[]) %}{% for row in comparison_rows %}{% if row.field | lower in ['name', 'locality', 'acara identifier'] %}{% set partition.primary = partition.primary + [row] %}{% else %}{% set partition.additional = partition.additional + [row] %}{% endif %}{% endfor %}{% set primary_rows = partition.primary %}{% set additional_rows = partition.additional %}{% set unknown_additional = additional_rows | selectattr('comparison', 'equalto', 'unknown') | list | length %}
+<div data-primary-comparison>{{ comparison_table(primary_rows) }}</div>
+{% if additional_rows %}<details data-additional-comparison><summary data-additional-comparison-summary>More comparison facts · {{ additional_rows | length }} more · {{ unknown_additional }} unknown</summary><div>{{ comparison_table(additional_rows) }}</div></details>{% endif %}
+{{ evidence_summary(workspace_evidence | default([]), workspace_unknown_gaps | default([])) }}</div>
+<aside class="workspace-decision-panel"><h2>Record a decision</h2><label>Outcome<select name="action" form="school-draft"><option value="map" {% if form_values.get('action', 'map') in ['accept', 'map', 'supersede'] %}selected{% endif %}>Confirm selected mapping</option><option value="ambiguous_name" {% if form_values.get('action') == 'ambiguous_name' %}selected{% endif %}>Name is ambiguous</option><option value="no_suitable_candidate" {% if form_values.get('action') == 'no_suitable_candidate' %}selected{% endif %}>No suitable candidate</option><option value="research" {% if form_values.get('action') in ['research', 'reject'] %}selected{% endif %}>Needs research</option></select></label>
+<label>Relationship<select name="field_relationship_type" data-resolution-field required form="school-draft" {% if resolution_fields_disabled %}disabled{% endif %}><option value="">Choose a relationship</option>{% for key, label in relationships.items() %}<option value="{{ key }}" {% if payload.get('relationship_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+<button type="submit" form="school-draft" formnovalidate data-workspace-action="preview">Validate and preview</button>
+<details><summary>Optional source and notes</summary><label>Evidence source URL<input name="source_url" type="url" value="{{ form_values.get('source_url', '') }}" form="school-draft"></label><label>Review notes<textarea name="notes" rows="3" form="school-draft">{{ form_values.get('notes', '') }}</textarea></label></details>
+<p>Unresolved outcomes set no target. School location is not inferred from parliamentary state.</p>{% if workspace_actions is defined %}<nav aria-label="School review navigation">{% for action in workspace_actions %}<a class="button" data-workspace-action="{{ action.key }}" href="{{ action.href }}">{{ action.label }}</a>{% endfor %}</nav>{% endif %}</aside>
+</section>
 {% include "assertion-context.html" %}
 {% from "relationship-preview.html" import individual_progress with context %}
 {{ individual_progress(item.context.get('individual_resolution'), 'Individual resolution progress') }}
-<section aria-label="Parliamentarian context"><h2>Parliamentarians using this school name</h2>
+<details class="advanced-field-details"><summary>Related parliamentarians and attendance history</summary><section aria-label="Parliamentarian context"><h2>Parliamentarians using this school name</h2>
 {% for member in comparison_members %}<div class="school-option">
 {% set biography = member.get('biography_url') | source_link %}<h3>{% if biography %}<a href="{{ biography }}" target="_blank" rel="noopener noreferrer">{{ member.display_name }}</a>{% else %}{{ member.display_name }}{% endif %}</h3>
 {% for term in member.get('services', []) %}<p>Parliament {{ term.parliament }} · {{ term.chamber | replace('representatives', 'House of Representatives') | replace('senate', 'Senate') }}{% if term.electorate %} · {{ term.electorate }}{% endif %} · Represented state/territory: {{ term.state }}</p>{% else %}<p>Parliamentary service context unavailable.</p>{% endfor %}
 {% for education in member.get('education', []) %}<p>Recorded: {{ education.recorded_name }}{% if education.review_id %} · <a href="{{ url_for('detail', review_id=education.review_id) }}">Resolve this member’s school</a>{% endif %}</p><details><summary>{{ education.source_records | length }} attendance source record(s)</summary>{% for source in education.source_records %}<p>{% if source.years_attended %}{{ source.years_attended }} · {% endif %}{{ (source.attended_status or 'Attendance status unknown') | replace('_', ' ') }}</p><p>Source institution location: {{ source.location or 'Unknown' }}{% set attendance_source = source.source_url | source_link %}{% if attendance_source %} · <a href="{{ attendance_source }}" target="_blank" rel="noopener noreferrer">Attendance source</a>{% endif %}</p><details><summary>Full source record {{ loop.index }}</summary><pre>{{ source | json_text }}</pre></details>{% endfor %}</details>{% endfor %}
 </div>{% else %}<p>No parliamentarian context is available in the local review database.</p>{% endfor %}
 <p>Represented state/territory describes parliamentary service; it does not establish where the member attended school.</p>
-</section>
+</section></details>
 {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
 {% include "retry.html" %}
 {% if error and item.decision %}<section aria-label="Current decision"><h2>Current decision</h2><p>{{ item.decision.replacement_action or item.decision.action }} · {{ item.decision.reviewer }} · {{ item.decision.reviewed_at }}</p><p>{{ item.decision.notes }}</p><p>{{ item.decision.payload.get('institution_ref', 'No selected target') }}</p></section>{% endif %}
 {% if item.get('conflicts') %}<section class="error"><h2>Conflicting active decisions</h2><p>No alternative currently has authority. Your guided decision replaces every active alternative after preview.</p>{% for event in item.conflicts %}<p>{{ event.action }} · {{ event.reviewer }} · {{ event.payload.get('institution_ref', 'No selected target') }}{% if event.notes %} · {{ event.notes }}{% endif %}</p>{% endfor %}</section>{% endif %}
 {% set decision_form_id = 'school-draft' %}
-{% include "evidence-workbench.html" %}
-<form id="school-draft" data-school-draft data-resolution-outcomes method="post" action="{{ url_for('preview_item', review_id=item.review_id) }}">
+<details class="advanced-field-details"><summary>Research and detailed evidence tools</summary>{% include "evidence-workbench.html" %}</details>
+<form id="school-draft" data-school-draft data-resolution-outcomes data-comparison-url="{{ url_for('school_comparison_json', review_id=item.review_id) }}" method="post" action="{{ url_for('preview_item', review_id=item.review_id) }}">
 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 {% if evidence_enabled %}<input type="hidden" name="evidence_selection" value="1">{% endif %}
 <input type="hidden" name="school_workflow" value="1">
 <input type="hidden" name="form_token" value="{{ form_token }}">
+{% if workspace_draft_token %}<input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token }}">{% endif %}
 <input type="hidden" name="field_recorded_name" value="{{ payload.get('recorded_name', school.name) }}">
-<section><h2>Possible matches</h2>
+<details class="advanced-field-details"><summary>Detailed candidate leads and local register search</summary><section><h2>Possible matches</h2>
 <p>Choose the institution that the recorded name refers to. A suggestion still needs relationship evidence.</p>
 {% for target in school.targets %}<div class="school-option"><h3>{{ target.name }}</h3>{{ metadata(target) }}{% if target.legacy %}<p>Earlier mapping lead—needs evidence</p>{% endif %}<button name="choose_ref" value="{{ target.reference }}" data-choose-school="{{ target.reference }}" data-school-name="{{ target.name }}" formnovalidate>Use this school</button>{{ sources(target.sources) }}</div>{% else %}<p>No confirmed institution references were suggested. Search the local register or use an existing manual institution.</p>{% endfor %}
 {% if school.leads %}<h3>Evidence leads</h3>{% for lead in school.leads %}<div class="school-option"><strong>{{ lead.name }}</strong>{% if lead.reference %}<p>{{ lead.reference }} is unavailable in the local register or active manual definitions.</p>{% else %}<p>Institution identity has not been confirmed.</p>{% endif %}<button name="find_school" value="{{ lead.name }}" data-find-school="{{ lead.name }}" formnovalidate>Find this school</button>{{ sources(lead.sources) }}</div>{% endfor %}{% endif %}
@@ -49,20 +66,10 @@
 <ul data-school-results class="institution-results">{% for result in item.get('lookup_results', []) %}<li><strong>{{ result.school_name }}</strong><p>{{ result.institution_ref }} · {{ result.get('suburb') or 'Locality unknown' }} · {{ result.get('state') or 'State unknown' }} · {{ result.get('sector') or 'Sector unknown' }} · {{ result.get('school_type') or 'Type unknown' }}</p><button name="choose_ref" value="{{ result.institution_ref }}" data-choose-school="{{ result.institution_ref }}" data-school-name="{{ result.school_name }}" formnovalidate>Use this school</button></li>{% else %}{% if item.get('lookup_results') is not none %}<li>No matching school was found in the local ACARA register.</li>{% endif %}{% endfor %}</ul>
 </div></details>
 <details {% if payload.get('institution_ref') %}open{% endif %}><summary>Use an existing institution reference</summary><label>Institution reference<input name="field_institution_ref" data-resolution-field {% if resolution_fields_disabled %}disabled{% endif %} value="{{ payload.get('institution_ref', '') }}" placeholder="acara:123 or manual:school-slug"></label><p>For schools outside ACARA, <a href="{{ url_for('new_item', entity_type='manual_institution') }}" target="_blank" rel="noopener noreferrer">create a manual institution</a> in another tab, then enter its saved reference here.</p></details>
-<p class="notice" data-selected-school role="status" aria-live="polite">{% if payload.get('institution_ref') %}Selected: {{ selected.get('school_name') if selected else 'Unresolved reference' }} · {{ payload.institution_ref }}{% else %}No school selected{% endif %}</p>
-</section>
-<section><h2>Relationship and evidence</h2>
-<label>Decision<select name="action"><option value="map" {% if form_values.get('action', 'map') in ['accept', 'map', 'supersede'] %}selected{% endif %}>Map to selected school</option>{% for reason, label in resolution_reasons.items() %}<option value="{{ reason }}" {% if form_values.get('action') == reason %}selected{% endif %}>{{ label }}</option>{% endfor %}<option value="research" {% if form_values.get('action') in ['research', 'reject'] %}selected{% endif %}>Needs research</option></select></label>
-<p>When the name is ambiguous or no suitable candidate exists, resolve each member's assertion separately. These outcomes set no school-wide target and preserve attendance. General needs research keeps this case open. Add review notes explaining the outcome.</p>
-<label>Relationship<select name="field_relationship_type" data-resolution-field {% if resolution_fields_disabled %}disabled{% endif %}><option value="">Choose a relationship</option>{% for key, label in relationships.items() %}<option value="{{ key }}" {% if payload.get('relationship_type') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
-<p>“Successor institution” means a later institution, rather than assuming it is the school that existed when a member attended.</p>
-<label>Evidence source URL (optional)<input name="source_url" type="url" value="{{ form_values.get('source_url', '') }}"></label>
-<p>Leave blank when the school relationship is obvious from the available context. If supplied, use an HTTP(S) source URL.</p>
-<label>Reviewer (uses your Git identity if blank)<input name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
-<label>Review notes<textarea name="notes" rows="3">{{ form_values.get('notes', '') }}</textarea></label>
-</section>
+</section></details>
+<label>Reviewer (uses your Git identity if blank)<input name="reviewer" form="school-draft" value="{{ form_values.get('reviewer', '') }}"></label>
 <details><summary>Source record</summary>{% for record in school.source_records %}<p>{{ record.get('school_name', school.name) }} · {{ record.get('school_type') or 'Type unknown' }} · {{ record.get('sector') or 'Sector unknown' }} · {{ record.get('institution_status') or 'Status unknown' }}</p>{% else %}<p>No unmatched source record.</p>{% endfor %}</details>
-<section aria-label="Original school historical context"><h2>Original institution and historical facts</h2>
+<details class="advanced-field-details"><summary>Original institution and historical facts</summary><section aria-label="Original school historical context"><h2>Original institution and historical facts</h2>
 <p>Optional for successor mappings. An original reference verifies school identity; it does not verify attendance-era location or sector. Use a historical ACARA reference or a sourced manual institution with a different identity from the successor.</p>
 {% if original_selected %}<p>Original reference: {{ original_selected.school_name }} · {{ original_selected.get('institution_ref', payload.get('attended_institution_ref')) }}. Register metadata is reference context.</p>{% endif %}
 {% for name, label, kind, options in context_fields %}
@@ -73,7 +80,7 @@
 <p>Historical coordinates require their own location source. Same-campus continuity requires separate evidence. Government/non-government continuity and Catholic/Independent continuity are separate questions; leave details unknown when unsupported.</p>
 <p>Confirm evidence covers the attendance records receiving this default and verified name aliases shown in the preview. Mixed-era or conflicting histories remain unresolved; date ranges are not supported. Use an education assertion review for evidence that applies to one member.</p>
 {% if item.context.get('verified_aliases') %}<p>Verified aliases:</p>{% for alias in item.context.verified_aliases %}<p><a href="{{ url_for('detail', review_id=alias.review_id) }}">{{ alias.recorded_name }}</a></p>{% endfor %}{% endif %}
-</section>
+</section></details>
 <details><summary>Technical details</summary>
 <p><code>{{ item.review_id }}</code></p>
 <fieldset><legend>Payload editor</legend><label class="choice"><input type="radio" name="payload_mode" value="guided" {% if form_values.get('payload_mode', 'guided') != 'json' %}checked{% endif %}>Use the school chooser</label><label class="choice"><input type="radio" name="payload_mode" value="json" {% if form_values.get('payload_mode') == 'json' %}checked{% endif %}>Use the complete JSON payload</label></fieldset>
@@ -86,8 +93,10 @@
 <details><summary>Current decision</summary><pre>{{ item.decision | json_text }}</pre></details>
 <h3>Decision history</h3>{% for event in item.history %}<details><summary>{{ event.reviewed_at }} · {{ event.action }} · {{ event.reviewer }} · {{ event.decision_id }}</summary><pre>{{ event | json_text }}</pre></details>{% else %}<p>No decisions have been recorded.</p>{% endfor %}
 </details>
-<button type="submit">Preview mapping</button>
+{% if navigation_token %}<input type="hidden" name="navigation_token" value="{{ navigation_token }}">{% endif %}
 </form>
+{% set research_case = {'review_id': item.review_id, 'retained_evidence': item.get('retained_evidence', []), 'job_id': research_case.get('job_id', '')} %}
+{% include 'research-panel.html' ignore missing %}
 {% if preview %}<section id="preview" data-school-preview><h2>Validated semantic preview</h2>
 {% set event = preview.event %}{% set proposal = event.payload %}{% set outcome = event.replacement_action or event.action %}
 <p>This preview has not changed any file.</p>
@@ -100,7 +109,7 @@
 <details><summary>Detailed changes and recorded decision</summary><pre>{{ preview.changes | json_text }}</pre><pre>{{ event | json_text }}</pre></details>
 {% if preview.get('historical_context') %}<section aria-label="Historical evidence scope"><h3>School-wide evidence scope</h3><p>{{ preview.historical_context.scope }}</p>{% for case in preview.historical_context.cases %}<p><a href="{{ url_for('detail', review_id=case.review_id) }}">{{ case.recorded_name }}</a>{% for member in case.members %} · {{ member.display_name }}{% endfor %}</p>{% endfor %}{% for message in preview.historical_context.diagnostics %}<p class="notice" role="status">{{ message }}</p>{% endfor %}</section>{% endif %}
 <p>Dataset-wide totals describe the time of preview. Other school reviews may change those totals before saving.</p>
-{% if outcome in ['accept', 'map'] and preview.get('default_application', {}).get('available') is sameas false %}<p class="error" role="alert">Run a review build and inspect the affected assertions before saving a school-wide default.</p>{% else %}<form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_token" value="{{ preview_token }}"><button type="submit" data-save-school>Save mapping</button></form>{% endif %}
+{% if outcome in ['accept', 'map'] and preview.get('default_application', {}).get('available') is sameas false %}<p class="error" role="alert">Run a review build and inspect the affected assertions before saving a school-wide default.</p>{% else %}<form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_token" value="{{ preview_token }}">{% if workspace_draft_token %}<input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token }}">{% endif %}{% if navigation_token %}<input type="hidden" name="navigation_token" value="{{ navigation_token }}">{% endif %}<button type="submit" data-save-school data-workspace-action="save">Save mapping</button>{% if navigation_token %}<button type="submit" name="advance" value="next" data-workspace-action="save">Save and next</button>{% endif %}</form>{% endif %}
 <p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence, this school's decisions or mapping effects require another preview.</p>
 </section>{% endif %}
 {% endblock %}
