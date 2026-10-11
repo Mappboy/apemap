@@ -1356,7 +1356,7 @@ class ReviewService:
         }
         if selected_candidate is not None:
             if not any(
-                row.get("institution_ref") == candidate_id
+                row.get("institution_ref") == selected_candidate.get("institution_ref")
                 for row in result["candidates"]
             ):
                 result["candidates"] = [*result["candidates"][:19], selected_candidate]

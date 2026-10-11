@@ -498,6 +498,35 @@ def test_school_research_context_includes_effective_reviewed_target(
     assert context["selected_candidate"]["institution_ref"] == "acara:2"
 
 
+def test_assertion_research_context_does_not_duplicate_default_selected_target(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    event = ReviewEvent.from_dict(
+        {
+            "decision_id": "education-map-test",
+            "review_id": CASE,
+            "entity_type": "member_education",
+            "action": "map",
+            "payload": {
+                "aph_id": "TEST",
+                "recorded_school_name": "Test High School",
+                "institution_ref": "acara:1",
+                "relationship_type": "direct",
+            },
+            "source_url": URL,
+            "reviewer": "Reviewer",
+            "reviewed_at": "2026-10-10",
+            "recorded_at": "2026-10-10T00:00:00+00:00",
+        }
+    )
+    service.log_path.write_bytes(encode_event(event))
+    context = service.research_context(CASE)
+    references = [row["institution_ref"] for row in context["candidates"]]
+    assert references.count("acara:1") == 1
+    assert len(references) == len(set(references))
+
+
 def test_network_errors_are_redacted_and_offline_does_not_call(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
