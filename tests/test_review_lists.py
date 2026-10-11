@@ -153,7 +153,14 @@ def test_member_list_groups_open_work_sorts_and_fixes_scope() -> None:
         as_text=True
     )
     parsed = ListHTML(html)
-    assert [url for url in parsed.links if url.startswith("/members/")] == [
+    member_urls = [
+        url for url in parsed.links if urlsplit(url).path.startswith("/members/")
+    ]
+    for url in member_urls:
+        context = parse_qs(urlsplit(url).query, keep_blank_values=True)
+        assert context["queue_view"] == ["members"]
+        assert context["queue_page"] == ["1"]
+    assert [urlsplit(url).path for url in member_urls] == [
         "/members/conflict",
         "/members/pending-a",
         "/members/pending-b",
@@ -161,7 +168,10 @@ def test_member_list_groups_open_work_sorts_and_fixes_scope() -> None:
     ]
     assert "4 matching members" in html and "2 correction fields" in html
     assert parsed.statuses == ["", "conflict", "pending", "needs_research"]
-    assert parsed.filter_action == "/members"
+    assert urlsplit(parsed.filter_action).path == "/members"
+    assert parse_qs(urlsplit(parsed.filter_action).query, keep_blank_values=True)[
+        "queue_view"
+    ] == ["members"]
     assert "entity_type" not in parsed.names and "unmatched_schools" not in parsed.names
     assert not any(url.startswith("/items/school:") for url in parsed.links)
     assert "Completed</a>" not in html and "Accepted</a>" not in html
@@ -210,13 +220,23 @@ def test_school_list_includes_suggestions_and_excludes_completed_resolutions() -
         "/schools/unmatched?entity_type=member&unmatched_schools=0"
     ).get_data(as_text=True)
     parsed = ListHTML(html)
-    assert [url for url in parsed.links if url.startswith("/items/school:")] == [
+    school_urls = [
+        url for url in parsed.links if urlsplit(url).path.startswith("/items/school:")
+    ]
+    assert [urlsplit(url).path for url in school_urls] == [
         f"/items/{school_review_id(name)}"
         for name in ["Conflict", "Individual", "Pending", "Research", "Rejected"]
     ]
+    for url in school_urls:
+        context = parse_qs(urlsplit(url).query, keep_blank_values=True)
+        assert context["queue_view"] == ["schools"]
+        assert context["queue_page"] == ["1"]
     assert "5 matching unmatched schools" in html
     assert "1 possible targets · 1 unresolved evidence leads" in html
-    assert parsed.filter_action == "/schools/unmatched"
+    assert urlsplit(parsed.filter_action).path == "/schools/unmatched"
+    assert parse_qs(urlsplit(parsed.filter_action).query, keep_blank_values=True)[
+        "queue_view"
+    ] == ["schools"]
     assert (
         "accepted" not in parsed.statuses
         and "resolved_individually" not in parsed.statuses
@@ -256,19 +276,33 @@ def test_list_filters_counts_and_pagination_stay_in_context(
         if parse_qs(urlsplit(url).query).get("page") == ["2"]
     )
     assert urlsplit(next_url).path == path
-    assert parse_qs(urlsplit(next_url).query) == {
-        "status": ["pending"],
-        "parliament": ["48"],
-        "q": ["Person"],
-        "page": ["2"],
-    }
+    next_query = parse_qs(urlsplit(next_url).query, keep_blank_values=True)
+    assert next_query["status"] == ["pending"]
+    assert next_query["parliament"] == ["48"]
+    assert next_query["q"] == ["Person"]
+    assert next_query["page"] == ["2"]
     last = client.get(next_url).get_data(as_text=True)
     assert (
-        len([url for url in ListHTML(last).links if url.startswith(detail_prefix)]) == 1
+        len(
+            [
+                url
+                for url in ListHTML(last).links
+                if urlsplit(url).path.startswith(detail_prefix)
+            ]
+        )
+        == 1
     )
     assert "page 2 of 2" in last
     assert "Person 050</a>" in last
-    assert f'href="{path}">Clear filters' in html
+    last_detail = next(
+        url
+        for url in ListHTML(last).links
+        if urlsplit(url).path.startswith(detail_prefix)
+    )
+    assert parse_qs(urlsplit(last_detail).query, keep_blank_values=True)[
+        "queue_page"
+    ] == ["2"]
+    assert f'href="{path}?' in html and "Clear filters</a>" in html
     assert "page 2 of 2" in client.get(f"{path}?q=Person&page=999").get_data(
         as_text=True
     )
@@ -310,7 +344,8 @@ def test_home_counts_and_shared_navigation_use_complete_grouped_workloads() -> N
     assert "0 matching review entries" in html
     for url in ("/", "/members", "/schools/unmatched", "/members/a"):
         parsed = ListHTML(client.get(url).get_data(as_text=True))
-        assert "/members" in parsed.links and "/schools/unmatched" in parsed.links
+        paths = {urlsplit(link).path for link in parsed.links}
+        assert "/members" in paths and "/schools/unmatched" in paths
 
 
 def test_empty_lists_and_search_results_have_explicit_messages() -> None:

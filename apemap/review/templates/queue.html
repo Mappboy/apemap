@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% from 'workspace.html' import workspace_header, status_badge %}
 {% block title %}{{ page_title }}{% endblock %}
 {% block content %}
-<h1>{{ page_title }}</h1>
+{% if request.args.get('saved') %}<p class="notice" role="status">Saved {{ request.args.get('saved_count', '1')|int }} decision(s).{% if request.args.get('remaining_count', '0')|int %} {{ request.args.get('remaining_count')|int }} fields remain unresolved{% if request.args.get('saved_member') %} for <a href="{{ url_for('member_detail', aph_id=request.args.get('saved_member')) }}">{{ request.args.get('saved_member') }}</a>{% endif %}.{% endif %} Continue with the filtered queue below.</p>{% endif %}
+{{ workspace_header(page_title) }}
 {% if queue_view == 'all' %}
 <section class="queue-workloads" aria-label="Review lists">
   <a class="workload-card" href="{{ url_for('member_queue') }}"><strong>{{ workload_counts.members }}</strong><span>Members to review</span><small>Pending corrections, research tasks and conflicts</small></a>
@@ -18,6 +20,7 @@
   <label>Status<select name="status"><option value="">All statuses</option>{% for status in statuses %}<option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status | replace('_', ' ') }}</option>{% endfor %}</select></label>
   <label>Parliament<input name="parliament" type="number" min="42" max="48" value="{{ filters.parliament }}"></label>
   <label>School, member or identifier<input name="q" type="search" value="{{ filters.q }}"></label>
+  <label>Focus preset<select name="preset"><option value="">All review work</option>{% for value, label in [('ambiguous_schools','Ambiguous schools'),('member_identity_conflicts','Member identity conflicts'),('member_corrections','Member corrections'),('needs_research','Needs research'),('low_evidence','Low evidence'),('unresolved','Unresolved')] %}<option value="{{ value }}" {% if filters.preset == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
   {% if queue_view == 'all' %}<label class="choice"><input type="checkbox" name="unmatched_schools" value="1" {% if filters.unmatched_schools %}checked{% endif %}> Unmatched schools</label>{% endif %}
   <button type="submit">Filter</button><a href="{{ url_for(queue_endpoint) }}">Clear filters</a>
 </form>
@@ -28,14 +31,14 @@
   <tbody>{% for row in rows %}<tr>
     <th scope="row">
       {% if row.entity_type == 'member' %}
-        <a href="{{ url_for('member_detail', aph_id=row.aph_id) }}">{{ row.display_name }}</a>
+        <a href="{{ url_for('member_detail', aph_id=row.aph_id, queue_view=queue_view, queue_entity=filters.entity_type, queue_status=filters.status, queue_parliament=filters.parliament, queue_q=filters.q, queue_unmatched_schools='1' if filters.unmatched_schools else '', queue_page=page, queue_preset=filters.preset) }}">{{ row.display_name }}</a>
         <small>{{ row.aph_id }}</small>
         {% if row.ambiguous %}<span class="ambiguity-badge" title="Identity ambiguity detected">Ambiguous</span>{% endif %}
       {% elif row.school is defined %}
-        <a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.school.name }}</a>
+        <a href="{{ url_for('detail', review_id=row.review_id, queue_view=queue_view, queue_entity=filters.entity_type, queue_status=filters.status, queue_parliament=filters.parliament, queue_q=filters.q, queue_unmatched_schools='1' if filters.unmatched_schools else '', queue_page=page, queue_preset=filters.preset) }}">{{ row.school.name }}</a>
       {% else %}
-        <a href="{{ url_for('detail', review_id=row.review_id) }}">{{ row.review_id }}</a>
-        <small>{{ row.candidate_id }}</small>
+        <a href="{{ url_for('detail', review_id=row.review_id, queue_view=queue_view, queue_entity=filters.entity_type, queue_status=filters.status, queue_parliament=filters.parliament, queue_q=filters.q, queue_unmatched_schools='1' if filters.unmatched_schools else '', queue_page=page, queue_preset=filters.preset) }}">{{ row.review_id }}</a>
+        <small>{{ (row.candidate_ids | join(', ')) if row.candidate_ids is defined else row.candidate_id }}</small>
       {% endif %}
     </th>
     {% if queue_view == 'all' %}<td>{{ entity_labels.get(row.entity_type, row.entity_type) }}</td>{% endif %}

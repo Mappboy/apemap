@@ -17,9 +17,15 @@ from apemap.review.research import (
     load_providers,
     validate_result,
 )
-from apemap.review.model import education_review_id, member_review_id, school_digest
+from apemap.review.model import (
+    ReviewEvent,
+    education_review_id,
+    member_review_id,
+    school_digest,
+    school_review_id,
+)
 from apemap.review.service import ReviewService
-from apemap.review.store import StaleReviewError
+from apemap.review.store import StaleReviewError, encode_event
 from tests.test_review_service import review_service as review_service
 
 CASE = education_review_id("TEST", "Test High School")
@@ -361,6 +367,80 @@ def test_member_evidence_retention_and_copy_are_exact_and_read_only(
         service.prepare_evidence(case, invalid)
 
 
+@pytest.mark.parametrize(
+    "case",
+    ["school:" + school_digest("Test High School"), CASE],
+)
+def test_school_identity_evidence_copy_is_exact_and_read_only(
+    review_service: ReviewService, case: str
+) -> None:
+    service = review_service
+    payload = {
+        "source_title": "Local school history",
+        "source_type": "school-register",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "candidate_institution_ref": "acara:1",
+        "claim_type": "identity",
+        "claim_value": "The source identifies Test High School as this institution.",
+        "stance": "supports",
+        "excerpt_or_note": "Identity claim",
+        "generated_by": "manual",
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    decision_revision = service.review_revision()
+    assert service.copy_school_evidence_value(case, record.evidence_id) == "acara:1"
+    assert service.review_revision() == decision_revision
+    with pytest.raises(ValueError, match="belong to this review case"):
+        service.copy_school_evidence_value(
+            "school:" + school_digest("Other School"), record.evidence_id
+        )
+
+
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"stance": "contradicts"}, "supporting"),
+        ({"stance": "contextual"}, "supporting"),
+        ({"claim_type": "location"}, "identity claim"),
+        ({"candidate_institution_ref": None}, "no institution reference"),
+        ({"local_target_missing": True}, "unavailable locally"),
+    ],
+)
+def test_school_identity_copy_rejects_untrusted_or_non_supporting_claims(
+    review_service: ReviewService,
+    changes: dict[str, Any],
+    message: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    service = review_service
+    case = "school:" + school_digest("Test High School")
+    local_target_missing = changes.get("local_target_missing", False)
+    evidence_changes = {
+        key: value for key, value in changes.items() if key != "local_target_missing"
+    }
+    payload = {
+        "source_title": "School source",
+        "source_type": "school-register",
+        "source_url": URL,
+        "retrieved_at": "2026-10-10T00:00:00+00:00",
+        "candidate_institution_ref": "acara:1",
+        "claim_type": "identity",
+        "claim_value": {"institution": "Test High School"},
+        "stance": "supports",
+        "excerpt_or_note": "Evidence",
+        "generated_by": "manual",
+        **evidence_changes,
+    }
+    record = service.save_evidence(service.prepare_evidence(case, payload))
+    decision_revision = service.review_revision()
+    if local_target_missing:
+        monkeypatch.setattr(service, "resolve_institution", lambda _reference: None)
+    with pytest.raises(ValueError, match=message):
+        service.copy_school_evidence_value(case, record.evidence_id)
+    assert service.review_revision() == decision_revision
+
+
 def test_school_research_context_includes_selected_candidates(
     review_service: ReviewService,
 ) -> None:
@@ -370,6 +450,52 @@ def test_school_research_context_includes_selected_candidates(
     assert "postcode" in context["selected_candidate"]
     with pytest.raises(ValueError, match="Selected candidate"):
         review_service.research_context(case, candidate_id="acara:404")
+
+
+@pytest.mark.parametrize(
+    "case",
+    ["school:" + school_digest("Test High School"), CASE],
+)
+def test_research_context_includes_selected_local_alternative(
+    review_service: ReviewService, case: str
+) -> None:
+    # This is a legitimate local lookup result for a different query, but it is
+    # not among the top scored candidates for the reviewed recorded name.
+    context = review_service.research_context(case, candidate_id="acara:2")
+    assert context["selected_candidate"]["institution_ref"] == "acara:2"
+    assert any(row["institution_ref"] == "acara:2" for row in context["candidates"])
+    assert context["selected_candidate"]["score"] is not None
+    with pytest.raises(ValueError, match="Selected candidate"):
+        review_service.research_context(case, candidate_id="acara:404")
+
+
+def test_school_research_context_includes_effective_reviewed_target(
+    review_service: ReviewService,
+) -> None:
+    service = review_service
+    case = school_review_id("Test High School")
+    event = ReviewEvent.from_dict(
+        {
+            "decision_id": "school-map-test",
+            "review_id": case,
+            "entity_type": "school",
+            "action": "map",
+            "payload": {
+                "recorded_name": "Test High School",
+                "institution_ref": "acara:1",
+                "relationship_type": "direct",
+            },
+            "source_url": URL,
+            "reviewer": "Reviewer",
+            "reviewed_at": "2026-10-10",
+            "recorded_at": "2026-10-10T00:00:00+00:00",
+        }
+    )
+    service.log_path.write_bytes(encode_event(event))
+    context = service.research_context(case, candidate_id="acara:2")
+    assert context["assertion"]["effective_institution_ref"] == "acara:1"
+    assert context["decision"]["payload"]["institution_ref"] == "acara:1"
+    assert context["selected_candidate"]["institution_ref"] == "acara:2"
 
 
 def test_network_errors_are_redacted_and_offline_does_not_call(
@@ -457,9 +583,10 @@ def test_ui_provider_choice_inspection_preview_and_retention(
         started = client.post(
             f"/items/{CASE}/research",
             data={"csrf_token": token, "provider_id": "second"},
+            headers={"Accept": "application/json"},
         )
-        assert started.status_code == 303
-        path = started.headers["Location"]
+        assert started.status_code == 200
+        path = started.get_json()["detail_url"]
         identifier = path.rsplit("/", 1)[-1]
         manager.get(identifier, CASE).future.result(timeout=5)
         output = client.get(path)

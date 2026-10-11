@@ -1,22 +1,23 @@
 {% extends "base.html" %}
+{% from "workspace.html" import workspace_header, status_badge, comparison_table, evidence_summary %}
 {% block title %}Member review: {{ member.name }}{% endblock %}
 {% macro field_name(name) %}{% if name == 'date_of_birth' %}Birth date{% elif name == 'wikidata_id' %}Wikidata ID{% else %}{{ name | replace('_', ' ') | title }}{% endif %}{% endmacro %}
 {% macro display_value(value) %}{{ value if value is not none and value != '' else 'Not recorded' }}{% endmacro %}
 {% macro context(field) %}
-<details class="evidence-context"><summary>Evidence, alternatives and decision history</summary>
+<details class="evidence-context" {% if field.comparison == 'ambiguous' or field.status == 'conflict' %}open{% endif %}><summary>Evidence, alternatives and decision history</summary>
 {% for candidate in field.candidates %}
 <div class="evidence-record">
-<p><strong>{{ candidate.evidence.match_method }}</strong> · {{ candidate.evidence.cache_file or 'No cache' }} · Proposed: {{ candidate.evidence.proposed_value }} · {{ candidate.evidence.comparison }}</p>
-<p>Source: {% if candidate.evidence.source_url | source_link %}<a href="{{ candidate.evidence.source_url | source_link }}" rel="noopener noreferrer">{{ candidate.evidence.source_url }}</a>{% else %}None{% endif %} · Retrieved: {{ candidate.evidence.retrieved_at or 'None' }}</p>
-<p>Query: {{ candidate.evidence.source_query or 'None' }} · Notes: {{ candidate.evidence.notes or 'None' }}</p>
+<p><strong>{{ candidate.evidence.match_method }}</strong> &middot; {{ candidate.evidence.cache_file or 'No cache' }} &middot; Proposed: {{ candidate.evidence.proposed_value }} &middot; {{ candidate.evidence.comparison }}</p>
+<p>Source: {% if candidate.evidence.source_url | source_link %}<a href="{{ candidate.evidence.source_url | source_link }}" rel="noopener noreferrer">{{ candidate.evidence.source_url }}</a>{% else %}None{% endif %} &middot; Retrieved: {{ candidate.evidence.retrieved_at or 'None' }}</p>
+<p>Query: {{ candidate.evidence.source_query or 'None' }} &middot; Notes: {{ candidate.evidence.notes or 'None' }}</p>
 {% if candidate.evidence.alternatives %}
 <h4>Candidate alternatives</h4>
 <ul>{% for alternative in candidate.evidence.alternatives %}<li>
 {% if alternative is mapping %}
 <strong>{{ alternative.get('qid', alternative.get('wikidata_id', alternative.get('id', 'Unidentified candidate'))) }}</strong>
-{% if alternative.get('gender') %} · Gender: {{ alternative.gender }}{% endif %}
-{% if alternative.get('dob', alternative.get('date_of_birth')) %} · Birth date: {{ alternative.get('dob', alternative.get('date_of_birth')) }}{% endif %}
-{% if alternative.get('article') | source_link %} · <a href="{{ alternative.article | source_link }}" rel="noopener noreferrer">Source article</a>{% endif %}
+{% if alternative.get('gender') %} &middot; Gender: {{ alternative.gender }}{% endif %}
+{% if alternative.get('dob', alternative.get('date_of_birth')) %} &middot; Birth date: {{ alternative.get('dob', alternative.get('date_of_birth')) }}{% endif %}
+{% if alternative.get('article') | source_link %} &middot; <a href="{{ alternative.article | source_link }}" rel="noopener noreferrer">Source article</a>{% endif %}
 {% else %}{{ alternative }}{% endif %}
 </li>{% endfor %}</ul>
 <details class="technical-details"><summary>Technical details: candidate alternatives</summary><pre>{{ candidate.evidence.alternatives | json_text }}</pre></details>
@@ -28,8 +29,8 @@
 <ol class="decision-history">{% for event in field.history %}
 {% set action = event.replacement_action or event.action %}
 <li><strong>{{ {'accept': 'Accepted', 'reject': 'Rejected proposal', 'research': 'Needs research', 'supersede': 'Superseded'}.get(action, action | title) }}</strong>
-{% if action == 'accept' %} · {{ display_value(event.payload.get('value')) }}{% endif %}
- · {{ event.reviewer }} · {{ event.reviewed_at }}
+{% if action == 'accept' %} &middot; {{ display_value(event.payload.get('value')) }}{% endif %}
+ &middot; {{ event.reviewer }} &middot; {{ event.reviewed_at }}
 {% if event.notes %}<p>{{ event.notes }}</p>{% endif %}
 {% if event.source_url | source_link %}<a href="{{ event.source_url | source_link }}" rel="noopener noreferrer">Evidence source</a>{% endif %}
 </li>{% endfor %}</ol>
@@ -38,12 +39,13 @@
 </details>
 {% endmacro %}
 {% block content %}
-<p><a href="{{ url_for('queue') }}">← Back to queue</a></p>
-
-<h1>Member review: {{ member.name }}</h1>
+{{ workspace_header('Member review: ' ~ member.name, workspace_position, workspace_actions) }}
+{% if request.args.get('saved') %}<p class="notice" role="status">Saved {{ request.args.get('saved_count', '1')|int }} field decision(s){% if request.args.get('saved_member') %} for <a href="{{ url_for('member_detail', aph_id=request.args.get('saved_member')) }}">{{ request.args.get('saved_member') }}</a>{% endif %}.{% if request.args.get('remaining_count', '0')|int %} {{ request.args.get('remaining_count')|int }} fields remain unresolved in that saved batch.{% endif %} The current member’s open fields are shown below.</p>{% endif %}
+<section class="review-workspace member-workspace" aria-label="Member comparison and decisions">
+<div class="workspace-content">
 <div class="member-meta">
   <p><strong>APH ID:</strong> {{ member.aph_id }}</p>
-  <p><strong>Aggregate status:</strong> <span class="status-badge status-{{ member.status }}">{{ member.status | replace('_', ' ') }}</span></p>
+  <p><strong>Aggregate status:</strong> {{ status_badge(member.status) }}</p>
   <p><strong>Parliaments:</strong> {{ member.parliaments | join(', ') if member.parliaments else 'None' }}</p>
   <p><strong>Actionable fields:</strong> {{ member.actionable_count }}</p>
   {% if member.ambiguous %}
@@ -59,21 +61,14 @@
 </div>
 {% endif %}
 
-<section class="member-summary" aria-labelledby="comparison-heading">
-<h2 id="comparison-heading">Member comparison</h2>
-<div class="table-wrap"><table>
-<caption>Compare all fields before reviewing individual decisions.</caption>
-<thead><tr><th scope="col">Field</th><th scope="col">Source</th><th scope="col">Current reviewed</th><th scope="col">Proposed</th><th scope="col">Status</th></tr></thead>
-<tbody>{% for field in member.fields %}<tr>
-<th scope="row"><a href="#field-{{ field.field }}">{{ field_name(field.field) }}</a></th>
-<td>{{ display_value(field.source_value) }}</td><td>{{ display_value(field.effective_value) }}</td><td>{{ display_value(field.proposed_value) }}</td>
-<td><span class="status-badge status-{{ field.status }}">{{ field.status | replace('_', ' ') }}</span><br><span class="comparison-badge comparison-{{ field.comparison }}">{{ field.comparison | replace('_', ' ') }}</span></td>
-</tr>{% endfor %}</tbody>
-</table></div>
+<section class="member-summary" aria-label="Member field comparison">
+{{ comparison_table(workspace_rows | default([])) }}
+{{ evidence_summary(workspace_evidence | default([]), workspace_unknown_gaps | default([])) }}
 </section>
 
 <form method="post" action="{{ url_for('preview_member_batch', aph_id=member.aph_id) }}" id="member-batch-form">
 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{% if navigation_token %}<input type="hidden" name="navigation_token" value="{{ navigation_token }}">{% endif %}
 {% if preview %}
 <input type="hidden" name="preview_token" value="{{ preview_token }}">
 <section class="preview-panel">
@@ -107,8 +102,6 @@
   <pre>{{ preview.events | json_text }}</pre>
   <pre>{{ preview.changes | json_text }}</pre>
   </details>
-  <p class="batch-actions"><button type="submit" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" id="save-batch-btn">Save all decisions</button>
-  <span id="save-disabled-msg" hidden>Draft inputs changed after preview. Preview again to enable saving.</span></p>
 </section>
 {% endif %}
 
@@ -124,12 +117,6 @@
       </p>
       {% if field.is_suppressed %}<p>This field now requires no decision. Leave unchanged before previewing again.</p>{% endif %}
 
-      <dl class="field-comparison">
-        <div><dt>Source</dt><dd>{{ display_value(field.source_value) }}</dd></div>
-        <div><dt>Current reviewed</dt><dd>{{ display_value(field.effective_value) }}</dd></div>
-        <div class="proposed-value"><dt>Proposed</dt><dd>{{ display_value(field.proposed_value) }}</dd></div>
-      </dl>
-
       {% if field.conflicts %}
       <div class="alert alert-warning">
         <strong>Conflicting active decisions:</strong>
@@ -139,49 +126,25 @@
           {% endfor %}
         </ul>
       </div>
+      <label>Accepted decision to retain for reject/research:
+        <select name="retained_decision_id_{{ field.field }}"><option value="">Select explicitly</option>
+        {% for event in field.history if event.action == 'accept' or event.replacement_action == 'accept' %}<option value="{{ event.decision_id }}" {% if form_values.get('retained_decision_id_' + field.field) == event.decision_id %}selected{% endif %}>{{ event.payload.value }} ({{ event.decision_id }})</option>{% endfor %}
+        </select>
+      </label>
       {% endif %}
 
+      <fieldset class="field-controls field-action"><legend>Decision</legend>
+        {% for choice, label in [('accept', 'Accept proposal'), ('reject', 'Reject proposal and retain current'), ('research', 'Needs research'), ('unchanged', 'Leave unchanged')] %}
+        <label class="decision-choice"><input type="radio" name="action_{{ field.field }}" value="{{ choice }}" {% if form_values.get('action_' + field.field, '') == choice %}checked{% endif %}> {{ label }}</label>
+        {% endfor %}
+      </fieldset>
+      <details class="advanced-field-details" {% if field.comparison == 'ambiguous' or field.status == 'conflict' %}open{% endif %}><summary>Evidence, overrides and decision history</summary>
       <div class="field-controls">
-        <div class="field-action">
-          <label><strong>Action:</strong>
-            <select name="action_{{ field.field }}">
-              <option value="unchanged" {% if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}selected{% endif %}>Leave unchanged</option>
-              <option value="accept" {% if form_values.get('action_' + field.field) == 'accept' %}selected{% endif %}>Accept proposal</option>
-              <option value="reject" {% if form_values.get('action_' + field.field) == 'reject' %}selected{% endif %}>Reject proposal (retains reviewed value)</option>
-              <option value="research" {% if form_values.get('action_' + field.field) == 'research' %}selected{% endif %}>Needs research (retains reviewed value)</option>
-            </select>
-          </label>
-        </div>
-        <label>Proposal evidence:
-          <select name="candidate_id_{{ field.field }}">
-          {% for candidate in field.candidates %}
-          <option value="{{ candidate.candidate_id }}" {% if form_values.get('candidate_id_' + field.field, field.candidate_id) == candidate.candidate_id %}selected{% endif %}>{{ candidate.evidence.match_method }} · {{ candidate.evidence.cache_file or 'No cache' }} · {{ candidate.evidence.proposed_value }}</option>
-          {% endfor %}
-          </select>
-        </label>
-        {% if field.conflicts %}
-        <label>Accepted decision to retain for reject/research:
-          <select name="retained_decision_id_{{ field.field }}">
-          <option value="">Select explicitly</option>
-          {% for event in field.history if event.action == 'accept' or event.replacement_action == 'accept' %}
-          <option value="{{ event.decision_id }}" {% if form_values.get('retained_decision_id_' + field.field) == event.decision_id %}selected{% endif %}>{{ event.payload.value }} · {{ event.decision_id }}</option>
-          {% endfor %}
-          </select>
-        </label>
-        {% endif %}
-        <div class="secondary-controls">
-          <label>Value override (optional):
-            <input type="text" name="value_{{ field.field }}" value="{{ form_values.get('value_' + field.field, '') }}" placeholder="{{ field.normalized_proposed_value or '' }}">
-          </label>
-          <label>Evidence URL:
-            <input type="url" name="source_url_{{ field.field }}" value="{{ form_values.get('source_url_' + field.field, field.evidence.source_url or '') }}">
-          </label>
-          <label>Notes:
-            <input type="text" name="notes_{{ field.field }}" value="{{ form_values.get('notes_' + field.field, '') }}">
-          </label>
-        </div>
+        <label>Proposal evidence:<select name="candidate_id_{{ field.field }}">{% for candidate in field.candidates %}<option value="{{ candidate.candidate_id }}" {% if form_values.get('candidate_id_' + field.field, field.candidate_id) == candidate.candidate_id %}selected{% endif %}>{{ candidate.evidence.match_method }} &middot; {{ candidate.evidence.cache_file or 'No cache' }} &middot; {{ candidate.evidence.proposed_value }}</option>{% endfor %}</select></label>
+        <div class="secondary-controls"><label>Value override (optional):<input type="text" name="value_{{ field.field }}" value="{{ form_values.get('value_' + field.field, '') }}" placeholder="{{ field.normalized_proposed_value or '' }}"></label><label>Evidence URL:<input type="url" name="source_url_{{ field.field }}" value="{{ form_values.get('source_url_' + field.field, field.evidence.source_url or '') }}"></label><label>Notes:<input type="text" name="notes_{{ field.field }}" value="{{ form_values.get('notes_' + field.field, '') }}"></label></div>
       </div>
       {{ context(field) }}
+      </details>
     </fieldset>
     {% endfor %}
 
@@ -192,7 +155,7 @@
       {% for field in matching_fields if form_values.get('action_' + field.field, 'unchanged') == 'unchanged' %}
       <div id="field-{{ field.field }}">
         <h4>{{ field_name(field.field) }}</h4>
-        <p>Source: <code>{{ field.source_value }}</code> · Effective: <code>{{ field.effective_value }}</code> · Proposed: <code>{{ field.proposed_value }}</code> · {{ field.comparison }}.</p>
+        <p>Source: <code>{{ field.source_value }}</code> &middot; Effective: <code>{{ field.effective_value }}</code> &middot; Proposed: <code>{{ field.proposed_value }}</code> &middot; {{ field.comparison }}.</p>
         {{ context(field) }}
         {% if field.evidence.source_url | source_link %}
         <p><small>Evidence: <a href="{{ field.evidence.source_url | source_link }}" target="_blank" rel="noopener noreferrer">{{ field.evidence.source_url }}</a></small></p>
@@ -202,24 +165,32 @@
     </details>
     {% endif %}
 
-    <p>
-      <label>Reviewer name: <input type="text" name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
-    </p>
-    <p>
-      <button type="submit" id="preview-batch-btn" {% if preview %}class="secondary-button"{% endif %}>{% if preview %}Preview again{% else %}Preview batch{% endif %}</button>
-    </p>
+    <details class="reviewer-details"><summary>Reviewer</summary><label>Reviewer name: <input type="text" name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label></details>
 </section>
 </form>
 
-<section class="member-context-section">
+{% for field in member.fields if not field.is_suppressed %}
+{% set review_id = field.review_id or ('member:' ~ member.aph_id|lower ~ ':' ~ field.field) %}
+{% set research_case = {'review_id': review_id, 'member_field': field.field, 'retained_evidence': field.get('retained_evidence', []), 'job_id': research_jobs.get(field.field)} %}
+{% set research_result = research_results.get(field.field) %}
+{% set research_evidence_case = research_evidence.get(field.field, {}) %}
+{% set research_evidence_values = research_evidence_case.get('values', {}) %}
+{% set evidence_preview = research_evidence_case.get('preview') %}
+{% set evidence_preview_token = research_evidence_case.get('preview_token') %}
+{% set evidence_error = research_evidence_case.get('error') %}
+{% set decision_form_id = 'member-batch-form' %}
+{% include 'research-panel.html' ignore missing %}
+{% endfor %}
+
+<details class="member-context-section"><summary>Related records ({{ member.education|length }} education / {{ member.services|length }} service · {{ related_unresolved_count }} unresolved)</summary>
   <h3>Related Records</h3>
   <h4>Education Assertions</h4>
   {% if member.education %}
   <ul>
     {% for edu in member.education %}
     <li>
-      <strong>{{ edu.recorded_school_name }}</strong> · Status: {{ edu.status | replace('_', ' ') }}
-      · <a href="{{ url_for('detail', review_id=edu.review_id) }}">Review assertion</a>
+      <strong>{{ edu.recorded_school_name }}</strong> &middot; Status: {{ edu.status | replace('_', ' ') }}
+      &middot; <a href="{{ url_for('detail', review_id=edu.review_id) }}">Review assertion</a>
     </li>
     {% endfor %}
   </ul>
@@ -232,14 +203,20 @@
   <ul>
     {% for s in member.services %}
     <li>
-      {{ s.parliament_number }}th Parliament · {{ s.chamber }} ({{ s.electorate or s.state_or_territory }}) · {{ s.status }} · <a href="{{ url_for('detail', review_id=s.review_id) }}">Review service</a>
+      {{ s.parliament_number }}th Parliament &middot; {{ s.chamber }} ({{ s.electorate or s.state_or_territory }}) &middot; {{ s.status }} &middot; <a href="{{ url_for('detail', review_id=s.review_id) }}">Review service</a>
     </li>
     {% endfor %}
   </ul>
   {% else %}
   <p>No parliament service intervals recorded.</p>
   {% endif %}
-</section>
-
+</details>
+ </div>
+ <aside class="workspace-decision-panel member-primary-actions"><h2>Review actions</h2><p>{{ workspace_position.position or 'Outside queue' }}{% if workspace_position.in_queue %} of {{ workspace_position.total }}{% endif %}</p>
+ {% if preview %}<button type="submit" form="member-batch-form" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" id="save-batch-btn" data-workspace-action="save">Save all decisions</button>{% endif %}
+ <button type="submit" form="member-batch-form" data-workspace-action="preview" id="preview-batch-btn">{% if preview %}Preview again{% else %}Preview batch{% endif %}</button>
+ {% if preview and navigation_token %}<button type="submit" form="member-batch-form" formaction="{{ url_for('save_member_batch', aph_id=member.aph_id) }}" name="advance" value="next" data-workspace-action="save" id="save-next-btn">Save and next</button>{% endif %}
+ {% if not workspace_position.in_queue %}<p class="notice">This item is outside the current filtered queue.</p>{% endif %}</aside>
+ </section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='member.js') }}" defer></script>{% endblock %}

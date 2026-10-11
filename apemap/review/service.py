@@ -43,6 +43,7 @@ from apemap.review.model import (
     active_heads,
     education_review_id,
     entity_for_review_id,
+    institution_reference,
     member_review_id,
     service_review_id,
     parse_events,
@@ -469,6 +470,40 @@ class ReviewService:
         if value is None:
             raise ValueError("Retained evidence value is empty")
         return value
+
+    def copy_school_evidence_value(self, review_id: str, evidence_id: str) -> str:
+        """Read a retained, supporting identity target for this exact school case."""
+        entity = entity_for_review_id(review_id)
+        if entity not in {"school", "member_education"} or review_id.endswith(
+            ":missing"
+        ):
+            raise ValueError("Institution copying requires a school identity case")
+        record = next(
+            (
+                item
+                for item in self.evidence_records()
+                if item.evidence_id == evidence_id
+            ),
+            None,
+        )
+        if record is None or record.review_id != review_id:
+            raise ValueError("Retained evidence does not belong to this review case")
+        if record.stance != "supports":
+            raise ValueError("Only supporting identity evidence can be copied")
+        if record.claim_type != "identity":
+            raise ValueError("Selected evidence is not an institution identity claim")
+        reference = record.candidate_institution_ref
+        if not reference:
+            raise ValueError("Identity evidence has no institution reference")
+        normalized = institution_reference(reference)
+        metadata = self.resolve_institution(normalized)
+        if metadata is None:
+            raise ValueError("Institution reference is unavailable locally")
+        canonical = metadata.get("institution_ref") or normalized
+        canonical = institution_reference(canonical)
+        if self.resolve_institution(canonical) is None:
+            raise ValueError("Institution reference is unavailable locally")
+        return canonical
 
     def _evidence_candidate_revision(self, reference: str | None) -> str:
         """Bind candidate facts and manual-definition heads without unrelated reviews."""
@@ -1244,13 +1279,35 @@ class ReviewService:
         assertions = [
             row for row in member["education"] if row.get("review_id") == review_id
         ]
+        recorded_name = (
+            item["context"].get("recorded_school_name")
+            or item["context"].get("recorded_name")
+            or (assertions[0].get("recorded_school_name") if assertions else "")
+        )
+        effective_ref = (item.get("decision") or {}).get("payload", {}).get(
+            "institution_ref"
+        ) or (item["context"].get("school_relationship") or {}).get("payload", {}).get(
+            "institution_ref"
+        )
+        ranked = item["ranked_candidates"]
+        selected_ref = candidate_id or effective_ref
+        selected_candidate = next(
+            (row for row in ranked if row.get("institution_ref") == selected_ref),
+            None,
+        )
+        if selected_ref is not None and selected_candidate is None:
+            selected_candidate = self._research_candidate(
+                review_id, recorded_name, selected_ref
+            )
+        if candidate_id is not None and selected_candidate is None:
+            raise ValueError("Selected candidate does not belong to this review item")
         result = {
             "review_id": review_id,
             **revisions,
             "evidence_revision": ledger_revision,
             "assertion": {
-                "recorded_school_name": item["context"].get("recorded_school_name")
-                or item["context"].get("recorded_name"),
+                "recorded_school_name": recorded_name,
+                "effective_institution_ref": effective_ref,
                 "years_attended": assertions[0].get("years_attended")
                 if assertions
                 else None,
@@ -1291,37 +1348,19 @@ class ReviewService:
                         "myschool_id",
                     )
                 }
-                for row in item["ranked_candidates"][:20]
+                for row in ranked[:20]
             ],
             "school_relationship": item["context"].get("school_relationship"),
             "decision": item.get("decision"),
             "conflicts": item.get("conflicts", [])[:10],
         }
-        if candidate_id is not None:
-            matching = [
-                row
-                for row in item.get("ranked_candidates", [])
-                if row.get("institution_ref") == candidate_id
-            ]
-            if not matching:
-                raise ValueError(
-                    "Selected candidate does not belong to this review item"
-                )
-            result["selected_candidate"] = {
-                key: matching[0].get(key)
-                for key in (
-                    "institution_ref",
-                    "school_name",
-                    "state",
-                    "suburb",
-                    "country",
-                    "postcode",
-                    "latitude",
-                    "longitude",
-                    "historical_names",
-                    "myschool_id",
-                )
-            }
+        if selected_candidate is not None:
+            if not any(
+                row.get("institution_ref") == candidate_id
+                for row in result["candidates"]
+            ):
+                result["candidates"] = [*result["candidates"][:19], selected_candidate]
+            result["selected_candidate"] = selected_candidate
         if (
             revisions != self.research_revisions()
             or ledger_revision != evidence_revision(self.evidence_path)
@@ -1414,17 +1453,28 @@ class ReviewService:
         ranked = item["ranked_candidates"]
         refs = {row.get("institution_ref") for row in ranked}
         selected_ref = candidate_id or decision_ref
+        selected_candidate = next(
+            (row for row in ranked if row.get("institution_ref") == selected_ref),
+            None,
+        )
         if candidate_id and candidate_id not in refs:
-            raise ValueError("Selected candidate does not belong to this school case")
+            selected_candidate = self._research_candidate(review_id, name, candidate_id)
+            if selected_candidate is None:
+                raise ValueError(
+                    "Selected candidate does not belong to this school case"
+                )
+        elif selected_candidate is None and decision_ref:
+            selected_candidate = self._research_candidate(review_id, name, decision_ref)
         result = {
             "review_id": review_id,
             **revisions,
             "evidence_revision": ledger_revision,
-            "assertion": {"recorded_school_name": name},
-            "selected_candidate": next(
-                (row for row in ranked if row.get("institution_ref") == selected_ref),
-                None,
-            ),
+            "assertion": {
+                "recorded_school_name": name,
+                "effective_institution_ref": decision_ref,
+            },
+            "decision": decision,
+            "selected_candidate": selected_candidate,
             "candidates": [
                 {
                     key: row.get(key)
@@ -1453,12 +1503,59 @@ class ReviewService:
             "history": item.get("history", [])[-10:],
             "retained_evidence": self.retained_evidence(review_id)[:20],
         }
+        if selected_candidate is not None and not any(
+            row.get("institution_ref") == selected_candidate.get("institution_ref")
+            for row in result["candidates"]
+        ):
+            result["candidates"] = [*result["candidates"][:19], selected_candidate]
         if (
             revisions != self.research_revisions()
             or ledger_revision != evidence_revision(self.evidence_path)
         ):
             raise StaleReviewError("Research context changed while loading; retry")
         return json_value(result)
+
+    def _research_candidate(
+        self, review_id: str, recorded_name: str, institution_ref: str
+    ) -> dict[str, Any] | None:
+        """Resolve one explicitly selected local institution for scoped research."""
+        try:
+            reference = institution_reference(institution_ref)
+        except ValueError:
+            return None
+        metadata = self.resolve_institution(reference)
+        if metadata is None:
+            return None
+        proposal = {
+            **metadata,
+            "institution_ref": reference,
+            "institution_name": metadata.get("school_name"),
+            "recorded_name": recorded_name,
+        }
+        ranked = score_candidates(review_id, [proposal], self.evidence_records())
+        if not ranked:
+            return None
+        return {
+            key: ranked[0].get(key)
+            for key in (
+                "institution_ref",
+                "school_name",
+                "state",
+                "suburb",
+                "country",
+                "acara_id",
+                "institution_status",
+                "score",
+                "score_band",
+                "reasons",
+                "evidence_ids",
+                "postcode",
+                "latitude",
+                "longitude",
+                "historical_names",
+                "myschool_id",
+            )
+        }
 
     def rank_education_candidates(
         self,
