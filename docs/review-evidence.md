@@ -109,3 +109,26 @@ evidence pin preserve their original contract.
 No online source, agent or model is required for scoring or release replay.
 Historical deliveries, recipes and checked-in research artifacts are preserved.
 See the [issue #66 acceptance audit](issue-66-acceptance.md) for remaining work.
+
+## Focused workspace research
+
+The issue #82 reviewer can search within a school, education assertion, or exact
+member-field case. Suggestions remain temporary until the reviewer inspects the
+cited page, edits the proposed claim if needed, previews the record and explicitly
+retains it. Retention writes schema-1 records to `evidence.jsonl`; it never chooses
+or saves a decision. A separate decision preview and save are still required. See
+[Focused review workspaces](focused-review-workspaces.md) for the workflow and
+offline/provider limitations.
+
+Member-field evidence uses the exact `member:<aph-id>:<field>` case. A supported
+`member_value` claim is valid only for the named field and must contain a value
+that field's normalizer accepts. The reviewer may explicitly copy that normalized
+typed value into the matching draft field. The copy action also adds the retained
+record reference to that field's decision draft. For institution-identity
+evidence, copying a locally known candidate into a school or assertion draft
+fills the target and selects its retained evidence reference. These copy actions
+do not choose an outcome, preview or persist a decision. Reviewers still choose
+the outcome and explicitly preview and save. Evidence references remain scoped
+to the corresponding member field, school or attendance case. Do not use a member
+correction claim as attendance or institution evidence, or reuse attendance
+evidence across members.

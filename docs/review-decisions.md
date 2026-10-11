@@ -223,6 +223,18 @@ preview. Browser edits append decisions to the same ledger; there is no second
 database of review authority. Existing generated CSVs remain available for offline
 inspection.
 
+The focused school, education assertion and member workspaces add compact
+comparisons, queue position and save-next navigation. Member field choices are
+independent and initially unset; a partial batch can save accepted, rejected or
+research-needed fields while leaving the rest untouched. School outcomes are
+explicitly **Confirm selected mapping**, **Name is ambiguous**, **No suitable
+candidate**, and **Needs research**. See [Focused review workspaces](focused-review-workspaces.md)
+for queue preservation, keyboard shortcuts and the research-to-retained-evidence
+workflow. These workspaces remain progressive HTML forms: without JavaScript,
+comparison, decisions, previews, and ordinary navigation still work; shortcut
+keys and dirty-draft warnings are JavaScript enhancements. Copying retained
+evidence into a draft also has an ordinary form fallback.
+
 To review the historical working database with the correct register:
 
 ```powershell
