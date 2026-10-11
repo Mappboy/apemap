@@ -1408,7 +1408,37 @@ class ReviewService:
             **revisions,
             "evidence_revision": ledger_revision,
             "member_field": field_name,
-            "member": {"aph_id": member["aph_id"], "display_name": member["name"]},
+            "member": {
+                "aph_id": member["aph_id"],
+                "display_name": member["name"],
+                "aliases": [" ".join(reversed(member["name"].split(", ", 1)))]
+                if ", " in member["name"]
+                else [],
+                "date_of_birth": next(
+                    (
+                        row["effective_value"]
+                        for row in member["fields"]
+                        if row["field"] == "date_of_birth"
+                    ),
+                    None,
+                ),
+            },
+            "services": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "parliament_number",
+                        "chamber",
+                        "party",
+                        "electorate",
+                        "state_or_territory",
+                        "service_start",
+                        "service_end",
+                        "source_url",
+                    )
+                }
+                for row in member["services"]
+            ],
             "assertion": {
                 "field": field_name,
                 "source_value": field.get("source_value"),

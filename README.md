@@ -105,6 +105,8 @@ The optional local reviewer also provides focused school, assertion and member
 review workspaces; see [Focused review workspaces](docs/focused-review-workspaces.md)
 for queue navigation, independent member-field decisions, research and retained
 evidence workflow.
+Guided research proposals use [persistent research batches](docs/guided-research-batches.md):
+members can receive explicit sampled approval; schools require inspection of all evidence.
 After saving decisions, follow [Decisions to a new release](docs/decisions-to-release.md)
 to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released

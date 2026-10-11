@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ batch.manifest.batch_id }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('research_batch_list') }}">Research batches</a></p>
+<h1>{{ batch.manifest.batch_id }}</h1>
+<p>{{ batch.manifest.kind|capitalize }} · {{ batch.manifest.case_count }} cases · {{ batch.proposals|length }} researched · {{ batch.sample|length }} sample items</p>
+{% if batch.manifest.kind == 'members' %}<p>Review 20% of eligible suggestions, with a minimum of five (or all when fewer than five). Ambiguous suggestions require individual review.</p>{% if batch.sample_failed %}<p class="error" role="alert">An identity error was found in the sample. The remainder now requires individual review; sample approval is blocked.</p>{% elif batch.sample_passed %}<p class="notice">All sample items passed. You can explicitly approve the eligible remainder as this named batch.</p>{% else %}<p>Sample approval is pending. Inspect and accept every sample item first.</p>{% endif %}{% else %}<p><strong>Every school proposal requires individual review of every attached evidence item.</strong> Closure conclusions never imply a current-school match.</p>{% endif %}
+<details><summary>Agent handoff and saved task context</summary><p>The batch directory contains tasks.json and instructions.md. Use Luna at medium reasoning, two workers maximum, and the recorded search/open budgets. Unresolved cases get one Sol retry.</p><pre>{{ batch.tasks|json_text }}</pre></details>
+<form method="post" enctype="multipart/form-data" action="{{ url_for('research_batch_import', batch_id=batch.manifest.batch_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label>Research results JSON<input type="file" name="results" accept="application/json" required></label><button type="submit">Import proposals</button></form>
+{% for proposal in batch.proposals %}
+{% set review = batch.reviews.get(proposal.proposal_id) %}
+{% set task = batch.tasks|selectattr('review_id', 'equalto', proposal.review_id)|first %}
+<article class="field-card" id="{{ proposal.proposal_id }}">
+<h2>{{ task.context.member.display_name if batch.manifest.kind == 'members' else task.context.assertion.recorded_school_name }}</h2>
+<p><strong>{{ proposal.outcome|capitalize }}</strong>{% if proposal.value %} · {{ proposal.value }}{% endif %}{% if proposal.proposal_id in batch.sample %} · <strong>Sample item</strong>{% endif %}{% if review %} · Individually reviewed: {{ review.action }}{% endif %}</p>
+<p>{{ proposal.reasoning }}</p>
+{% if proposal.eligibility_reasons %}<ul>{% for reason in proposal.eligibility_reasons %}<li>{{ reason }}</li>{% endfor %}</ul>{% else %}<p>Eligible for sampled member approval after the required sample passes.</p>{% endif %}
+<form method="post" action="{{ url_for('research_batch_review', batch_id=batch.manifest.batch_id, proposal_id=proposal.proposal_id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="binding" value="{{ binding }}">
+{% for evidence in proposal.evidence %}<section><h3><a href="{{ evidence.source_url|source_link }}" target="_blank" rel="noopener noreferrer">{{ evidence.source_title or 'Open source' }}</a></h3><p>{{ evidence.excerpt_or_note }}</p><p>{{ evidence.claim_type|replace('_', ' ') }} · {{ evidence.claim_value|json_text }} · Retrieved {{ evidence.retrieved_at }}</p>
+<label class="choice"><input type="checkbox" name="inspected_{{ evidence.evidence_id }}" value="yes" {% if review and evidence.evidence_id in review.inspected %}checked{% endif %} required>I inspected this source</label>
+<label>Source disposition<select name="disposition_{{ evidence.evidence_id }}" required><option value="">Choose after inspecting</option>{% for stance in ['supports', 'contradicts', 'contextual', 'unavailable'] %}<option value="{{ stance }}" {% if review and review.inspected.get(evidence.evidence_id) == stance %}selected{% endif %}>{{ stance|capitalize }}</option>{% endfor %}</select></label></section>{% else %}<p>No cited evidence; retain as unresolved.</p>{% endfor %}
+{% for head in task.decision_heads %}<label class="choice"><input type="checkbox" name="supersedes" value="{{ head }}">Explicitly replace prior decision {{ head }}</label>{% endfor %}
+{% if batch.manifest.kind == 'members' %}<label class="choice"><input type="checkbox" name="identity_error" value="yes">This proposal identifies the wrong person</label>{% endif %}
+<label>Review notes<textarea name="notes">{{ review.notes if review else '' }}</textarea></label>
+<label>Proposal disposition<select name="action"><option value="accept">Accept researched proposal</option><option value="reject">Reject proposal</option><option value="research">Needs further research</option></select></label><button type="submit">Record individual review</button>
+</form>
+<details><summary>Alternatives, mapping payload and model attempts</summary><pre>{{ proposal|json_text }}</pre></details>
+</article>{% endfor %}
+<section><h2>Retain evidence and preview decisions</h2><p>Recording reviews does not apply decisions. Retaining evidence preserves agent provenance; it does not claim that unsampled sources were individually inspected.</p>
+{% for operation, label in [('research_batch_retain', 'Retain approved evidence'), ('research_batch_preview', 'Preview approved decisions')] %}<form method="post" action="{{ url_for(operation, batch_id=batch.manifest.batch_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% if batch.manifest.kind == 'members' %}<label class="choice"><input type="checkbox" name="approve_sampled" value="yes" {% if not batch.sample_passed %}disabled{% endif %}>Include the eligible unsampled remainder under explicit batch approval</label>{% endif %}<button type="submit">{{ label }}</button></form>{% endfor %}</section>
+{% if preview %}<section class="preview-panel"><h2>Decision application preview</h2><p>Inspect the canonical changes and affected school assertions before applying.</p><pre>{{ preview.preview|json_text }}</pre><form method="post" action="{{ url_for('research_batch_apply', batch_id=batch.manifest.batch_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="preview_name" value="{{ preview_name }}"><input type="hidden" name="approval" value="{{ preview.sha256 }}"><button type="submit">Approve and apply this exact preview</button></form></section>{% endif %}
+<details><summary>Review audit</summary><pre>{{ batch.review_history|json_text }}</pre></details>
+{% endblock %}

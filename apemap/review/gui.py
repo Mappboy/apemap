@@ -2972,6 +2972,11 @@ def create_app(
             )
         return redirect(url_for("detail", review_id=review_id, saved="1"), code=303)
 
+    from apemap.review.service import ReviewService
+    from apemap.review.research_batch_ui import register_batch_routes
+
+    if isinstance(service, ReviewService):
+        register_batch_routes(app, service)
     return app
 
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Research batches{% endblock %}
+{% block content %}
+<h1>Guided research batches</h1>
+<p>Research stays reviewable across sessions. Member batches can use a reviewed sample; every school proposal needs all its evidence inspected.</p>
+<section><h2>Prepare a research batch</h2>
+<form method="post" action="{{ url_for('research_batch_prepare') }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label>Batch name<input name="batch_id" required pattern="[a-z0-9][a-z0-9-]{0,79}" placeholder="members-october-01"></label>
+<label>Research cases<select name="kind"><option value="members">Missing member Wikidata IDs</option><option value="schools">Schools with no matcher target</option></select></label>
+<label>Maximum cases<input type="number" name="limit" value="10" min="1" max="100" required></label>
+<button type="submit">Prepare tasks</button>
+</form></section>
+<h2>Saved batches</h2>
+{% for batch in batches %}<article><h3><a href="{{ url_for('research_batch_detail', batch_id=batch.batch_id) }}">{{ batch.batch_id }}</a></h3><p>{{ batch.kind|capitalize }} · {{ batch.case_count }} cases · {{ batch.created_at }}</p></article>{% else %}<p>No research batches have been prepared.</p>{% endfor %}
+{% endblock %}
