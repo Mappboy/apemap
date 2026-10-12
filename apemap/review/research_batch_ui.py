@@ -63,6 +63,8 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
 
     @app.post("/research-batches/<batch_id>/review/<proposal_id>")
     def research_batch_review(batch_id: str, proposal_id: str) -> Any:
+        state = None
+        draft_review = None
         try:
             state = batches.show(batch_id)
             if not request.form.get("binding"):
@@ -77,6 +79,20 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 for evidence in proposal["evidence"]
                 if request.form.get("inspected_" + evidence["evidence_id"]) == "yes"
             }
+            draft_review = {
+                "proposal_id": proposal_id,
+                "action": request.form.get("action", ""),
+                "inspected": inspected,
+                "dispositions": {
+                    evidence["evidence_id"]: request.form.get(
+                        "disposition_" + evidence["evidence_id"], ""
+                    )
+                    for evidence in proposal["evidence"]
+                },
+                "notes": request.form.get("notes", ""),
+                "identity_error": request.form.get("identity_error") == "yes",
+                "supersedes": request.form.getlist("supersedes"),
+            }
             batches.record_review(
                 batch_id,
                 proposal_id,
@@ -90,6 +106,15 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
         except StopIteration:
             abort(404)
         except (OSError, ValueError, KeyError) as exc:
+            if state is not None and draft_review is not None:
+                return render_template(
+                    "research-batch.html",
+                    batch=state,
+                    binding=request.form.get("binding", ""),
+                    preview=None,
+                    review_error=str(exc),
+                    draft_review=draft_review,
+                ), 400
             abort(400, str(exc))
         return redirect(url_for("research_batch_detail", batch_id=batch_id), code=303)
 

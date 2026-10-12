@@ -49,6 +49,13 @@ For each proposal you review, open every source and check the actual contents
 against the cited claim. The agent's excerpt is a starting point for inspection.
 Record each source inspection using **I inspected this source** and **Source disposition**:
 
+Each disposition defaults to its saved evidence stance; prior review selections
+take precedence. The saved conclusion is shown beside the source. Defaults leave
+inspection checkboxes unchecked. Confirm the disposition after inspecting the source.
+If you change a conclusion, an inline warning blocks acceptance before submission;
+you can record research-needed or rejection with notes instead. Validation failures
+also keep your draft on the batch page rather than replacing it with a Bad Request page.
+
 | Disposition | Meaning |
 | --- | --- |
 | Supports | The source supports the attached claim. |
