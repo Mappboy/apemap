@@ -33,6 +33,19 @@ name and no-suitable-candidate outcomes preserve attendance while leaving the
 institution unresolved. Resolve another member with the same recorded name in
 that member's own assertion workspace.
 
+The primary decision panel also offers **Different schools for different members /
+Split required**. It jumps directly to links for the affected member assertions.
+Choose each member's school in that assertion workspace; following the split
+path does not record a global mapping or any decision.
+
+The selected school comparison shows concise **Supports**, **Conflicts**,
+**Context** and **Unknown** explanations before the candidate alternatives.
+Each populated evidence group shows up to two findings with source links;
+**Full evidence and provenance** retains every finding and its metadata.
+Changing candidates updates both displays and excludes evidence specific to
+another candidate. Normalized name similarity is labelled as context, not
+attendance evidence. Full evidence tools remain available separately.
+
 ## Member fields and partial batches
 
 The member workspace compares source, reviewed and proposed values separately for

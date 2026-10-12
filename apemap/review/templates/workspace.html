@@ -18,10 +18,16 @@
 </tbody></table></div>
 {%- endmacro %}
 
-{% macro evidence_summary(records, unknown_gaps=[]) -%}
+{% macro evidence_summary(records, unknown_gaps=[], inline=False) -%}
 {% set supports = records|selectattr('stance', 'equalto', 'supports')|list %}{% set conflicts = records|selectattr('stance', 'equalto', 'contradicts')|list %}{% set contextual = records|selectattr('stance', 'equalto', 'contextual')|list %}
-<details class="workspace-evidence" data-evidence-summary><summary>Evidence: {{ supports|length }} supports · {{ conflicts|length }} conflicts · {{ contextual|length }} contextual{% if unknown_gaps %} · {{ unknown_gaps|length }} unknown gaps{% endif %}</summary>
+{% if inline %}<section class="workspace-evidence" data-evidence-summary data-inline-evidence aria-label="Selected candidate evidence">
+{% for label, matching in [('Supports', supports), ('Conflicts', conflicts), ('Context', contextual)] %}{% if matching %}<div class="evidence-brief"><strong>{{ label }}</strong><ul>{% for item in matching[:2] %}<li>{{ item.summary or item.claim or item.claim_value or item.excerpt_or_note }}{% if item.source_url|source_link %} · <a href="{{ item.source_url|source_link }}" rel="noopener noreferrer">{{ item.source_title or item.source_url }}</a>{% elif item.source_title %} · {{ item.source_title }}{% endif %}</li>{% endfor %}</ul></div>{% endif %}{% endfor %}
+{% if not supports %}<p><strong>Supports:</strong> No candidate-specific supporting evidence recorded.</p>{% endif %}
+{% if unknown_gaps %}<p><strong>Unknown:</strong> {{ unknown_gaps|join(', ') }} not established.</p>{% endif %}
+{% endif %}
+<details class="workspace-evidence" {% if not inline %}data-evidence-summary{% endif %}><summary>{% if inline %}Full evidence and provenance · {% endif %}Evidence: {{ supports|length }} supports · {{ conflicts|length }} conflicts · {{ contextual|length }} contextual{% if unknown_gaps %} · {{ unknown_gaps|length }} unknown gaps{% endif %}</summary>
 {% for stance, matching in [('supports', supports), ('contradicts', conflicts), ('contextual', contextual)] %}{% if matching %}<div class="evidence-group evidence-{{ stance }}"><h3>{{ {'supports':'Supports','contradicts':'Conflicts','contextual':'Context'}[stance] }} · {{ matching|length }}</h3><ul>{% for item in matching %}<li data-evidence-stance="{{ stance }}">{% if item.summary or item.claim or item.claim_value or item.excerpt_or_note %}<p>{{ item.summary or item.claim or item.claim_value or item.excerpt_or_note }}</p>{% endif %}{% if item.source_title %}<strong>{{ item.source_title }}</strong>{% endif %}{% if item.source_url|source_link %}<a href="{{ item.source_url|source_link }}" rel="noopener noreferrer">{{ item.source_title or item.source_url }}</a>{% endif %}{% if item.retrieved_at %}<small> · {{ item.retrieved_at }}</small>{% endif %}<details class="technical-details"><summary>Full evidence provenance</summary><pre>{{ item|tojson(indent=2) }}</pre></details></li>{% endfor %}</ul></div>{% endif %}{% endfor %}
 <div class="evidence-gaps"><h3>Unknown or incomplete evidence</h3>{% if unknown_gaps %}<ul>{% for gap in unknown_gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% else %}<p>Absence of recorded conflict is not evidence of support.</p>{% endif %}</div>
 </details>
+{% if inline %}</section>{% endif %}
 {%- endmacro %}

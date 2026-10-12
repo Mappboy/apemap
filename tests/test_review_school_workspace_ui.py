@@ -112,7 +112,7 @@ def test_school_and_assertion_templates_keep_save_next_preview_gated() -> None:
     assert 'name="field_relationship_type" data-resolution-field required' in school
     assert "Candidate score reasons" in school
     assert "Conflicting evidence:" in school
-    assert school.index('aria-label="School candidates"') < school.index(
+    assert school.index('aria-label="School candidates"') > school.index(
         "comparison_table(primary_rows"
     )
     assert "['name', 'locality', 'acara identifier']" in school

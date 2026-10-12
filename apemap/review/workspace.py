@@ -24,6 +24,43 @@ EVIDENCE_STANCES = ("supports", "contradicts", "contextual")
 _URGENCY = ("conflict", "pending", "needs_research", "rejected", "accepted")
 
 
+def school_candidate_evidence(
+    item: Mapping[str, Any], reference: str
+) -> list[dict[str, Any]]:
+    """Explain one candidate without attributing another candidate's evidence to it."""
+    records = [
+        dict(row["evidence"])
+        for row in item.get("candidates", [])
+        if row.get("payload", {}).get("institution_ref") == reference
+        and row.get("evidence", {}).get("stance")
+    ] + [
+        dict(record)
+        for record in item.get("retained_evidence", [])
+        if record.get("candidate_institution_ref") in (None, "", reference)
+    ]
+    candidate = next(
+        (
+            row
+            for row in item.get("ranked_candidates", [])
+            if row.get("institution_ref") == reference
+        ),
+        None,
+    )
+    if candidate:
+        for reason in candidate.get("reasons", []):
+            if reason.get("component") == "name_match":
+                records.append(
+                    {
+                        "stance": "contextual",
+                        "summary": reason["note"] + "; not attendance evidence",
+                        "source_title": "Local register name comparison",
+                        "candidate_institution_ref": reference,
+                        "generated_by": "deterministic candidate ranking",
+                    }
+                )
+    return records
+
+
 def _normalize(field: str, value: Any) -> Any:
     if value is None or (isinstance(value, str) and not value.strip()):
         return None

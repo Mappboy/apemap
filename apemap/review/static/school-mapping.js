@@ -131,13 +131,14 @@
   function renderEvidence(records, gaps) {
     const root = document.querySelector("[data-evidence-summary]");
     if (!root) return;
+    const inline = root.dataset.inlineEvidence !== undefined;
     const wasOpen = root.open;
     const counts = Object.fromEntries(["supports", "contradicts", "contextual"].map(stance => [
       stance, records.filter(item => item.stance === stance).length,
     ]));
     const replacement = document.createElement("details");
     replacement.className = "workspace-evidence";
-    replacement.dataset.evidenceSummary = "";
+    if (!inline) replacement.dataset.evidenceSummary = "";
     replacement.open = wasOpen;
     const summaryTitle = document.createElement("summary");
     summaryTitle.textContent = `Evidence: ${counts.supports} supports · ${counts.contradicts} conflicts · ${counts.contextual} contextual${gaps.length ? ` · ${gaps.length} unknown gaps` : ""}`;
@@ -172,7 +173,40 @@
       unknown.append(list);
     }
     replacement.append(unknown);
-    root.replaceWith(replacement);
+    if (inline) {
+      const section = document.createElement("section");
+      section.className = "workspace-evidence";
+      section.dataset.evidenceSummary = "";
+      section.dataset.inlineEvidence = "";
+      section.setAttribute("aria-label", "Selected candidate evidence");
+      for (const [stance, label] of [["supports", "Supports"], ["contradicts", "Conflicts"], ["contextual", "Context"]]) {
+        const matches = records.filter(item => item.stance === stance).slice(0, 2);
+        if (!matches.length) continue;
+        const group = document.createElement("div"); group.className = "evidence-brief";
+        const title = document.createElement("strong"); title.textContent = label;
+        const list = document.createElement("ul");
+        for (const item of matches) {
+          const li = document.createElement("li");
+          li.textContent = item.summary || item.claim || item.claim_value || item.excerpt_or_note || "";
+          if (/^https?:\/\//i.test(item.source_url || "")) {
+            const link = document.createElement("a"); link.href = item.source_url;
+            link.rel = "noopener noreferrer"; link.textContent = item.source_title || item.source_url;
+            li.append(document.createTextNode(" · "), link);
+          } else if (item.source_title) li.append(document.createTextNode(` · ${item.source_title}`));
+          list.append(li);
+        }
+        group.append(title, list); section.append(group);
+      }
+      if (!counts.supports) {
+        const p = document.createElement("p"); p.textContent = "Supports: No candidate-specific supporting evidence recorded."; section.append(p);
+      }
+      if (gaps.length) {
+        const p = document.createElement("p"); p.textContent = `Unknown: ${gaps.join(", ")} not established.`; section.append(p);
+      }
+      summaryTitle.textContent = "Full evidence and provenance · " + summaryTitle.textContent;
+      section.append(replacement);
+      root.replaceWith(section);
+    } else root.replaceWith(replacement);
   }
 
   function wireButtons(container) {
