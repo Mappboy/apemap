@@ -132,3 +132,25 @@ def apply_cmd(
     from apemap.review.cli import _run
 
     _run(lambda: _batches(ctx).apply(batch_id, preview, approve))
+
+
+@batch_app.command("revalidate")
+def revalidate_cmd(
+    ctx: typer.Context,
+    batch_id: str,
+    original_external_dir: Annotated[Path, typer.Option()],
+    out: Annotated[Path, typer.Option()],
+    approve_sampled: bool = False,
+    reviewer: str | None = None,
+) -> None:
+    from apemap.review.cli import _run
+
+    _run(
+        lambda: _batches(ctx).revalidate(
+            batch_id,
+            original_external_dir=original_external_dir,
+            destination=out,
+            approve_sampled=approve_sampled,
+            reviewer=reviewer,
+        )
+    )

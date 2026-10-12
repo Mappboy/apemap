@@ -133,6 +133,7 @@ def imported(batches: ResearchBatches) -> dict[str, Any]:
 def accept(
     batches: ResearchBatches, batch_id: str, item: dict[str, Any], **kwargs: Any
 ) -> None:
+    kwargs.setdefault("reviewer", "Test reviewer")
     batches.record_review(
         batch_id,
         item["proposal_id"],
@@ -176,6 +177,7 @@ def test_sample_identity_error_permanently_blocks_remainder(
         inspected,
         identity_error=True,
         notes="Wrong person",
+        reviewer="Test reviewer",
     )
     for pid in state["sample"]:
         accept(batches, "members", items[pid])
@@ -225,6 +227,11 @@ def test_namesakes_and_claim_linked_non_name_facts(batches: ResearchBatches) -> 
     assert member_eligibility(task, validated)
     validated["evidence"][0]["claim_value"]["date_of_birth"] = "1970-01-01"
     validated["evidence"][1]["claim_value"] = {"party": "Labor"}
+    assert member_eligibility(task, validated)
+    validated["evidence"][1]["claim_value"]["date_of_birth"] = "1970-01-01"
+    validated["identity"]["evidence_refs"]["date_of_birth"] = [
+        validated["evidence"][1]["evidence_id"]
+    ]
     assert not member_eligibility(task, validated)
     validated["alternatives"] = ["Q2"]
     assert member_eligibility(task, validated)
@@ -259,6 +266,7 @@ def test_selection_preserves_explicit_nulls_and_deduplicates(
         {"aph_id": "m0", "field": "wikidata_id", "value": None},
         source_url="https://example.org/decision",
         notes="Reviewed absence",
+        reviewer="Test reviewer",
     )
     append_events(
         batches.service.log_path,
@@ -312,6 +320,17 @@ def test_failed_attempt_cannot_be_a_matched_proposal(batches: ResearchBatches) -
     raw["attempts"][0]["status"] = "failed"
     with pytest.raises(ValueError, match="remain unresolved"):
         batches.import_results("failed", [raw])
+
+
+def test_unresolved_member_cannot_be_accepted(batches: ResearchBatches) -> None:
+    task = batches.prepare("unresolved-review", "members", 1)["tasks"][0]
+    raw = proposal(task)
+    raw.update(outcome="unresolved", value=None)
+    raw["attempts"][0]["status"] = "unresolved"
+    item = batches.import_results("unresolved-review", [raw])["proposals"][0]
+    with pytest.raises(ValueError, match="Unresolved member"):
+        accept(batches, "unresolved-review", item)
+    assert not batches.show("unresolved-review")["reviews"]
 
 
 @pytest.mark.parametrize(
@@ -597,3 +616,448 @@ def test_cli_and_ui_use_shared_batches(review_service: ReviewService) -> None:
             ).status_code
             == 403
         )
+
+
+def test_old_sample_is_invalidated_without_losing_individual_reviews(
+    batches: ResearchBatches,
+) -> None:
+    task = batches.prepare("old-sample", "members", 1)["tasks"][0]
+    raw = proposal(task)
+    raw["identity"] = {
+        "name": task["context"]["member"]["display_name"],
+        "date_of_birth": "1970-01-01",
+        "party": "Labor",
+        "evidence_refs": {},
+    }
+    official = evidence(
+        task["review_id"],
+        "https://www.aph.gov.au/member/m0",
+        {
+            "aph_id": "m0",
+            "date_of_birth": "1970-01-01",
+            "party": "Labor",
+        },
+    )
+    raw["evidence"] = [
+        official,
+        evidence(
+            task["review_id"], "https://www.wikidata.org/wiki/Q1", {"wikidata_id": "Q1"}
+        ),
+    ]
+    raw["identity"]["evidence_refs"] = {
+        "date_of_birth": [official["evidence_id"]],
+        "party": [official["evidence_id"]],
+    }
+    state = batches.import_results("old-sample", [raw])
+    snapshot_path = batches.path("old-sample") / "proposals-0001.json"
+    snapshot = json.loads(snapshot_path.read_bytes())
+    snapshot["proposals"][0]["eligibility_reasons"] = []
+    snapshot["content_sha256"] = _digest(snapshot["proposals"])
+    snapshot["sample"] = [state["proposals"][0]["proposal_id"]]
+    snapshot_path.write_text(json.dumps(snapshot), encoding="utf-8")
+    item = batches.show("old-sample")["proposals"][0]
+    accept(batches, "old-sample", item)
+    original = snapshot_path.read_bytes()
+    state = batches.show("old-sample")
+    assert state["sample_approval_blockers"] and not state["sample_passed"]
+    with pytest.raises(ValueError, match="eligibility changed"):
+        batches.retain("old-sample", approve_sampled=True)
+    assert batches.retain("old-sample")["retained"] == 2
+    assert snapshot_path.read_bytes() == original
+
+
+def test_unrelated_ledger_changes_and_later_subsets(
+    review_service: ReviewService,
+    tmp_path: Path,
+) -> None:
+    from apemap.review.integration import capture_review_sources
+
+    with get_connection(review_service.db_path) as conn:
+        conn.execute(
+            "INSERT INTO members (member_id, family_name, given_name, display_name, aph_id) VALUES ('aph-other', 'Person', 'Other', 'Other Person', 'OTHER')"
+        )
+        capture_review_sources(conn)
+    batches = ResearchBatches(review_service)
+    tasks = batches.prepare("subsets", "members", 2)["tasks"]
+    state = batches.import_results(
+        "subsets", [proposal(task, i + 10) for i, task in enumerate(tasks)]
+    )
+    unrelated = build_review_event(
+        school_review_id("Unrelated School"),
+        "research",
+        {"recorded_name": "Unrelated School"},
+        reviewer="Test reviewer",
+        notes="Unrelated context",
+        source_url="https://example.org/source",
+    )
+    append_events(
+        review_service.log_path,
+        [unrelated],
+        expected_revision=review_service.review_revision(),
+    )
+    for i, item in enumerate(state["proposals"]):
+        accept(batches, "subsets", item)
+        batches.retain("subsets")
+        result = batches.preview(
+            "subsets", tmp_path / f"subset-{i}.json", reviewer="Test reviewer"
+        )
+        assert len(result["preview"]["events"]) == 1
+        applied = batches.apply(
+            "subsets", Path(result["preview_path"]), result["sha256"]
+        )
+        assert applied["new_events"] == 1
+        assert (
+            applied["queue_changes"]["canonical_after"]["missing_wikidata_id"] == 1 - i
+        )
+    assert len(batches.show("subsets")["applied_proposals"]) == 2
+
+
+def test_receipt_recovery_is_idempotent(
+    review_service: ReviewService,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from apemap.review import research_batches as module
+
+    batches = ResearchBatches(review_service)
+    task = batches.prepare("receipt", "members", 1)["tasks"][0]
+    item = batches.import_results("receipt", [proposal(task, 12345)])["proposals"][0]
+    accept(batches, "receipt", item)
+    batches.retain("receipt")
+    result = batches.preview(
+        "receipt", tmp_path / "receipt-preview.json", reviewer="Test reviewer"
+    )
+    original_write = module._write
+
+    def fail_receipt(path: Path, value: Any) -> None:
+        if path.name.startswith("application-"):
+            raise OSError("Simulated receipt failure")
+        original_write(path, value)
+
+    monkeypatch.setattr(module, "_write", fail_receipt)
+    first = batches.apply("receipt", Path(result["preview_path"]), result["sha256"])
+    assert first["applied"] and first["receipt_error"]
+    original_ledger = review_service.log_path.read_bytes()
+    monkeypatch.setattr(module, "_write", original_write)
+    for _ in range(2):
+        recovered = batches.apply(
+            "receipt", Path(result["preview_path"]), result["sha256"]
+        )
+        assert recovered["already_applied"] and recovered["new_events"] == 0
+        assert recovered["queue_changes"] == first["queue_changes"]
+        assert review_service.log_path.read_bytes() == original_ledger
+    assert batches.show("receipt")["applications"][0]["recovered"]
+
+
+def test_postcommit_database_failure_reports_saved_decisions_and_recovers(
+    review_service: ReviewService,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from duckdb import IOException
+
+    batches = ResearchBatches(review_service)
+    task = batches.prepare("measurement-recovery", "members", 1)["tasks"][0]
+    item = batches.import_results("measurement-recovery", [proposal(task, 12345)])[
+        "proposals"
+    ][0]
+    accept(batches, "measurement-recovery", item)
+    batches.retain("measurement-recovery")
+    preview = batches.preview(
+        "measurement-recovery",
+        tmp_path / "measurement-preview.json",
+        reviewer="Test reviewer",
+    )
+    snapshot = batches._queue_snapshot
+
+    def fail_after_commit(kind: str, events: list[Any]) -> dict[str, Any]:
+        if events:
+            raise IOException("Simulated database lock after commit")
+        return snapshot(kind, events)
+
+    monkeypatch.setattr(batches, "_queue_snapshot", fail_after_commit)
+    applied = batches.apply(
+        "measurement-recovery", Path(preview["preview_path"]), preview["sha256"]
+    )
+    assert applied["applied"] and applied["receipt_error"]
+    assert "queue_changes" not in applied
+    original = review_service.log_path.read_bytes()
+    monkeypatch.setattr(batches, "_queue_snapshot", snapshot)
+    recovered = batches.apply(
+        "measurement-recovery", Path(preview["preview_path"]), preview["sha256"]
+    )
+    assert recovered["new_events"] == 0 and recovered["already_applied"]
+    assert (
+        recovered["queue_changes"] == preview["preview"]["research_queue_expectation"]
+    )
+    assert review_service.log_path.read_bytes() == original
+
+
+def test_explicit_revalidation_binds_original_sources_and_rechecks_generic_apply(
+    review_service: ReviewService,
+    tmp_path: Path,
+) -> None:
+    original_dir = review_service.external_dir
+    register = original_dir / "school-location-2025.csv"
+    register.rename(original_dir / "school-location-2022.csv")
+    batches = ResearchBatches(review_service)
+    task = batches.prepare("revalidate", "members", 1)["tasks"][0]
+    item = batches.import_results("revalidate", [proposal(task, 12345)])["proposals"][0]
+    accept(batches, "revalidate", item)
+    batches.retain("revalidate")
+    current_dir = tmp_path / "current-register"
+    current_dir.mkdir()
+    current = current_dir / "school-location-2025.csv"
+    current.write_bytes((original_dir / "school-location-2022.csv").read_bytes())
+    service = ReviewService(
+        log_path=review_service.log_path,
+        db_path=review_service.db_path,
+        external_dir=current_dir,
+    )
+    continued = ResearchBatches(service)
+    frozen = {
+        file.name: file.read_bytes()
+        for file in batches.path("revalidate").iterdir()
+        if file.is_file()
+    }
+    with pytest.raises(StaleReviewError, match="Source data"):
+        continued.preview(
+            "revalidate", tmp_path / "strict.json", reviewer="Test reviewer"
+        )
+    result = continued.revalidate(
+        "revalidate",
+        original_external_dir=original_dir,
+        destination=tmp_path / "revalidated.json",
+        reviewer="Test reviewer",
+    )
+    binding = result["preview"]["research_batch"]["revalidation"]
+    assert binding["original_source_revision"] != binding["current_source_revision"]
+    assert frozen == {
+        file.name: file.read_bytes()
+        for file in batches.path("revalidate").iterdir()
+        if file.is_file()
+    }
+    source = original_dir / "school-location-2022.csv"
+    old = source.read_bytes()
+    source.write_bytes(old.replace(b"Test High", b"Next High"))
+    with pytest.raises(StaleReviewError, match="Original research sources"):
+        apply_preview(service, Path(result["preview_path"]), result["sha256"])
+    assert not service.events()
+    source.write_bytes(old)
+    applied = continued.apply(
+        "revalidate", Path(result["preview_path"]), result["sha256"]
+    )
+    assert applied["new_events"] == 1
+
+
+def test_changed_related_heads_and_edited_original_ledger_block_reuse(
+    review_service: ReviewService,
+    tmp_path: Path,
+) -> None:
+    baseline = build_review_event(
+        school_review_id("Unrelated School"),
+        "research",
+        {"recorded_name": "Unrelated School"},
+        reviewer="Test reviewer",
+        notes="Original",
+        source_url="https://example.org/source",
+    )
+    append_events(
+        review_service.log_path,
+        [baseline],
+        expected_revision=review_service.review_revision(),
+    )
+    batches = ResearchBatches(review_service)
+    task = batches.prepare("changed-heads", "members", 1)["tasks"][0]
+    item = batches.import_results("changed-heads", [proposal(task, 12345)])[
+        "proposals"
+    ][0]
+    accept(batches, "changed-heads", item)
+    batches.retain("changed-heads")
+    original = review_service.log_path.read_bytes()
+    changed = build_review_event(
+        "member:test:date_of_birth",
+        "accept",
+        {"aph_id": "test", "field": "date_of_birth", "value": "1980-01-01"},
+        reviewer="Test reviewer",
+        source_url="https://example.org/source",
+    )
+    append_events(
+        review_service.log_path,
+        [changed],
+        expected_revision=review_service.review_revision(),
+    )
+    with pytest.raises(StaleReviewError, match="Related decisions"):
+        batches.preview(
+            "changed-heads", tmp_path / "changed.json", reviewer="Test reviewer"
+        )
+    review_service.log_path.write_bytes(original.replace(b"Original", b"Replaced"))
+    with pytest.raises(StaleReviewError, match="exact ledger prefix"):
+        batches.preview(
+            "changed-heads", tmp_path / "edited.json", reviewer="Test reviewer"
+        )
+
+
+def test_school_revalidation_allows_status_enrichment_but_not_target_identity_changes(
+    review_service: ReviewService,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from apemap.review.integration import capture_review_sources
+
+    with get_connection(review_service.db_path) as conn:
+        conn.execute(
+            "UPDATE institutions SET acara_id = NULL, school_name = 'Historical School'"
+        )
+        conn.execute(
+            "UPDATE member_education SET school_name_as_recorded = 'Historical School'"
+        )
+        capture_review_sources(conn)
+    original_dir = review_service.external_dir
+    (original_dir / "school-location-2025.csv").rename(
+        original_dir / "school-location-2022.csv"
+    )
+    batches = ResearchBatches(review_service)
+    rows = [
+        row
+        for row in review_service.candidates("school")
+        if row["review_id"] == school_review_id("Historical School")
+    ]
+    monkeypatch.setattr(review_service, "candidates", lambda kind: rows)
+    task = batches.prepare("school-revalidation", "schools", 1)["tasks"][0]
+    raw = school_proposal(task)
+    raw["outcome"] = "rename"
+    raw["payload"] = {
+        "recorded_name": "Historical School",
+        "institution_ref": "acara:1",
+        "relationship_type": "rename",
+        "evidence_refs": [raw["evidence"][0]["evidence_id"]],
+    }
+    item = batches.import_results("school-revalidation", [raw])["proposals"][0]
+    accept(batches, "school-revalidation", item)
+    batches.retain("school-revalidation")
+    current_dir = tmp_path / "current-register"
+    current_dir.mkdir()
+    current = current_dir / "school-location-2025.csv"
+    source = (original_dir / "school-location-2022.csv").read_bytes()
+    current.write_bytes(source)
+    service = ReviewService(
+        log_path=review_service.log_path,
+        db_path=review_service.db_path,
+        external_dir=current_dir,
+    )
+    continued = ResearchBatches(service)
+    result = continued.revalidate(
+        "school-revalidation",
+        original_external_dir=original_dir,
+        destination=tmp_path / "school-revalidated.json",
+        reviewer="Test reviewer",
+    )
+    target = result["preview"]["research_batch"]["revalidation"]["target_metadata"][
+        "acara:1"
+    ]
+    assert target["original"]["institution_status"] == "unknown"
+    assert target["current"]["institution_status"] == "current"
+    current.write_bytes(source.replace(b"Test High", b"Next High"))
+    with pytest.raises(StaleReviewError, match="identity or location"):
+        continued.revalidate(
+            "school-revalidation",
+            original_external_dir=original_dir,
+            destination=tmp_path / "different-target.json",
+            reviewer="Test reviewer",
+        )
+    current.write_bytes(source)
+    applied = continued.apply(
+        "school-revalidation", Path(result["preview_path"]), result["sha256"]
+    )
+    assert applied["queue_changes"]["canonical_after"]["mapped_assertions"] == 1
+    assert applied["events"][0]["payload"]["evidence_refs"] == [
+        e["evidence_id"] for e in raw["evidence"]
+    ]
+    assert (
+        item["proposal_id"]
+        in continued.show("school-revalidation")["applied_proposals"]
+    )
+
+
+def test_closure_research_keeps_canonical_attendance_unresolved(
+    review_service: ReviewService,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from apemap.review.integration import capture_review_sources
+
+    with get_connection(review_service.db_path) as conn:
+        conn.execute(
+            "UPDATE institutions SET acara_id = NULL, school_name = 'Historical School'"
+        )
+        conn.execute(
+            "UPDATE member_education SET school_name_as_recorded = 'Historical School'"
+        )
+        capture_review_sources(conn)
+    batches = ResearchBatches(review_service)
+    rows = [
+        row
+        for row in review_service.candidates("school")
+        if row["review_id"] == school_review_id("Historical School")
+    ]
+    monkeypatch.setattr(review_service, "candidates", lambda kind: rows)
+    task = batches.prepare("unmapped-closure", "schools", 1)["tasks"][0]
+    item = batches.import_results("unmapped-closure", [school_proposal(task)])[
+        "proposals"
+    ][0]
+    accept(batches, "unmapped-closure", item)
+    batches.retain("unmapped-closure")
+    result = batches.preview(
+        "unmapped-closure", tmp_path / "closure-preview.json", reviewer="Test reviewer"
+    )
+    changes = batches.apply(
+        "unmapped-closure", Path(result["preview_path"]), result["sha256"]
+    )["queue_changes"]
+    assert changes["pending_after"] < changes["pending_before"]
+    assert changes["status_counts_after"]["needs_individual_review"] == 1
+    assert changes["canonical_before"]["unresolved_assertions"] == 1
+    assert changes["canonical_after"]["unresolved_assertions"] == 1
+
+
+def test_historical_member_exports_compare_identity_and_service_facts_only() -> None:
+    current: dict[str, Any] = {
+        "member": {
+            "aph_id": "test",
+            "display_name": "Test Person",
+            "aliases": [],
+            "date_of_birth": "1970-01-01",
+        },
+        "assertion": {"field": "wikidata_id", "effective_value": None},
+        "services": [
+            {
+                "service_id": "srv-test",
+                "member_id": "aph-test",
+                "party_abbrev": "ALP",
+                "parliament_number": 48,
+                "chamber": "representatives",
+                "party": "Labor",
+                "electorate": "Seat",
+                "state_or_territory": "TAS",
+                "service_start": "2025-07-22",
+                "service_end": None,
+                "source_url": "https://example.org/service",
+            }
+        ],
+    }
+    historical = deepcopy(current)
+    historical["assertion"].update(
+        proposed_value="Q123",
+        source_value=None,
+        comparison="missing",
+        source_url="https://example.org/profile",
+    )
+    for key in ("service_id", "member_id", "party_abbrev"):
+        historical["services"][0].pop(key)
+    assert ResearchBatches._normalized_context(
+        historical
+    ) == ResearchBatches._normalized_context(current)
+    historical["services"][0]["party"] = "Independent"
+    assert ResearchBatches._normalized_context(
+        historical
+    ) != ResearchBatches._normalized_context(current)

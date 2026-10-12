@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import re
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -276,6 +277,7 @@ def member_candidates(
     *,
     review_id: str | None = None,
     include_suppressed: bool = False,
+    decision_heads: Mapping[str, Sequence[ReviewEvent]] | None = None,
 ) -> list[dict[str, Any]]:
     """Share source baselines and every cached alternative across queue and detail."""
     aph_id = str(member["aph_id"])
@@ -296,7 +298,11 @@ def member_candidates(
     ]
     if not caches:
         caches = [(None, "aph_id", {})]
-    is_ambiguous_member = check_identity_ambiguity(caches, events or [], aph_id)
+    if decision_heads is None:
+        decision_heads = active_heads(events)
+    is_ambiguous_member = check_identity_ambiguity(
+        caches, events, aph_id, decision_heads=decision_heads
+    )
     for filename, kind, cached in caches:
         for member_field in ("date_of_birth", "gender", "wikidata_id"):
             case_id = member_review_id(aph_id, member_field)
@@ -304,7 +310,11 @@ def member_candidates(
                 continue
             source_val = member.get(member_field)
             effective_val, providing_event, is_explicit_null = effective_member_value(
-                events or [], aph_id, member_field, source_val
+                events,
+                aph_id,
+                member_field,
+                source_val,
+                decision_heads=decision_heads,
             )
             retained_id = providing_event.decision_id if providing_event else None
             proposed = cached.get(member_field)
@@ -404,6 +414,7 @@ def build_candidates(
                 )
             )
         result[school_item["candidate_id"]] = school_item
+    decision_heads: dict[str, list[ReviewEvent]] | None = None
     for member in members:
         aph_id = member.get("aph_id")
         if not aph_id:
@@ -430,8 +441,15 @@ def build_candidates(
             result[item["candidate_id"]] = item
         if review_id is not None and not review_id.startswith("member:"):
             continue
+        if decision_heads is None:
+            decision_heads = active_heads(events or [])
         for item in member_candidates(
-            member, parliaments, events or [], cache_dir, review_id=review_id
+            member,
+            parliaments,
+            events or [],
+            cache_dir,
+            review_id=review_id,
+            decision_heads=decision_heads,
         ):
             result[item["candidate_id"]] = item
     grouped_services: dict[tuple[str, int], list[dict[str, Any]]] = {}
