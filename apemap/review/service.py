@@ -721,13 +721,16 @@ class ReviewService:
                 return dict(heads[0].payload)
         return None
 
-    def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
+    def institution_resolver(
+        self, *, events: list[ReviewEvent] | None = None
+    ) -> Callable[[str], dict[str, Any] | None]:
         """Snapshot reference metadata once for a single presentation request."""
         source_revision = self._register_revision()
         with self._register_lock:
             self._build_institution_lookup_rows(source_revision)
             references = dict(self._lookup_refs)
-        for heads in active_heads(self.events(allow_conflicts=True)).values():
+        selected = self.events(allow_conflicts=True) if events is None else events
+        for heads in active_heads(selected).values():
             if len(heads) == 1:
                 event = heads[0]
                 if (
@@ -865,7 +868,7 @@ class ReviewService:
         if not selected:
             return {}
         return school_resolution_progress(
-            conn, events, selected, resolve=self.institution_resolver()
+            conn, events, selected, resolve=self.institution_resolver(events=events)
         )
 
     def history(self, review_id: str) -> list[dict[str, Any]]:

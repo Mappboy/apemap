@@ -1,7 +1,9 @@
-# Pending issue #77 pilot
+# Issue #77 research pilot
+
+## Original delivery: 12 October 2026
 
 Prepared and researched on 12 October 2026 (Australia/Hobart). These versioned
-artifacts contain proposals only: **zero reviews, zero applied pilot decisions**.
+artifacts contained proposals only at delivery: **zero reviews, zero applied pilot decisions**.
 Task snapshots include the existing local source and decision revisions, including
 the user's uncommitted decision history. Authority ledgers are unchanged by this pilot.
 
@@ -43,11 +45,11 @@ All five schools need individual disposition of every evidence item:
 Prospective effects, conditional on human review, are ten member Wikidata
 corrections, three school mappings, two manual definitions and one retained
 closure conclusion (16 ledger events). St Thomas remains unresolved. These are
-proposal counts, not measured queue reductions. The local canonical projection
-cannot currently validate because existing decision `school:5456673f9606de0b`
-references `acara:40335`, absent from the supplied local register. Existing history
+proposal counts, not measured queue reductions. At delivery the local canonical
+projection could not validate because existing decision `school:5456673f9606de0b`
+referenced `acara:40335`, absent from the supplied local register. Existing history
 was preserved. Exact queue effects must be previewed after that baseline issue
-is resolved; no dataset release was built or published.
+is resolved; no dataset release was published.
 
 Evidence records preserve source titles, URLs, retrieval times, claims and brief
 quoted excerpts or paraphrases, with agent provenance. Sources include public
@@ -55,3 +57,76 @@ parliamentary records, Wikidata, schools and education directories; they remain
 individually attributed in each proposal. See
 [the workflow guide](../../../../docs/guided-research-batches.md) for commands,
 review rules and separate evidence/decision application.
+
+## Reviewed follow-up: 13 October 2026
+
+Cam recorded six accepted member reviews: Zoe Daniel, Anthony Byrne, George
+Brandis, Kerryn Phelps, Tony Windsor and Luke Hartsuyker. All five sample items
+passed, but this follow-up applies only individually accepted proposals. Peter
+Dutton, Sussan Ley, Patrick Farmer and Sharon Grierson remain unreviewed.
+
+Four school proposals have individual acceptance: MacKillop College's rename,
+Geilston Bay High School's closure, St Andrew Muar Johor's manual mapping and
+Five Dock's Rosebank College mapping. St Thomas remains unreviewed and unresolved.
+The original proposals, prior attempts and saved source inspection records remain
+intact.
+
+The original source hash still reproduces with `data/external`. The frozen decision
+revision is an exact 324-event prefix of the 326-event ledger audited on 13 October.
+Only unrelated Beerwah and Cheltenham mappings were appended; all ten accepted
+proposal decision heads and both proposed manual-definition heads are unchanged.
+The 21 approved member evidence records were already retained at audit; the 19
+approved school evidence records still required retention.
+
+The explicit pinned register at `data/raw/historical/acara` contains Alice Springs
+High School's `acara:40335` profiles for 2008-2010. Its retained CSV and JSON hashes
+match `data/historical-inputs-manifest.json`, and it validates the existing ledger.
+Revalidation compares the reproduced original context with that register before
+making a fresh approval preview. Approved member identity and service facts,
+school attendance context, and target identity, sector, state, type and location
+remain unchanged. MacKillop and Rosebank's register status is enriched from
+`unknown` to `current`.
+
+The selected subset was applied on 13 October 2026 as **12 ledger events**: six
+QID corrections, three school mappings, two manual definitions and one closure
+research event. The six accepted member proposals and all four accepted school
+proposals are applied. Retention appended 19 school evidence records; the 21 member
+records were already retained and deduplicated without another append. Copied-ledger
+rehearsal and actual application produced the same measured results, and repeating
+each exact application appended zero events.
+
+| Measured local result | Before | After |
+| --- | ---: | ---: |
+| Pending member cases | 626 | 620 |
+| Pending school cases | 85 | 81 |
+| Accepted school cases | 219 | 222 |
+| School cases needing individual resolution | 1 | 2 |
+| Member/school decision conflicts | 0 | 0 |
+| Members missing Wikidata IDs | 580 | 574 |
+| Unresolved attendance assertions | 29 | 26 |
+| Unresolved institutions | 25 | 22 |
+
+All 580 members, 352 attendance assertions and 1,754 service intervals were
+preserved. These counts come from actual receipts and regenerated local queues,
+not the earlier projections. The measured local ledger grew from 326 to 338 events
+and preserved every prior byte as an exact prefix. Its baseline includes an
+unrelated, pre-existing uncommitted Cheltenham mapping, which is preserved locally
+but excluded from this PR. The committed PR ledger therefore grows from 325 to 337
+events; the local absolute queue counts above are not clean-checkout counts.
+
+Application receipts preserve the approved hashes and measured queues:
+
+- [Member receipt](issue-77-members-pilot/application-295322d09e7ae7928234a94dbcf0f00d74d3a9ddad62d129c46e56ae712ca99b.json),
+  approval hash `295322d09e7ae7928234a94dbcf0f00d74d3a9ddad62d129c46e56ae712ca99b`.
+- [School receipt](issue-77-schools-pilot/application-c3409cb7e1b19ca5171ab0ea4dc27b824277723c78c3d215140554c9c9b5aef8.json),
+  approval hash `c3409cb7e1b19ca5171ab0ea4dc27b824277723c78c3d215140554c9c9b5aef8`.
+
+Geilston remains unresolved for mapping purposes. Its accepted closure finding
+retains a closed manual institution and a research-needed event without inventing
+a successor or attaching the attendance assertion to a current school. Its queue
+status is `needs_individual_review`, separate from the three accepted mappings.
+
+Follow the [revalidation workflow](../../../../docs/guided-research-batches.md#revalidate-saved-reviews-against-current-inputs)
+with the individually accepted scope. Applying decisions does not publish a dataset
+or update a released website. The [acceptance record](../../../../docs/issue-77-acceptance.md)
+records source provenance, remaining cases and validation.

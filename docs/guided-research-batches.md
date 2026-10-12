@@ -20,7 +20,7 @@ reviewer, run these commands from the repository root and leave the server runni
 
 ```text
 uv sync --extra review-ui
-uv run apemap review serve --port 8777
+uv run apemap review --external-dir data/raw/historical/acara serve --port 8777
 ```
 
 Open [Research batches](http://127.0.0.1:8777/research-batches). The issue #77 pilot
@@ -34,11 +34,24 @@ is already researched; you do not need to prepare it or import results again:
 
 Read the [pilot findings and caveats](../data/reference/review/research/README.md)
 alongside the proposals. The pilot was delivered with no human reviews or applied
-decisions. Its canonical preview has a known baseline blocker: an existing decision
-references `acara:40335`, absent from the supplied local register. Reviews can be
-recorded, but a validated preview is required before application.
+decisions. Cam subsequently accepted six member proposals and four school proposals.
+The four remaining members and St Thomas are unreviewed. These saved reviews are
+separate from decision application. The accepted subset was applied on 13 October
+2026; see the [acceptance record](issue-77-acceptance.md) for measured local results
+and the ledger-baseline caveat.
+
+The original pilot used `data/external`, whose 2022 register omits the historical
+Alice Springs High School ID `acara:40335` referenced by an existing decision.
+The explicit `data/raw/historical/acara` register above includes its 2008-2010
+profiles and validates that decision. Changing registers requires the revalidation
+workflow below; the reviewer does not silently substitute sources.
 
 ### 2. Inspect the proposal and every attached source
+
+The batch shows one proposal at a time. Use the proposal list, status filters and
+**Previous**/**Next** navigation to select a case. **Save and next** records the
+current review before advancing. The batch summary keeps accepted, unreviewed,
+research-needed and applied counts separate.
 
 Read the outcome and reasoning. Expand **Alternatives, mapping payload and model
 attempts** to check the exact QID or institution target, alternatives, manual
@@ -47,7 +60,8 @@ contains the original local context.
 
 For each proposal you review, open every source and check the actual contents
 against the cited claim. The agent's excerpt is a starting point for inspection.
-Record each source inspection using **I inspected this source** and **Source disposition**:
+Record each source inspection using **Inspection completed or access attempted**
+and **Source disposition**:
 
 Each disposition defaults to its saved evidence stance; prior review selections
 take precedence. The saved conclusion is shown beside the source. Defaults leave
@@ -100,12 +114,13 @@ school mapping. Check saved actions in **Review audit**.
 
 ### 4. Retain evidence, then inspect the preview
 
-For members only, if the sample passed and you explicitly approve the named eligible
-remainder, check **Include the eligible unsampled remainder under explicit batch
-approval** on **both** forms. Each form has its own checkbox. Leave both unchecked
-to proceed with individually accepted proposals only. Sampling adds only eligible,
-unreviewed proposals; ineligible proposals need individual acceptance, and rejected
-or research-needed proposals are excluded.
+The shared **Approval scope** defaults to **Individually accepted proposals**.
+It controls both evidence retention and decision preview. For members only, once
+the sample passes, **Named batch approval: eligible unsampled remainder** explicitly
+includes eligible unreviewed proposals. Ineligible proposals still need individual
+acceptance, and rejected or research-needed proposals are excluded. The issue #77
+follow-up uses individually accepted proposals only, even though the member sample
+passed.
 
 Click **Retain approved evidence**. This copies evidence for selected accepted
 proposals to the evidence ledger and preserves agent provenance. It does not apply
@@ -127,14 +142,76 @@ an accepted subset without approving every proposal in the batch.
 When the preview contains the changes you intend, click **Approve and apply this
 exact preview**. This atomically appends decisions to the ledger, preserving prior
 history. The batch's `application-<sha256>.json` receipt records applied decision IDs
-and measured `queue_changes`. Compare those with the preview's expectations;
-prospective counts are not measured results.
+and measured `queue_changes`. Saved previews and receipts remain available after
+reload. Repeating application of the same successfully applied preview recovers
+its receipt instead of appending duplicate decisions. Previously applied proposals
+are excluded from later previews.
+
+If decisions were appended but receipt writing failed, reopen the saved exact
+preview and choose **Recover this application receipt**, or repeat the same CLI
+apply command and approval hash. Recovery appends zero events. A missing receipt
+can only be reconstructed while the preview's source and retained-evidence revisions
+still match; changing those inputs can block recovery even when its decisions are
+already present. Preserve the preview and inputs, and do not submit a new preview
+to duplicate the application. An existing saved receipt remains the audit record.
+
+Compare measured results with the preview's expectations. Pending queue reductions,
+mapped school coverage and research-needed cases describe different outcomes.
+Geilston's accepted closure finding retains a manual definition and an unresolved
+research event; it does not count as a school mapping. Prospective counts are not
+measured results.
 
 Saving decisions does not rebuild DuckDB, update released data or change the website.
 When you intend to produce updated data, follow
 [Decisions to a new release](decisions-to-release.md) to validate, commit, rebuild
 from pinned sources and verify the consumed ledger. Publication requires its own
-review; the pending pilot does not require a dataset release.
+review; applying the pilot does not require a dataset release.
+
+## Revalidate saved reviews against current inputs
+
+Use explicit revalidation when the original source snapshot can still be reproduced
+and the reviewed facts remain unchanged. It preserves the old manifest, proposals,
+source inspections and review timestamps. It does not approve unreviewed proposals.
+
+For issue #77, the original directory is `data/external`; the current register is
+`data/raw/historical/acara`. Revalidation checks the original source hash and ledger
+prefix, current decision heads, member identity and service facts, school attendance
+context, and the identity and classification of proposed institution targets.
+The historical register enriches the two approved ACARA targets' status from
+`unknown` to `current`; their names, sector, state, type and location are unchanged.
+Inspect that source change in the new preview before applying it.
+
+Changed identity, attendance, target facts or manual decisions require a fresh
+research batch and human review. Revalidation cannot replace those reviews or
+authorize a new target. Source, evidence, review or decision changes after a preview
+still invalidate its approval.
+
+In the reviewer, keep **Individually accepted proposals** selected, retain the
+approved evidence, enter the original external directory and choose **Revalidate
+and preview**. Inspect both the revalidation report and the exact events before
+applying the preview.
+
+The same CLI flow uses a fresh output path for each batch:
+
+```powershell
+$Batch = 'issue-77-schools-pilot'
+$Preview = '.cache/issue-77-schools-revalidated-1.json'
+uv run apemap review --external-dir data/raw/historical/acara research-batch retain $Batch
+uv run apemap review --external-dir data/raw/historical/acara research-batch revalidate $Batch --original-external-dir data/external --out $Preview
+```
+
+Read the returned `preview`, including `research_batch.revalidation`, `events`,
+`changes`, `school_assertions` and `research_queue_expectation`. Then apply only
+that file with its returned SHA-256:
+
+```powershell
+uv run apemap review --external-dir data/raw/historical/acara research-batch apply $Batch $Preview --approve SHA256_FROM_REVALIDATION_OUTPUT
+```
+
+Repeat for `issue-77-members-pilot` with a separate new preview path. Omit
+`--approve-sampled` for this follow-up. The selected subset contains six member
+corrections, three school mappings, two manual definitions and one closure research
+event. Dutton, Ley, Farmer, Grierson and St Thomas remain pending review.
 
 ## Prepare and import new research
 
@@ -202,11 +279,13 @@ A closure without a documented successor must not invent a current ACARA target.
 Run commands from the repository root using the same database, register and ledgers
 as the reviewer. Custom `--db-path`, `--external-dir`, `--log-path` and
 `--evidence-path` options belong after `review`, before `research-batch` or `serve`.
+The examples below assume a fresh batch with unchanged sources and decisions.
+For the saved issue #77 reviews, use the explicit revalidation commands above.
 
 First inspect the batch to get the exact proposal and evidence IDs:
 
 ```powershell
-$Batch = 'issue-77-schools-pilot'
+$Batch = 'schools-example'
 uv run apemap review research-batch show $Batch
 ```
 
@@ -244,7 +323,7 @@ For members only, after every sample item passes and you approve the eligible
 remainder, use the member batch ID and add `--approve-sampled` to **both** commands:
 
 ```powershell
-$Batch = 'issue-77-members-pilot'
+$Batch = 'members-example'
 $Preview = '.cache/members-reviewed-preview-1.json'
 uv run apemap review research-batch retain $Batch --approve-sampled
 uv run apemap review research-batch preview $Batch --approve-sampled --out $Preview
@@ -274,20 +353,24 @@ application receipt too.
   preserve the reviewed revision.
 - **Missing retained evidence:** run **Retain approved evidence** (or `retain`) with
   the same sampling scope before previewing.
-- **Source inputs or prior decisions changed since research:** prepare and review
-  a fresh batch using current context. A new preview alone cannot refresh an old
-  research snapshot.
+- **Source inputs or prior decisions changed since research:** use explicit
+  revalidation only when the original sources can be reproduced and reviewed facts
+  are unchanged. Otherwise prepare and review a fresh batch using current context.
+  A regular preview cannot refresh an old research snapshot.
 - **Reviews changed after preview:** generate and inspect a fresh preview at a new
   path, then approve its new hash. Reload stale reviewer forms before recording reviews.
 - **Prior manual decision:** replacement needs individual review and explicit
   **Explicitly replace prior decision** selection, or CLI `--supersedes DECISION_ID`.
   Sampled approval cannot authorize replacement.
 - **Canonical validation error, including the pilot's missing `acara:40335`:**
-  resolve the register/ledger mismatch through the existing
-  [review decision workflow](review-decisions.md), preserving prior events. If the
-  resolution changes source inputs or decisions, prepare and review a fresh batch.
+  supply the explicit pinned register that contains the reviewed identity, such as
+  `--external-dir data/raw/historical/acara` for this pilot, and revalidate saved
+  reviews against it. Do not change a valid historical decision to fit a current-only
+  register. Other corrections use the existing
+  [review decision workflow](review-decisions.md), preserving prior events.
   Apply only after a valid preview can be generated.
 
-The issue #77 pilot contains ten members and five schools. Its proposals remain
-pending human approval; it changes no canonical data or dataset release. Review
-the [pilot record](../data/reference/review/research/README.md) for gaps and prospective effects.
+The issue #77 pilot contains ten members and five schools. Review the
+[pilot record](../data/reference/review/research/README.md) for the reviewed subset,
+application results and remaining gaps. Decision application, rebuilding derived
+data and publishing a dataset remain separate operations.

@@ -1,0 +1,41 @@
+{
+  "applied_at": "2026-10-12T23:10:53.805785+00:00",
+  "approval_sha256": "295322d09e7ae7928234a94dbcf0f00d74d3a9ddad62d129c46e56ae712ca99b",
+  "events": [
+    "e8023927-be63-48a4-9f11-fab6f9837c71",
+    "fdf8a8aa-e598-4167-8d57-ee09db167b10",
+    "774defc7-9bf4-426a-b090-7fb34a4afaf4",
+    "0893398b-223b-4fa1-873a-593310792c78",
+    "4d264c57-c867-41c8-9485-3ebfae9db94d",
+    "45e9a1b9-4734-4e99-80aa-321bb42103b5"
+  ],
+  "queue_changes": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "members": 580,
+      "missing_wikidata_id": 574,
+      "with_wikidata_id": 6
+    },
+    "canonical_before": {
+      "members": 580,
+      "missing_wikidata_id": 580,
+      "with_wikidata_id": 0
+    },
+    "pending_after": 620,
+    "pending_before": 626,
+    "removed_review_ids": [
+      "member:008ch:wikidata_id",
+      "member:008k0:wikidata_id",
+      "member:008w7:wikidata_id",
+      "member:008z0:wikidata_id",
+      "member:009lp:wikidata_id",
+      "member:00amm:wikidata_id"
+    ],
+    "status_counts_after": {
+      "pending": 620
+    },
+    "status_counts_before": {
+      "pending": 626
+    }
+  }
+}

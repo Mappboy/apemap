@@ -1,0 +1,45 @@
+{
+  "applied_at": "2026-10-12T23:13:18.412546+00:00",
+  "approval_sha256": "c3409cb7e1b19ca5171ab0ea4dc27b824277723c78c3d215140554c9c9b5aef8",
+  "events": [
+    "9770e010-ab6d-4d88-a490-90534f0085f2",
+    "f01fc950-063f-4a9d-9fb1-babba0119c72",
+    "b810bdb5-e840-4629-8b7f-0f87c15127cb",
+    "4f52a4bd-0be8-43dd-9185-685715bd52c7",
+    "38cdfac8-0aa1-45a1-8b41-f61b4deeb2ff",
+    "3ee7c98d-95fb-4d2d-9d97-e96fe40da074"
+  ],
+  "queue_changes": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 326,
+      "unresolved_assertions": 26
+    },
+    "canonical_before": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 323,
+      "unresolved_assertions": 29
+    },
+    "pending_after": 81,
+    "pending_before": 85,
+    "removed_review_ids": [
+      "school:09051859847a101d",
+      "school:0cd5c91f4fa92a27",
+      "school:1315d9b754d38040",
+      "school:22994f80163ecdec"
+    ],
+    "status_counts_after": {
+      "accepted": 222,
+      "needs_individual_review": 2,
+      "pending": 81,
+      "rejected": 1
+    },
+    "status_counts_before": {
+      "accepted": 219,
+      "needs_individual_review": 1,
+      "pending": 85,
+      "rejected": 1
+    }
+  }
+}

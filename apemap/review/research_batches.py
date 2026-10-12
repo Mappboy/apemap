@@ -1584,6 +1584,28 @@ class ResearchBatches:
     def _pending(self, kind: str, events: list[ReviewEvent]) -> set[str]:
         return set(self._queue_snapshot(kind, events)["pending"])
 
+    def _receipt_queue_changes(
+        self,
+        source_revision: str,
+        kind: str,
+        baseline: list[ReviewEvent],
+        events: list[ReviewEvent],
+        before: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Measure this append only, while retaining the preview's source binding."""
+        if source_revision != self.service.source_revision(include_evidence=True):
+            raise StaleReviewError(
+                "Source/candidate/evidence data changed before receipt measurement"
+            )
+        if before is None:
+            before = self._queue_snapshot(kind, baseline)
+        after = self._queue_snapshot(kind, baseline + events)
+        if source_revision != self.service.source_revision(include_evidence=True):
+            raise StaleReviewError(
+                "Source/candidate/evidence data changed during receipt measurement"
+            )
+        return self._queue_changes(before, after)
+
     def apply(self, batch_id: str, preview_path: Path, approval: str) -> dict[str, Any]:
         path = self.path(batch_id)
         with _decision_lock(path / "batch.lock"):
@@ -1609,38 +1631,47 @@ class ResearchBatches:
                     raise ValueError(
                         "Preview is only partially applied or differs from saved decisions"
                     )
-                receipt_path = path / f"application-{approval}.json"
-                if receipt_path.exists():
-                    receipt = _read(receipt_path)
-                else:
-                    if preview.get("source_revision") != self.service.source_revision():
-                        raise StaleReviewError(
-                            "Decisions were applied; sources changed before receipt recovery"
-                        )
-                    baseline = self._baseline_events(
-                        {"decision_revision": preview["revision"]}
-                    )
-                    events = [ReviewEvent.from_dict(event) for event in values]
-                    receipt = {
-                        "applied_at": _now(),
-                        "approval_sha256": approval,
-                        "events": [event["decision_id"] for event in values],
-                        "queue_changes": self._queue_changes(
-                            self._queue_snapshot(state["manifest"]["kind"], baseline),
-                            self._queue_snapshot(
-                                state["manifest"]["kind"], baseline + events
-                            ),
-                        ),
-                        "recovered": True,
-                    }
-                    _write(receipt_path, receipt)
-                return {
+                result = {
                     "applied": True,
                     "already_applied": True,
                     "new_events": 0,
                     "events": values,
-                    "queue_changes": receipt["queue_changes"],
                 }
+                receipt_path = path / f"application-{approval}.json"
+                if receipt_path.exists():
+                    receipt = _read(receipt_path)
+                else:
+                    try:
+                        baseline = self._baseline_events(
+                            {"decision_revision": preview["revision"]}
+                        )
+                        events = [ReviewEvent.from_dict(event) for event in values]
+                        receipt = {
+                            "applied_at": _now(),
+                            "approval_sha256": approval,
+                            "events": [event["decision_id"] for event in values],
+                            "queue_changes": self._receipt_queue_changes(
+                                preview["source_revision"],
+                                state["manifest"]["kind"],
+                                baseline,
+                                events,
+                            ),
+                            "recovered": True,
+                        }
+                        _write(receipt_path, receipt)
+                    except (
+                        OSError,
+                        ValueError,
+                        IOException,
+                        ConnectionException,
+                    ) as exc:
+                        result["receipt_error"] = (
+                            "Decisions already applied; restore the preview-bound inputs and repeat this exact application to recover the receipt: "
+                            + str(exc)
+                        )
+                        return result
+                result["queue_changes"] = receipt["queue_changes"]
+                return result
             if (
                 binding.get("batch_id") != batch_id
                 or binding.get("content_sha256") != state["content_sha256"]
@@ -1650,13 +1681,16 @@ class ResearchBatches:
                     "Research contents or reviews changed; preview again"
                 )
             self.validate_preview(preview)
-            before = self._queue_snapshot(
-                state["manifest"]["kind"], self.service.events(allow_conflicts=True)
-            )
+            baseline = self.service.events(allow_conflicts=True)
+            before = self._queue_snapshot(state["manifest"]["kind"], baseline)
             result = apply_preview(self.service, preview_path, approval)
             try:
-                after = self._queue_snapshot(
-                    state["manifest"]["kind"], self.service.events(allow_conflicts=True)
+                result["queue_changes"] = self._receipt_queue_changes(
+                    preview["source_revision"],
+                    state["manifest"]["kind"],
+                    baseline,
+                    [ReviewEvent.from_dict(event) for event in result["events"]],
+                    before,
                 )
             except (OSError, ValueError, IOException, ConnectionException) as exc:
                 result["receipt_error"] = (
@@ -1664,7 +1698,6 @@ class ResearchBatches:
                     + str(exc)
                 )
                 return result
-            result["queue_changes"] = self._queue_changes(before, after)
             receipt = {
                 "applied_at": _now(),
                 "approval_sha256": approval,
