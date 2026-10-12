@@ -603,6 +603,10 @@ def serve_cmd(
 
         try:
             providers = load_providers(research_config)
+            typer.echo(
+                f"Loaded {len(providers)} research providers from {research_config}"
+                f"Providers: {', '.join(providers.keys()) if providers else 'none'}"
+            )
         except (OSError, ValueError) as exc:
             typer.echo(f"Research configuration failed: {exc}", err=True)
             raise typer.Exit(1) from exc
