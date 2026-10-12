@@ -14,6 +14,7 @@ from apemap.review.research_batches import ResearchBatches
 from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError
 from tests.test_research_batch_ui import Controls, prepare_ui
+from tests.test_research_batch_ui import batch_reviewer as batch_reviewer
 from tests.test_research_batches import accept, batches as batches, imported, proposal
 from tests.test_review_service import review_service as review_service
 
@@ -68,7 +69,7 @@ def test_focused_selection_filter_and_save_next(batches: ResearchBatches) -> Non
 
 
 def test_stale_review_retains_draft_and_refreshes_binding(
-    batches: ResearchBatches, monkeypatch: pytest.MonkeyPatch
+    batches: ResearchBatches, monkeypatch: pytest.MonkeyPatch, batch_reviewer: str
 ) -> None:
     item = prepare_ui(batches, monkeypatch)
     client = create_app(batches.service).test_client()
@@ -82,6 +83,7 @@ def test_stale_review_retains_draft_and_refreshes_binding(
         "research",
         {record["evidence_id"]: record["stance"] for record in item["evidence"]},
         notes="Concurrent reviewer found an identity gap",
+        reviewer=batch_reviewer,
     )
     failed = client.post(
         "/research-batches/ui/review/" + item["proposal_id"], data=data

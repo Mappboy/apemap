@@ -577,6 +577,76 @@ def test_real_preview_apply_and_generic_stale_guards(
     )
 
 
+def test_cli_revalidate_forwards_registers_and_individual_scope(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    current_register = tmp_path / "current register"
+    original_register = tmp_path / "original register"
+    preview_path = tmp_path / "revalidated preview.json"
+    existing_files = set(tmp_path.iterdir())
+    calls: list[dict[str, Any]] = []
+
+    def revalidate(
+        batches: ResearchBatches,
+        batch_id: str,
+        *,
+        original_external_dir: Path,
+        destination: Path,
+        approve_sampled: bool = False,
+        reviewer: str | None = None,
+    ) -> dict[str, str]:
+        calls.append(
+            {
+                "batch_id": batch_id,
+                "external_dir": batches.service.external_dir,
+                "original_external_dir": original_external_dir,
+                "destination": destination,
+                "approve_sampled": approve_sampled,
+                "reviewer": reviewer,
+            }
+        )
+        return {"preview_path": str(destination), "sha256": "preview-hash"}
+
+    monkeypatch.setattr(ResearchBatches, "revalidate", revalidate)
+    result = CliRunner().invoke(
+        app,
+        [
+            "review",
+            "--log-path",
+            str(tmp_path / "decisions.jsonl"),
+            "--db-path",
+            str(tmp_path / "review.duckdb"),
+            "--external-dir",
+            str(current_register),
+            "research-batch",
+            "revalidate",
+            "cli-revalidated",
+            "--original-external-dir",
+            str(original_register),
+            "--out",
+            str(preview_path),
+            "--reviewer",
+            "Test reviewer",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert calls == [
+        {
+            "batch_id": "cli-revalidated",
+            "external_dir": current_register.resolve(),
+            "original_external_dir": original_register,
+            "destination": preview_path,
+            "approve_sampled": False,
+            "reviewer": "Test reviewer",
+        }
+    ]
+    assert json.loads(result.output) == {
+        "preview_path": str(preview_path),
+        "sha256": "preview-hash",
+    }
+    assert set(tmp_path.iterdir()) == existing_files
+
+
 def test_cli_and_ui_use_shared_batches(review_service: ReviewService) -> None:
     from apemap.review.gui import create_app
 

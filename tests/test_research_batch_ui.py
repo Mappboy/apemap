@@ -8,12 +8,20 @@ import pytest
 
 pytest.importorskip("flask", reason="Install the review-ui extra for GUI tests")
 
+from apemap.review import research_batches
 from apemap.review.evidence import EvidenceRecord
 from apemap.review.gui import create_app
 from apemap.review.model import school_review_id
 from apemap.review.research_batches import ResearchBatches
 from tests.test_research_batches import batches as batches
 from tests.test_research_batches import proposal, school_proposal
+
+
+@pytest.fixture(autouse=True)
+def batch_reviewer(monkeypatch: pytest.MonkeyPatch) -> str:
+    reviewer = "Test GUI reviewer"
+    monkeypatch.setattr(research_batches, "default_reviewer", lambda: reviewer)
+    return reviewer
 
 
 class Controls(HTMLParser):
@@ -101,7 +109,7 @@ def test_dispositions_default_to_saved_stance_without_claiming_inspection(
 
 
 def test_saved_review_dispositions_and_action_take_precedence(
-    batches: ResearchBatches, monkeypatch: pytest.MonkeyPatch
+    batches: ResearchBatches, monkeypatch: pytest.MonkeyPatch, batch_reviewer: str
 ) -> None:
     item = prepare_ui(batches, monkeypatch)
     inspected = {e["evidence_id"]: "contradicts" for e in item["evidence"]}
@@ -111,6 +119,7 @@ def test_saved_review_dispositions_and_action_take_precedence(
         "research",
         inspected,
         notes="Identity needs research",
+        reviewer=batch_reviewer,
     )
     with create_app(batches.service).test_client() as client:
         page = client.get("/research-batches/ui")
