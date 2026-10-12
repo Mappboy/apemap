@@ -9,6 +9,7 @@ from collections.abc import Callable, Mapping
 import hashlib
 import hmac
 import json
+import logging
 import secrets
 import time
 from pathlib import Path
@@ -38,6 +39,15 @@ from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 from apemap.review.context_evidence import ROLE_TYPES
 from apemap.review.research import ResearchJobs, ResearchProvider
 from apemap.review.scoring import score_candidates
+from apemap.review.diagnostics import (
+    Operation,
+    operation,
+    report_error,
+    terminal_logging,
+    timed,
+)
+
+logger = logging.getLogger(__name__)
 
 PAGE_SIZE = 50
 PREVIEW_TTL = 15 * 60
@@ -582,13 +592,23 @@ def _comparison_members(item: dict[str, Any]) -> list[dict[str, Any]]:
     return members
 
 
+class ReviewApp(Flask):
+    def log_exception(self, exc_info: tuple[Any, Any, Any]) -> None:
+        """Report internal failures without arbitrary exception or request values."""
+        activity = getattr(g, "review_operation", None)
+        if activity is not None:
+            activity.finish(status=500, error=exc_info[1])
+        elif exc_info[1] is not None:
+            report_error("Review request", exc_info[1])
+
+
 def create_app(
     service: ReviewServiceLike,
     *,
     research_providers: dict[str, ResearchProvider] | None = None,
 ) -> Flask:
     """Build an isolated Flask app with no separate decision persistence."""
-    app = Flask(__name__)
+    app = ReviewApp(__name__)
     app.config.update(
         TRUSTED_HOSTS=["127.0.0.1", "localhost"],
         MAX_CONTENT_LENGTH=256 * 1024,
@@ -759,6 +779,33 @@ def create_app(
             "evidence_enabled": callable(getattr(service, "prepare_evidence", None))
             and callable(getattr(service, "save_evidence", None)),
         }
+
+    @app.before_request
+    def request_started() -> None:
+        # Endpoints are code-defined; paths, query strings and bodies may contain
+        # signed previews, credentials or research content and must not be logged.
+        level = (
+            logging.DEBUG
+            if request.endpoint in {"static", "research_status"}
+            else logging.INFO
+        )
+        g.review_operation = Operation(
+            f"Request {request.method} {request.endpoint or 'unmatched route'}",
+            level=level,
+        )
+
+    @app.after_request
+    def request_finished(response: Any) -> Any:
+        activity = getattr(g, "review_operation", None)
+        if activity is not None:
+            activity.finish(status=response.status_code)
+        return response
+
+    @app.teardown_request
+    def request_failed(error: BaseException | None) -> None:
+        activity = getattr(g, "review_operation", None)
+        if activity is not None:
+            activity.finish(error=error)
 
     @app.before_request
     def protect_writes() -> None:
@@ -1145,6 +1192,7 @@ def create_app(
             **evidence_context,
         )
 
+    @timed("Building review queue rows")
     def build_queue_rows() -> list[dict[str, Any]]:
         all_rows = group_school_rows(group_member_rows(service.candidates()))
         decisions = service.school_decisions()
@@ -1257,14 +1305,22 @@ def create_app(
             return build_queue_rows()
         # Hash outside the queue lock. Lookup, details, previews and saves never
         # take this lock or consume this presentation cache.
-        revision = revision_reader()
-        with queue_lock:
+        with operation("Checking review queue revision", level=logging.DEBUG):
+            revision = revision_reader()
+        with operation("Waiting for review queue lock", level=logging.DEBUG):
+            queue_lock.acquire()
+        try:
             if queue_cache is not None and queue_cache[0] == revision:
+                logger.debug("Review queue cache hit (%d rows)", len(queue_cache[1]))
                 return queue_cache[1]
+            logger.info("Review queue cache miss; rebuilding rows")
             rows = build_queue_rows()
             if revision_reader() == revision:
                 queue_cache = (revision, rows)
+            logger.info("Review queue built (%d rows)", len(rows))
             return rows
+        finally:
+            queue_lock.release()
 
     def workspace_navigation(current_id: str, entity: str) -> dict[str, Any]:
         context = dict(getattr(g, "queue_navigation_context", {}))
@@ -2931,20 +2987,32 @@ def serve(
         raise ValueError("Port must be between 1 and 65535")
     if workers < 1:
         raise ValueError("Workers must be a positive integer")
-    app = (
-        create_app(service)
-        if research_providers is None
-        else create_app(service, research_providers=research_providers)
-    )
-    try:
-        waitress_serve(
-            app,
-            host="127.0.0.1",
-            port=port,
-            threads=workers,
-            max_request_body_size=256 * 1024,
+    with terminal_logging():
+        with operation("Initializing review UI"):
+            app = (
+                create_app(service)
+                if research_providers is None
+                else create_app(service, research_providers=research_providers)
+            )
+        logger.info(
+            "Starting review server at http://127.0.0.1:%d with %d workers; "
+            "press Ctrl+C to stop",
+            port,
+            workers,
         )
-    finally:
-        jobs = getattr(app, "extensions", {}).get("research_jobs")
-        if jobs is not None:
-            jobs.close()
+        try:
+            waitress_serve(
+                app,
+                host="127.0.0.1",
+                port=port,
+                threads=workers,
+                max_request_body_size=256 * 1024,
+            )
+        except Exception as exc:
+            report_error("Review server", exc)
+            raise
+        finally:
+            jobs = getattr(app, "extensions", {}).get("research_jobs")
+            if jobs is not None:
+                jobs.close()
+            logger.info("Review server stopped")

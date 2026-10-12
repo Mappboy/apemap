@@ -7,6 +7,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import json
+import logging
 import os
 from pathlib import Path
 import re
@@ -21,6 +22,9 @@ from apemap.constants import DEFAULT_USER_AGENT
 from apemap.review.evidence import EvidenceRecord
 from apemap.review.model import evidence_url
 from apemap.review.store import StaleReviewError
+from apemap.review.diagnostics import operation
+
+logger = logging.getLogger(__name__)
 
 PROVIDERS = {
     "openai": ("OPENAI_API_KEY", "https://api.openai.com/v1/responses"),
@@ -397,9 +401,15 @@ class ResearchJobs:
             copied = deepcopy(context)
             identifier = str(uuid4())
             provider = self.providers[provider_id]
-            future = self.executor.submit(
-                lambda: validate_result(copied, provider.search(deepcopy(copied)))
+            logger.info(
+                "Research job %s queued for provider %s", identifier, provider_id
             )
+
+            def search() -> dict[str, Any]:
+                with operation(f"Research job {identifier}"):
+                    return validate_result(copied, provider.search(deepcopy(copied)))
+
+            future = self.executor.submit(search)
             self.jobs[identifier] = ResearchJob(
                 context["review_id"], provider_id, copied, future
             )

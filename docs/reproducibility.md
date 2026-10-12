@@ -56,6 +56,19 @@ hashes and sizes are checked before copying. An offline workstation can use
 Tracked input CSV/JSON files use LF bytes on every platform. Source snapshots
 are preserved without a refresh; original raw retrieval times were not recorded.
 
+CI's review, pipeline and release-contract jobs also need the longitudinal
+register because reviewed decisions can identify schools closed before 2022.
+During online setup, `uv run python -m apemap.release.ci` restores the standard
+archive, downloads the historical manifest's exact ACARA workbooks, and verifies
+both workbook and converted CSV hashes. It stages a separate register, combined
+input manifest and current review recipe under ignored `data/raw/ci/`; existing
+manifests, recipes and source files remain unchanged. The staged JSON cache uses
+the tracked 2022 cache's own pin, while the 2008–2025 profiles supply historical
+identities. CI then validates the ledger with `--external-dir data/raw/ci/acara`
+and builds strictly offline with `release recipe build --recipe
+data/raw/ci/recipe.json`. These temporary `0.0.0-ci` bundles are never published.
+Changed upstream bytes fail provisioning rather than silently refreshing pins.
+
 Execute the complete pipeline across supported Parliaments (42–48):
 ```bash
 uv run apemap run-all --offline --inputs-manifest data/inputs-manifest.json --strict

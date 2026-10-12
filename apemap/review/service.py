@@ -64,6 +64,7 @@ from apemap.review.member_comparison import (
     normalize_member_value,
 )
 from apemap.review.store import StaleReviewError, append_events, log_revision
+from apemap.review.diagnostics import timed
 from apemap.review.resolution import relationship_conflicts
 from apemap.review.evidence import (
     EvidenceRecord,
@@ -529,6 +530,7 @@ class ReviewService:
         paths = [self.external_dir / name for name in REGISTER_FILES]
         return tuple((str(path), file_digest(path)) for path in paths if path.is_file())
 
+    @timed("Loading school register matcher")
     def matcher(self) -> SchoolMatcher:
         # Cache compiled register data by content, not timestamps: same-size edits
         # and restored modification times must not retain an obsolete register.
@@ -628,6 +630,7 @@ class ReviewService:
             self._lookup_revision = source_revision
         return self._lookup_rows
 
+    @timed("Looking up institutions")
     def lookup_institutions(
         self, query: str, *, limit: int = 20
     ) -> list[dict[str, Any]]:
@@ -664,6 +667,7 @@ class ReviewService:
             dict(row) for _, row in sorted(ranked, key=lambda item: item[0])[:limit]
         ]
 
+    @timed("Hashing review source files")
     def source_revision(self, *, include_evidence: bool = True) -> str:
         paths = [
             path
@@ -811,6 +815,7 @@ class ReviewService:
             ],
         }
 
+    @timed("Loading review candidates")
     def candidates(
         self,
         entity_type: str | None = None,
@@ -891,6 +896,7 @@ class ReviewService:
             if item["review_id"] == review_id
         ]
 
+    @timed("Loading review detail")
     def show(self, review_id: str) -> dict[str, Any]:
         entity = entity_for_review_id(review_id)
         events = self.events(allow_conflicts=True)
@@ -1650,6 +1656,7 @@ class ReviewService:
         ]
         return score_candidates(review_id, proposals, records)
 
+    @timed("Checking review readiness")
     def readiness(self, parliaments: list[int] | None = None) -> dict[str, Any]:
         """Project working decisions in memory; never update the source database."""
         from apemap.db import init_schema
@@ -1893,6 +1900,7 @@ class ReviewService:
             "diagnostics": sorted(set(diagnostics)),
         }
 
+    @timed("Validating canonical preview effects")
     def semantic_diff(
         self,
         before: list[ReviewEvent],
@@ -2050,6 +2058,7 @@ class ReviewService:
         }
         return json_value(result)
 
+    @timed("Preparing review preview")
     def prepare(
         self,
         review_id: str,
@@ -2150,6 +2159,7 @@ class ReviewService:
             }
         return preview
 
+    @timed("Saving review decision")
     def save(self, preview: dict[str, Any]) -> ReviewEvent:
         event = ReviewEvent.from_dict(preview["event"])
 
@@ -2194,6 +2204,7 @@ class ReviewService:
         )
         return event
 
+    @timed("Preparing member review preview")
     def prepare_batch(
         self, aph_id: str, drafts: Sequence[MemberFieldDraft | dict[str, Any]]
     ) -> dict[str, Any]:
@@ -2382,6 +2393,7 @@ class ReviewService:
             "validation_outcome": validation_result,
         }
 
+    @timed("Saving member review decisions")
     def save_batch(self, preview: dict[str, Any]) -> list[ReviewEvent]:
         if preview.get("kind") != "member_batch":
             raise ValueError("Expected a member batch preview")
