@@ -866,6 +866,7 @@ def test_signed_save_token_does_not_repeat_large_canonical_display() -> None:
     }
 
 
+@pytest.mark.integration
 def test_real_service_manual_and_missing_education_preview_leave_database_unchanged(
     tmp_path: Path, database_factory: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:

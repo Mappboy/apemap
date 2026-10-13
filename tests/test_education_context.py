@@ -72,6 +72,7 @@ ORIGINAL: dict[str, Any] = {
 }
 
 
+@pytest.mark.integration
 def test_original_identity_does_not_verify_register_location_or_sector(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -90,6 +91,7 @@ def test_original_identity_does_not_verify_register_location_or_sector(
     assert actual["profile_basis"] == actual["finance_basis"] == "successor_context"
 
 
+@pytest.mark.integration
 def test_verified_school_wide_facts_apply_across_original_aliases(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -121,6 +123,7 @@ def test_verified_school_wide_facts_apply_across_original_aliases(
 @pytest.mark.parametrize(
     "campus,eligible", [("same_campus", True), ("different_campus", False)]
 )
+@pytest.mark.integration
 def test_campus_continuity_has_its_own_evidence(
     context_db: duckdb.DuckDBPyConnection, campus: str, eligible: bool
 ) -> None:
@@ -138,6 +141,7 @@ def test_campus_continuity_has_its_own_evidence(
     )
 
 
+@pytest.mark.integration
 def test_historical_conflicts_suppress_only_affected_dimensions(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -167,6 +171,7 @@ def test_historical_conflicts_suppress_only_affected_dimensions(
     assert actual["detailed_sector_basis"] == "unresolved"
 
 
+@pytest.mark.integration
 def test_contradictory_successor_assumptions_need_review(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -180,6 +185,7 @@ def test_contradictory_successor_assumptions_need_review(
     assert actual["sector_basis"] == "unresolved"
 
 
+@pytest.mark.integration
 def test_frozen_recorded_identity_survives_unicode_backfill(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -193,6 +199,7 @@ def test_frozen_recorded_identity_survives_unicode_backfill(
     assert row(context_db, "missing")["attended_school_id"] is None
 
 
+@pytest.mark.integration
 def test_verified_original_location_wins_over_continuity_disagreement(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -215,6 +222,7 @@ def test_verified_original_location_wins_over_continuity_disagreement(
     assert actual["attendance_longitude"] == 135
 
 
+@pytest.mark.integration
 def test_detailed_historical_evidence_implies_broad_and_detects_cross_alias_conflict(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -242,6 +250,7 @@ def test_detailed_historical_evidence_implies_broad_and_detects_cross_alias_conf
     assert actual["broad_sector"] is actual["detailed_sector"] is None
 
 
+@pytest.mark.integration
 def test_original_reference_survives_contradictory_successor_assumption(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -260,6 +269,7 @@ def test_original_reference_survives_contradictory_successor_assumption(
     assert actual["sector_basis"] == "original_reference"
 
 
+@pytest.mark.integration
 def test_old_review_source_schema_upgrade_preserves_rows(
     context_db: duckdb.DuckDBPyConnection,
 ) -> None:

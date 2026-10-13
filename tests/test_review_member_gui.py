@@ -88,6 +88,7 @@ class MemberPresentation(HTMLParser):
 
 
 @pytest.mark.parametrize("unrelated", ["school", "other_member_conflict"])
+@pytest.mark.integration
 def test_member_page_scopes_decision_annotation_to_its_own_fields(
     review_service: ReviewService, unrelated: str
 ) -> None:
@@ -139,6 +140,7 @@ def test_member_page_scopes_decision_annotation_to_its_own_fields(
     assert hashlib.sha256(review_service.db_path.read_bytes()).hexdigest() == before_db
 
 
+@pytest.mark.integration
 def test_member_batch_preview_save_and_matching_history(
     review_service: ReviewService,
 ) -> None:
@@ -190,6 +192,7 @@ def test_member_batch_preview_save_and_matching_history(
 
 
 @pytest.mark.parametrize("action", ["reject", "research"])
+@pytest.mark.integration
 def test_readable_preview_retains_reviewed_value_when_resolving_conflict(
     review_service: ReviewService, action: str
 ) -> None:
@@ -233,6 +236,7 @@ def test_readable_preview_retains_reviewed_value_when_resolving_conflict(
     assert len(review_service.events(allow_conflicts=True)) == 2
 
 
+@pytest.mark.integration
 def test_candidate_alternatives_are_readable_and_escape_untrusted_text(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -275,6 +279,7 @@ def test_candidate_alternatives_are_readable_and_escape_untrusted_text(
         "retained_decision_id",
     ],
 )
+@pytest.mark.integration
 def test_current_visible_draft_must_equal_signed_preview(
     review_service: ReviewService, changed: str
 ) -> None:
@@ -293,6 +298,7 @@ def test_current_visible_draft_must_equal_signed_preview(
 
 
 @pytest.mark.parametrize("failure", ["busy", "file", "stale"])
+@pytest.mark.integration
 def test_failed_member_save_preserves_draft(
     review_service: ReviewService, monkeypatch: pytest.MonkeyPatch, failure: str
 ) -> None:
@@ -334,6 +340,7 @@ def test_failed_member_save_preserves_draft(
     assert log_revision(review_service.log_path) == before
 
 
+@pytest.mark.integration
 def test_suppressed_missing_proposals_are_context_only(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -351,6 +358,7 @@ def test_suppressed_missing_proposals_are_context_only(
     assert "Fields requiring no decision" in html
 
 
+@pytest.mark.integration
 def test_stale_draft_survives_when_new_evidence_suppresses_field(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -374,6 +382,7 @@ def test_stale_draft_survives_when_new_evidence_suppresses_field(
     assert not review_service.events()
 
 
+@pytest.mark.integration
 def test_legacy_member_links_and_filter_intersection(
     review_service: ReviewService,
 ) -> None:
@@ -391,6 +400,7 @@ def test_legacy_member_links_and_filter_intersection(
     assert "<strong>0</strong> pending" in html
 
 
+@pytest.mark.integration
 def test_unmatched_filter_excludes_mappings_and_preserves_conflicts(
     review_service: ReviewService,
 ) -> None:

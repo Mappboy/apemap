@@ -148,14 +148,26 @@ uv run pytest -m notebook
 uv run pytest --durations=25
 ```
 
-Each test carries an explicit execution category: `unit` for isolated logic with
+Use explicit execution categories: `unit` for isolated logic with
 small local fixtures, or `integration` for multiple components and orchestration.
 `notebook` additionally identifies tests that launch Jupyter kernels; these also
 carry `slow`. Reserve `slow` for tests whose remaining cost cannot reasonably be
 reduced. Markers are registered in `pyproject.toml` and checked strictly. No
-category is excluded by default, and parallel execution is not enabled.
-The [issue #39 measurements](testing-performance.md) record the original and
-updated full-suite and priority-module timings.
+category is excluded by default. The default command runs serially. CI runs
+non-notebook tests on two workers with `--dist=loadfile`, then runs notebook
+execution serially; both commands together retain the complete suite:
+
+```bash
+uv run pytest -n 2 --dist=loadfile -m "not notebook" --durations=30
+uv run pytest -m notebook --durations=10
+```
+
+`loadfile` keeps each module on one worker, with separate worker temporary roots;
+see the [pytest-xdist distribution documentation](https://pytest-xdist.readthedocs.io/en/stable/distribution.html).
+The [issue #88 measurements](testing-performance-issue-88.md) record the current
+Windows and Linux timings, fixture costs, and CI comparison. The earlier
+[issue #39 measurements](testing-performance.md) preserve the original and
+updated priority-module timings.
 
 Tests stay in domain-oriented files under `tests/`. Keep new fixtures small and
 offline; do not ingest the entire research dataset to test orchestration. The
@@ -163,12 +175,21 @@ funding orchestration fixture supplies synthetic, source-native CSVs for all six
 input types, with exact row counts, validation, and rerun assertions.
 
 `tests/conftest.py` supplies an empty canonical `db_conn` and a
-`database_factory`. The CLI, funding, web-release, and Wikimedia tests build
-closed seeded templates once per session using `tests/db_fixtures.py`. Each test
-receives a private file copy and a connection closed by fixture teardown, even
-on failure. Domain seeds stay beside their tests. Never copy an open database
-or share a mutable connection between tests. Schema migration tests still build
+`database_factory`. The CLI, funding, web-release, Wikimedia, and review-service
+tests build closed seeded templates once per session using `tests/db_fixtures.py`.
+Each test receives a private file copy and a connection closed by fixture teardown, even
+on failure. Review-service tests are marked `integration` because they exercise
+projections and persistence against those per-test DuckDB copies. Domain seeds
+stay beside their tests. Never copy an open database or share a mutable connection
+between tests. Explorer audit tests copy a complete prepared release for each
+test, so tampering cannot affect later cases. Schema migration tests still build
 their original legacy layouts explicitly.
+
+Pytest uses one DuckDB query thread for these small fixtures to avoid scheduling
+overhead on machines with many cores. Explicit connection settings take priority.
+This fixture does not change application settings or subprocess/kernel settings;
+concurrent review tests still exercise independent request workers. Full release
+build/verification tests belong to `integration`, including the CLI roundtrip.
 
 The autouse HTTP guard fails immediately on an unmocked `requests.Session`
 request, including clients created by the retry-session helper. Mock clients or
@@ -179,8 +200,11 @@ that extension before running tests in an environment without network access.
 Fixture ingestion must pass `decision_log_path=empty_review_log` (the shared
 private empty-ledger fixture), or an explicit temporary/pinned review log when
 testing decisions. CLI fixtures use `--decision-log`. An autouse fallback also
-redirects ingestion defaults to the private ledger; it is a guard for orchestration
-paths, not a replacement for declaring review state in fixture setup. Tests that
+redirects ingestion defaults to the private ledger and review source caches to
+private APH/Wikimedia paths. Explicit cache fixtures can replace those paths.
+This prevents synthetic reviews from hashing unrelated working caches while
+preserving source-change detection. The guard is not a replacement for declaring
+review state in fixture setup. Tests that
 exercise review validation deliberately select their own nonempty ledger.
 
 Notebook execution tests read a small temporary on-disk DuckDB fixture and verify

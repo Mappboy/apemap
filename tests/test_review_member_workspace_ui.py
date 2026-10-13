@@ -36,6 +36,7 @@ class MemberWorkspace(HTMLParser):
             self.current_details.pop()
 
 
+@pytest.mark.integration
 def test_member_workspace_has_explicit_field_choices_and_collapsed_details(
     review_service: ReviewService,
     member_cache: object,
@@ -65,6 +66,7 @@ def test_member_workspace_has_explicit_field_choices_and_collapsed_details(
     assert 'data-workspace-action="save"' not in html
 
 
+@pytest.mark.integration
 def test_member_workspace_preview_keeps_save_disabled_after_draft_edit(
     review_service: ReviewService,
     member_cache: object,

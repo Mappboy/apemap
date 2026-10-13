@@ -170,6 +170,7 @@ def completed() -> list[ReviewEvent]:
     return [policy(), education("APH-1"), education("APH-2", reference="acara:2")]
 
 
+@pytest.mark.integration
 def test_distinct_members_resolve_individually_and_duplicates_count_once(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -199,6 +200,7 @@ def test_distinct_members_resolve_individually_and_duplicates_count_once(
 @pytest.mark.parametrize(
     "outcome", ["pending", "research", "conflict", "attendance_only"]
 )
+@pytest.mark.integration
 def test_automatic_matches_and_unresolved_decisions_do_not_complete(
     progress_conn: duckdb.DuckDBPyConnection, outcome: str
 ) -> None:
@@ -221,6 +223,7 @@ def test_automatic_matches_and_unresolved_decisions_do_not_complete(
     assert result["resolved_count"] == 1 and result["unresolved_count"] == 1
 
 
+@pytest.mark.integration
 def test_source_and_manual_withdrawals_are_reported_without_blocking_completion(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -252,6 +255,7 @@ def test_source_and_manual_withdrawals_are_reported_without_blocking_completion(
     } == {"aph-2", "aph-3"}
 
 
+@pytest.mark.integration
 def test_manual_claims_outside_source_members_do_not_affect_current_scope(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -262,6 +266,7 @@ def test_manual_claims_outside_source_members_do_not_affect_current_scope(
     assert result["status"] == "resolved_individually" and result["resolved_count"] == 2
 
 
+@pytest.mark.integration
 def test_manual_withdrawal_without_source_inventory_cannot_complete(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -286,6 +291,7 @@ def test_manual_withdrawal_without_source_inventory_cannot_complete(
     assert not result["available"] and result["status"] == "needs_individual_review"
 
 
+@pytest.mark.integration
 def test_mapping_after_withdrawal_requires_live_attendance(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -314,6 +320,7 @@ def test_mapping_after_withdrawal_requires_live_attendance(
 
 
 @pytest.mark.parametrize("missing", [True, False])
+@pytest.mark.integration
 def test_missing_or_empty_inventory_never_completes(
     db_conn: duckdb.DuckDBPyConnection, missing: bool
 ) -> None:
@@ -324,6 +331,7 @@ def test_missing_or_empty_inventory_never_completes(
     assert result["resolved_count"] == 0 and result["assertions"] == []
 
 
+@pytest.mark.integration
 def test_unavailable_target_reopens_review(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -340,6 +348,7 @@ def test_unavailable_target_reopens_review(
     assert unavailable["current_resolution"]["unavailable_institution_ref"] == "acara:2"
 
 
+@pytest.mark.integration
 def test_frozen_inventory_reopens_when_source_build_adds_an_assertion(
     progress_conn: duckdb.DuckDBPyConnection,
 ) -> None:
@@ -363,6 +372,7 @@ def test_frozen_inventory_reopens_when_source_build_adds_an_assertion(
     )
 
 
+@pytest.mark.integration
 def test_show_queue_status_and_exports_share_derived_completion(
     progress_service: ReviewService,
     tmp_path: Path,
@@ -401,6 +411,7 @@ def test_show_queue_status_and_exports_share_derived_completion(
     )
 
 
+@pytest.mark.integration
 def test_preview_normalizes_policy_and_shows_before_after_member_progress(
     progress_service: ReviewService,
 ) -> None:
@@ -438,6 +449,7 @@ def test_preview_normalizes_policy_and_shows_before_after_member_progress(
 
 
 @pytest.mark.parametrize("change", ["member", "source"])
+@pytest.mark.integration
 def test_school_preview_cannot_save_after_progress_changes(
     progress_service: ReviewService,
     change: str,
@@ -475,6 +487,7 @@ def test_school_preview_cannot_save_after_progress_changes(
     assert service.log_path.read_bytes() == before
 
 
+@pytest.mark.integration
 def test_build_exports_the_same_completion_as_live_queue(
     progress_service: ReviewService, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -29,7 +29,7 @@ def create_release_db(db_path: Path) -> Path:
     return db_path
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_build_and_verify_release(tmp_path: Path) -> None:
     """Verify end-to-end build generates all files and verify_release passes cleanly."""
     db_path = create_release_db(tmp_path / "test_aped.duckdb")
@@ -80,7 +80,7 @@ def test_build_and_verify_release(tmp_path: Path) -> None:
     assert report["verified_files_count"] == results["files_count"]
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_release_records_the_consumed_review_snapshot(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -110,7 +110,7 @@ def test_release_records_the_consumed_review_snapshot(
     assert web_metadata["review_snapshot"] == snapshot
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_verify_release_catches_tampering(tmp_path: Path) -> None:
     """verify_release catches modified files, unmanifested files, and restricted leaks."""
     db_path = create_release_db(tmp_path / "test_tamper.duckdb")
@@ -157,7 +157,7 @@ def test_verify_release_catches_tampering(tmp_path: Path) -> None:
     assert any("Restricted finance column" in e for e in rep_leak["errors"])
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_diff_releases(tmp_path: Path) -> None:
     """diff_releases accurately identifies added, removed, modified, and unchanged files."""
     db_path = create_release_db(tmp_path / "test_diff.duckdb")
@@ -206,7 +206,7 @@ def test_diff_releases(tmp_path: Path) -> None:
     assert "data/members.csv" in mod_paths or "web/members.json" in mod_paths
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_cli_release_build_verify_diff(tmp_path: Path) -> None:
     """Test CLI commands for release build, verify, and diff."""
     db_path = create_release_db(tmp_path / "test_cli.duckdb")

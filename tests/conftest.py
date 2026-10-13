@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 import duckdb
 import pytest
@@ -13,16 +14,37 @@ from apemap.db import get_connection
 from tests.db_fixtures import DatabaseFactory, build_template, copy_database
 
 
+@pytest.fixture(scope="session", autouse=True)
+def small_database_threads() -> Iterator[None]:
+    """Avoid parallel-query overhead on tiny fixtures; retain explicit settings."""
+    connect = duckdb.connect
+
+    def fixture_connection(
+        database: str = ":memory:",
+        read_only: bool = False,
+        config: dict[str, Any] | None = None,
+    ) -> duckdb.DuckDBPyConnection:
+        return connect(
+            database, read_only=read_only, config={"threads": 1, **(config or {})}
+        )
+
+    with pytest.MonkeyPatch.context() as patches:
+        patches.setattr(duckdb, "connect", fixture_connection)
+        yield
+
+
 @pytest.fixture(autouse=True)
 def isolate_ingestion_review_log(
-    empty_review_log: Path, monkeypatch: pytest.MonkeyPatch
+    empty_review_log: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Default ingestion to private authority; explicit review fixtures still replay.
+    """Default to private authority and caches; explicit review fixtures still replay.
 
     Reading and snapshot capture must use the same path throughout ingestion,
     even when a developer saves decisions while the test suite is running.
     """
     monkeypatch.setattr("apemap.review.integration.DEFAULT_LOG_PATH", empty_review_log)
+    monkeypatch.setattr("apemap.review.service.RAW_APH_DIR", tmp_path / "aph")
+    monkeypatch.setattr("apemap.review.service.RAW_WIKIMEDIA_DIR", tmp_path / "wiki")
 
 
 @pytest.fixture
@@ -47,6 +69,16 @@ def block_http_requests(monkeypatch: pytest.MonkeyPatch) -> None:
 def canonical_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Initialize the canonical schema once, without sharing an open connection."""
     return build_template(tmp_path_factory.mktemp("canonical") / "empty.duckdb")
+
+
+@pytest.fixture(scope="session")
+def review_db_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build the review fixture database once and keep it closed for copying."""
+    from tests.test_review_service import seed_review_database
+
+    return build_template(
+        tmp_path_factory.mktemp("review") / "seed.duckdb", seed_review_database
+    )
 
 
 @pytest.fixture

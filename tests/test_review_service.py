@@ -152,9 +152,7 @@ def test_changes_during_semantic_diff_invalidate_preview(
 pytestmark = pytest.mark.integration
 
 
-@pytest.fixture
-def review_service(tmp_path: Path, database_factory: DatabaseFactory) -> ReviewService:
-    path, conn = database_factory(None)
+def seed_review_database(conn: duckdb.DuckDBPyConnection) -> None:
     conn.execute(
         "INSERT INTO members (member_id, family_name, given_name, display_name, aph_id, gender, date_of_birth) VALUES ('aph-test', 'Person', 'Test', 'Test Person', 'TEST', 'Male', '1970-01-01')"
     )
@@ -170,6 +168,15 @@ def review_service(tmp_path: Path, database_factory: DatabaseFactory) -> ReviewS
     from apemap.review.integration import capture_review_sources
 
     capture_review_sources(conn)
+
+
+@pytest.fixture
+def review_service(
+    tmp_path: Path,
+    database_factory: DatabaseFactory,
+    review_db_template: Path,
+) -> ReviewService:
+    path, conn = database_factory(review_db_template)
     conn.close()
     external = tmp_path / "external"
     external.mkdir()
@@ -180,6 +187,25 @@ def review_service(tmp_path: Path, database_factory: DatabaseFactory) -> ReviewS
     return ReviewService(
         log_path=tmp_path / "decisions.jsonl", db_path=path, external_dir=external
     )
+
+
+@pytest.mark.parametrize("cache", ["aph", "wiki"])
+def test_private_source_cache_changes_invalidate_review_previews(
+    review_service: ReviewService, tmp_path: Path, cache: str
+) -> None:
+    preview = review_service.prepare(
+        school_review_id("Test High School"),
+        "research",
+        {"recorded_name": "Test High School"},
+        reviewer="Reviewer",
+        notes="Check history",
+    )
+    source = tmp_path / cache / "individuals.json"
+    source.parent.mkdir()
+    source.write_text("[]", encoding="utf-8")
+    with pytest.raises(StaleReviewError, match="Source"):
+        review_service.save(preview)
+    assert not review_service.log_path.exists()
 
 
 def test_member_preview_never_mutates_and_supersession_restores_source(

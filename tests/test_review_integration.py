@@ -121,6 +121,7 @@ def seeded_review(
     return db_conn, SchoolMatcher(external_dir=external)
 
 
+@pytest.mark.integration
 def test_indexed_qid_and_source_restoration_preserve_children_and_indexes(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -164,6 +165,7 @@ def test_indexed_qid_and_source_restoration_preserve_children_and_indexes(
         )
 
 
+@pytest.mark.integration
 def test_detached_child_catalog_and_parent_update_roll_back_together(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -189,6 +191,7 @@ def test_detached_child_catalog_and_parent_update_roll_back_together(
     )
 
 
+@pytest.mark.integration
 def test_reviewed_qid_swap_preserves_uniqueness_and_child_links(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -220,6 +223,7 @@ def test_reviewed_qid_swap_preserves_uniqueness_and_child_links(
     ]
 
 
+@pytest.mark.integration
 def test_manual_optional_fields_and_education_accept_reject_share_replay(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -283,6 +287,7 @@ def test_manual_optional_fields_and_education_accept_reject_share_replay(
     ]
 
 
+@pytest.mark.integration
 def test_compact_projection_ignores_unchanged_typed_values(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -313,6 +318,7 @@ def test_compact_projection_ignores_unchanged_typed_values(
     )
 
 
+@pytest.mark.integration
 def test_read_only_legacy_projection_does_not_hash_blank_recorded_names(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -324,6 +330,7 @@ def test_read_only_legacy_projection_does_not_hash_blank_recorded_names(
     assert projected["member_education"][0]["recorded_school_id"] is None
 
 
+@pytest.mark.integration
 def test_original_context_replay_is_idempotent_and_supersession_clears_facts(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -376,6 +383,7 @@ def test_original_context_replay_is_idempotent_and_supersession_clears_facts(
     ).fetchone() == (school_review_id("First High School"),)
 
 
+@pytest.mark.integration
 def test_consumed_ledger_and_input_manifest_are_archived_exactly(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
     tmp_path: Path,
@@ -430,6 +438,7 @@ def test_consumed_ledger_and_input_manifest_are_archived_exactly(
     )
 
 
+@pytest.mark.integration
 def test_unrelated_registered_reference_does_not_require_fixture_register(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:
@@ -452,6 +461,7 @@ def test_unrelated_registered_reference_does_not_require_fixture_register(
         preview_review_events(conn, [applied], matcher)
 
 
+@pytest.mark.integration
 def test_research_removes_prior_fuzzy_identity_but_preserves_source_attendance(
     seeded_review: tuple[DuckDBPyConnection, SchoolMatcher],
 ) -> None:

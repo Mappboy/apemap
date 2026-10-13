@@ -210,6 +210,7 @@ def guided(client: Any, review_id: str = REVIEW_ID, **changes: Any) -> dict[str,
     }
 
 
+@pytest.mark.integration
 def test_guided_mapping_replaces_earlier_event_after_read_only_preview(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -246,6 +247,7 @@ def test_guided_mapping_replaces_earlier_event_after_read_only_preview(
     assert 'value="alias" selected' in updated
 
 
+@pytest.mark.integration
 def test_guided_successor_original_and_historical_fields_are_scoped_and_clearable(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -309,6 +311,7 @@ def test_guided_successor_original_and_historical_fields_are_scoped_and_clearabl
     )
 
 
+@pytest.mark.integration
 def test_incomplete_historical_location_retains_guided_draft(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -331,6 +334,7 @@ def test_incomplete_historical_location_retains_guided_draft(
 
 
 @pytest.mark.parametrize("action", ["research", "reject"])
+@pytest.mark.integration
 def test_research_rejection_remove_target_but_retain_provenance(
     real_school: tuple[Any, ReviewService], action: str
 ) -> None:
@@ -359,6 +363,7 @@ def test_research_rejection_remove_target_but_retain_provenance(
         ("field_institution_ref", ""),
     ],
 )
+@pytest.mark.integration
 def test_mapping_requires_target_and_relationship(
     real_school: tuple[Any, ReviewService], field: str, value: str
 ) -> None:
@@ -373,6 +378,7 @@ def test_mapping_requires_target_and_relationship(
     assert service.log_path.read_bytes() == baseline
 
 
+@pytest.mark.integration
 def test_mapping_without_source_previews_and_saves_append_only(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -403,6 +409,7 @@ def test_mapping_without_source_previews_and_saves_append_only(
 @pytest.mark.parametrize(
     "source", ["not a URL", "javascript:alert(1)", "https://user:secret@example.org"]
 )
+@pytest.mark.integration
 def test_mapping_rejects_invalid_optional_source(
     real_school: tuple[Any, ReviewService], source: str
 ) -> None:
@@ -418,6 +425,7 @@ def test_mapping_rejects_invalid_optional_source(
 
 
 @pytest.mark.parametrize("snapshot", [False, True])
+@pytest.mark.integration
 def test_parliamentarian_context_uses_source_attendance_and_service(
     real_school: tuple[Any, ReviewService],
     database_factory: DatabaseFactory,
@@ -496,6 +504,7 @@ def test_parliamentarian_context_uses_source_attendance_and_service(
     assert hashlib.sha256(path.read_bytes()).hexdigest() == baseline
 
 
+@pytest.mark.integration
 def test_school_without_database_has_missing_context_and_blocks_mapping_save(
     real_school: tuple[Any, ReviewService],
     tmp_path: Path,
@@ -517,6 +526,7 @@ def test_school_without_database_has_missing_context_and_blocks_mapping_save(
     assert not service.db_path.exists()
 
 
+@pytest.mark.integration
 def test_stale_form_retains_draft_and_requires_fresh_preview(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -544,6 +554,7 @@ def test_stale_form_retains_draft_and_requires_fresh_preview(
     assert client.post(f"/items/{REVIEW_ID}/preview", data=draft).status_code == 200
 
 
+@pytest.mark.integration
 def test_unrelated_decision_does_not_stale_school_form(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -564,6 +575,7 @@ def test_unrelated_decision_does_not_stale_school_form(
     assert service.log_path.read_bytes() == baseline
 
 
+@pytest.mark.integration
 def test_changed_manual_target_refreshes_page_and_retains_draft(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -615,6 +627,7 @@ def test_changed_manual_target_refreshes_page_and_retains_draft(
     assert "data-save-school" not in html
 
 
+@pytest.mark.integration
 def test_unrelated_change_during_preview_retries_without_losing_draft(
     real_school: tuple[Any, ReviewService], monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -644,6 +657,7 @@ def test_unrelated_change_during_preview_retries_without_losing_draft(
     assert len(service.events()) == 2  # No preview writes.
 
 
+@pytest.mark.integration
 def test_guided_conflict_supersedes_every_head(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -673,6 +687,7 @@ def test_guided_conflict_supersedes_every_head(
     )
 
 
+@pytest.mark.integration
 def test_no_js_selection_search_and_source_preserve_draft(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -698,6 +713,7 @@ def test_no_js_selection_search_and_source_preserve_draft(
     assert service.log_path.read_bytes() == baseline
 
 
+@pytest.mark.integration
 def test_form_token_tamper_wrong_item_and_expiration(
     real_school: tuple[Any, ReviewService], monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -756,6 +772,7 @@ def test_queue_groups_before_search_and_parliament_filter() -> None:
     assert len(service.candidates()) == 2
 
 
+@pytest.mark.integration
 def test_exact_manual_resolution_only_accepts_one_active_definition(
     real_school: tuple[Any, ReviewService],
 ) -> None:
@@ -803,6 +820,7 @@ def test_exact_manual_resolution_only_accepts_one_active_definition(
 
 @pytest.mark.parametrize("source", [SOURCE, ""])
 @pytest.mark.parametrize("recorded_name", [NAME, None, "", "missing-column"])
+@pytest.mark.integration
 def test_readable_canonical_preview_leaves_database_unchanged(
     real_school: tuple[Any, ReviewService],
     database_factory: DatabaseFactory,
@@ -850,6 +868,7 @@ def test_readable_canonical_preview_leaves_database_unchanged(
 
 
 @pytest.mark.parametrize("action", ["research", "reject"])
+@pytest.mark.integration
 def test_unresolved_decision_requires_reason(
     real_school: tuple[Any, ReviewService], action: str
 ) -> None:
@@ -869,6 +888,7 @@ def test_unresolved_decision_requires_reason(
     assert len(service.events()) == 1
 
 
+@pytest.mark.integration
 def test_advanced_school_payload_retains_explicit_action(
     real_school: tuple[Any, ReviewService],
 ) -> None:

@@ -16,6 +16,7 @@ from apemap.release import build_release
 from tests.test_analysis import create_analysis_fixture
 
 
+@pytest.mark.integration
 def test_chamber_sectors_keep_missing_and_multiple_attendance(tmp_path: Path) -> None:
     conn = get_connection(create_analysis_fixture(tmp_path / "chambers.duckdb"))
     conn.execute(
@@ -51,6 +52,7 @@ def test_prototype_gate_rejects_unverified_input(tmp_path: Path) -> None:
         build_prototype(tmp_path, tmp_path / "out")
 
 
+@pytest.mark.integration
 def test_release_reference_is_offline_deterministic_and_keeps_unmapped(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

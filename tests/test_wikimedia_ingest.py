@@ -40,6 +40,7 @@ from apemap.review.integration import capture_review_snapshot, review_snapshot_m
 runner = CliRunner()
 
 
+@pytest.mark.integration
 def test_reviewed_qid_takes_precedence_over_autofill_and_can_be_withdrawn(
     tmp_path: Path,
     test_db: tuple[Path, duckdb.DuckDBPyConnection],

@@ -60,6 +60,7 @@ def _token(html: str, name: str) -> str:
     return value
 
 
+@pytest.mark.integration
 def test_nojs_member_research_retain_and_copy_preserve_decision_draft(
     review_service: ReviewService, member_cache: object, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -179,6 +180,7 @@ def test_nojs_member_research_retain_and_copy_preserve_decision_draft(
         jobs.close()
 
 
+@pytest.mark.integration
 def test_nojs_assertion_retain_then_copy_preserves_signed_draft_and_queue_context(
     review_service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -17,6 +17,7 @@ from apemap.review.store import encode_event
 from tests.test_review_concurrency import mapping, service as service
 
 
+@pytest.mark.integration
 def test_queue_reuses_rows_but_refreshes_after_save_and_source_edit(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -44,6 +45,7 @@ def test_queue_reuses_rows_but_refreshes_after_save_and_source_edit(
     assert calls == 3
 
 
+@pytest.mark.integration
 def test_changed_inputs_during_queue_build_are_not_cached(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -65,6 +67,7 @@ def test_changed_inputs_during_queue_build_are_not_cached(
     assert calls == 2
 
 
+@pytest.mark.integration
 def test_concurrent_queue_build_is_shared_without_blocking_lookup(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -110,6 +113,7 @@ def test_concurrent_queue_build_is_shared_without_blocking_lookup(
         "institution_resolver",
     ],
 )
+@pytest.mark.integration
 def test_register_hashing_leaves_other_cache_readers_available(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch, operation: str
 ) -> None:
@@ -139,6 +143,7 @@ def test_register_hashing_leaves_other_cache_readers_available(
         assert blocked.result(15) is not None
 
 
+@pytest.mark.integration
 def test_event_cache_is_content_bound_and_private(
     service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -170,6 +175,7 @@ def test_event_cache_is_content_bound_and_private(
         service.events()
 
 
+@pytest.mark.integration
 def test_permissive_event_cache_never_bypasses_strict_conflict_validation(
     service: ReviewService,
 ) -> None:
@@ -185,6 +191,7 @@ def test_permissive_event_cache_never_bypasses_strict_conflict_validation(
         service.events()
 
 
+@pytest.mark.integration
 def test_assets_are_cached_and_versioned_but_review_pages_are_not(
     service: ReviewService,
 ) -> None:

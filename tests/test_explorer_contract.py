@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -13,8 +15,12 @@ from apemap.release import build_release
 from tests.test_analysis import create_analysis_fixture
 
 
-@pytest.fixture
-def explorer_release(tmp_path: Path) -> Path:
+pytestmark = pytest.mark.integration
+
+
+@pytest.fixture(scope="session")
+def explorer_release_template(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    tmp_path = tmp_path_factory.mktemp("explorer-release")
     conn = get_connection(create_analysis_fixture(tmp_path / "explorer.duckdb"))
     conn.execute(
         "UPDATE institutions SET longitude = 145, latitude = -37 WHERE institution_id != 'school-ind'"
@@ -25,6 +31,35 @@ def explorer_release(tmp_path: Path) -> Path:
     build_release(conn=conn, output_dir=release, parliaments=[47, 48], strict=False)
     conn.close()
     return release
+
+
+@pytest.fixture
+def explorer_release(explorer_release_template: Path, tmp_path: Path) -> Path:
+    return shutil.copytree(explorer_release_template, tmp_path / "release")
+
+
+def _directory_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    for file_path in sorted(path.rglob("*")):
+        if file_path.is_file():
+            digest.update(file_path.relative_to(path).as_posix().encode())
+            digest.update(file_path.read_bytes())
+    return digest.hexdigest()
+
+
+def test_explorer_release_copies_are_independent_and_template_stays_pristine(
+    explorer_release: Path,
+    explorer_release_template: Path,
+    tmp_path: Path,
+) -> None:
+    template_hash = _directory_sha256(explorer_release_template)
+    second_copy = shutil.copytree(explorer_release_template, tmp_path / "second")
+    (explorer_release / "web/results-summary.json").write_text("{}", encoding="utf-8")
+
+    assert (second_copy / "web/results-summary.json").read_bytes() == (
+        explorer_release_template / "web/results-summary.json"
+    ).read_bytes()
+    assert _directory_sha256(explorer_release_template) == template_hash
 
 
 def test_reconciliation_preserves_unmapped_and_changed_service(
