@@ -1,0 +1,281 @@
+{
+  "batch_id": "issue-77-schools-pilot",
+  "cases": [
+    {
+      "prior_proposal": {
+        "alternatives": [
+          {
+            "name": "Rosebank College",
+            "reason": "Located in Five Dock and named as an attended school by a secondary biography; the cited underlying profile still needs independent verification."
+          },
+          {
+            "name": "Domremy College",
+            "reason": "Official site identifies it as a girls’ secondary college at Five Dock; current evidence does not prove Martin attended it."
+          }
+        ],
+        "attempts": [
+          {
+            "gaps": [
+              "Verify the exact school from a primary or directly citable source; the potentially identifying Liberal Party candidate profile cited by the biography could not be opened within this attempt budget."
+            ],
+            "model": "gpt-6-luna",
+            "searches": 3,
+            "source_opens": 6,
+            "status": "unresolved",
+            "token_usage": null
+          }
+        ],
+        "eligibility_reasons": [
+          "School evidence requires individual review"
+        ],
+        "evidence": [
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "attendance",
+            "claim_value": {
+              "attended_status": "attended_unspecified",
+              "level": "secondary",
+              "member": "Dr Fiona Martin",
+              "recorded_school_name": "Five Dock"
+            },
+            "evidence_id": "evidence:c1428ad1cff57c284b4a919b6c0037b179187b1815684cd0689c2cc44e33099b",
+            "excerpt_or_note": "Supplied APH Handbook context records the secondary school as “Five Dock”, with attendance status unconfirmed and no years. It does not give a school name beyond the locality.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:51:26Z",
+            "review_id": "school:22994f80163ecdec",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Parliamentary Handbook API attendance context",
+            "source_type": "official_parliamentary_record",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%27282982%27",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "attendance_context",
+            "claim_value": {
+              "member": "Fiona Martin",
+              "school_localities": [
+                "Five Dock",
+                "Strathfield"
+              ]
+            },
+            "evidence_id": "evidence:75b6b93288fcc9c9ec960c1c0bd73661eee0137d78485669db9a0df6ef61ebcd",
+            "excerpt_or_note": "SBS reports Martin saying: “I went to school at Five Dock and Strathfield.” It confirms the locality but does not identify the school or which locality was secondary.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:51:26Z",
+            "review_id": "school:22994f80163ecdec",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "SBS News report on Fiona Martin and Sally Sitou",
+            "source_type": "news_report",
+            "source_url": "https://www.sbs.com.au/news/article/liberal-mp-fiona-martin-denies-confusing-labors-sally-sitou-with-another-asian-australian/g4brnu91f",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "school_identity",
+            "claim_value": {
+              "address": "121 First Avenue, Five Dock NSW 2046",
+              "school_name": "Domremy College",
+              "school_type": "Catholic secondary school for girls"
+            },
+            "evidence_id": "evidence:ef10163233cc50b7a9d1513ce20b26e1c0022e87722e235c3eb854fb11069b02",
+            "excerpt_or_note": "Official school site identifies an operating girls’ secondary college at Five Dock; this is one plausible candidate for the vague locality-only record.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:51:26Z",
+            "review_id": "school:22994f80163ecdec",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Domremy College official site",
+            "source_type": "school_website",
+            "source_url": "https://www.domremy.catholic.edu.au/",
+            "stance": "contextual",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "school_identity",
+            "claim_value": {
+              "address": "1A Harris Road, Five Dock, NSW",
+              "school_name": "Rosebank College",
+              "school_type": "secondary school"
+            },
+            "evidence_id": "evidence:bb55146c61d0e2d606217df1ca6f0b66b71a6b2e83bdfcdebf4d72ff75cddc48",
+            "excerpt_or_note": "Rosebank College’s 2020 planning document identifies the Five Dock site and describes the school as operating as a secondary college from 1951; a second plausible Five Dock candidate.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:51:26Z",
+            "review_id": "school:22994f80163ecdec",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Rosebank College Statement of Heritage Impact",
+            "source_type": "planning_document",
+            "source_url": "https://apps.planningportal.nsw.gov.au/prweb/PRRestService/DocMgmt/v1/PublicDocuments/DATA-WORKATTACH-FILE%20PEC-DPE-EP-WORK%20PAN-16048%2120200601T063214.021%20GMT",
+            "stance": "contextual",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "profile_proxy",
+            "claim_value": {
+              "claimed_locality": "Five Dock",
+              "claimed_school": "Rosebank College",
+              "member": "Fiona Martin"
+            },
+            "evidence_id": "evidence:d59bfee99faddf3cb8e4ac1cd3112073b89c5894b17c38ba9172fea7c8271c12",
+            "excerpt_or_note": "The opened biography states that Martin attended Rosebank College in Five Dock after Santa Sabina College in Strathfield, but this is secondary reporting and the underlying cited source was not independently opened within the source budget.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-11T22:51:26Z",
+            "review_id": "school:22994f80163ecdec",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Fiona Martin biography",
+            "source_type": "encyclopedia",
+            "source_url": "https://en.wikipedia.org/wiki/Fiona_Martin",
+            "stance": "contextual",
+            "temporal_relevance": null
+          }
+        ],
+        "identity": {
+          "evidence_refs": {
+            "candidate_domremy": [
+              "evidence:ef10163233cc50b7a9d1513ce20b26e1c0022e87722e235c3eb854fb11069b02"
+            ],
+            "candidate_rosebank": [
+              "evidence:bb55146c61d0e2d606217df1ca6f0b66b71a6b2e83bdfcdebf4d72ff75cddc48",
+              "evidence:d59bfee99faddf3cb8e4ac1cd3112073b89c5894b17c38ba9172fea7c8271c12"
+            ],
+            "recorded_school_name": [
+              "evidence:c1428ad1cff57c284b4a919b6c0037b179187b1815684cd0689c2cc44e33099b"
+            ],
+            "school_locality": [
+              "evidence:75b6b93288fcc9c9ec960c1c0bd73661eee0137d78485669db9a0df6ef61ebcd"
+            ]
+          },
+          "locality": "Five Dock, NSW",
+          "name": "Five Dock"
+        },
+        "manual_institutions": [],
+        "outcome": "unresolved",
+        "payload": {
+          "recorded_name": "Five Dock",
+          "resolution_reason": "ambiguous_name"
+        },
+        "proposal_id": "proposal:4b0c4d0f16b2f374cf069ef44e71529c265fe22ea682be5ffc6c5b4dc9e3792b",
+        "reasoning": "The supplied APH record gives only “Five Dock” for a secondary school, and SBS reports Martin saying she attended school in Five Dock and Strathfield without naming either school. Both Domremy College and Rosebank College are documented secondary schools in Five Dock. A secondary biography specifically attributes Rosebank College to Martin, but its cited underlying profile was not independently verified within this search/open budget; the vague evidence cannot safely distinguish the candidates.",
+        "review_id": "school:22994f80163ecdec",
+        "value": null
+      },
+      "task": {
+        "context": {
+          "assertion": {
+            "effective_institution_ref": null,
+            "recorded_school_name": "Five Dock"
+          },
+          "attendance_context": [
+            {
+              "attendance": {
+                "attended_status": "attended_unspecified",
+                "confidence": "unconfirmed",
+                "education_id": "edu-282982-22994f80163ecdec",
+                "evidence_origin": "aph",
+                "graduation_year": null,
+                "institution_id": "inst-unmatched-five-dock",
+                "institution_resolution": "unresolved",
+                "level": "secondary",
+                "member_id": "aph-282982",
+                "resolution_source_url": null,
+                "retrieved_at": "2026-10-02 10:00:00+10:00",
+                "reviewer_notes": "Parsed from APH Handbook text 'Five Dock'; matched status: unconfirmed",
+                "school_name_as_recorded": "Five Dock",
+                "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '282982'",
+                "years_attended": null
+              },
+              "member": {
+                "aph_id": "282982",
+                "date_of_birth": "1977-11-16",
+                "display_name": "MARTIN, Dr. Fiona Barbouttis"
+              },
+              "parliamentary_services": [
+                {
+                  "chamber": "representatives",
+                  "electorate": "Reid",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-282982",
+                  "parliament_number": 46,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 10:00:00+10:00",
+                  "service_end": "2022-04-11",
+                  "service_id": "srv-282982-46-8aa10992d4bcf087",
+                  "service_start": "2019-07-02",
+                  "source_service_end": "2022-05-21",
+                  "source_service_start": "2019-05-18",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '282982'",
+                  "state_or_territory": "NSW"
+                }
+              ]
+            }
+          ],
+          "candidates": [
+            {
+              "accepted_candidate": false,
+              "candidate_id": "candidate:57b1882638755f096fdde8e9289fa757c643368906b55747867a3cf8d295208d",
+              "conflicts": [],
+              "decision_id": null,
+              "entity_type": "school",
+              "evidence": {
+                "acara_id": null,
+                "campus_type": null,
+                "country": null,
+                "institution_id": "inst-unmatched-five-dock",
+                "institution_status": "unknown",
+                "latitude": null,
+                "longitude": null,
+                "postcode": null,
+                "school_name": "Five Dock",
+                "school_type": "Secondary",
+                "sector": "Other",
+                "state": null,
+                "suburb": null
+              },
+              "parliaments": [
+                46
+              ],
+              "payload": {
+                "recorded_name": "Five Dock"
+              },
+              "review_id": "school:22994f80163ecdec",
+              "status": "pending"
+            }
+          ],
+          "conflicts": [],
+          "retained_evidence": [],
+          "review_id": "school:22994f80163ecdec",
+          "selected_candidate": null
+        },
+        "decision_heads": [],
+        "review_id": "school:22994f80163ecdec"
+      }
+    }
+  ],
+  "content_sha256": "3425ded3fb4d65aaee4e4a445b1242506ad08bb1f6a858913576382ad1c8ca46",
+  "max_workers": 2,
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "searches_per_case": 2,
+  "source_opens_per_case": 4
+}

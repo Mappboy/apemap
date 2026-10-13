@@ -182,9 +182,12 @@ data/external/acara_finances_*.parquet
 .review-locks/
 data/reference/review/*.lock
 data/reference/review/.*.tmp
+data/reference/review/research/**/*.lock
+data/reference/review/research/**/previews/
 data/processed/review/
 .ruff_cache/
 
 notebooks/*/__marimo__/
 
 .research-providers.json
+.env

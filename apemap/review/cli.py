@@ -24,11 +24,14 @@ from apemap.review.preview import (
     write_preview,
 )
 from apemap.review.store import append_events, check_append_only, log_revision
+from apemap.review.research_batch_cli import batch_app
 
 review_app = typer.Typer(
     help="Append-only research decisions and disposable candidates.",
     no_args_is_help=True,
 )
+
+review_app.add_typer(batch_app, name="research-batch")
 
 
 @review_app.callback()
@@ -600,6 +603,10 @@ def serve_cmd(
 
         try:
             providers = load_providers(research_config)
+            typer.echo(
+                f"Loaded {len(providers)} research providers from {research_config}"
+                f"Providers: {', '.join(providers.keys()) if providers else 'none'}"
+            )
         except (OSError, ValueError) as exc:
             typer.echo(f"Research configuration failed: {exc}", err=True)
             raise typer.Exit(1) from exc

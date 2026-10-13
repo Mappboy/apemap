@@ -721,13 +721,16 @@ class ReviewService:
                 return dict(heads[0].payload)
         return None
 
-    def institution_resolver(self) -> Callable[[str], dict[str, Any] | None]:
+    def institution_resolver(
+        self, *, events: list[ReviewEvent] | None = None
+    ) -> Callable[[str], dict[str, Any] | None]:
         """Snapshot reference metadata once for a single presentation request."""
         source_revision = self._register_revision()
         with self._register_lock:
             self._build_institution_lookup_rows(source_revision)
             references = dict(self._lookup_refs)
-        for heads in active_heads(self.events(allow_conflicts=True)).values():
+        selected = self.events(allow_conflicts=True) if events is None else events
+        for heads in active_heads(selected).values():
             if len(heads) == 1:
                 event = heads[0]
                 if (
@@ -865,7 +868,7 @@ class ReviewService:
         if not selected:
             return {}
         return school_resolution_progress(
-            conn, events, selected, resolve=self.institution_resolver()
+            conn, events, selected, resolve=self.institution_resolver(events=events)
         )
 
     def history(self, review_id: str) -> list[dict[str, Any]]:
@@ -1408,7 +1411,37 @@ class ReviewService:
             **revisions,
             "evidence_revision": ledger_revision,
             "member_field": field_name,
-            "member": {"aph_id": member["aph_id"], "display_name": member["name"]},
+            "member": {
+                "aph_id": member["aph_id"],
+                "display_name": member["name"],
+                "aliases": [" ".join(reversed(member["name"].split(", ", 1)))]
+                if ", " in member["name"]
+                else [],
+                "date_of_birth": next(
+                    (
+                        row["effective_value"]
+                        for row in member["fields"]
+                        if row["field"] == "date_of_birth"
+                    ),
+                    None,
+                ),
+            },
+            "services": [
+                {
+                    key: row.get(key)
+                    for key in (
+                        "parliament_number",
+                        "chamber",
+                        "party",
+                        "electorate",
+                        "state_or_territory",
+                        "service_start",
+                        "service_end",
+                        "source_url",
+                    )
+                }
+                for row in member["services"]
+            ],
             "assertion": {
                 "field": field_name,
                 "source_value": field.get("source_value"),

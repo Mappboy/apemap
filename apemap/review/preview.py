@@ -119,8 +119,16 @@ def apply_preview(service: ReviewService, path: Path, approval: str) -> dict[str
     if not isinstance(values, list):
         raise ValueError("Preview events must be a list")
     events = [ReviewEvent.from_dict(value) for value in values]
+    if any(
+        event.payload.get("research_batch_id") for event in events
+    ) and not preview.get("research_batch"):
+        raise ValueError("Research events require their bound batch approval")
 
     def check_sources() -> None:
+        if preview.get("research_batch") is not None:
+            from apemap.review.research_batches import ResearchBatches
+
+            ResearchBatches(service).validate_preview(preview)
         if preview.get("source_revision") != service.source_revision():
             raise StaleReviewError(
                 "Source/candidate/evidence data changed; preview again"

@@ -34,7 +34,12 @@ from apemap.review.navigation import (
     normalize_queue_context,
     queue_position,
 )
-from apemap.review.workspace import compare_values, extract_queue, summarize_evidence
+from apemap.review.workspace import (
+    compare_values,
+    extract_queue,
+    school_candidate_evidence,
+    summarize_evidence,
+)
 from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 from apemap.review.context_evidence import ROLE_TYPES
 from apemap.review.research import ResearchJobs, ResearchProvider
@@ -942,11 +947,7 @@ def create_app(
             ref = str(chosen.get("institution_ref", ""))
             selected = resolve_reference(ref) if ref else None
             navigation = workspace_navigation(item["review_id"], "school")
-            evidence_records = [
-                candidate.get("evidence", {})
-                for candidate in item.get("candidates", [])
-                if candidate.get("evidence", {}).get("stance")
-            ] + list(item.get("retained_evidence", []))
+            evidence_records = school_candidate_evidence(item, ref)
             evidence_view = summarize_evidence(
                 evidence_records, ("identity", "temporal", "geographic")
             )
@@ -2005,11 +2006,7 @@ def create_app(
             if item.get("entity_type") == "school":
                 school = school_view(item, resolve_reference)
                 rows = school_comparison(asdict(school), selected)
-                evidence = [
-                    row.get("evidence", {})
-                    for row in item.get("candidates", [])
-                    if row.get("evidence", {}).get("stance")
-                ] + list(item.get("retained_evidence", []))
+                evidence = school_candidate_evidence(item, candidate_ref)
             else:
                 source = next(
                     (
@@ -2972,6 +2969,11 @@ def create_app(
             )
         return redirect(url_for("detail", review_id=review_id, saved="1"), code=303)
 
+    from apemap.review.service import ReviewService
+    from apemap.review.research_batch_ui import register_batch_routes
+
+    if isinstance(service, ReviewService):
+        register_batch_routes(app, service)
     return app
 
 

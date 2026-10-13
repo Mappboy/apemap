@@ -1,0 +1,3388 @@
+[
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:d94dab690b204993e790668936d4ee62b9717c4d676748f05e3d32fb35c2ffec",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "008CH.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "DANIEL, Zoe",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q65628647",
+            "notes": null,
+            "proposed_value": "Q65628647",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:32:41.674744+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"008CH\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%22008CH%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            47
+          ],
+          "payload": {
+            "aph_id": "008CH",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:008ch:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Zoe DANIEL"
+        ],
+        "aph_id": "008CH",
+        "date_of_birth": "1972-11-28",
+        "display_name": "DANIEL, Zoe"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008CH",
+            "name": "DANIEL, Zoe"
+          },
+          "evidence_id": "evidence:113c03139a32ed6cb51b80249261f08c2e1f8452da0509c89a70450e67b873df",
+          "excerpt_or_note": "Official Parliament of Australia profile search result identifies Ms Zoe Daniel MP; Wikidata item states birth 28 November 1972 and Parliament of Australia MP ID 008CH.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008CH",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008CH",
+            "date_of_birth": "1972-11-28",
+            "name": "DANIEL, Zoe"
+          },
+          "evidence_id": "evidence:3c4281027a364a0d7044c7d57d22d5e68183a22233e687d36661ff53206df538",
+          "excerpt_or_note": "Wikidata item labels this entity “Zoe Daniel”; it states date of birth 28 November 1972 and Parliament of Australia MP ID 008CH.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "DANIEL, Zoe (Q65628647)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q65628647",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Goldstein",
+                "party": "Independent",
+                "service_end": "2025-03-28",
+                "service_start": "2022-07-26"
+              }
+            ]
+          },
+          "evidence_id": "evidence:8ee7bc9bd3d820e4ebf72e60c731bdf61f24825a48685343d4054eb4107b8465",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008ch:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008CH'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:008ch:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Goldstein",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008ch",
+          "parliament_number": 47,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-008ch-47-950ac14bb2ca505d",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-05-03",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008CH'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:008ch:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:711a2936d01861cb7961e77505ce9370427b1c2f78941964aaf0ab402a86c224",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "008K0.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "BYRNE, the Hon. Anthony Michael",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q4772190",
+            "notes": null,
+            "proposed_value": "Q4772190",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:30:11.822270+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"008K0\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%22008K0%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46
+          ],
+          "payload": {
+            "aph_id": "008K0",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:008k0:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Anthony Michael BYRNE"
+        ],
+        "aph_id": "008K0",
+        "date_of_birth": "1962-12-01",
+        "display_name": "BYRNE, the Hon. Anthony Michael"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008K0",
+            "name": "BYRNE, the Hon. Anthony Michael"
+          },
+          "evidence_id": "evidence:607a211cf2defa52e14081ff12c73ef34ee2f5ef485e9539e46ce18523a5e23a",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Hon Anthony Byrne, Australian Labor Party, House of Representatives, elected for Holt; Wikidata item states Anthony Michael Byrne, DOB 1 December 1962.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008K0",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2016-05-09",
+                "service_start": "2013-11-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2022-04-11",
+                "service_start": "2019-07-02"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "Holt",
+                "party": "Australian Labor Party",
+                "service_end": "2019-04-11",
+                "service_start": "2016-08-30"
+              }
+            ]
+          },
+          "evidence_id": "evidence:b193846b15dd645670254f6e9d02a13c2469420580af5cbc0430e21c8d8f0153",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008K0",
+            "date_of_birth": "1962-12-01",
+            "name": "BYRNE, the Hon. Anthony Michael"
+          },
+          "evidence_id": "evidence:f20a0e744cdc73a75a4608dc25ed8c9e8fd6b6d4a56155f7c1ad24c18e186dd6",
+          "excerpt_or_note": "Wikidata item labels this entity “Anthony Byrne”, gives full name Anthony Michael Byrne and DOB 1 December 1962; service is for Holt and Australian Labor Party.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008k0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "BYRNE, the Hon. Anthony Michael (Q4772190)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q4772190",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:008k0:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Holt",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008k0",
+          "parliament_number": 43,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-008k0-43-409aa2dda69a1818",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Holt",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008k0",
+          "parliament_number": 44,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-008k0-44-80085909aa39e43a",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Holt",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008k0",
+          "parliament_number": 46,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-008k0-46-3c2906fa886831d7",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-04-11",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Holt",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008k0",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-008k0-42-c51e69abf3269eeb",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Holt",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008k0",
+          "parliament_number": 45,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-008k0-45-f734d71ee9d08d78",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008K0'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:008k0:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:9dfb8f7ba70dce3e0ab223c491e75d7d27170f0476da74d7a93af3b7249fc58a",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "BRANDIS, the Hon. George Henry, KC",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45
+          ],
+          "payload": {
+            "aph_id": "008W7",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:008w7:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. George Henry, KC BRANDIS"
+        ],
+        "aph_id": "008W7",
+        "date_of_birth": "1957-06-22",
+        "display_name": "BRANDIS, the Hon. George Henry, KC"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008W7",
+            "name": "BRANDIS, the Hon. George Henry, KC"
+          },
+          "evidence_id": "evidence:78c77d07c1e5d4d5964ac3b6701d93f9d08c40334d52801811343200406fde7a",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies former Senator George Brandis KC, Liberal Party, Senate; Wikidata item states George Henry Brandis, DOB 22 June 1957.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008W7",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008W7",
+            "date_of_birth": "1957-06-22",
+            "name": "BRANDIS, the Hon. George Henry, KC"
+          },
+          "evidence_id": "evidence:8dd6844557b4eb104f4ae39326e4e785ba04834b697f5ee28de60ee199b01787",
+          "excerpt_or_note": "Wikidata item labels this entity “George Brandis”, gives full name George Henry Brandis and DOB 22 June 1957; service is as Queensland senator.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "BRANDIS, the Hon. George Henry, KC (Q5537216)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q5537216",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2018-02-07",
+                "service_start": "2016-08-30"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "senate",
+                "electorate": null,
+                "party": "Liberal Party of Australia",
+                "service_end": "2016-05-09",
+                "service_start": "2013-11-12"
+              }
+            ]
+          },
+          "evidence_id": "evidence:e56cdaeb75f8f1e94a9dd4e7a3d1106afad9d5bb7e543dd9d14709f7ab37609c",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008w7:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:008w7:wikidata_id",
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008w7",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2018-02-07",
+          "service_id": "srv-008w7-45-61d6087e18b3b4ae",
+          "service_start": "2016-08-30",
+          "source_service_end": "2018-02-07",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008w7",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-008w7-43-caf764be0226f779",
+          "service_start": "2010-09-28",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2005-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008w7",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-008w7-42-27c3fa12aca4e3ca",
+          "service_start": "2008-02-12",
+          "source_service_end": "2011-06-30",
+          "source_service_start": "2005-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-008w7",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-008w7-44-56de330abcfb938e",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2011-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008W7'",
+          "state_or_territory": "QLD"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:008w7:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:12d87843994101b3556640f7f00db5fe38cd6bf94ba78d831ea343f22cebd9fa",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "PHELPS, Kerryn Lyndel, AM",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            45
+          ],
+          "payload": {
+            "aph_id": "008Z0",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:008z0:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Kerryn Lyndel, AM PHELPS"
+        ],
+        "aph_id": "008Z0",
+        "date_of_birth": "1957-12-14",
+        "display_name": "PHELPS, Kerryn Lyndel, AM"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "Wentworth",
+                "party": "Independent",
+                "service_end": "2019-04-11",
+                "service_start": "2018-10-20"
+              }
+            ]
+          },
+          "evidence_id": "evidence:1c8a8dd7d727fa840b9c688a1b7b3d15cde2f275ae119a66a8e1b04b1bf20e9a",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008Z0'",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008Z0",
+            "date_of_birth": "1957-12-14",
+            "name": "PHELPS, Kerryn Lyndel, AM"
+          },
+          "evidence_id": "evidence:621ca5608878de30c563dad262bece7ac24bfd93e7616e7fb585224386573228",
+          "excerpt_or_note": "Wikidata item labels this entity “Kerryn Phelps”; official APH profile corroborates the matching name, DOB and Wentworth service.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "PHELPS, Kerryn Lyndel, AM (Q6394699)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q6394699",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "008Z0",
+            "name": "PHELPS, Kerryn Lyndel, AM"
+          },
+          "evidence_id": "evidence:a411f05d69c214af8845e9037216e34ed74445098950c7a424a024b4b3a96d16",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Dr Kerryn Phelps AM, Independent, House of Representatives; states Born 14.12.1957 and service for Wentworth 20.10.2018–18.05.2019.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:008z0:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=008Z0",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:008z0:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Wentworth",
+          "is_current_member": false,
+          "is_opening_day_member": false,
+          "member_id": "aph-008z0",
+          "parliament_number": 45,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-008z0-45-b5cf915e7de7b67c",
+          "service_start": "2018-10-20",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2018-10-20",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '008Z0'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:008z0:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:adf45720443260893ed947dd861b82b8be04e82a09e3fc9bd96232ace81cacdb",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "WINDSOR, Antony (Tony) Harold Curties, AM",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43
+          ],
+          "payload": {
+            "aph_id": "009LP",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:009lp:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Antony (Tony) Harold Curties, AM WINDSOR"
+        ],
+        "aph_id": "009LP",
+        "date_of_birth": "1950-09-02",
+        "display_name": "WINDSOR, Antony (Tony) Harold Curties, AM"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "009LP",
+            "date_of_birth": "1950-09-02",
+            "name": "WINDSOR, Antony (Tony) Harold Curties, AM"
+          },
+          "evidence_id": "evidence:2133adc928db60154ffa23f16d152dbb7acf1ef27ba11d9304c1f1d514bb1e3a",
+          "excerpt_or_note": "Wikidata item labels this entity “Tony Windsor”; it states DOB 2 September 1950, New England House service 10 November 2001–5 August 2013, and MP ID 009LP.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "WINDSOR, Antony (Tony) Harold Curties, AM (Q7823688)",
+          "source_type": "wikidata_item",
+          "source_url": "https://www.wikidata.org/wiki/Q7823688",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "service": [
+              {
+                "chamber": "representatives",
+                "electorate": "New England",
+                "party": "Independent",
+                "service_end": "2010-07-19",
+                "service_start": "2008-02-12"
+              },
+              {
+                "chamber": "representatives",
+                "electorate": "New England",
+                "party": "Independent",
+                "service_end": "2013-08-05",
+                "service_start": "2010-09-28"
+              }
+            ]
+          },
+          "evidence_id": "evidence:3a48aef3dca6da9a7b44ec23c0c68e06fa4b0f1fbe41b7fcfbecda64fe39ece3",
+          "excerpt_or_note": "Supplied candidate context contains official APH Handbook API service records for this PHID, including chamber, electorate, party and service dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:39:11Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament Handbook API member service records",
+          "source_type": "official_aph_api",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '009LP'",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "009LP",
+            "name": "WINDSOR, Antony (Tony) Harold Curties, AM"
+          },
+          "evidence_id": "evidence:98d10f9fa8f363520a56e935ce43f239872c17213c24c90721aa4564ccd48439",
+          "excerpt_or_note": "Official Parliament of Australia profile identifies Mr Tony Windsor AM; Wikidata item states Tony Windsor, DOB 2 September 1950, service for New England 10 November 2001–5 August 2013, and Parliament of Australia MP ID 009LP.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:38:53Z",
+          "review_id": "member:009lp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia parliamentarian profile",
+          "source_type": "official_parliamentary_profile",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=009LP",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:009lp:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "New England",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-009lp",
+          "parliament_number": 42,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-009lp-42-a42bb78f422f5a60",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '009LP'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "New England",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-009lp",
+          "parliament_number": 43,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-009lp-43-261d031f83a16c3f",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-08-05",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '009LP'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:009lp:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:e967180eaece8185ac3f9988c1a948efdce5807b43eb201e89841672d19af436",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AKI.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "DUTTON, the Hon. Peter Craig",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q7173778",
+            "notes": null,
+            "proposed_value": "Q7173778",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:32:59.123449+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AKI\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AKI%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "payload": {
+            "aph_id": "00AKI",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00aki:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Peter Craig DUTTON"
+        ],
+        "aph_id": "00AKI",
+        "date_of_birth": "1970-11-18",
+        "display_name": "DUTTON, the Hon. Peter Craig"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00aki:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00aki-45-cd69a72b01f7192f",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 47,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00aki-47-ff32394dc3d4b327",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-05-03",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00aki-44-fe7d089238d97773",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 46,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00aki-46-04997ff67caeeeeb",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-05-21",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00aki-42-cd5d9a365be7f3b4",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aki",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00aki-43-d3b79ca4acecbe2b",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "state_or_territory": "QLD"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00aki:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:6e705fedfa8c0d68283c326ec1b4097436d292d49c6dab89f4bc085d50c05a82",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "HARTSUYKER, the Hon. Luke",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45
+          ],
+          "payload": {
+            "aph_id": "00AMM",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amm:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Luke HARTSUYKER"
+        ],
+        "aph_id": "00AMM",
+        "date_of_birth": "1959-04-28",
+        "display_name": "HARTSUYKER, the Hon. Luke"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "chamber": "representatives",
+            "date_of_birth": "1959-04-28",
+            "electorate": "Cowper",
+            "name": "the Hon. Luke HARTSUYKER",
+            "party": "The Nationals"
+          },
+          "evidence_id": "evidence:0f8bf4bf399786761d72d3d6077fc458d10c43f5c7ec4b5ec26f1b6bf85494f6",
+          "excerpt_or_note": "Official APH page content returned in web search confirms birth date, party, House and electorate. Name capitalization/honorific is normalized to the existing local alias. Direct page open failed with restricted URL; facts are from the official indexed search content.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia: the Hon. Luke HARTSUYKER",
+          "source_type": "guided-research",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMM",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_value",
+          "claim_value": {
+            "field": "wikidata_id",
+            "value": "Q6702024"
+          },
+          "evidence_id": "evidence:3b9458cb5fc9540850af6e9985806b53439a0c24c74db514b69631ea63cdf2fd",
+          "excerpt_or_note": "Exact entity P10020 matches the local APH identifier; birth date and House seat/service also agree.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata: Q6702024 matched entity",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Q6702024",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_context",
+          "claim_value": {
+            "aph_id": null,
+            "date_of_birth": "1959-04-28",
+            "name": "Luke Hartsuyker"
+          },
+          "evidence_id": "evidence:4a84ed7bb1b3336ac7579d088e38ae47b9d59653e3fb915d7c49b2e0d4488283",
+          "excerpt_or_note": "Searches did not establish an exact entity and identifier match; lookup trail only.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:41:41Z",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata entity / lookup",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Special:Search?search=Luke%20Hartsuyker",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "wikidata_id": "Q6702024"
+          },
+          "evidence_id": "evidence:b21809957f986215f352ab6ca033cff2b0fa22aa053e04c3ae0252cc9a84befb",
+          "excerpt_or_note": "Opened this page to follow its Wikidata item link. Used for discovery; identity conclusions use the exact Wikidata entity and official APH search content.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikipedia item discovery",
+          "source_type": "guided-research",
+          "source_url": "https://en.wikipedia.org/wiki/Luke_Hartsuyker",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "00AMM",
+            "date_of_birth": "1959-04-28",
+            "service": {
+              "chamber": "representatives",
+              "electorate": "Cowper",
+              "end": "2019-04-11",
+              "start": "2001-11-10"
+            },
+            "wikidata_id": "Q6702024"
+          },
+          "evidence_id": "evidence:b782d76bfbfd43a05106db583f9c5c561909a37c8cdeb0b0905c96ba2d4c8223",
+          "excerpt_or_note": "Opened exact entity via the Wikipedia Wikidata item link. Entity documents the exact Parliament of Australia MP ID, birth date, House seat, and full start/end dates. These are full career dates, not the shorter local parliament observation window.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata: Q6702024",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Q6702024",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "date_of_birth": "1959-04-28",
+            "electorate": "Cowper",
+            "name": "Luke Hartsuyker",
+            "party": "National Party of Australia",
+            "service_years": "2008–2019"
+          },
+          "evidence_id": "evidence:c2f1d09556df4c79f2c4e4d79794bbc0b223f20a4539c89fa88a3eb67ffcd425",
+          "excerpt_or_note": "Task context supplies APH name, DOB, Cowper, National Party, NSW, House and 2008–2019 service; direct APH page open failed.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:41:41Z",
+          "review_id": "member:00amm:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia member record",
+          "source_type": "guided-research",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMM",
+          "stance": "contextual",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:00amm:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Cowper",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amm",
+          "parliament_number": 43,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amm-43-f7ca49b3e93cddbf",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Cowper",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amm",
+          "parliament_number": 45,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00amm-45-bcdd821c4d51ecad",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-04-11",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Cowper",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amm",
+          "parliament_number": 44,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00amm-44-6e70204a881842ba",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Cowper",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amm",
+          "parliament_number": 42,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amm-42-ec648470351c006a",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMM'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amm:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:9a6bcc58b05c9bf07dbeb5a91e6287b2af373b3764562d649978e1dae80bc80b",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AMN.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "LEY, the Hon. Sussan Penelope",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q7649377",
+            "notes": null,
+            "proposed_value": "Q7649377",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:36:39.826925+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AMN\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AMN%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "payload": {
+            "aph_id": "00AMN",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amn:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Sussan Penelope LEY"
+        ],
+        "aph_id": "00AMN",
+        "date_of_birth": "1961-12-14",
+        "display_name": "LEY, the Hon. Sussan Penelope"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amn:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00amn-45-7176f210a22de0d0",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 47,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00amn-47-903a89973b0b863a",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-05-03",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 46,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00amn-46-bd2ba891deeb96c7",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-05-21",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amn-43-6d832a2c850aac76",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amn-42-ec04627e997a1fac",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00amn-44-c6c61ab865b5b03d",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Farrer",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amn",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2026-02-27",
+          "service_id": "srv-00amn-48-e8e9342b07c8cdec",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-02-27",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMN'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amn:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:e02bb8db6a84b4f91c5553d5d269dc95970b9e7463b40483418e857a3ace2ecb",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "FARMER, the Hon. Patrick Francis, AM",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42
+          ],
+          "payload": {
+            "aph_id": "00AMO",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amo:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Patrick Francis, AM FARMER"
+        ],
+        "aph_id": "00AMO",
+        "date_of_birth": "1962-03-14",
+        "display_name": "FARMER, the Hon. Patrick Francis, AM"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amo:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Macarthur",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amo",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amo-42-eeb9603e9c97785c",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-07-19",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMO'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amo:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:75d5694378a75c1349ee5ad8e1331f744a9667ee29f174993cbb56edfa959bb8",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "GRIERSON, Sharon Joy",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43
+          ],
+          "payload": {
+            "aph_id": "00AMP",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amp:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Sharon Joy GRIERSON"
+        ],
+        "aph_id": "00AMP",
+        "date_of_birth": "1951-05-04",
+        "display_name": "GRIERSON, Sharon Joy"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "aph_id": "00AMP",
+            "date_of_birth": "1951-05-04",
+            "service": {
+              "chamber": "representatives",
+              "electorate": "Newcastle",
+              "end": "2013-08-05",
+              "start": "2001-11-10"
+            },
+            "wikidata_id": "Q7490078"
+          },
+          "evidence_id": "evidence:2057e39948576ad04843ad3f3f7d3cf685422c197c98f951265672e7571f9be9",
+          "excerpt_or_note": "Opened exact entity via the Wikipedia Wikidata item link. Entity documents the exact Parliament of Australia MP ID, birth date, House seat, and full start/end dates. These are full career dates, not the shorter local parliament observation window.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata: Q7490078",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Q7490078",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "wikidata_id": "Q7490078"
+          },
+          "evidence_id": "evidence:3c6927e38db154cfd46187a9a1a4d43141e4d2774fc396b42ec59eaaa8f6dc98",
+          "excerpt_or_note": "Opened this page to follow its Wikidata item link. Used for discovery; identity conclusions use the exact Wikidata entity and official APH search content.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikipedia item discovery",
+          "source_type": "guided-research",
+          "source_url": "https://en.wikipedia.org/wiki/Sharon_Grierson",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_value",
+          "claim_value": {
+            "field": "wikidata_id",
+            "value": "Q7490078"
+          },
+          "evidence_id": "evidence:956ae72b5df8b10e95201c5699cddd2f33166cd7052bc7267ae86e10368b11c8",
+          "excerpt_or_note": "Exact entity P10020 matches the local APH identifier; birth date and House seat/service also agree.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata: Q7490078 matched entity",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Q7490078",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "chamber": "representatives",
+            "date_of_birth": "1951-05-04",
+            "electorate": "Newcastle",
+            "name": "Sharon Joy GRIERSON",
+            "party": "Australian Labor Party"
+          },
+          "evidence_id": "evidence:96176a288e26ff0e5fe1b2ce6f53103064ca468f341cc57323de7ef6678bbc8a",
+          "excerpt_or_note": "Official APH page content returned in web search confirms birth date, party, House and electorate. Name capitalization/honorific is normalized to the existing local alias. Direct page open failed with restricted URL; facts are from the official indexed search content.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:51:47.202123+00:00",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia: Sharon Joy GRIERSON",
+          "source_type": "guided-research",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMP",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_identity",
+          "claim_value": {
+            "date_of_birth": "1951-05-04",
+            "electorate": "Newcastle",
+            "name": "Sharon Joy Grierson",
+            "party": "Australian Labor Party",
+            "service_years": "2008–2013"
+          },
+          "evidence_id": "evidence:ae37385086e8f7003d81586f518efa5e5d30f70c9e8322aeaaec8fc4aad78179",
+          "excerpt_or_note": "Official APH search result gives DOB 4 May 1951, House, Australian Labor Party, Newcastle, retirement before 2013 election.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:41:41Z",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Parliament of Australia member record",
+          "source_type": "guided-research",
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=00AMP",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "member_context",
+          "claim_value": {
+            "aph_id": null,
+            "date_of_birth": "1951-05-04",
+            "name": "Sharon Joy Grierson"
+          },
+          "evidence_id": "evidence:b5049bf31733f1a9e94610d158d7c6855f24992543ee87de7f3b3b16c5fc27a0",
+          "excerpt_or_note": "Searches did not establish exact entity and identifier match; lookup trail only.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:41:41Z",
+          "review_id": "member:00amp:wikidata_id",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Wikidata entity / lookup",
+          "source_type": "guided-research",
+          "source_url": "https://www.wikidata.org/wiki/Special:Search?search=Sharon%20Grierson",
+          "stance": "contextual",
+          "temporal_relevance": null
+        }
+      ],
+      "review_id": "member:00amp:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Newcastle",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amp",
+          "parliament_number": 43,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amp-43-0009214bec25dd0a",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-08-05",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMP'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Newcastle",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amp",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amp-42-8c220741606190eb",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMP'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amp:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:41ba49d8967585842e38784ab0499b27b200abac8cda85a983a5a80c86a76349",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AMR.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "KING, the Hon. Catherine Fiona",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q5052776",
+            "notes": null,
+            "proposed_value": "Q5052776",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:35:45.684817+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AMR\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AMR%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "payload": {
+            "aph_id": "00AMR",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amr:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Catherine Fiona KING"
+        ],
+        "aph_id": "00AMR",
+        "date_of_birth": "1966-06-02",
+        "display_name": "KING, the Hon. Catherine Fiona"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amr:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 45,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00amr-45-d71539a381d44f49",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 46,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00amr-46-39aaf6d6fc5fc7dd",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-05-21",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amr-42-432762e60cdca6c2",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 43,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amr-43-70dd59ee74723a31",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-00amr-48-3cebff7a7f45ccf9",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 44,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00amr-44-f028b4228fdd14b7",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ballarat",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amr",
+          "parliament_number": 47,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00amr-47-77a952a688c8b2eb",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-05-03",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMR'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amr:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:9c11a263181c5a02488ff95ebec9267a720ea98c8ecdb6127308146fb5ad3f0f",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AMT.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "VAMVAKINOU, Maria",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q6761645",
+            "notes": null,
+            "proposed_value": "Q6761645",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T21:38:19.521053+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AMT\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AMT%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "payload": {
+            "aph_id": "00AMT",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amt:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Maria VAMVAKINOU"
+        ],
+        "aph_id": "00AMT",
+        "date_of_birth": "1959-01-04",
+        "display_name": "VAMVAKINOU, Maria"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amt:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 44,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00amt-44-d62baeaf98353874",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 43,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amt-43-631628dcfd2163d5",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amt-42-3d8160e1fc6ab5ca",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 46,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00amt-46-ebe4cbe444f8a36f",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-05-21",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 47,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00amt-47-34cf2f8ed2294a88",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-03-28",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calwell",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amt",
+          "parliament_number": 45,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00amt-45-de2c9d57d8294b94",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMT'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amt:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:d8d7d327bfbb84cbe2f9499afd4fd044b7b6ec16c56acc5635e9c66c50068886",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "MIRABELLA (formerly Panopolous), Sophie",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43
+          ],
+          "payload": {
+            "aph_id": "00AMU",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amu:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Sophie MIRABELLA (formerly Panopolous)"
+        ],
+        "aph_id": "00AMU",
+        "date_of_birth": "1968-10-27",
+        "display_name": "MIRABELLA (formerly Panopolous), Sophie"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amu:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Indi",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amu",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amu-42-4ec3a735cf2a20a9",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMU'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Indi",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amu",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amu-43-faa30f4ff2c75a07",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMU'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amu:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:61200fa3c902be654f2e7258c593ddc86a983b1f4aeb7cf2f09a0be0ba77426a",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AMV.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "HUNT, the Hon. Gregory (Greg) Andrew",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q5605742",
+            "notes": null,
+            "proposed_value": "Q5605742",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:35:05.169370+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AMV\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AMV%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46
+          ],
+          "payload": {
+            "aph_id": "00AMV",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amv:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Gregory (Greg) Andrew HUNT"
+        ],
+        "aph_id": "00AMV",
+        "date_of_birth": "1965-11-18",
+        "display_name": "HUNT, the Hon. Gregory (Greg) Andrew"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amv:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Flinders",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amv",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00amv-45-e66d2078e2e25bb3",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Flinders",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amv",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amv-42-d03cd3e191bed230",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Flinders",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amv",
+          "parliament_number": 46,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00amv-46-418347fbdb5ba44b",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-04-11",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Flinders",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amv",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00amv-43-fea346ac96e9cc48",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Flinders",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amv",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00amv-44-fc1a3d9d50f5f4cd",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMV'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amv:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:d312ba30733f7fd4a053db2d97c9d0790e433c0244d70a4834320a5e34ffcada",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "JOHNSON, Michael Andrew",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42
+          ],
+          "payload": {
+            "aph_id": "00AMX",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00amx:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Michael Andrew JOHNSON"
+        ],
+        "aph_id": "00AMX",
+        "date_of_birth": "1970-01-31",
+        "display_name": "JOHNSON, Michael Andrew"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00amx:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Ryan",
+          "is_current_member": false,
+          "is_opening_day_member": false,
+          "member_id": "aph-00amx",
+          "parliament_number": 42,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00amx-42-a43f44d8487744ed",
+          "service_start": "2010-05-21",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMX'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Ryan",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00amx",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-05-20",
+          "service_id": "srv-00amx-42-c04131d889866703",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AMX'",
+          "state_or_territory": "QLD"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00amx:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:6c65f4d7835f9ff90eac0b55900326f7090512cbfd100c8c041deeb7d0cbdae8",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "CIOBO, the Hon. Steven Michele",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45
+          ],
+          "payload": {
+            "aph_id": "00AN0",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00an0:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Steven Michele CIOBO"
+        ],
+        "aph_id": "00AN0",
+        "date_of_birth": "1974-05-29",
+        "display_name": "CIOBO, the Hon. Steven Michele"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00an0:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Moncrieff",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an0",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00an0-43-d2c04186271cc49f",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN0'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Moncrieff",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an0",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00an0-45-1c24841d7df9ca45",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-04-11",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN0'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Moncrieff",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an0",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00an0-42-d8a7dd5cd201c735",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN0'",
+          "state_or_territory": "QLD"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Moncrieff",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an0",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00an0-44-8715c08611259da0",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN0'",
+          "state_or_territory": "QLD"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00an0:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:88a691a4e7024b3bea563115e6354319467407188d3728bca74b7fe1f07be395",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "COBB, the Hon. John Kenneth",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42,
+            43,
+            44
+          ],
+          "payload": {
+            "aph_id": "00AN1",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00an1:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. John Kenneth COBB"
+        ],
+        "aph_id": "00AN1",
+        "date_of_birth": "1950-02-11",
+        "display_name": "COBB, the Hon. John Kenneth"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00an1:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Calare",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an1",
+          "parliament_number": 43,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00an1-43-bcfb9e75f002ccd2",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN1'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calare",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an1",
+          "parliament_number": 44,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00an1-44-67461a18f2e90e0c",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-05-09",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN1'",
+          "state_or_territory": "NSW"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Calare",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an1",
+          "parliament_number": 42,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00an1-42-8f46f94384a04511",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN1'",
+          "state_or_territory": "NSW"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00an1:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:207ca2d96f8027bfdb3026920ca39ecc99c3778b9972ecefce8d4ae36d957702",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": null,
+            "cache_missing": true,
+            "comparison": "proposed_missing",
+            "display_name": "JACKSON, Sharryn Maree",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": null,
+            "notes": null,
+            "proposed_value": null,
+            "retained_decision_id": null,
+            "retrieved_at": null,
+            "source_query": null,
+            "source_url": null,
+            "source_value": null,
+            "status": null
+          },
+          "parliaments": [
+            42
+          ],
+          "payload": {
+            "aph_id": "00AN2",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00an2:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "Sharryn Maree JACKSON"
+        ],
+        "aph_id": "00AN2",
+        "date_of_birth": "1962-02-12",
+        "display_name": "JACKSON, Sharryn Maree"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00an2:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Hasluck",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an2",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00an2-42-d94273a3b47bf901",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN2'",
+          "state_or_territory": "WA"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00an2:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:fbfca4f5fd3c58bae9de5c2f12548ef6d720d9dfdd00b8149b59d9d02dbfa2c0",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AN3.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q4961047",
+            "notes": null,
+            "proposed_value": "Q4961047",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:37:41.177012+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AN3\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AN3%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ],
+          "payload": {
+            "aph_id": "00AN3",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00an3:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Brendan Patrick John O'CONNOR"
+        ],
+        "aph_id": "00AN3",
+        "date_of_birth": "1962-03-02",
+        "display_name": "O'CONNOR, the Hon. Brendan Patrick John"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00an3:wikidata_id",
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 46,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00an3-46-26326238a51e011b",
+          "service_start": "2019-07-02",
+          "source_service_end": "2022-05-21",
+          "source_service_start": "2019-05-18",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 43,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00an3-43-cd18f6f1710d4516",
+          "service_start": "2010-09-28",
+          "source_service_end": "2013-09-07",
+          "source_service_start": "2010-08-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 42,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00an3-42-44ce1a9a67119dab",
+          "service_start": "2008-02-12",
+          "source_service_end": "2010-08-21",
+          "source_service_start": "2007-11-24",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 45,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00an3-45-b1fa0b344b6c9dc2",
+          "service_start": "2016-08-30",
+          "source_service_end": "2019-05-18",
+          "source_service_start": "2016-07-02",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 47,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00an3-47-a22a150503a63b2a",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-03-28",
+          "source_service_start": "2022-05-21",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        },
+        {
+          "chamber": "representatives",
+          "electorate": "Gorton",
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00an3",
+          "parliament_number": 44,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00an3-44-b5512004871968e0",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2013-09-07",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "state_or_territory": "VIC"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00an3:wikidata_id"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_value": null,
+        "field": "wikidata_id"
+      },
+      "candidates": [
+        {
+          "accepted_candidate": false,
+          "candidate_id": "candidate:abdea90a625c2ba3f7bb0e865e0c4ed51b1af6f498ac71ab91ef78b90610ffa0",
+          "conflicts": [],
+          "decision_id": null,
+          "entity_type": "member",
+          "evidence": {
+            "alternatives": [],
+            "aph_value": null,
+            "cache_file": "00AOL.json",
+            "cache_missing": false,
+            "comparison": "different",
+            "display_name": "COLBECK, the Hon. Richard Mansell",
+            "effective_value": null,
+            "match_method": "aph_id",
+            "normalized_effective_value": null,
+            "normalized_proposed_value": "Q7324825",
+            "notes": null,
+            "proposed_value": "Q7324825",
+            "retained_decision_id": null,
+            "retrieved_at": "2026-09-23T12:32:11.828069+00:00",
+            "source_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"00AOL\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+            "source_url": "https://query.wikidata.org/sparql?query=%0A++++++++SELECT+%3Fitem+%3FitemLabel+%3Fdob+%3FgenderLabel+%3Farticle+WHERE+%7B%0A++++++++++%3Fitem+wdt%3AP10020+%2200AOL%22+.%0A++++++++++OPTIONAL+%7B+%3Fitem+wdt%3AP569+%3Fdob+.+%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Fitem+wdt%3AP21+%3Fgender+.%0A++++++++++++%3Fgender+rdfs%3Alabel+%3FgenderLabel+FILTER%28LANG%28%3FgenderLabel%29+%3D+%22en%22%29%0A++++++++++%7D%0A++++++++++OPTIONAL+%7B%0A++++++++++++%3Farticle+schema%3Aabout+%3Fitem+%3B%0A+++++++++++++++++++++schema%3AisPartOf+%3Chttps%3A%2F%2Fen.wikipedia.org%2F%3E+.%0A++++++++++%7D%0A++++++++%7D%0A++++++++&format=json",
+            "source_value": null,
+            "status": "matched"
+          },
+          "parliaments": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "payload": {
+            "aph_id": "00AOL",
+            "field": "wikidata_id"
+          },
+          "review_id": "member:00aol:wikidata_id",
+          "status": "pending"
+        }
+      ],
+      "conflicts": [],
+      "member": {
+        "aliases": [
+          "the Hon. Richard Mansell COLBECK"
+        ],
+        "aph_id": "00AOL",
+        "date_of_birth": "1958-04-05",
+        "display_name": "COLBECK, the Hon. Richard Mansell"
+      },
+      "member_field": "wikidata_id",
+      "retained_evidence": [],
+      "review_id": "member:00aol:wikidata_id",
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-00aol-48-2bf21d49824a86c4",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 47,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-03-28",
+          "service_id": "srv-00aol-47-3769ea16ddf2406b",
+          "service_start": "2022-07-26",
+          "source_service_end": "2025-06-30",
+          "source_service_start": "2019-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 42,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2010-07-19",
+          "service_id": "srv-00aol-42-e6ae0c1f476ad59d",
+          "service_start": "2008-02-12",
+          "source_service_end": "2014-06-30",
+          "source_service_start": "2002-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": false,
+          "member_id": "aph-00aol",
+          "parliament_number": 45,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2019-04-11",
+          "service_id": "srv-00aol-45-ce924c4d48446569",
+          "service_start": "2018-02-09",
+          "source_service_end": "2019-06-30",
+          "source_service_start": "2018-02-09",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 46,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2022-04-11",
+          "service_id": "srv-00aol-46-056e1e5f8bfd74c2",
+          "service_start": "2019-07-02",
+          "source_service_end": "2025-06-30",
+          "source_service_start": "2019-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 43,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2013-08-05",
+          "service_id": "srv-00aol-43-d305a102fc63470f",
+          "service_start": "2010-09-28",
+          "source_service_end": "2014-06-30",
+          "source_service_start": "2008-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        },
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-00aol",
+          "parliament_number": 44,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2016-05-09",
+          "service_id": "srv-00aol-44-0e5fa684227e621e",
+          "service_start": "2013-11-12",
+          "source_service_end": "2016-07-02",
+          "source_service_start": "2008-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AOL'",
+          "state_or_territory": "TAS"
+        }
+      ]
+    },
+    "decision_heads": [],
+    "review_id": "member:00aol:wikidata_id"
+  }
+]

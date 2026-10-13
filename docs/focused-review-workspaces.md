@@ -33,6 +33,19 @@ name and no-suitable-candidate outcomes preserve attendance while leaving the
 institution unresolved. Resolve another member with the same recorded name in
 that member's own assertion workspace.
 
+The primary decision panel also offers **Different schools for different members /
+Split required**. It jumps directly to links for the affected member assertions.
+Choose each member's school in that assertion workspace; following the split
+path does not record a global mapping or any decision.
+
+The selected school comparison shows concise **Supports**, **Conflicts**,
+**Context** and **Unknown** explanations before the candidate alternatives.
+Each populated evidence group shows up to two findings with source links;
+**Full evidence and provenance** retains every finding and its metadata.
+Changing candidates updates both displays and excludes evidence specific to
+another candidate. Normalized name similarity is labelled as context, not
+attendance evidence. Full evidence tools remain available separately.
+
 ## Member fields and partial batches
 
 The member workspace compares source, reviewed and proposed values separately for
@@ -174,3 +187,51 @@ input-verification command reports those same files. The narrow viewport check
 used a same-origin fixture iframe because the
 in-app browser viewport override was unsupported; it was not a resized production
 app viewport.
+
+### Issue #82 finishing pass — 13 October 2026
+
+Package 0.10.0 → 0.10.1 completes the three gaps identified when #82 reopened.
+This is a compatible review UI fix. Only the root package version changes in
+the lockfile; dependencies, dataset versions, schemas and review stores are
+unchanged. The branch builds on the unmerged guided-research branch from #85.
+
+| Remaining requirement | Verification |
+| --- | --- |
+| Primary split/per-member path | The decision panel links directly to independently resolvable assertions for two members sharing one school name. Page and browser tests verify both links and that viewing/selecting creates no decisions. |
+| Visible selected-candidate explanation | Page tests verify support, source access and unknown facts outside collapsed details. Endpoint and browser checks switch to a conflicting alternative and verify the first candidate's evidence disappears. Full provenance remains disclosed separately. |
+| Actual desktop and narrow pages | Playwright drives the Flask-rendered school page in Edge at 1280×720 and 390×844. Desktop comparison, evidence and preview fit in the first viewport. The narrow page has no horizontal page overflow; comparison fits its width, actions are static and reachable, and per-member links accept keyboard focus. Before/after desktop and full-page narrow screenshots were exported and inspected locally. |
+
+The opt-in real-browser regression uses Node.js, Playwright and installed Edge;
+set `APEMAP_BROWSER_TESTS=1` and run
+`uv run pytest tests/test_review_school_finishing.py`. Playwright must be
+resolvable by Node (for example through `NODE_PATH`). Optional
+`APEMAP_BROWSER_SCREENSHOTS` names an existing output directory. Requests in
+the browser check are limited to the local fixture server; no live providers
+or authoritative data are used. The deterministic HTML/endpoint checks run
+without the browser opt-in.
+
+The original acceptance criteria remain covered by the existing workspace,
+navigation, member-batch, research/evidence and resolution tests: grouped member
+fields, collapsed no-op fields, preview/stale/atomic saves, append-only stores,
+contextual research, save-next/filter preservation and progressive disclosure
+continue to use their existing implementation. This pass changes only the
+remaining school presentation paths.
+
+Validation of code checkpoint `1795817`:
+
+| Check | Result |
+| --- | --- |
+| Focused school/page/chooser regressions | 20 passed, including the opt-in actual-browser check. |
+| Restored-input and member-retention checks | 24 passed after restoring six existing ignored APH/AEC caches whose hashes matched the pinned manifest. `apemap inputs verify` passes; no upstream sources were fetched. |
+| Quality gates | Ruff lint/format, `ty check apemap tests/test_review_school_finishing.py`, deptry, all hooks, and `uv lock --check --offline` pass. Unscoped typing retains the documented 157 diagnostics outside changed files. |
+| Ledger | Historical-register check against the parent branch passes: 326 events, 233 effective, append-only. Existing assertion/default target disagreement remains; uncommitted user decisions are excluded from this PR. |
+| [Clean CI full suite](https://github.com/Mappboy/apemap/actions/runs/38319183219/job/115042928699) | 1,117 passed, 12 failed, 2 skipped in 322.71 seconds. All failures are in unchanged `tests/test_research_batch_ui.py` / `tests/test_research_batches.py`: the clean runner lacks `git user.name`, and the parent branch's tests omit the reviewer. New #82 tests pass; the browser opt-in and unavailable optional existing database account for the skips. |
+| [Other CI jobs](https://github.com/Mappboy/apemap/actions/runs/38319183219) | Quality/dependencies/ledger, offline pipeline, and strict release-contract build/verification all pass. |
+| Parent research-batch modules locally | `uv run pytest tests/test_research_batch_ui.py tests/test_research_batches.py`: 27 passed with the existing configured Git reviewer identity. |
+
+The CI failures originate in #85's unchanged research-batch tests and
+`default_reviewer` path, outside this finishing diff. They must be corrected in
+the parent work before claiming an entirely green CI suite. The duplicate Windows
+full-suite run was stopped after CI supplied the complete result; it is not
+reported as a passing full run. The original historical acceptance record above
+is preserved.

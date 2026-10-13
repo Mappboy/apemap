@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Research batches{% endblock %}
+{% block content %}
+<div class="research-batches">
+<h1>Guided research batches</h1>
+{% if operation_error %}<p class="error" role="alert">Batch was not prepared: {{ operation_error }}</p>{% endif %}
+<div class="table-wrap"><table class="research-batch-list">
+<thead><tr><th>Batch</th><th>Research</th><th>Reviews</th><th>Applied</th><th>Status</th></tr></thead>
+<tbody>{% for item in batches %}{% set batch = item.manifest %}
+<tr><th scope="row"><a href="{{ url_for('research_batch_detail', batch_id=batch.batch_id) }}">{{ batch.batch_id }}</a><small>{{ batch.kind|capitalize }} &middot; {{ batch.created_at[:10] }}</small></th>
+{% if item.error %}<td colspan="4"><span class="error">{{ item.error }}</span></td>{% else %}
+<td>{{ item.summary.researched }} / {{ batch.case_count }} cases</td>
+<td>{{ item.summary.reviewed }} reviewed<small>{{ item.summary.accept }} accepted &middot; {{ item.summary.research }} need research</small></td>
+<td>{{ item.summary.applied }} proposals</td>
+<td>{% if item.summary.applied == batch.case_count %}<span class="status-badge status-accepted">Applied</span>{% elif item.summary.researched < batch.case_count %}<span class="status-badge status-pending">Research incomplete</span>{% elif item.summary.unreviewed %}<span class="status-badge status-pending">Review in progress</span>{% else %}<span class="status-badge status-needs_research">Reviewed</span>{% endif %}{% if item.blockers %}<small>{{ item.blockers|join('; ') }}</small>{% endif %}</td>{% endif %}</tr>
+{% else %}<tr><td colspan="5">No research batches have been prepared.</td></tr>{% endfor %}</tbody>
+</table></div>
+<details class="research-prepare" {% if operation_error %}open{% endif %}><summary>Prepare a research batch</summary>
+<form method="post" action="{{ url_for('research_batch_prepare') }}" class="filters">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label>Batch name<input name="batch_id" value="{{ draft.get('batch_id', '') }}" required pattern="[a-z0-9][a-z0-9-]{0,79}" placeholder="members-october-01"></label>
+<label>Research cases<select name="kind"><option value="members" {% if draft.get('kind', 'members') == 'members' %}selected{% endif %}>Missing member Wikidata IDs</option><option value="schools" {% if draft.get('kind') == 'schools' %}selected{% endif %}>Schools with no matcher target</option></select></label>
+<label>Maximum cases<input type="number" name="limit" value="{{ draft.get('limit', '10') }}" min="1" max="100" required></label>
+<button type="submit">Prepare tasks</button>
+</form></details>
+</div>
+{% endblock %}

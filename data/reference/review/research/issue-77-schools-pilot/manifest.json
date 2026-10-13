@@ -1,0 +1,27 @@
+{
+  "attempt_budgets": [
+    {
+      "searches": 3,
+      "source_opens": 6
+    },
+    {
+      "searches": 2,
+      "source_opens": 4
+    }
+  ],
+  "batch_id": "issue-77-schools-pilot",
+  "case_count": 5,
+  "cases_per_task": 1,
+  "created_at": "2026-10-11T22:36:07.090459+00:00",
+  "decision_revision": "e3afb6b64be76f32fd5c293f18255f6f4d687f077b1f652121ddacde3743baa7",
+  "kind": "schools",
+  "max_workers": 2,
+  "models": [
+    "gpt-6-luna",
+    "gpt-6.1-sol"
+  ],
+  "reasoning_effort": "medium",
+  "schema_version": 1,
+  "source_revision": "13e9a8cc6356c814959f512f8390b6922028c7170e9c1f79884180a440737799",
+  "task_sha256": "6336d42c316677f92b9394cc7a2f98c562696d4b454d3a18899450b6072b7425"
+}

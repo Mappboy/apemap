@@ -238,13 +238,18 @@ def effective_member_value(
     aph_id: str,
     field: str,
     source_value: Any,
+    *,
+    decision_heads: Mapping[str, Sequence[ReviewEvent]] | None = None,
 ) -> tuple[Any, ReviewEvent | None, bool]:
     """Resolve the effective value for a member field from the ledger.
 
     Returns (effective_value, providing_event, is_explicit_null).
+    Optional decision heads must be resolved from the same events.
     """
     review_id = member_review_id(aph_id, field)
-    heads = active_heads(events).get(review_id, [])
+    if decision_heads is None:
+        decision_heads = active_heads(events)
+    heads = decision_heads.get(review_id, [])
     if len(heads) == 0:
         return source_value, None, False
     if len(heads) > 1:
@@ -262,10 +267,12 @@ def check_identity_ambiguity(
     caches: Sequence[tuple[str | None, str, Mapping[str, Any]]],
     events: list[ReviewEvent],
     aph_id: str,
+    *,
+    decision_heads: Mapping[str, Sequence[ReviewEvent]] | None = None,
 ) -> bool:
-    """Assess whether a member's identity is ambiguous across available caches and decision heads."""
+    """Assess identity ambiguity; optional heads must come from the same events."""
     # 1. Conflicting decision heads on any member field
-    heads = active_heads(events)
+    heads = active_heads(events) if decision_heads is None else decision_heads
     for field in ("date_of_birth", "gender", "wikidata_id"):
         review_id = member_review_id(aph_id, field)
         if len(heads.get(review_id, [])) > 1:

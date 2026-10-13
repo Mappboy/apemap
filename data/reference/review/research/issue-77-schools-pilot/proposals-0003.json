@@ -1,0 +1,458 @@
+{
+  "content_sha256": "a910d79d1d777a93f472e7194dc34dcf67ef3104cb6481d08f03ec1fd7fb105f",
+  "imported_at": "2026-10-11T22:49:10.338996+00:00",
+  "proposals": [
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [
+            "Catholic Education Melbourne history page is on a UAT subdomain; independently verify the formal historical name change during human review."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 4,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "attendance",
+          "claim_value": {
+            "member": "Joanne Ryan",
+            "recorded_school_name": "MacKillop College"
+          },
+          "evidence_id": "evidence:e8ecc8dbe4c1ddd9897d608f03285d6c04718c61e991297620228d7f8472dc43",
+          "excerpt_or_note": "Ryan states: “School for me was St Andrews and then MacKillop College”. This directly supports the recorded attendance name; no attendance dates are inferred.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "First Speech to Parliament - Joanne Ryan MP",
+          "source_type": "parliamentary_speech",
+          "source_url": "https://www.joanneryan.com.au/first_speech_to_parliament",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "rename",
+          "claim_value": {
+            "address": "1 Russell Street, Werribee VIC 3030",
+            "current_registered_name": "MacKillop Catholic Regional College",
+            "former_name": "MacKillop College",
+            "name_change_date": "1978-10-01",
+            "opened": 1970,
+            "school_enumber": "E1272"
+          },
+          "evidence_id": "evidence:8f5b12c6b8a89570a47bdd14309e894fc5e0de9c1c86b64aacc725f19d522249",
+          "excerpt_or_note": "Profile identifies MacKillop Catholic Regional College, Werribee (E1272), says it opened as MacKillop College in 1970, and says its name officially changed on 1 October 1978. URL is on the organization’s UAT subdomain, so inspect this evidence before accepting the historical date.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "MacKillop Catholic Regional College, Werribee - Catholic Education Melbourne",
+          "source_type": "catholic_education_school_profile",
+          "source_url": "https://www-cem-uat.dxau.digital/SchoolInformation?School_ENumber=E1272",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:46002",
+          "claim_type": "location",
+          "claim_value": {
+            "address": "Russell Street, Werribee VIC 3030",
+            "campus": "Werribee",
+            "school_name": "MacKillop College"
+          },
+          "evidence_id": "evidence:4d0ca3f2a31dd9b85b22ca276f13c4fdbe805ca6306a634204ed23ab448315c6",
+          "excerpt_or_note": "College describes Werribee as a campus at the heart of MacKillop College and locates it on Russell Street, Werribee.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:47Z",
+          "review_id": "school:09051859847a101d",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Werribee Campus - MacKillop College",
+          "source_type": "school_website",
+          "source_url": "https://www.mackillop.vic.edu.au/campuses/werribee-campus",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "evidence_refs": {
+          "attendance_name": [
+            "evidence:e8ecc8dbe4c1ddd9897d608f03285d6c04718c61e991297620228d7f8472dc43"
+          ],
+          "current_campus_location": [
+            "evidence:4d0ca3f2a31dd9b85b22ca276f13c4fdbe805ca6306a634204ed23ab448315c6"
+          ],
+          "school_rename": [
+            "evidence:8f5b12c6b8a89570a47bdd14309e894fc5e0de9c1c86b64aacc725f19d522249"
+          ]
+        },
+        "locality": "Werribee, VIC",
+        "name": "MacKillop College"
+      },
+      "manual_institutions": [],
+      "outcome": "rename",
+      "payload": {
+        "institution_ref": "acara:46002",
+        "legacy": {
+          "canonical_acara_id": "46002",
+          "canonical_name": "MacKillop Catholic Regional College",
+          "notes": "MacKillop College (Werribee, VIC); Catholic Education Melbourne profile documents the 1978 formal rename. The profile URL is on a UAT subdomain and needs human inspection.",
+          "school_type": "Sec",
+          "sector": "Catholic",
+          "state": "VIC"
+        },
+        "recorded_name": "MacKillop College",
+        "relationship_type": "rename"
+      },
+      "proposal_id": "proposal:1392e7b1767f5d7ccfa0012be8f74ab60e6fd93d28aa1a5572458f190b6c28b2",
+      "reasoning": "Joanne Ryan’s own parliamentary speech confirms attendance at MacKillop College. The Werribee college’s profile identifies the same school lineage under its formal registered name, MacKillop Catholic Regional College (ACARA 46002), while the current college site identifies the Werribee campus. Proposed rename mapping to the current ACARA record; the historical profile is on Catholic Education Melbourne’s UAT subdomain and should be human-inspected before approval. No attendance dates or graduation year are inferred.",
+      "review_id": "school:09051859847a101d",
+      "value": null
+    },
+    {
+      "alternatives": [],
+      "attempts": [
+        {
+          "gaps": [
+            "Official parliamentary source confirms closure in 2013 but not the exact date; the opened school page conflicts between 9 and 19 December 2013.",
+            "No educational successor was established; later Archives use is reuse of the site.",
+            "All proposed identity, location, closure, and site-history findings require human review."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 5,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "closure",
+          "claim_value": {
+            "school": "Geilston Bay High School",
+            "status": "closed",
+            "year": 2013
+          },
+          "evidence_id": "evidence:40cdfaef4ff0cb0dd723c02b0315cf5f36f21c845ba5ceca2c93046024f581f5",
+          "excerpt_or_note": "An official parliamentary transcript lists Geilston Bay High School among schools that closed. It does not state the exact closing day.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:28Z",
+          "review_id": "school:0cd5c91f4fa92a27",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Tasmanian Parliament, Legislative Council Estimates B (11 September 2014)",
+          "source_type": "guided-research",
+          "source_url": "https://www.parliament.tas.gov.au/__data/assets/pdf_file/0022/59710/lc20estimates20b-20thurs201120september20201420-rockliff.pdf",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "campus_continuity",
+          "claim_value": {
+            "former_school_site": "Geilston Bay High School",
+            "subsequent_use": "Tasmanian Archives repository"
+          },
+          "evidence_id": "evidence:d25380785c37f90f4205e1e2c340415780a8fa48d25a48a1c70bd645762df644",
+          "excerpt_or_note": "The department annual report describes the planned Archives Repository as being at the former Geilston Bay High School site, indicating reuse of the site rather than an educational successor.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:28Z",
+          "review_id": "school:0cd5c91f4fa92a27",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Tasmanian Department of Education Annual Report 2015–16",
+          "source_type": "guided-research",
+          "source_url": "https://publicdocumentcentre.education.tas.gov.au/library/Shared%20Documents/DoE-Annual-Report-2015-16.pdf",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "historical_context",
+          "claim_value": {
+            "contract_period": "2018-01-01 to 2018-03-31",
+            "former_site": "Geilston Bay High School",
+            "project": "Preparation works for Tasmanian Archives and Heritage Office"
+          },
+          "evidence_id": "evidence:9f429baacddba74f8894bcccc916ab7ffed76f0ee8b1d538f23acd5fcede143c",
+          "excerpt_or_note": "The government tender describes preparation works for the Tasmanian Archives and Heritage Office at the former Geilston Bay High School.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:28Z",
+          "review_id": "school:0cd5c91f4fa92a27",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Tasmanian Government Tenders — TAHO Stage 1 Redevelopment",
+          "source_type": "guided-research",
+          "source_url": "https://www.tenders.tas.gov.au/ClosedForBids/Details/4246",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "school_identity",
+          "claim_value": {
+            "closure_dates_reported": [
+              "2013-12-09",
+              "2013-12-19"
+            ],
+            "coordinates": {
+              "latitude": -42.8376,
+              "longitude": 147.3488
+            },
+            "name": "Geilston Bay High School"
+          },
+          "evidence_id": "evidence:c6e9add01e355ec703b5e4183298231444d7efd72b5f3e6db9151a227ef5676b",
+          "excerpt_or_note": "The opened page identifies this school in Geilston Bay, Hobart, Tasmania and gives coordinates -42.8376, 147.3488. Its infobox says closed 9 December 2013, while the History text says 19 December 2013; preserve the date conflict.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:28Z",
+          "review_id": "school:0cd5c91f4fa92a27",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Geilston Bay High School — Wikipedia",
+          "source_type": "guided-research",
+          "source_url": "https://en.wikipedia.org/wiki/Geilston_Bay_High_School",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "geography",
+          "claim_value": {
+            "current_acara_target": null,
+            "latitude": -42.8376,
+            "longitude": 147.3488,
+            "wikidata_candidate": "Q5530143"
+          },
+          "evidence_id": "evidence:7b547e037544a3888862d67f4834172e9fa7baf270447fcbed91056705a8f122",
+          "excerpt_or_note": "The supplied local candidate cache records Q5530143 and coordinates but no current ACARA target. Parliamentary electorate geography is not used to infer the school location.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:45:28Z",
+          "review_id": "school:0cd5c91f4fa92a27",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Geilston Bay High School — local candidate cache",
+          "source_type": "guided-research",
+          "source_url": "https://en.wikipedia.org/w/api.php?action=query&titles=Geilston+Bay+High+School&prop=pageprops%7Ccoordinates&ppprop=wikibase_item&redirects=1&format=json",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "evidence_refs": {
+          "closure": [
+            "evidence:40cdfaef4ff0cb0dd723c02b0315cf5f36f21c845ba5ceca2c93046024f581f5",
+            "evidence:c6e9add01e355ec703b5e4183298231444d7efd72b5f3e6db9151a227ef5676b"
+          ],
+          "location": [
+            "evidence:c6e9add01e355ec703b5e4183298231444d7efd72b5f3e6db9151a227ef5676b",
+            "evidence:7b547e037544a3888862d67f4834172e9fa7baf270447fcbed91056705a8f122"
+          ],
+          "name": [
+            "evidence:c6e9add01e355ec703b5e4183298231444d7efd72b5f3e6db9151a227ef5676b"
+          ],
+          "subsequent_site_use": [
+            "evidence:d25380785c37f90f4205e1e2c340415780a8fa48d25a48a1c70bd645762df644",
+            "evidence:9f429baacddba74f8894bcccc916ab7ffed76f0ee8b1d538f23acd5fcede143c"
+          ]
+        },
+        "name": "Geilston Bay High School"
+      },
+      "manual_institutions": [
+        {
+          "country": "Australia",
+          "institution_ref": "manual:geilston-bay-high-school",
+          "institution_status": "closed",
+          "latitude": -42.8376,
+          "location_source_url": "https://en.wikipedia.org/wiki/Geilston_Bay_High_School",
+          "longitude": 147.3488,
+          "school_name": "Geilston Bay High School",
+          "sector": "Other"
+        }
+      ],
+      "outcome": "closure",
+      "payload": null,
+      "proposal_id": "proposal:15e2b8cfe778defebed70dce74056e51c44a1a3f2d41835155e4121d20cebea7",
+      "reasoning": "The school is identified at the exact named Geilston Bay site and an official Tasmanian parliamentary transcript confirms it closed in 2013. The date is conflicting in the opened secondary source (9 vs 19 December), while the official transcript does not give a day. Tasmanian Department of Education material documents later Archives use of the former school site; this is site reuse, not evidence of an educational successor. No current ACARA target is suitable. Propose a closed manual historical institution for human review; all closure, location, and site-history conclusions remain pending human review.",
+      "review_id": "school:0cd5c91f4fa92a27",
+      "value": null
+    },
+    {
+      "alternatives": [
+        {
+          "name": "SK St Andrew Muar",
+          "reason": "The directory lists this separately as primary school JBB5032; the reviewed claim is secondary and the yearbook/context identify the secondary school."
+        }
+      ],
+      "attempts": [
+        {
+          "gaps": [
+            "Official Ministry of Education school-list PDF was returned in search but could not be opened; school identity and address are corroborated by the La Salle page and federation directory."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 5,
+          "status": "resolved",
+          "token_usage": null
+        }
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": "manual:st-andrew-secondary-school-muar",
+          "claim_type": "attendance",
+          "claim_value": {
+            "member": "Sam Lim",
+            "recorded_school_name": "St Andrew Muar Johor",
+            "school_level": "secondary"
+          },
+          "evidence_id": "evidence:d33cccce6ab2a93d10d6e4a021e02b91fca1b811b7f35d1b86ffcce32ae9d1e5",
+          "excerpt_or_note": "The school yearbook profile identifies Bon Cheng Lim (Sam Lim) as one of St Andrew’s Muar alumni and discusses his education and MCE completion. Supports the secondary school identity; it gives no attendance dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:48:11Z",
+          "review_id": "school:1315d9b754d38040",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "The Andrean 2022 school yearbook",
+          "source_type": "school_yearbook",
+          "source_url": "https://anyflip.com/gpceo/zybi/basic",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "manual:st-andrew-secondary-school-muar",
+          "claim_type": "school_identity",
+          "claim_value": {
+            "address": "Jalan Hashim, 84000 Muar, Johor",
+            "current_name": "Sekolah Menengah Kebangsaan St. Andrew, Muar",
+            "founded": 1930,
+            "school_name": "St. Andrew's School (Secondary), Muar"
+          },
+          "evidence_id": "evidence:b93de64aa873c989e52296fde7efb0402efc209ed31c8287249038bd590084c3",
+          "excerpt_or_note": "La Salle Centre school page identifies St. Andrew’s School (Secondary), Muar / SMK St. Andrew, Muar, gives Jalan Hashim, 84000 Muar, Johor, and states it was founded in 1930.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:48:11Z",
+          "review_id": "school:1315d9b754d38040",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "St. Andrew's School, Muar - La Salle Centre",
+          "source_type": "school_organization_profile",
+          "source_url": "https://lasallecentre.wixsite.com/lasallecentre/st-andrews-school-secondary",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "manual:st-andrew-secondary-school-muar",
+          "claim_type": "location",
+          "claim_value": {
+            "postcode": "84000",
+            "school_name": "SMK St Andrew Muar",
+            "secondary_school_code": "JEB5022",
+            "state": "Johor",
+            "street": "Jln Hashim",
+            "town": "Muar"
+          },
+          "evidence_id": "evidence:4e2b76afdbf1c5c5266e46d031fd19c6db6529383facc2bfeb95e9416a3a1840",
+          "excerpt_or_note": "Directory separately lists JEB5022 SMK St Andrew Muar at Jln Hashim, 84000 Muar, Johor, distinguishing it from primary school JBB5032 SK St Andrew Muar.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-11T22:48:11Z",
+          "review_id": "school:1315d9b754d38040",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Federation of Councils of Christian Mission Schools Malaysia directory (Jan 2022)",
+          "source_type": "school_directory",
+          "source_url": "https://www.fcmsm.org/wp-content/uploads/2022/04/Directory-updated-Jan-2022.pdf?x38165=",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "country": "Malaysia",
+        "evidence_refs": {
+          "attendance_name": [
+            "evidence:d33cccce6ab2a93d10d6e4a021e02b91fca1b811b7f35d1b86ffcce32ae9d1e5"
+          ],
+          "location": [
+            "evidence:b93de64aa873c989e52296fde7efb0402efc209ed31c8287249038bd590084c3",
+            "evidence:4e2b76afdbf1c5c5266e46d031fd19c6db6529383facc2bfeb95e9416a3a1840"
+          ],
+          "school_name": [
+            "evidence:b93de64aa873c989e52296fde7efb0402efc209ed31c8287249038bd590084c3"
+          ],
+          "secondary_level": [
+            "evidence:d33cccce6ab2a93d10d6e4a021e02b91fca1b811b7f35d1b86ffcce32ae9d1e5",
+            "evidence:b93de64aa873c989e52296fde7efb0402efc209ed31c8287249038bd590084c3",
+            "evidence:4e2b76afdbf1c5c5266e46d031fd19c6db6529383facc2bfeb95e9416a3a1840"
+          ]
+        },
+        "name": "St. Andrew's School (Secondary), Muar",
+        "state": "Johor",
+        "suburb": "Muar"
+      },
+      "manual_institutions": [
+        {
+          "country": "Malaysia",
+          "institution_ref": "manual:st-andrew-secondary-school-muar",
+          "institution_status": "current",
+          "school_name": "St. Andrew's School (Secondary), Muar",
+          "school_type": "Secondary",
+          "sector": "Other",
+          "state": "Johor",
+          "suburb": "Muar"
+        }
+      ],
+      "outcome": "mapping",
+      "payload": {
+        "institution_ref": "manual:st-andrew-secondary-school-muar",
+        "recorded_name": "St Andrew Muar Johor",
+        "relationship_type": "direct"
+      },
+      "proposal_id": "proposal:1bc0cd2162661fa451423ba9959af2e72b655447786e3c8eadfe3c3fe118bb2f",
+      "reasoning": "Sam Lim's school yearbook profile ties him to St Andrew's Muar and describes his secondary education. La Salle Centre identifies the exact secondary school as SMK St Andrew, Muar, at Jalan Hashim, Johor; the 2022 mission-schools directory confirms secondary code JEB5022 and distinguishes it from the similarly named primary school (JBB5032). The school is in Malaysia, so propose a direct mapping to a manual institution rather than an ACARA record. No attendance dates are inferred.",
+      "review_id": "school:1315d9b754d38040",
+      "value": null
+    }
+  ],
+  "revision": 3,
+  "sample": [],
+  "schema_version": 1
+}

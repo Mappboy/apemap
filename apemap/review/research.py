@@ -79,6 +79,7 @@ def _object(text: str) -> dict[str, Any]:
     except (TypeError, ValueError) as exc:
         raise ValueError(
             "Research provider returned invalid suggestion JSON; nothing was retained"
+            f" (first 1000 chars: {value[:1000]!r})"
         ) from exc
     if not isinstance(parsed, dict) or not isinstance(parsed.get("suggestions"), list):
         raise ValueError("Research provider must return a suggestions list")
