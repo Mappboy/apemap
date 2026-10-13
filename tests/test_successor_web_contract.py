@@ -89,6 +89,7 @@ def successor_release(tmp_path: Path) -> Path:
     return root
 
 
+@pytest.mark.integration
 def test_original_coordinates_and_aliases_do_not_merge_predecessors(
     tmp_path: Path,
 ) -> None:
@@ -163,6 +164,7 @@ def test_original_coordinates_and_aliases_do_not_merge_predecessors(
         )
 
 
+@pytest.mark.integration
 def test_complete_unmapped_profiles_and_independent_evidence_survive_handoff(
     successor_release: Path,
 ) -> None:
@@ -196,6 +198,7 @@ def test_complete_unmapped_profiles_and_independent_evidence_survive_handoff(
     }
 
 
+@pytest.mark.integration
 def test_audit_detects_context_and_provider_year_corruption(
     successor_release: Path,
 ) -> None:
@@ -212,6 +215,7 @@ def test_audit_detects_context_and_provider_year_corruption(
     assert any("context fields" in error for error in errors)
 
 
+@pytest.mark.integration
 def test_multiple_reporting_counterparts_keep_assertion_providers(
     tmp_path: Path,
 ) -> None:

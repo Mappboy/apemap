@@ -174,6 +174,7 @@ def test_working_cli_report_does_not_change_database(
     assert json.loads(response.output) == report
 
 
+@pytest.mark.integration
 def test_release_reports_use_consumed_snapshot_offline(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

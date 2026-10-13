@@ -63,6 +63,7 @@ def event(
 
 
 @pytest.mark.parametrize("nonempty_working_log", [False, True])
+@pytest.mark.integration
 def test_fixture_ingestion_never_reads_working_review_authority(
     tmp_path: Path,
     empty_review_log: Path,
@@ -116,6 +117,7 @@ def test_fixture_ingestion_never_reads_working_review_authority(
         assert snapshot["decision_log_sha256"] == hashlib.sha256(b"").hexdigest()
 
 
+@pytest.mark.integration
 def test_aph_review_supersession_restores_updated_source(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     raw = historical_member()
@@ -181,6 +183,7 @@ def test_aph_review_supersession_restores_updated_source(tmp_path: Path) -> None
         assert effective[0] == original
 
 
+@pytest.mark.integration
 def test_aph_education_rejection_and_withdrawal_replay(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     raw = historical_member()
@@ -230,6 +233,7 @@ def test_aph_education_rejection_and_withdrawal_replay(tmp_path: Path) -> None:
         assert conn.execute("SELECT count(*) FROM member_education").fetchone() == (1,)
 
 
+@pytest.mark.integration
 def test_invalid_log_cannot_partially_refresh_canonical_sources(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     write_log(path, [])
@@ -279,6 +283,7 @@ def test_default_legacy_readers_are_disabled() -> None:
     assert load_service_overrides() == {}
 
 
+@pytest.mark.integration
 def test_aph_snapshot_fingerprints_consumed_json_register(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     write_log(path, [])
@@ -326,6 +331,7 @@ def service_event(
     )
 
 
+@pytest.mark.integration
 def test_reviewed_service_repairs_missing_narrow_cohort_membership(
     tmp_path: Path,
 ) -> None:
@@ -374,6 +380,7 @@ def test_reviewed_service_repairs_missing_narrow_cohort_membership(
         )
 
 
+@pytest.mark.integration
 def test_reviewed_service_respects_persisted_requested_cohorts(tmp_path: Path) -> None:
     path = tmp_path / "decisions.jsonl"
     raw = historical_member()
@@ -406,6 +413,7 @@ def test_reviewed_service_respects_persisted_requested_cohorts(tmp_path: Path) -
         assert review_snapshot_metadata(conn)["source_parliaments"] == [42, 48]
 
 
+@pytest.mark.integration
 def test_missing_member_preview_matches_source_facts_and_rebuild(
     tmp_path: Path,
 ) -> None:
@@ -484,6 +492,7 @@ def test_missing_member_preview_matches_source_facts_and_rebuild(
         assert conn.execute("SELECT count(*) FROM member_education").fetchone() == (1,)
 
 
+@pytest.mark.integration
 def test_aph_refresh_retains_consumed_stage_and_manifest_provenance(
     tmp_path: Path,
 ) -> None:
@@ -537,6 +546,7 @@ def test_aph_refresh_retains_consumed_stage_and_manifest_provenance(
         ).fetchone() == (consumed_manifest,)
 
 
+@pytest.mark.integration
 def test_retained_reviewed_person_refreshes_source_before_withdrawal(
     tmp_path: Path,
 ) -> None:
@@ -655,6 +665,7 @@ def test_retained_reviewed_person_refreshes_source_before_withdrawal(
 @pytest.mark.parametrize(
     "action,intervals", [("accept", []), ("research", None), ("reject", None)]
 )
+@pytest.mark.integration
 def test_nonadding_service_decisions_do_not_create_phantom_members(
     tmp_path: Path,
     action: str,
