@@ -99,6 +99,7 @@ def test_precomputed_member_heads_match_default_resolution(
     assert expected_ambiguity == [False, True]
 
 
+@pytest.mark.integration
 def test_member_candidate_build_replays_once_and_never_caches_between_builds(
     db_conn: duckdb.DuckDBPyConnection,
     tmp_path: Path,
@@ -159,6 +160,7 @@ def test_member_candidate_build_replays_once_and_never_caches_between_builds(
     )
 
 
+@pytest.mark.integration
 def test_member_candidate_build_still_validates_ledger(
     db_conn: duckdb.DuckDBPyConnection, tmp_path: Path
 ) -> None:
