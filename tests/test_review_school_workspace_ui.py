@@ -34,6 +34,7 @@ class FixtureResearchProvider:
         return {"sources": [], "suggestions": []}
 
 
+@pytest.mark.integration
 def test_assertion_workspace_puts_decision_controls_before_technical_details(
     review_service: ReviewService,
 ) -> None:
@@ -72,6 +73,7 @@ def test_assertion_workspace_puts_decision_controls_before_technical_details(
     assert f'formaction="/items/{review_id}/research"' in html
 
 
+@pytest.mark.integration
 def test_school_research_panel_uses_the_school_review_id_and_decision_form(
     review_service: ReviewService,
 ) -> None:

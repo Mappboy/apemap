@@ -188,6 +188,7 @@ def test_shared_sampled_scope_survives_retention_and_preview_error(
 
 
 @pytest.mark.parametrize("receipt_failure", [False, True])
+@pytest.mark.integration
 def test_nojs_exact_preview_apply_and_persistent_measured_receipt(
     review_service: ReviewService,
     monkeypatch: pytest.MonkeyPatch,

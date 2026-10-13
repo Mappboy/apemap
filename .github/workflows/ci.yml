@@ -98,41 +98,15 @@ jobs:
         run: uv run apemap inputs verify
 
       - name: Run Pytest suite
-        run: uv run pytest
+        run: mkdir -p .cache && uv run pytest --durations=30 --junitxml=.cache/ci-pytest.xml
 
-  pipeline:
-    name: Offline Pipeline Execution
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v5
+      - name: Upload pytest runtime report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          enable-cache: true
-
-      - name: Set up Python
-        run: uv python install 3.12
-
-      - name: Install dependencies
-        run: uv sync --all-groups --extra review-ui --frozen
-
-      - name: Provision pinned longitudinal inputs and current review recipe
-        env:
-          APEMAP_OFFLINE: "0"
-        run: uv run python -m apemap.release.ci
-
-      - name: Preinstall DuckDB spatial extension
-        run: uv run python -c "import duckdb; duckdb.connect().execute('INSTALL spatial; LOAD spatial')"
-
-      - name: Run full pipeline in strict offline mode
-        run: |
-          uv run apemap release recipe build \
-            --recipe data/raw/ci/recipe.json \
-            --db-path /tmp/ci_aped.duckdb \
-            --output-dir /tmp/ci_pipeline_out \
-            --version 0.0.0-ci
+          name: pytest-runtime-report
+          path: .cache/ci-pytest.xml
+          if-no-files-found: warn
 
   release-contract:
     name: Release Contract Build & Verify

@@ -148,7 +148,7 @@ uv run pytest -m notebook
 uv run pytest --durations=25
 ```
 
-Each test carries an explicit execution category: `unit` for isolated logic with
+Use explicit execution categories: `unit` for isolated logic with
 small local fixtures, or `integration` for multiple components and orchestration.
 `notebook` additionally identifies tests that launch Jupyter kernels; these also
 carry `slow`. Reserve `slow` for tests whose remaining cost cannot reasonably be
@@ -163,12 +163,21 @@ funding orchestration fixture supplies synthetic, source-native CSVs for all six
 input types, with exact row counts, validation, and rerun assertions.
 
 `tests/conftest.py` supplies an empty canonical `db_conn` and a
-`database_factory`. The CLI, funding, web-release, and Wikimedia tests build
-closed seeded templates once per session using `tests/db_fixtures.py`. Each test
-receives a private file copy and a connection closed by fixture teardown, even
-on failure. Domain seeds stay beside their tests. Never copy an open database
-or share a mutable connection between tests. Schema migration tests still build
+`database_factory`. The CLI, funding, web-release, Wikimedia, and review-service
+tests build closed seeded templates once per session using `tests/db_fixtures.py`.
+Each test receives a private file copy and a connection closed by fixture teardown, even
+on failure. Review-service tests are marked `integration` because they exercise
+projections and persistence against those per-test DuckDB copies. Domain seeds
+stay beside their tests. Never copy an open database or share a mutable connection
+between tests. Explorer audit tests copy a complete prepared release for each
+test, so tampering cannot affect later cases. Schema migration tests still build
 their original legacy layouts explicitly.
+
+Pytest uses one DuckDB query thread for these small fixtures to avoid scheduling
+overhead on machines with many cores. Explicit connection settings take priority.
+This fixture does not change application settings or subprocess/kernel settings;
+concurrent review tests still exercise independent request workers. Full release
+build/verification tests belong to `integration`, including the CLI roundtrip.
 
 The autouse HTTP guard fails immediately on an unmocked `requests.Session`
 request, including clients created by the retry-session helper. Mock clients or

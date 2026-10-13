@@ -368,6 +368,7 @@ def test_empty_lists_and_search_results_have_explicit_messages() -> None:
     )
 
 
+@pytest.mark.integration
 def test_real_member_saves_invalidate_lists_without_mutating_authority_on_reads(
     review_service: ReviewService,
 ) -> None:
@@ -404,6 +405,7 @@ def test_real_member_saves_invalidate_lists_without_mutating_authority_on_reads(
     assert hashlib.sha256(service.db_path.read_bytes()).hexdigest() == before_db
 
 
+@pytest.mark.integration
 def test_real_school_save_updates_unmatched_list_and_home_count(
     review_service: ReviewService,
 ) -> None:

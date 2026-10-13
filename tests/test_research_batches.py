@@ -478,6 +478,7 @@ def test_school_requires_every_evidence_disposition_and_no_sampling(
         batches._validate_result("schools", task, raw)
 
 
+@pytest.mark.integration
 def test_school_manual_closure_end_to_end(
     review_service: ReviewService, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -532,6 +533,7 @@ def test_school_manual_closure_end_to_end(
     assert not definitions[0].payload.get("acara_id")
 
 
+@pytest.mark.integration
 def test_real_preview_apply_and_generic_stale_guards(
     review_service: ReviewService, tmp_path: Path
 ) -> None:
@@ -647,6 +649,7 @@ def test_cli_revalidate_forwards_registers_and_individual_scope(
     assert set(tmp_path.iterdir()) == existing_files
 
 
+@pytest.mark.integration
 def test_cli_and_ui_use_shared_batches(review_service: ReviewService) -> None:
     from apemap.review.gui import create_app
 
@@ -736,6 +739,7 @@ def test_old_sample_is_invalidated_without_losing_individual_reviews(
     assert snapshot_path.read_bytes() == original
 
 
+@pytest.mark.integration
 def test_unrelated_ledger_changes_and_later_subsets(
     review_service: ReviewService,
     tmp_path: Path,
@@ -782,6 +786,7 @@ def test_unrelated_ledger_changes_and_later_subsets(
     assert len(batches.show("subsets")["applied_proposals"]) == 2
 
 
+@pytest.mark.integration
 def test_receipt_recovery_is_idempotent(
     review_service: ReviewService,
     tmp_path: Path,
@@ -819,6 +824,7 @@ def test_receipt_recovery_is_idempotent(
     assert batches.show("receipt")["applications"][0]["recovered"]
 
 
+@pytest.mark.integration
 def test_postcommit_database_failure_reports_saved_decisions_and_recovers(
     review_service: ReviewService,
     tmp_path: Path,
@@ -863,6 +869,7 @@ def test_postcommit_database_failure_reports_saved_decisions_and_recovers(
     assert review_service.log_path.read_bytes() == original
 
 
+@pytest.mark.integration
 def test_measured_receipt_excludes_unrelated_postcommit_events(
     review_service: ReviewService,
     tmp_path: Path,
@@ -934,6 +941,7 @@ def test_measured_receipt_excludes_unrelated_postcommit_events(
 
 
 @pytest.mark.parametrize("changed_input", ["register", "evidence"])
+@pytest.mark.integration
 def test_postcommit_source_changes_leave_recoverable_receipt_error(
     review_service: ReviewService,
     tmp_path: Path,
@@ -1001,6 +1009,7 @@ def test_postcommit_source_changes_leave_recoverable_receipt_error(
     assert review_service.log_path.read_bytes() == original_ledger
 
 
+@pytest.mark.integration
 def test_school_receipt_keeps_frozen_manual_target_metadata(
     review_service: ReviewService,
 ) -> None:
@@ -1092,6 +1101,7 @@ def test_school_receipt_keeps_frozen_manual_target_metadata(
     assert current[policy.review_id]["status"] == "needs_individual_review"
 
 
+@pytest.mark.integration
 def test_explicit_revalidation_binds_original_sources_and_rechecks_generic_apply(
     review_service: ReviewService,
     tmp_path: Path,
@@ -1149,6 +1159,7 @@ def test_explicit_revalidation_binds_original_sources_and_rechecks_generic_apply
     assert applied["new_events"] == 1
 
 
+@pytest.mark.integration
 def test_changed_related_heads_and_edited_original_ledger_block_reuse(
     review_service: ReviewService,
     tmp_path: Path,
@@ -1197,6 +1208,7 @@ def test_changed_related_heads_and_edited_original_ledger_block_reuse(
         )
 
 
+@pytest.mark.integration
 def test_school_revalidation_allows_status_enrichment_but_not_target_identity_changes(
     review_service: ReviewService,
     tmp_path: Path,
@@ -1279,6 +1291,7 @@ def test_school_revalidation_allows_status_enrichment_but_not_target_identity_ch
     )
 
 
+@pytest.mark.integration
 def test_closure_research_keeps_canonical_attendance_unresolved(
     review_service: ReviewService,
     tmp_path: Path,

@@ -376,6 +376,7 @@ def test_replacement_reason_is_normalized_without_rejecting_attendance(
     assert event["payload"]["resolution_only"] is True
 
 
+@pytest.mark.integration
 def test_real_signed_school_policy_and_assertion_resolution_update_progress(
     review_service: ReviewService,
 ) -> None:

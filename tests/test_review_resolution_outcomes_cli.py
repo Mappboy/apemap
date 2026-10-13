@@ -16,6 +16,7 @@ from tests.test_review_service import review_service as review_service
 
 @pytest.mark.parametrize("reason", ["ambiguous_name", "no_suitable_candidate"])
 @pytest.mark.parametrize("entity", ["school", "member_education"])
+@pytest.mark.integration
 def test_cli_previews_and_retains_typed_resolution_reasons(
     review_service: ReviewService, tmp_path: Path, reason: str, entity: str
 ) -> None:

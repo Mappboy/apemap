@@ -152,9 +152,7 @@ def test_changes_during_semantic_diff_invalidate_preview(
 pytestmark = pytest.mark.integration
 
 
-@pytest.fixture
-def review_service(tmp_path: Path, database_factory: DatabaseFactory) -> ReviewService:
-    path, conn = database_factory(None)
+def seed_review_database(conn: duckdb.DuckDBPyConnection) -> None:
     conn.execute(
         "INSERT INTO members (member_id, family_name, given_name, display_name, aph_id, gender, date_of_birth) VALUES ('aph-test', 'Person', 'Test', 'Test Person', 'TEST', 'Male', '1970-01-01')"
     )
@@ -170,6 +168,15 @@ def review_service(tmp_path: Path, database_factory: DatabaseFactory) -> ReviewS
     from apemap.review.integration import capture_review_sources
 
     capture_review_sources(conn)
+
+
+@pytest.fixture
+def review_service(
+    tmp_path: Path,
+    database_factory: DatabaseFactory,
+    review_db_template: Path,
+) -> ReviewService:
+    path, conn = database_factory(review_db_template)
     conn.close()
     external = tmp_path / "external"
     external.mkdir()

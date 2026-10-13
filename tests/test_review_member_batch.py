@@ -35,6 +35,7 @@ def member_cache(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return path
 
 
+@pytest.mark.integration
 def test_member_view_presentation(review_service: ReviewService) -> None:
     service = review_service
     # Member TEST is present in the fixture database
@@ -56,6 +57,7 @@ def test_member_view_presentation(review_service: ReviewService) -> None:
     )
 
 
+@pytest.mark.integration
 def test_member_prepare_and_save_batch_mixed_decisions(
     review_service: ReviewService,
 ) -> None:
@@ -142,6 +144,7 @@ def test_member_prepare_and_save_batch_mixed_decisions(
     assert dob_after["effective_value"] == "1971-02-03"
 
 
+@pytest.mark.integration
 def test_batch_validation_rejections(review_service: ReviewService) -> None:
     service = review_service
 
@@ -193,6 +196,7 @@ def test_batch_validation_rejections(review_service: ReviewService) -> None:
         )
 
 
+@pytest.mark.integration
 def test_strict_ledger_revision_on_member_save(review_service: ReviewService) -> None:
     service = review_service
     drafts = [
@@ -228,6 +232,7 @@ def test_strict_ledger_revision_on_member_save(review_service: ReviewService) ->
         service.save_batch(preview)
 
 
+@pytest.mark.integration
 def test_prepare_batch_requires_review_db(review_service: ReviewService) -> None:
     service = review_service
     # Set non-existent db_path
@@ -241,6 +246,7 @@ def test_prepare_batch_requires_review_db(review_service: ReviewService) -> None
         service.prepare_batch("TEST", drafts)
 
 
+@pytest.mark.integration
 def test_member_uses_preserved_baseline_after_withdrawal(
     review_service: ReviewService,
 ) -> None:
@@ -281,6 +287,7 @@ def test_member_uses_preserved_baseline_after_withdrawal(
     assert field["comparison"] == "different"
 
 
+@pytest.mark.integration
 def test_every_cache_option_and_distinct_fields_are_shared(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -305,6 +312,7 @@ def test_every_cache_option_and_distinct_fields_are_shared(
     assert review_service.member("TEST")["ambiguous"]
 
 
+@pytest.mark.integration
 def test_refreshed_proposal_returns_to_pending_and_retention_chains(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -361,6 +369,7 @@ def test_refreshed_proposal_returns_to_pending_and_retention_chains(
     )
 
 
+@pytest.mark.integration
 def test_suppressed_fields_have_no_batch_controls(
     review_service: ReviewService, member_cache: Path
 ) -> None:
@@ -386,6 +395,7 @@ def test_suppressed_fields_have_no_batch_controls(
 
 
 @pytest.mark.parametrize("changed", ["validation", "effects", "source"])
+@pytest.mark.integration
 def test_changed_batch_conclusions_never_append(
     review_service: ReviewService,
     member_cache: Path,
@@ -441,6 +451,7 @@ def test_changed_batch_conclusions_never_append(
         assert len(service.events()) == 1
 
 
+@pytest.mark.integration
 def test_invalid_one_field_prevents_entire_batch(review_service: ReviewService) -> None:
     before = log_revision(review_service.log_path)
     with pytest.raises(ValueError):
@@ -466,6 +477,7 @@ def test_invalid_one_field_prevents_entire_batch(review_service: ReviewService) 
     assert log_revision(review_service.log_path) == before
 
 
+@pytest.mark.integration
 def test_conflicting_heads_require_explicit_retention(
     review_service: ReviewService,
 ) -> None:
@@ -529,6 +541,7 @@ def test_conflicting_heads_require_explicit_retention(
     assert field["effective_value"] == "Female"
 
 
+@pytest.mark.integration
 def test_member_batch_references_only_retained_same_field_evidence(
     review_service: ReviewService,
 ) -> None:

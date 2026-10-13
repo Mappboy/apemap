@@ -165,8 +165,14 @@ def test_ci_provisioning_refuses_to_replace_a_pinned_recipe(
 
 def test_ci_workflow_uses_provisioned_register_and_offline_recipes() -> None:
     workflow = (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-    assert workflow.count("uv run python -m apemap.release.ci") == 3
+    assert workflow.count("uv run python -m apemap.release.ci") == 2
     assert workflow.count("apemap review --external-dir data/raw/ci/acara check") == 2
-    assert workflow.count("--recipe data/raw/ci/recipe.json") == 2
+    assert workflow.count("--recipe data/raw/ci/recipe.json") == 1
+    assert workflow.count("uv run apemap release recipe build") == 1
+    assert "uv run pytest --durations=30 --junitxml=.cache/ci-pytest.xml" in workflow
+    assert "actions/upload-artifact@v4" in workflow
+    assert "if: always()" in workflow
+    assert "jobs:\n  quality:" in workflow
+    assert "  pipeline:" not in workflow
     assert "apemap run-all" not in workflow
     assert "--strict-assertions" in workflow

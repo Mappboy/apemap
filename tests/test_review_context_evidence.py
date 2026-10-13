@@ -123,6 +123,7 @@ def test_incompatible_context_cannot_enter_replay(change: str) -> None:
         resolve_context(selected, retained)
 
 
+@pytest.mark.integration
 def test_selected_context_projects_through_service(
     review_service: ReviewService,
 ) -> None:
@@ -150,6 +151,7 @@ def test_selected_context_projects_through_service(
     ]
 
 
+@pytest.mark.integration
 def test_retained_roles_replay_offline_into_existing_contract(
     review_service: ReviewService, monkeypatch: pytest.MonkeyPatch
 ) -> None:

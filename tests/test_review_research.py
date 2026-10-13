@@ -316,6 +316,7 @@ def test_member_research_disallows_candidate_refs_and_unsupported_types() -> Non
 
 
 @pytest.mark.parametrize("field", ["gender", "date_of_birth", "wikidata_id"])
+@pytest.mark.integration
 def test_member_research_context_is_scoped_to_one_exact_field(
     review_service: ReviewService, field: str
 ) -> None:
@@ -334,6 +335,7 @@ def test_member_research_context_is_scoped_to_one_exact_field(
     assert len(context["candidates"]) <= 10
 
 
+@pytest.mark.integration
 def test_school_research_context_preserves_school_identity_and_local_candidates(
     review_service: ReviewService,
 ) -> None:
@@ -345,6 +347,7 @@ def test_school_research_context_preserves_school_identity_and_local_candidates(
     assert all(row.get("institution_ref") for row in context["candidates"])
 
 
+@pytest.mark.integration
 def test_member_evidence_retention_and_copy_are_exact_and_read_only(
     review_service: ReviewService,
 ) -> None:
@@ -379,6 +382,7 @@ def test_member_evidence_retention_and_copy_are_exact_and_read_only(
     "case",
     ["school:" + school_digest("Test High School"), CASE],
 )
+@pytest.mark.integration
 def test_school_identity_evidence_copy_is_exact_and_read_only(
     review_service: ReviewService, case: str
 ) -> None:
@@ -415,6 +419,7 @@ def test_school_identity_evidence_copy_is_exact_and_read_only(
         ({"local_target_missing": True}, "unavailable locally"),
     ],
 )
+@pytest.mark.integration
 def test_school_identity_copy_rejects_untrusted_or_non_supporting_claims(
     review_service: ReviewService,
     changes: dict[str, Any],
@@ -449,6 +454,7 @@ def test_school_identity_copy_rejects_untrusted_or_non_supporting_claims(
     assert service.review_revision() == decision_revision
 
 
+@pytest.mark.integration
 def test_school_research_context_includes_selected_candidates(
     review_service: ReviewService,
 ) -> None:
@@ -464,6 +470,7 @@ def test_school_research_context_includes_selected_candidates(
     "case",
     ["school:" + school_digest("Test High School"), CASE],
 )
+@pytest.mark.integration
 def test_research_context_includes_selected_local_alternative(
     review_service: ReviewService, case: str
 ) -> None:
@@ -477,6 +484,7 @@ def test_research_context_includes_selected_local_alternative(
         review_service.research_context(case, candidate_id="acara:404")
 
 
+@pytest.mark.integration
 def test_school_research_context_includes_effective_reviewed_target(
     review_service: ReviewService,
 ) -> None:
@@ -506,6 +514,7 @@ def test_school_research_context_includes_effective_reviewed_target(
     assert context["selected_candidate"]["institution_ref"] == "acara:2"
 
 
+@pytest.mark.integration
 def test_assertion_research_context_does_not_duplicate_default_selected_target(
     review_service: ReviewService,
 ) -> None:
@@ -595,6 +604,7 @@ def test_offline_jobs_never_call_provider(monkeypatch: pytest.MonkeyPatch) -> No
         jobs.close()
 
 
+@pytest.mark.integration
 def test_ui_provider_choice_inspection_preview_and_retention(
     review_service: ReviewService,
     monkeypatch: pytest.MonkeyPatch,
@@ -677,6 +687,7 @@ def test_ui_provider_choice_inspection_preview_and_retention(
         manager.close()
 
 
+@pytest.mark.integration
 def test_jobs_and_signed_retention_reject_stale_decisions(
     review_service: ReviewService,
     monkeypatch: pytest.MonkeyPatch,

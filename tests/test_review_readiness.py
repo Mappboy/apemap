@@ -147,6 +147,7 @@ def test_joint_bounds_count_people_once_and_detect_threshold_ties() -> None:
     )
 
 
+@pytest.mark.integration
 def test_working_cli_report_does_not_change_database(
     review_service: ReviewService,
 ) -> None:
