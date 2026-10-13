@@ -153,7 +153,17 @@ small local fixtures, or `integration` for multiple components and orchestration
 `notebook` additionally identifies tests that launch Jupyter kernels; these also
 carry `slow`. Reserve `slow` for tests whose remaining cost cannot reasonably be
 reduced. Markers are registered in `pyproject.toml` and checked strictly. No
-category is excluded by default, and parallel execution is not enabled.
+category is excluded by default. The default command runs serially. CI runs
+non-notebook tests on two workers with `--dist=loadfile`, then runs notebook
+execution serially; both commands together retain the complete suite:
+
+```bash
+uv run pytest -n 2 --dist=loadfile -m "not notebook" --durations=30
+uv run pytest -m notebook --durations=10
+```
+
+`loadfile` keeps each module on one worker, with separate worker temporary roots;
+see the [pytest-xdist distribution documentation](https://pytest-xdist.readthedocs.io/en/stable/distribution.html).
 The [issue #39 measurements](testing-performance.md) record the original and
 updated full-suite and priority-module timings.
 

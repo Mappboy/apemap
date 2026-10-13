@@ -97,15 +97,23 @@ jobs:
       - name: Verify cached input files manifest
         run: uv run apemap inputs verify
 
-      - name: Run Pytest suite
-        run: mkdir -p .cache && uv run pytest --durations=30 --junitxml=.cache/ci-pytest.xml
+      - name: Run non-notebook tests on two isolated workers
+        run: |
+          mkdir -p .cache
+          uv run pytest -n 2 --dist=loadfile -m "not notebook" \
+            --durations=30 --junitxml=.cache/ci-pytest.xml
+
+      - name: Run notebook execution tests serially
+        run: uv run pytest -m notebook --durations=10 --junitxml=.cache/ci-notebooks.xml
 
       - name: Upload pytest runtime report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pytest-runtime-report
-          path: .cache/ci-pytest.xml
+          path: |
+            .cache/ci-pytest.xml
+            .cache/ci-notebooks.xml
           if-no-files-found: warn
 
   release-contract:

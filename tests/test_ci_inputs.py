@@ -169,7 +169,10 @@ def test_ci_workflow_uses_provisioned_register_and_offline_recipes() -> None:
     assert workflow.count("apemap review --external-dir data/raw/ci/acara check") == 2
     assert workflow.count("--recipe data/raw/ci/recipe.json") == 1
     assert workflow.count("uv run apemap release recipe build") == 1
-    assert "uv run pytest --durations=30 --junitxml=.cache/ci-pytest.xml" in workflow
+    assert 'uv run pytest -n 2 --dist=loadfile -m "not notebook"' in workflow
+    assert "--durations=30 --junitxml=.cache/ci-pytest.xml" in workflow
+    assert "uv run pytest -m notebook --durations=10" in workflow
+    assert ".cache/ci-notebooks.xml" in workflow
     assert "actions/upload-artifact@v4" in workflow
     assert "if: always()" in workflow
     assert "jobs:\n  quality:" in workflow
