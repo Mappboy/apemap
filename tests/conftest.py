@@ -35,14 +35,16 @@ def small_database_threads() -> Iterator[None]:
 
 @pytest.fixture(autouse=True)
 def isolate_ingestion_review_log(
-    empty_review_log: Path, monkeypatch: pytest.MonkeyPatch
+    empty_review_log: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Default ingestion to private authority; explicit review fixtures still replay.
+    """Default to private authority and caches; explicit review fixtures still replay.
 
     Reading and snapshot capture must use the same path throughout ingestion,
     even when a developer saves decisions while the test suite is running.
     """
     monkeypatch.setattr("apemap.review.integration.DEFAULT_LOG_PATH", empty_review_log)
+    monkeypatch.setattr("apemap.review.service.RAW_APH_DIR", tmp_path / "aph")
+    monkeypatch.setattr("apemap.review.service.RAW_WIKIMEDIA_DIR", tmp_path / "wiki")
 
 
 @pytest.fixture

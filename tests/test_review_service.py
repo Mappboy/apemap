@@ -189,6 +189,25 @@ def review_service(
     )
 
 
+@pytest.mark.parametrize("cache", ["aph", "wiki"])
+def test_private_source_cache_changes_invalidate_review_previews(
+    review_service: ReviewService, tmp_path: Path, cache: str
+) -> None:
+    preview = review_service.prepare(
+        school_review_id("Test High School"),
+        "research",
+        {"recorded_name": "Test High School"},
+        reviewer="Reviewer",
+        notes="Check history",
+    )
+    source = tmp_path / cache / "individuals.json"
+    source.parent.mkdir()
+    source.write_text("[]", encoding="utf-8")
+    with pytest.raises(StaleReviewError, match="Source"):
+        review_service.save(preview)
+    assert not review_service.log_path.exists()
+
+
 def test_member_preview_never_mutates_and_supersession_restores_source(
     review_service: ReviewService,
 ) -> None:

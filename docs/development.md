@@ -188,8 +188,11 @@ that extension before running tests in an environment without network access.
 Fixture ingestion must pass `decision_log_path=empty_review_log` (the shared
 private empty-ledger fixture), or an explicit temporary/pinned review log when
 testing decisions. CLI fixtures use `--decision-log`. An autouse fallback also
-redirects ingestion defaults to the private ledger; it is a guard for orchestration
-paths, not a replacement for declaring review state in fixture setup. Tests that
+redirects ingestion defaults to the private ledger and review source caches to
+private APH/Wikimedia paths. Explicit cache fixtures can replace those paths.
+This prevents synthetic reviews from hashing unrelated working caches while
+preserving source-change detection. The guard is not a replacement for declaring
+review state in fixture setup. Tests that
 exercise review validation deliberately select their own nonempty ledger.
 
 Notebook execution tests read a small temporary on-disk DuckDB fixture and verify
