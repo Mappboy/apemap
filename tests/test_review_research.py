@@ -14,6 +14,8 @@ import requests
 from apemap.review.research import (
     HTTPResearchProvider,
     ResearchJobs,
+    _object,
+    _prompt,
     load_providers,
     validate_result,
 )
@@ -152,6 +154,12 @@ def test_official_provider_requests_and_citation_shapes(
         assert output["search_entry_point"] and "?key=" not in calls[0][0]
     elif provider == "openrouter":
         assert payload["max_tool_calls"] == 2
+        assert payload["response_format"]["type"] == "json_schema"
+        assert payload["response_format"]["json_schema"]["strict"] is True
+        assert payload["response_format"]["json_schema"]["name"] == "apemap_research"
+        assert payload["provider"] == {"require_parameters": True}
+        assert payload["messages"][0]["role"] == "system"
+        assert payload["messages"][1]["role"] == "user"
 
 
 def test_configuration_supports_multiple_choices_and_rejects_credentials(
@@ -707,3 +715,267 @@ def test_jobs_and_signed_retention_reject_stale_decisions(
         assert not service.evidence_path.exists()
     finally:
         jobs.close()
+
+
+GLM_NARRATED_ANALYSIS_FIXTURE = """Let me analyze this task:
+1. We have a member of parliament: Cameron Poole
+2. The recorded school name is: Test High School
+3. Key searches are:
+   - "Test High School" "Cameron Poole"
+   - "Cameron Poole" education history
+Let me start with these.
+"""
+
+
+def test_plain_valid_json_response_is_accepted() -> None:
+    valid_json = (
+        '{"suggestions": [{"candidate_institution_ref": null, '
+        '"source_url": "https://example.org", "claim_type": "identity", '
+        '"claim_value": "School", "stance": "contextual", '
+        '"excerpt_or_note": "A note"}]}'
+    )
+    parsed = _object(valid_json)
+    assert len(parsed["suggestions"]) == 1
+    assert parsed["suggestions"][0]["claim_type"] == "identity"
+
+
+def test_empty_suggestions_list_is_accepted() -> None:
+    empty_json = '{"suggestions": []}'
+    parsed = _object(empty_json)
+    assert parsed == {"suggestions": []}
+    context = {"review_id": CASE, "candidates": []}
+    validated = validate_result(context, {**parsed, "sources": []})
+    assert validated["suggestions"] == []
+
+
+def test_narrated_prose_is_rejected() -> None:
+    prose = "Let me analyze this task:\n1. We have a member of parliament..."
+    with pytest.raises(
+        ValueError, match="invalid suggestion JSON; nothing was retained"
+    ):
+        _object(prose)
+
+
+def test_markdown_fenced_json_is_accepted() -> None:
+    fenced_json = '```json\n{"suggestions": []}\n```'
+    assert _object(fenced_json) == {"suggestions": []}
+
+    fenced_raw = '```\n{"suggestions": []}\n```'
+    assert _object(fenced_raw) == {"suggestions": []}
+
+
+@pytest.mark.parametrize(
+    "invalid_text",
+    [
+        '{"not_suggestions": []}',
+        '{"suggestions": "not-a-list"}',
+        '"plain-string"',
+        "42",
+        "true",
+        "null",
+        '{"suggestions": ["not-a-dict"]}',
+    ],
+)
+def test_schema_invalid_json_is_rejected(invalid_text: str) -> None:
+    if invalid_text == '{"suggestions": ["not-a-dict"]}':
+        context = {"review_id": CASE, "candidates": []}
+        with pytest.raises(ValueError, match="Invalid research suggestion"):
+            validate_result(context, {**_object(invalid_text), "sources": []})
+    else:
+        with pytest.raises(ValueError, match="suggestions list"):
+            _object(invalid_text)
+
+
+def test_candidate_outside_review_case_is_rejected() -> None:
+    context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
+    untrusted = {
+        "suggestions": [
+            {
+                "candidate_institution_ref": "acara:999",
+                "source_url": URL,
+                "claim_type": "identity",
+                "claim_value": "School",
+                "stance": "supports",
+                "excerpt_or_note": "Outside",
+            }
+        ],
+        "sources": [{"url": URL, "title": "History"}],
+    }
+    with pytest.raises(ValueError, match="outside this case"):
+        validate_result(context, untrusted)
+
+
+def test_suggestion_without_provider_source_citation_is_rejected() -> None:
+    context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
+    missing_source = {
+        "suggestions": [
+            {
+                "candidate_institution_ref": "acara:1",
+                "source_url": "https://unmentioned.org/source",
+                "claim_type": "identity",
+                "claim_value": "School",
+                "stance": "supports",
+                "excerpt_or_note": "No citation in sources",
+            }
+        ],
+        "sources": [{"url": URL, "title": "History"}],
+    }
+    with pytest.raises(ValueError, match="provider source citation"):
+        validate_result(context, missing_source)
+
+
+@pytest.mark.parametrize(
+    ("provider", "response_data", "expected_match"),
+    [
+        (
+            "openrouter",
+            {
+                "choices": [
+                    {
+                        "finish_reason": "length",
+                        "message": {"content": '{"suggestions": []}'},
+                    }
+                ]
+            },
+            "truncated due to token limits",
+        ),
+        (
+            "openrouter",
+            {
+                "choices": [
+                    {
+                        "finish_reason": "max_tokens",
+                        "message": {"content": '{"suggestions": []}'},
+                    }
+                ]
+            },
+            "truncated due to token limits",
+        ),
+        (
+            "openrouter",
+            {"choices": [{"finish_reason": "tool_calls", "message": {"content": ""}}]},
+            "incomplete tool execution",
+        ),
+        (
+            "openrouter",
+            {"choices": []},
+            "no choices",
+        ),
+        (
+            "gemini",
+            {
+                "candidates": [
+                    {
+                        "finishReason": "MAX_TOKENS",
+                        "content": {"parts": [{"text": '{"suggestions": []}'}]},
+                    }
+                ]
+            },
+            "truncated due to token limits",
+        ),
+        (
+            "gemini",
+            {"candidates": []},
+            "no candidates",
+        ),
+        (
+            "gemini",
+            {"candidates": [{"finishReason": "SAFETY"}]},
+            "blocked",
+        ),
+        (
+            "openai",
+            {"status": "incomplete", "output": []},
+            "status was incomplete",
+        ),
+        (
+            "openai",
+            {"incomplete_details": {"reason": "max_output_tokens"}, "output": []},
+            "truncated",
+        ),
+        (
+            "openai",
+            {"output": [{"finish_reason": "length", "type": "message", "content": []}]},
+            "truncated due to token limits",
+        ),
+    ],
+)
+def test_truncated_or_incomplete_provider_responses_retain_nothing(
+    monkeypatch: pytest.MonkeyPatch,
+    provider: str,
+    response_data: dict[str, Any],
+    expected_match: str,
+) -> None:
+    monkeypatch.setenv("TEST_RESEARCH_KEY", "test-secret")
+    monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
+
+    class FakeResponse:
+        content = b"{}"
+
+        def raise_for_status(self) -> None:
+            pass
+
+        def json(self) -> dict[str, Any]:
+            return response_data
+
+    monkeypatch.setattr(requests, "post", lambda *args, **kwargs: FakeResponse())
+    adapter = HTTPResearchProvider(provider, "test-model", "TEST_RESEARCH_KEY")
+    with pytest.raises(ValueError, match=expected_match):
+        adapter.search({"review_id": CASE, "candidates": []})
+
+
+def test_prompt_states_incomplete_research_must_return_json() -> None:
+    context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
+    prompt = _prompt(context)
+    assert "You MUST return JSON even if research is incomplete" in prompt
+    assert '{"suggestions":[]}' in prompt
+    assert "empty valid result is always preferable to unfinished analysis" in prompt
+
+
+def test_prompt_explicitly_prohibits_narrated_search_planning() -> None:
+    context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
+    prompt = _prompt(context)
+    assert "Do not describe intended searches" in prompt
+    assert "Let me analyze this task" in prompt
+    assert "I should search for" in prompt
+    assert "Let me search" in prompt
+    assert "Key searches are" in prompt
+
+
+def test_glm_narrated_analysis_regression_fixture(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression test ensuring GLM-5.3-flash narrated analysis failure mode is rejected cleanly."""
+    with pytest.raises(
+        ValueError, match="invalid suggestion JSON; nothing was retained"
+    ):
+        _object(GLM_NARRATED_ANALYSIS_FIXTURE)
+
+    monkeypatch.setenv("TEST_RESEARCH_KEY", "test-secret")
+    monkeypatch.delenv("APEMAP_OFFLINE", raising=False)
+
+    class FakeResponse:
+        content = b"fixture"
+
+        def raise_for_status(self) -> None:
+            pass
+
+        def json(self) -> dict[str, Any]:
+            return {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "content": GLM_NARRATED_ANALYSIS_FIXTURE,
+                            "annotations": [],
+                        },
+                    }
+                ]
+            }
+
+    monkeypatch.setattr(requests, "post", lambda *args, **kwargs: FakeResponse())
+    adapter = HTTPResearchProvider("openrouter", "glm-5.3-flash", "TEST_RESEARCH_KEY")
+    with pytest.raises(
+        ValueError, match="invalid suggestion JSON; nothing was retained"
+    ):
+        adapter.search({"review_id": CASE, "candidates": []})
