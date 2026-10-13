@@ -190,3 +190,4 @@ data/processed/review/
 notebooks/*/__marimo__/
 
 .research-providers.json
+.env
