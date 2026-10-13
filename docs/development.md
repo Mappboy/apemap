@@ -164,8 +164,10 @@ uv run pytest -m notebook --durations=10
 
 `loadfile` keeps each module on one worker, with separate worker temporary roots;
 see the [pytest-xdist distribution documentation](https://pytest-xdist.readthedocs.io/en/stable/distribution.html).
-The [issue #39 measurements](testing-performance.md) record the original and
-updated full-suite and priority-module timings.
+The [issue #88 measurements](testing-performance-issue-88.md) record the current
+Windows and Linux timings, fixture costs, and CI comparison. The earlier
+[issue #39 measurements](testing-performance.md) preserve the original and
+updated priority-module timings.
 
 Tests stay in domain-oriented files under `tests/`. Keep new fixtures small and
 offline; do not ingest the entire research dataset to test orchestration. The

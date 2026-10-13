@@ -91,7 +91,7 @@ uv run apemap release verify /tmp/ci_release_bundle --strict-assertions
 
 The test job keeps the complete suite enabled, prints pytest's slowest duration
 entries, and records total test durations in `.cache/ci-pytest.xml` and
-`.cache/ci-notebooks.xml`. GitHub uploads both JUnit reports even when
+`.cache/ci-notebooks.xml`. GitHub uploads available JUnit reports even when
 pytest fails, so slow tests remain visible without excluding coverage or adding
 a job dependency to the test path.
 
