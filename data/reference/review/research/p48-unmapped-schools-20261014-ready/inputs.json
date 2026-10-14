@@ -1,0 +1,37 @@
+[
+  {
+    "path": "data/aped-p48-research.duckdb",
+    "sha256": "3e9a0793260c762822279ed8de5b83d3c0c9ac55d008944c02d853c1d2137d64",
+    "size_bytes": 116142080
+  },
+  {
+    "path": "data/reference/review/decisions.jsonl",
+    "sha256": "9836b30d32fac8c2e6c56396f556229affdc8d288252c95c168685fa14715550",
+    "size_bytes": 273784
+  },
+  {
+    "path": "data/reference/review/evidence.jsonl",
+    "sha256": "9ea17871b7eb984c3fed35f9b35b1567edadbdb6358ee446242a6e61ddf1847e",
+    "size_bytes": 53850
+  },
+  {
+    "path": "data/raw/aph/individuals.json",
+    "sha256": "aad9e3798b32d94f6dd849cac20a40b25967664e1f845ce2a070e16f87873093",
+    "size_bytes": 10741777
+  },
+  {
+    "path": "data/raw/historical/acara/school-location-2025.csv",
+    "sha256": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+    "size_bytes": 3348391
+  },
+  {
+    "path": "data/raw/historical/acara/school-profile-2008-2025.csv",
+    "sha256": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934",
+    "size_bytes": 52328060
+  },
+  {
+    "path": "data/raw/historical/acara/acara_school_results.json",
+    "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+    "size_bytes": 11195583
+  }
+]
