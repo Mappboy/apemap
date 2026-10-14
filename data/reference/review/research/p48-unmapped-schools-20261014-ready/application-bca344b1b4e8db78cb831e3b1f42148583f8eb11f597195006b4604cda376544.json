@@ -1,0 +1,90 @@
+{
+  "applied_at": "2026-10-14T02:23:44.044339+00:00",
+  "approval_sha256": "bca344b1b4e8db78cb831e3b1f42148583f8eb11f597195006b4604cda376544",
+  "events": [
+    "fd57ec83-edd4-4c87-8b0b-400b014cd810",
+    "1b0a8343-c674-439c-ac4e-0a593e5f52de",
+    "69bfd06a-31fd-4b9c-8a4f-b3250a20c001",
+    "3a3b861a-b3d0-48e9-a794-766e088f7c04",
+    "2c7b3821-9942-47ec-85e8-9555e5a54b63",
+    "66ccba31-ca84-45e8-9221-87bf5745806b",
+    "5154fa6d-dbc8-4078-9dc4-3ab89d197cc2",
+    "6124f625-f267-4eed-8d58-c19b8ceca85f",
+    "12e0b52e-51c6-4adc-ad40-86d69343e8b7",
+    "7ec8e616-3aeb-4ca0-a9b6-1c95971ba894",
+    "16c35d59-8ea8-4054-9d42-a41e5c7ab122",
+    "d6edcecb-5d54-404a-beba-d6e9063195bf",
+    "1c902c11-2f8a-45d6-90f6-2748b071cc8e",
+    "d55e78a7-0e91-4d8c-a8de-8619ff10d38c",
+    "60fef848-bbca-4019-a5a8-346d870d0316",
+    "1787a816-fec8-4392-9c9b-efbae51e80a9",
+    "b270d621-50b1-48ed-9f67-dd524a703efd",
+    "eba137d6-ebaa-4875-ae57-30d08019f549",
+    "94556030-9c1c-4e04-ac1b-742250ce85ca",
+    "92354dcd-fc91-4119-b561-4e420da8ebb8",
+    "357697f5-4538-4d26-aaf8-84a531d81446",
+    "a86bd620-702a-49ba-9015-1daa425b69b8",
+    "271e3d8b-ccc1-4641-b5c6-1540555b9a1c",
+    "6e3a7622-6cbc-465f-9dbd-ff38c3267eb6",
+    "04735926-e698-4287-b939-ea44a03c6b03",
+    "b3b96185-4a4c-4410-855c-633d495e8aee",
+    "70f73217-3df9-427c-beae-06d56ead9312",
+    "97483065-3103-405a-bb61-e90d8b11d093",
+    "d64b1106-efec-4dc9-8289-6be946ad2cb5",
+    "8df81773-3129-45d2-8d5f-a307ef84fd25"
+  ],
+  "queue_changes": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 299,
+      "unresolved_assertions": 53
+    },
+    "canonical_before": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 297,
+      "unresolved_assertions": 55
+    },
+    "pending_after": 38,
+    "pending_before": 63,
+    "removed_review_ids": [
+      "school:0477b661fc755dd3",
+      "school:1e093490bfa263ec",
+      "school:29d4244c033fdee9",
+      "school:2a4497d700c97b8e",
+      "school:301367a5a84d4067",
+      "school:40ad58d802098d20",
+      "school:42b3733b368b6365",
+      "school:48d76828ecdb0ae7",
+      "school:4db911ac8d31077e",
+      "school:5e38500c4077d03d",
+      "school:624d6a7d93a0d434",
+      "school:778527ed3ab48cff",
+      "school:88f32fdf927875e8",
+      "school:8cc84ad5f100dc69",
+      "school:95d614d246623b77",
+      "school:99cb96988751d35b",
+      "school:a7e0beca95837859",
+      "school:ad25b4e891c34c53",
+      "school:b985875d2907e2a4",
+      "school:c6bd84e053b303b0",
+      "school:d01606693420f46a",
+      "school:d15733fa54468d51",
+      "school:d5fec31f76b99bfc",
+      "school:ebb93e10f9378a05",
+      "school:fdcc81dab3876bca"
+    ],
+    "status_counts_after": {
+      "accepted": 242,
+      "needs_individual_review": 25,
+      "pending": 38,
+      "rejected": 1
+    },
+    "status_counts_before": {
+      "accepted": 240,
+      "needs_individual_review": 2,
+      "pending": 63,
+      "rejected": 1
+    }
+  }
+}
