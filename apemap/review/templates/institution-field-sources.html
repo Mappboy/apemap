@@ -1,0 +1,7 @@
+{% set fact_names = {'school_name': 'name', 'country': 'country', 'institution_status': 'status', 'sector': 'sector', 'school_type': 'school_type', 'suburb': 'suburb', 'state': 'state', 'latitude': 'latitude', 'longitude': 'longitude'} %}
+{% set fact = fact_names.get(name) %}
+{% if fact %}
+{% set chosen_sources = institution_draft.result.field_sources.get(fact, []) %}
+{% for source in institution_draft.sources if source.evidence_id in chosen_sources %}<p><a href="{{ source.source_url }}" target="_blank" rel="noopener noreferrer">{{ source.source_title }}</a> · {{ source.excerpt_or_note }}</p>{% endfor %}
+<details><summary>Choose citations for {{ label | lower }}</summary>{% for source in institution_draft.sources if source.stance == 'supports' %}<label class="choice"><input type="checkbox" name="institution_sources_{{ fact }}" value="{{ source.evidence_id }}" {% if source.evidence_id in chosen_sources %}checked{% endif %}>{{ source.source_title }}</label><p><a href="{{ source.source_url }}" target="_blank" rel="noopener noreferrer">Inspect source</a> · {{ source.excerpt_or_note }}</p>{% endfor %}</details>
+{% endif %}

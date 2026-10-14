@@ -491,6 +491,10 @@ def validate_evidence_references(
             if event.entity_type == "manual_institution"
             else set()
         )
+        if event.entity_type == "manual_institution":
+            from apemap.review.institution_drafts import validate_draft_provenance
+
+            institution_refs |= validate_draft_provenance(event.payload, records)
 
         refs = event.payload.get("evidence_refs", [])
         if not isinstance(refs, list) or any(

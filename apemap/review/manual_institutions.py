@@ -276,41 +276,11 @@ def build_manual_institution_candidate(
             return result
         result.update(state="reuse", institution_ref=reuse)
         return result
-    slug = re.sub(r"[^a-z0-9]+", "-", school_key(supported["name"])).strip("-")
-    slug = slug[:48].rstrip("-") or "school"
-    reference = "manual:" + slug
-    for row in existing.values():
-        if (
-            _normalized("name", supported["name"])
-            == _normalized("name", row.get("school_name"))
-            and _normalized("country", supported["country"])
-            == _normalized("country", row.get("country"))
-            and not _distinguished(supported, row)
-        ):
-            result["problems"] = [
-                "Existing institution identity is ambiguous; evidence-confirmed reuse is required"
-            ]
-            return result
-    if reference in existing:
-        if not _distinguished(supported, existing[reference]):
-            result["problems"] = [
-                "Institution slug collision lacks distinguishing evidence"
-            ]
-            return result
-        identity = {
-            field: _normalized(field, supported[field])
-            for field in IDENTITY_FIELDS
-            if field in supported
-        }
-        digest = hashlib.sha256(
-            json.dumps(identity, sort_keys=True).encode()
-        ).hexdigest()[:12]
-        reference += "-" + digest
-        if reference in existing:
-            result["problems"] = [
-                "Institution reference already exists; evidence-confirmed reuse is required"
-            ]
-            return result
+    try:
+        reference = manual_institution_reference(supported, existing.values())
+    except ValueError as exc:
+        result["problems"] = [str(exc)]
+        return result
     if not _compatible_candidate(records, linked, reference):
         result["problems"] = [
             "Institution fact evidence belongs to a different candidate"
@@ -355,6 +325,47 @@ def build_manual_institution_candidate(
         return result
     result.update(state="create", institution_ref=reference, definition=definition)
     return result
+
+
+def manual_institution_reference(
+    facts: Mapping[str, Any], institutions: Iterable[Mapping[str, Any]]
+) -> str:
+    """Allocate the same evidence-distinguished identity for either draft workflow."""
+    existing = {
+        str(row.get("institution_ref") or row.get("institution_id")): row
+        for row in institutions
+    }
+    slug = re.sub(r"[^a-z0-9]+", "-", school_key(facts["name"])).strip("-")
+    slug = slug[:48].rstrip("-") or "school"
+    reference = "manual:" + slug
+    for row in existing.values():
+        if (
+            _normalized("name", facts["name"])
+            == _normalized("name", row.get("school_name"))
+            and _normalized("country", facts.get("country"))
+            == _normalized("country", row.get("country"))
+            and not _distinguished(facts, row)
+        ):
+            raise ValueError(
+                "Existing institution identity is ambiguous; evidence-confirmed reuse is required"
+            )
+    if reference in existing:
+        if not _distinguished(facts, existing[reference]):
+            raise ValueError("Institution slug collision lacks distinguishing evidence")
+        identity = {
+            field: _normalized(field, facts[field])
+            for field in IDENTITY_FIELDS
+            if field in facts
+        }
+        digest = hashlib.sha256(
+            json.dumps(identity, sort_keys=True).encode()
+        ).hexdigest()[:12]
+        reference += "-" + digest
+        if reference in existing:
+            raise ValueError(
+                "Institution reference already exists; evidence-confirmed reuse is required"
+            )
+    return reference
 
 
 def validate_institution_fact_references(

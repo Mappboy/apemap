@@ -220,6 +220,13 @@ def validate_event(event: ReviewEvent) -> None:
     if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
+    if (
+        "institution_draft_provenance" in payload
+        and event.entity_type != "manual_institution"
+    ):
+        raise ValueError(
+            "Institution draft provenance requires a manual institution definition"
+        )
     if "resolution_reason" in payload:
         if (
             payload["resolution_reason"] not in RESOLUTION_REASONS

@@ -44,6 +44,7 @@ from apemap.education_context import SCHOOL_CONTEXT_FIELDS
 from apemap.review.context_evidence import ROLE_TYPES
 from apemap.review.research import ResearchJobs, ResearchProvider
 from apemap.review.scoring import score_candidates
+from apemap.review.institution_drafts import matching_manual_institutions
 from apemap.review.diagnostics import (
     Operation,
     operation,
@@ -874,6 +875,7 @@ def create_app(
         research_result_data: Mapping[str, Any] | None = None,
         workspace_draft_token: str | None = None,
         evidence_saved: bool = False,
+        institution_draft: dict[str, Any] | None = None,
     ) -> str:
         chosen = _initial_payload(item) if payload is None else payload
         values: Mapping[str, Any] = (
@@ -991,6 +993,13 @@ def create_app(
                 if chosen.get("attended_institution_ref")
                 else None,
                 evidence_links=_evidence_links(item),
+                manual_matches=[
+                    row
+                    for row in item.get("ranked_candidates", [])
+                    if row.get("institution_ref", "").startswith("manual:")
+                ]
+                if not isinstance(service, ReviewService)
+                else matching_manual_institutions(service, school.name),
                 preview_target=resolve_reference(
                     str(preview["event"]["payload"].get("institution_ref", ""))
                 )
@@ -1166,9 +1175,14 @@ def create_app(
             ]
         return render_template(
             "item.html",
+            institution_draft=institution_draft,
             item=item,
             payload=chosen,
-            fields=FIELDS.get(item["entity_type"], ()),
+            fields=tuple(
+                field
+                for field in FIELDS.get(item["entity_type"], ())
+                if not (institution_draft and field[0] == "postcode")
+            ),
             preview=preview,
             preview_token=_sign_preview(preview, signing_secret) if preview else None,
             evidence_links=_evidence_links(item),
@@ -3056,6 +3070,20 @@ def create_app(
 
     if isinstance(service, ReviewService):
         register_batch_routes(app, service)
+        from apemap.review.institution_draft_ui import register_institution_draft_routes
+
+        register_institution_draft_routes(
+            app,
+            service,
+            research,
+            item_page,
+            load_item,
+            sign_workspace_draft,
+            read_workspace_draft,
+            normalized_form_values,
+            lambda value: _sign_commit(value, signing_secret),
+            lambda token: _read_preview(token, signing_secret),
+        )
     return app
 
 
