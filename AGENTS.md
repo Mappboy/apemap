@@ -162,6 +162,8 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 When the user corrects your approach, append a one-line rule here before ending the session. Write it concretely ("Always use X for Y"), never abstractly ("be careful with Y"). If an existing line already covers the correction, tighten it instead of adding a new one. Remove lines when the underlying issue goes away (model upgrades, refactors, process changes).
 
 - Run performance baselines from an immutable checkout before editing fixtures or workflows.
+- Count every query in batched research search calls toward the per-case search budget.
+- Validate proposed mapping evidence references against the exact target; preserve superseded candidate evidence without selecting it for a new target.
 ## 11. Other important factors
 
 ### Repository map

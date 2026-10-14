@@ -38,6 +38,7 @@ task, with three searches and six source opens per school. An unresolved or
 failed case may receive one `gpt-6.1-sol` medium retry, limited to two searches
 and four opens. Earlier attempts and evidence remain preserved. Actual token
 usage is unavailable and is recorded as null.
+Every query within a batched search call counts against the per-case limit.
 
 These are research artifacts for individual human inspection. They do not
 change either authority ledger, rebuild canonical data, or publish a dataset.
@@ -47,3 +48,29 @@ The evidence workflow is documented in
 
 Package version remains 0.10.2: research artifacts do not change package
 behavior. No dataset release is built or published by this run.
+
+The completed [active review batch](../p48-unmapped-schools-20261014-ready/README.md)
+contains 28 school cases covering 30 assertions, including 14 Sol retries.
+Its summary distinguishes 19 proposed assertion mappings, eight unresolved
+assertions, one documented closure without a successor, one home-education
+finding and one possible primary-level correction. These are prospective
+findings; zero mappings were applied and both authority ledger hashes remain
+unchanged.
+
+Two Luna attempts exceeded the prescribed query budget: Ferntree Gully Technical
+School used five queries and Chisholm Catholic College used four. Their actual
+counts and evidence are preserved in `budget-exceptions.json` as advisory
+research, outside the normal importer and approval batch. They account for the
+other two assertions in the original 32-assertion scope. They were not given
+fresh attempts that would conceal the excess.
+
+`raw-luna-results.json` and `raw-sol-results.json` preserve worker outputs.
+`curated-luna-results.json` preserves the earlier curation;
+`curated-luna-results-corrected.json` and `curated-sol-results-corrected.json` record the
+final evidence scoping, original retrieval dates, registry corrections and QA
+caveats. Earlier evidence and first attempts are retained in every retry. The
+two earlier review drafts are preserved under `archive/research/2026-10-14/`.
+
+Web sources retain their linked provenance and short research notes rather than
+full copied pages. The existing APH/ACARA attribution and source-use requirements
+continue to apply; no new raw-source redistribution or licensing grant is made.

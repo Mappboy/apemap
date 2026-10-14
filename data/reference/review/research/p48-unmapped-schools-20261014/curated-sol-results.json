@@ -1,0 +1,3721 @@
+[
+  {
+    "alternatives": [
+      {
+        "basis": "local pinned registry; official VRQA source confirms institution; no evidence ties member to it",
+        "institution_ref": "acara:45994",
+        "school_name": "John Paul College",
+        "state": "VIC",
+        "suburb": "Frankston"
+      },
+      {
+        "basis": "local pinned registry; official school annual report confirms institution; no evidence ties member to it",
+        "institution_ref": "acara:48060",
+        "school_name": "John Paul College",
+        "state": "QLD",
+        "suburb": "Daisy Hill"
+      },
+      {
+        "basis": "local pinned registry only; not individually researched",
+        "institution_ref": "acara:48982",
+        "school_name": "John Paul College",
+        "state": "WA",
+        "suburb": "Kalgoorlie"
+      },
+      {
+        "basis": "local pinned registry only; similar name is not sufficient to establish identity",
+        "institution_ref": "acara:43545",
+        "school_name": "St John Paul College",
+        "state": "NSW",
+        "suburb": "Coffs Harbour"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "member": "COLLINS, Dr Jessica",
+          "recorded_school_name": "John Paul College"
+        },
+        "evidence_id": "evidence:fba4d1796ba07b15347f9456cf1932f7057d7d19e7ed987de88d8e4a14150eb5",
+        "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The supplied local APH-derived case record attributes the recorded school name 'John Paul College' to Jessica Collins; it provides no campus, location, or attendance dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:297964:0477b661fc755dd3",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (case context)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '297964'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "campus_identified": false,
+          "member": "COLLINS, Dr Jessica",
+          "recorded_school_name": "John Paul College"
+        },
+        "evidence_id": "evidence:603c71ce7cd8d2ceb76bae3c8670eb7eb28a504e8ccdb75e6a673082c875e845",
+        "excerpt_or_note": "Opened official party landing page. It identifies Jess Collins as the Liberal Senator for New South Wales and mentions a prior policy career, but gives no school attendance, campus, location, or dates. This is contextual negative search evidence, not support for attendance at any candidate institution. The linked meet-Jessica page failed to fetch.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:03:04.276888Z",
+        "review_id": "education:297964:0477b661fc755dd3",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Jess Collins - Liberal Party NSW",
+        "source_type": "official_party_profile",
+        "source_url": "https://nswliberal.org.au/jess-collins",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "No source tied specifically to Jessica Collins identifies the John Paul College campus or jurisdiction.",
+          "Similar-name institutions remain in the local pinned registry; do not use name-only matching.",
+          "No assertion mapping proposal is justified from available individual evidence."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "No retrieved person-specific source identifies which John Paul College Jessica Collins attended.",
+          "The official party meet-Jessica page failed to fetch; its opened landing page contains no schooling details.",
+          "SBS Document-1.pdf only lists Collins among participating senators; the opened Wikipedia biography does not state school attendance.",
+          "Search results predominantly concerned unrelated people or institutions. The retry budget is exhausted; no name-only or seat-based mapping is justified."
+        ],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://www.sbs.com.au/aboutus/wp-content/uploads/2026/05/Document-1.pdf"
+          },
+          {
+            "status": "opened",
+            "url": "https://en.wikipedia.org/wiki/Jessica_Collins_(politician)"
+          },
+          {
+            "error": "400 Timeout fetching",
+            "status": "failed",
+            "url": "https://nswliberal.org.au/jessica-collins/meet-jessica"
+          },
+          {
+            "status": "opened",
+            "url": "https://nswliberal.org.au/jess-collins"
+          }
+        ],
+        "search_queries": [
+          "Jessica Collins senator \"John Paul\" school",
+          "\"Jessica Collins\" \"college\" senator education"
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Aligned top-level school case identity with frozen task.",
+      "Scoped reused APH attendance to exact member education and restored source retrieval date."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:45994",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "165 Mc Mahons Road, Frankston VIC 3199",
+          "provider": "Melbourne Archdiocese Catholic Schools Ltd",
+          "school_name": "John Paul College",
+          "state": "VIC",
+          "suburb": "Frankston"
+        },
+        "evidence_id": "evidence:16bd09b408aba35f42e09bed65162eea81f10f0c2416ea5bdbbb8616ca6201ec",
+        "excerpt_or_note": "The Victorian government register lists a secondary Catholic provider trading as John Paul College at Frankston. This establishes one institution with the recorded name, but does not establish Jessica Collins attended it.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:19:55Z",
+        "review_id": "school:0477b661fc755dd3",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Victorian Registration and Qualifications Authority provider register: John Paul College",
+        "source_type": "government_school_register",
+        "source_url": "https://vrqa.vic.gov.au/StateRegister/Provider.aspx/DetailsProvider?AccountID=8d4c0e48-0179-e711-80e0-005056825391",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:48060",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "John Paul College",
+          "sector": "independent",
+          "state": "QLD",
+          "suburb": "Daisy Hill"
+        },
+        "evidence_id": "evidence:834053acfff520b8332448e8b4006a56cb25167bb3486c8f0bcf5647d1ad152a",
+        "excerpt_or_note": "The College annual report identifies John Paul College as an independent Queensland school on a campus in Daisy Hill. It does not identify this as the member’s school.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:19:55Z",
+        "review_id": "school:0477b661fc755dd3",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "John Paul College 2025 Annual Report",
+        "source_type": "school_official_publication",
+        "source_url": "https://www.jpc.qld.edu.au/publications/PageFlip/Annual-Report-2025/index.html",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {},
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "John Paul College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:451b4e15074cbff92334173c36b5e96bebe0c1709ea243ac377247074ec4fb99",
+    "reasoning": "The APH-derived case record gives only the unqualified name John Paul College. The local pinned institution register contains several distinct schools with this exact name (including Frankston VIC, Daisy Hill QLD, and Kalgoorlie WA) and a similarly named St John Paul College in Coffs Harbour NSW. Official Victorian and Queensland sources confirm distinct institutions; no person-specific source located in the allowed search budget identifies which one Jessica Collins attended. A school-wide mapping would therefore be unsafe. Leave the school policy at ambiguous_name and resolve this member assertion separately when individual evidence is available. The Sol retry researched only education:297964:0477b661fc755dd3. Two queries and four source opens, including one failed official-page fetch, supplied no campus-specific attendance evidence. The scoped assertion remains unresolved, and the ambiguous-name school policy remains necessary.",
+    "review_caveats": [],
+    "review_id": "school:0477b661fc755dd3",
+    "scoped_identity_context": {
+      "education:297964:0477b661fc755dd3": {
+        "aph_id": "297964",
+        "evidence_refs": [
+          "evidence:fba4d1796ba07b15347f9456cf1932f7057d7d19e7ed987de88d8e4a14150eb5",
+          "evidence:603c71ce7cd8d2ceb76bae3c8670eb7eb28a504e8ccdb75e6a673082c875e845"
+        ],
+        "recorded_school_name": "John Paul College",
+        "status": "unresolved"
+      }
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:48892",
+        "location": "Fremantle, WA",
+        "school_name": "Christian Brothers' College"
+      },
+      {
+        "institution_ref": "acara:49694",
+        "location": "Adelaide, SA",
+        "school_name": "Christian Brothers College - Senior Campus"
+      },
+      {
+        "institution_ref": "acara:50347",
+        "location": "Adelaide, SA",
+        "school_name": "Christian Brothers College - Junior Campus"
+      },
+      {
+        "institution_ref": "acara:40365",
+        "location": "Burwood, NSW",
+        "school_name": "Christian Brothers' College Burwood"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "C2T",
+          "display_name": "WILKIE, Andrew Damien",
+          "education_id": "edu-c2t-1e093490bfa263ec",
+          "recorded_school_name": "Christian Brothers' College"
+        },
+        "evidence_id": "evidence:2c27abda36c5d21171cd12b620ee77e59dbae0b79a74dc9d2f4818a43b971c21",
+        "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The APH Handbook record for Andrew Wilkie (APH ID C2T) lists ‘Christian Brothers’ College’ as an attended school; the record does not specify a campus or city.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:c2t:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'C2T'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43670",
+        "claim_type": "attendance",
+        "claim_value": {
+          "alternative_attended_school": "St Gregory's College, Campbelltown",
+          "aph_id": "C2T",
+          "education_id": "edu-c2t-1e093490bfa263ec",
+          "recorded_school_name": "Christian Brothers' College"
+        },
+        "evidence_id": "evidence:8e3e3d2e0b28292a8c8f3fdfd4f3ad11382b5f7289c478663558c916fabbb986",
+        "excerpt_or_note": "Opened page, Early life and education: reports Wilkie attended St Gregory’s College, Campbelltown. This is secondary evidence for another named school; it neither disproves attendance at a separate Christian Brothers’ College nor establishes an alias relationship. The cited Macarthur Chronicle source could not be opened: the click returned an internal error. Do not treat its contents as verified.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:02:44.950037+00:00",
+        "review_id": "education:c2t:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Andrew Wilkie — Wikipedia",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/Andrew_Wilkie",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43670",
+        "claim_type": "attendance",
+        "claim_value": {
+          "alternative_attended_school": "St Gregory's College, Campbelltown",
+          "aph_id": "C2T",
+          "education_id": "edu-c2t-1e093490bfa263ec",
+          "recorded_school_name": "Christian Brothers' College"
+        },
+        "evidence_id": "evidence:1aab1eb4c93dce187a01795340a505e4e29d3dd755a0fbf35ac2af384b620646",
+        "excerpt_or_note": "Opened page: the Politics, public service and the law alumni list names Andrew Wilkie MP. This corroborates only secondary alternative-school context, likely drawing on the same news citation as Wilkie’s biography; it is not an independent primary attendance source and does not resolve the recorded Christian Brothers’ College name.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:02:44.950037+00:00",
+        "review_id": "education:c2t:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "St Gregory’s College, Campbelltown — Wikipedia",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/St_Gregory's_College,_Campbelltown",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "No primary individual source found that names the specific campus attended by Wilkie.",
+          "The APH record supplies no attendance dates, city, or campus.",
+          "Several ACARA institutions have the same or similar names; no mapping proposal is justified."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 6,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "No primary individual source identifies the Christian Brothers’ College campus attended by Wilkie.",
+          "Secondary opened pages name St Gregory’s College, Campbelltown, but no source establishes it as an alias of the APH-recorded institution; separate attendance remains possible.",
+          "The cited Macarthur Chronicle page failed to open; its contents are unverified.",
+          "Search budget exhausted after 2 individual queries and 4 opens including the failed news click."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+      "Preserved mixed/person identity context separately from importer institutional identity evidence."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "historical_context",
+        "claim_value": {
+          "tasmania_christian_brothers_schools": [
+            "St Virgil’s College, Hobart",
+            "St Patrick’s College, Launceston"
+          ]
+        },
+        "evidence_id": "evidence:57ecae75d4f1422cadaddc5f7079dbb9058d725832a12e6ed8065942542b383d",
+        "excerpt_or_note": "The Archdiocese history associates Christian Brothers with St Virgil’s College in Hobart and St Patrick’s College in Launceston. It does not identify which institution Wilkie attended.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:22:19Z",
+        "review_id": "school:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Archdiocese of Hobart — Congregation of Christian Brothers",
+        "source_type": "institutional-history",
+        "source_url": "https://hobart.catholic.org.au/vocations/lay-religious-orders/congregation-of-christian-brothers-cfc/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:48892",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "acara_id": "48892",
+          "location": "Fremantle, Western Australia",
+          "name": "CBC Fremantle"
+        },
+        "evidence_id": "evidence:7ba73c13fc6b6b68c65177b55695a1e5339ab13324154f305ec21c9a9cacae4a",
+        "excerpt_or_note": "The official site identifies the institution as CBC Fremantle. This is one distinct institution present in the supplied pinned ACARA register; it is not evidence that Wilkie attended it.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:22:19Z",
+        "review_id": "school:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "CBC Fremantle — official school site",
+        "source_type": "school-website",
+        "source_url": "https://www.cbcfremantle.wa.edu.au/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43670",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "acara_id": "43670",
+          "location": "100 Badgally Road, Gregory Hills NSW 2557",
+          "name": "St Gregory's College Campbelltown",
+          "tradition": "Marist"
+        },
+        "evidence_id": "evidence:f64fca85e0c00e79ec0870e9e9dc1562c32937cd83db280fb1419b069d5c85fc",
+        "excerpt_or_note": "Opened official page: identifies St Gregory’s College Campbelltown, a Catholic school in the Marist tradition, at 100 Badgally Road, Gregory Hills NSW 2557. Local reference acara:43670 comes from the pinned register. This does not identify it as the APH-recorded Christian Brothers’ College or establish Wilkie attendance.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:02:44.950037+00:00",
+        "review_id": "school:1e093490bfa263ec",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "St Gregory’s College — official school site",
+        "source_type": "school-website",
+        "source_url": "https://www.stgregs.nsw.edu.au/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "alternative_institution_context": [
+          "evidence:f64fca85e0c00e79ec0870e9e9dc1562c32937cd83db280fb1419b069d5c85fc"
+        ],
+        "ambiguity_context": [
+          "evidence:57ecae75d4f1422cadaddc5f7079dbb9058d725832a12e6ed8065942542b383d",
+          "evidence:7ba73c13fc6b6b68c65177b55695a1e5339ab13324154f305ec21c9a9cacae4a"
+        ]
+      }
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Christian Brothers' College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:35aca81d75fb4856300bd9b7532f24c37a30084b32c97c8669aa30d13c2b3d6c",
+    "reasoning": "The APH Handbook associates Andrew Wilkie (APH ID C2T) with the recorded name Christian Brothers' College, but supplies no campus or location. The supplied ACARA register has multiple distinct candidates under this shared name or close variants, including Fremantle WA (acara:48892), Adelaide SA senior and junior campuses (acara:49694 and acara:50347), and Christian Brothers' College Burwood NSW (acara:40365). The Archdiocese of Hobart also documents Christian Brothers schools in both Hobart and Launceston. None of the opened primary sources ties Wilkie to one specific campus. The parliamentary division is not used to infer school location. Keep this exact education assertion unresolved for individual human inspection. Sol retry: opened secondary biographies and an alumni list identify St Gregory’s College, Campbelltown, while its opened official site identifies a Marist institution at Gregory Hills (pinned register acara:43670). These create alternative attendance context but do not connect the exact recorded name to that institution or exclude attendance at a different school. The cited news source failed to open. No exact education mapping is proposed.",
+    "review_caveats": [
+      "Preserve the APH-recorded Christian Brothers’ College name pending primary clarification; secondary St Gregory’s attendance evidence is alternative context, not a justified correction or alias mapping."
+    ],
+    "review_id": "school:1e093490bfa263ec",
+    "scoped_identity_context": {
+      "aph_id": "C2T",
+      "education_review_id": "education:c2t:1e093490bfa263ec",
+      "evidence_refs": {
+        "alternative_attendance_context": [
+          "evidence:8e3e3d2e0b28292a8c8f3fdfd4f3ad11382b5f7289c478663558c916fabbb986",
+          "evidence:1aab1eb4c93dce187a01795340a505e4e29d3dd755a0fbf35ac2af384b620646"
+        ],
+        "ambiguity_context": [
+          "evidence:57ecae75d4f1422cadaddc5f7079dbb9058d725832a12e6ed8065942542b383d",
+          "evidence:7ba73c13fc6b6b68c65177b55695a1e5339ab13324154f305ec21c9a9cacae4a"
+        ],
+        "aph_id": [
+          "evidence:2c27abda36c5d21171cd12b620ee77e59dbae0b79a74dc9d2f4818a43b971c21"
+        ],
+        "member": [
+          "evidence:2c27abda36c5d21171cd12b620ee77e59dbae0b79a74dc9d2f4818a43b971c21"
+        ],
+        "recorded_name": [
+          "evidence:2c27abda36c5d21171cd12b620ee77e59dbae0b79a74dc9d2f4818a43b971c21"
+        ]
+      },
+      "member": "WILKIE, Andrew Damien",
+      "name": "Christian Brothers' College"
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "basis": "official school history confirms institution; no person-specific attendance link",
+        "institution_ref": "acara:41341",
+        "school_name": "Carlingford High School",
+        "state": "NSW",
+        "suburb": "Carlingford"
+      },
+      {
+        "basis": "official school history confirms institution; no person-specific attendance link",
+        "institution_ref": "acara:43836",
+        "school_name": "The Hills Grammar School",
+        "state": "NSW",
+        "suburb": "Kenthurst"
+      },
+      {
+        "basis": "possible reading of combined recorded name; no timing evidence; requires further research and separate attendance assertions if supported",
+        "school_name": "Both institutions in sequence"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWO",
+          "recorded_school_name": "Carlingford & Hills Grammar School"
+        },
+        "evidence_id": "evidence:0445a17ee45aea28a95ce46d66576c117d309de46187f47da8b499c28e5ea3a8",
+        "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The supplied APH-derived case context records the combined school name for Alex Hawke, without identifying a campus or dates of attendance.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:hwo:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (case context)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWO'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWO",
+          "primary_corrobation_obtained": false,
+          "reported_school_names": [
+            "Hills Grammar School",
+            "Cumberland High School"
+          ]
+        },
+        "evidence_id": "evidence:57e1d7383248abdf665c6fb238dd107ea3427715e094a9f26d47edb26483c749",
+        "excerpt_or_note": "Opened biography states that Hawke attended Hills Grammar School and Cumberland High School. The attendance sentence has no attached citation in the retrieved page. This is a secondary-source lead for two separate schools, and raises a conflict with treating the recorded Carlingford component as Carlingford High School. It does not establish attendance order or years and is not primary confirmation.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:05:59.924167Z",
+        "review_id": "education:hwo:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Alex Hawke - Wikipedia",
+        "source_type": "opened_secondary_biography",
+        "source_url": "https://en.wikipedia.org/wiki/Alex_Hawke",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWO",
+          "secondary_school_history_stated": false
+        },
+        "evidence_id": "evidence:bb831e6abb5adfe6aa43d0bf4d303c87f14e10ec5f681c0682568eb66a076fde",
+        "excerpt_or_note": "Opened official biography mentions a postgraduate qualification and Army Reserve service, but does not name secondary schools or attendance dates. It therefore does not corroborate the two-school claim from the secondary biography.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:05:59.924167Z",
+        "review_id": "education:hwo:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "About Alex | Alex Hawke",
+        "source_type": "official_member_biography",
+        "source_url": "https://alexhawke.au/about-alex/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWO",
+          "raw_secondary_school": "Cumberland High School, Carlingford & Hills Grammar School"
+        },
+        "evidence_id": "evidence:d4d6499da20c48ac1f1aa8186ab472dd196d7276bd10be736dfcea40a628981b",
+        "excerpt_or_note": "Read from the exact pinned local APH snapshot, without an additional network request. The full field is 'Cumberland High School, Carlingford & Hills Grammar School'. Cumberland is therefore already named in the primary snapshot. The derived compound Carlingford & Hills Grammar label needs parser/source review; locality text must not be silently converted into a separate Carlingford High School attendance claim. This snapshot does not establish attendance years or order.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:hwo:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API: exact unparsed SecondarySchool field",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWO'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "No person-specific primary source identifies which school or schools Alex Hawke attended.",
+          "No attendance years are available to distinguish a single-school history from a transfer between Carlingford High School and The Hills Grammar School.",
+          "The current education assertion supports one institution reference, so no assertion_proposals were made for a possible two-school split."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 3,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "The opened secondary biography names Hills Grammar School and Cumberland High School; primary corroboration was not obtained.",
+          "The current official biography does not identify secondary schools; the contemporary newspaper profile could not be opened.",
+          "The Carlingford component cannot safely be expanded to Carlingford High School: Cumberland High School is a contrary identity lead located in Carlingford in the pinned registry.",
+          "Attendance order and dates remain unknown. A single-institution education payload cannot represent two schools; no split is proposed without stronger source support."
+        ],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://en.wikipedia.org/wiki/Alex_Hawke"
+          },
+          {
+            "error": "non-retryable error",
+            "status": "failed",
+            "url": "https://www.smh.com.au/articles/2007/06/22/1182019367511.html?page=fullpage"
+          },
+          {
+            "status": "opened",
+            "url": "https://alexhawke.au/"
+          },
+          {
+            "status": "opened",
+            "url": "https://alexhawke.au/about-alex/"
+          }
+        ],
+        "search_queries": [
+          "\"Alex Hawke\" \"Carlingford\" \"Grammar\"",
+          "\"Alex Hawke\" \"school\" \"Hills Grammar\""
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+      "Added exact raw APH field after local source QA; earlier retry gaps describe the research available before this primary snapshot check."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:43836",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "established": 1982,
+          "opened": "1983-02-07",
+          "school_name": "The Hills Grammar School",
+          "state": "NSW",
+          "suburb": "Kenthurst"
+        },
+        "evidence_id": "evidence:538dfe7988687a5a55eb4030dc0483b533447c8eb6ef6b13dbfe74f9201e09dc",
+        "excerpt_or_note": "The school’s official history says The Hills Grammar School was established in 1982 and opened in Kenthurst in February 1983. This confirms a separate institution but does not link Hawke to it.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:22:01Z",
+        "review_id": "school:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "The Hills Grammar: Our History",
+        "source_type": "school_official_history",
+        "source_url": "https://www.hillsgrammar.nsw.edu.au/about/our-history/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:41341",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "opened": "1968",
+          "school_name": "Carlingford High School",
+          "state": "NSW",
+          "suburb": "Carlingford"
+        },
+        "evidence_id": "evidence:f892fa5c4cbb5fb4cd14b14e8ed0e6389a8f6d67b93a31e9a5f9277938ffe5b5",
+        "excerpt_or_note": "The NSW public school’s official history records its opening in Carlingford in 1968. It is distinct from The Hills Grammar School; this source does not link Hawke to it.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:22:01Z",
+        "review_id": "school:29d4244c033fdee9",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Carlingford High School: Brief History",
+        "source_type": "nsw_government_school_history",
+        "source_url": "https://carlingfor-h.schools.nsw.gov.au/about-us/brief-history",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {},
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Carlingford & Hills Grammar School",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:3ee63602672ce70b060632cb0a7f135a02876b8c15c3b6ef24fe840be5bd2743",
+    "reasoning": "The recorded name combines Carlingford and Hills Grammar. Primary school histories establish distinct institutions: Carlingford High School and The Hills Grammar School. The APH-derived attendance record has no dates and does not establish whether Alex Hawke attended one school, both schools in sequence, or another institution. A single education mapping cannot faithfully resolve a possible two-school history. Preserve the school-level item as requiring individual resolution and research attendance sources that distinguish the institutions and periods. The Sol retry found a person-specific secondary lead: the opened Wikipedia biography states Hills Grammar School and Cumberland High School, not Carlingford High School. This uncited attendance sentence is not primary corroboration. The opened official biography gives no secondary-school history, and the newspaper profile failed to open. Preserve the two-school lead and the conflict with the Carlingford High School interpretation, but leave the original combined assertion unmapped pending authoritative confirmation and a supported split workflow. Final local-source QA found that the full pinned APH SecondarySchool field already names Cumberland High School and reads Cumberland High School, Carlingford & Hills Grammar School. Review the source parsing and possible locality punctuation before introducing or mapping another education assertion; do not force Carlingford High School from the derived compound.",
+    "review_caveats": [
+      "Primary APH snapshot names Cumberland High School. Earlier statements that primary corroboration was not obtained are superseded for that name; interpretation/splitting of the compound derived label and attendance chronology remain unresolved."
+    ],
+    "review_id": "school:29d4244c033fdee9",
+    "scoped_identity_context": {
+      "education:hwo:29d4244c033fdee9": {
+        "aph_id": "HWO",
+        "candidate_reference_basis": "Free local lookup in pinned .cache/p48-register.csv; attendance lead is secondary and not primary-confirmed. No single target selected.",
+        "evidence_refs": [
+          "evidence:57e1d7383248abdf665c6fb238dd107ea3427715e094a9f26d47edb26483c749",
+          "evidence:bb831e6abb5adfe6aa43d0bf4d303c87f14e10ec5f681c0682568eb66a076fde"
+        ],
+        "recorded_school_name": "Carlingford & Hills Grammar School",
+        "reported_attended_schools": [
+          {
+            "candidate_institution_ref": "acara:43836",
+            "school_name": "Hills Grammar School"
+          },
+          {
+            "candidate_institution_ref": "acara:41849",
+            "school_name": "Cumberland High School"
+          }
+        ],
+        "status": "unresolved"
+      }
+    },
+    "split_assertion_proposals": [],
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "former_name": "Presbyterian Girls’ College",
+        "institution_ref": "acara:49810",
+        "location": "Glen Osmond, SA",
+        "school_name": "Seymour College"
+      },
+      {
+        "institution_ref": "acara:40851",
+        "location": "Seymour, VIC",
+        "school_name": "Seymour College"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "296272",
+          "display_name": "MILLER-FROST, Louise Jane",
+          "education_id": "edu-296272-42b3733b368b6365",
+          "recorded_school_name": "Seymour College"
+        },
+        "evidence_id": "evidence:d3e334f42fb6f36b0f98b86d30b508954c3aa92866d3d0d87e7900c6157a689e",
+        "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The frozen APH Handbook record for Louise Miller-Frost lists the recorded attended-school name “Seymour College”; it provides no locality or dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:296272:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '296272'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49810",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "296272",
+          "attended_school_name": "Seymour College",
+          "candidate_locality": "Glen Osmond, South Australia",
+          "education_id": "edu-296272-42b3733b368b6365",
+          "recorded_school_name": "Seymour College"
+        },
+        "evidence_id": "evidence:55e4a1499413e9ea017ae0ae08c392f4acbc4e09de6bf330faa610e16ee9ab9f",
+        "excerpt_or_note": "Opened page, Early life: lists Seymour College among schools attended, with an explicit hyperlink to https://en.wikipedia.org/wiki/Seymour_College; opening that link identifies the Glen Osmond school rather than the Victorian institution. This is candidate-specific secondary attendance evidence. The attendance sentence has no immediate inline citation; the SALIFE profile cited nearby redirected to a general landing page, so its original contents were not verified.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:06:08.454418+00:00",
+        "review_id": "education:296272:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Louise Miller-Frost — Wikipedia",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/Louise_Miller-Frost",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49810",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "296272",
+          "attended_school_name": "Seymour College",
+          "candidate_locality": "Glen Osmond, South Australia",
+          "education_id": "edu-296272-42b3733b368b6365",
+          "recorded_school_name": "Seymour College"
+        },
+        "evidence_id": "evidence:84a11bb5c455dc2b65e1756479d574e2bdcf825b65548d7ed6191d1678d9e0af",
+        "excerpt_or_note": "Opened South Australian college page, Politics, public service and the law: names Louise Miller-Frost as an alumna. Her entry has no inline source, and the alumni section carries a verifiability warning. Treat this as secondary candidate evidence, not independent primary confirmation.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:06:08.454418+00:00",
+        "review_id": "education:296272:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Seymour College — Wikipedia alumni list",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/Seymour_College",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "APH attendance record gives no school locality or dates; the Victoria and South Australia exact-name ACARA candidates remain unresolved.",
+          "APH search result was blocked by robots; individual attendance could not be independently tied to either institution.",
+          "No exact education assertion mapping is proposed pending human resolution."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Candidate-specific secondary attendance evidence points to Glen Osmond, but no primary source confirming member-campus identity was obtained.",
+          "The college Wikipedia alumni list flags verifiability and the Louise Miller-Frost entry has no inline citation; the biography attendance sentence also lacks an immediate inline source.",
+          "The cited SALIFE profile redirected to a general landing page, and the opened official member homepage supplied no schooling details.",
+          "Search limit reached: first query searched the exact member and school; second restricted the member name to seymour.sa.edu.au and returned no results."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+      "Preserved mixed/person identity context separately from importer institutional identity evidence."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:49810",
+        "claim_type": "rename",
+        "claim_value": {
+          "current_name": "Seymour College",
+          "former_name": "Presbyterian Girls’ College",
+          "founded": 1922,
+          "location": "Glen Osmond, South Australia"
+        },
+        "evidence_id": "evidence:5d33c985715f03fe29ea304c18523ecf9a1a91f7f7f4bc1f418844f82b5570eb",
+        "excerpt_or_note": "The school’s official heritage page identifies Seymour College as formerly Presbyterian Girls’ College and says its foundation was in 1922; it locates the present campus in Glen Osmond, South Australia.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:30:27Z",
+        "review_id": "school:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Seymour College — School heritage",
+        "source_type": "official-school-history",
+        "source_url": "https://www.seymour.sa.edu.au/school-heritage/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49810",
+        "claim_type": "location",
+        "claim_value": {
+          "address": "546 Portrush Road, Glen Osmond SA 5064",
+          "history": "Presbyterian Girls’ College opened in 1922",
+          "name": "Seymour College"
+        },
+        "evidence_id": "evidence:e84d463205b5f4cbf8b64daa161525732188e26eb1e1d0937b0dd4c09d95a110",
+        "excerpt_or_note": "The College centenary page states Presbyterian Girls’ College opened in 1922 and gives Seymour College’s current address as 546 Portrush Road, Glen Osmond SA.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:30:27Z",
+        "review_id": "school:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Seymour College Centenary",
+        "source_type": "official-school-history",
+        "source_url": "https://www.seymour.sa.edu.au/centenary/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49810",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "acara_id": "49810",
+          "location": "Glen Osmond, Adelaide, South Australia",
+          "name": "Seymour College"
+        },
+        "evidence_id": "evidence:5f5bbf0c6aed736f612c3535f7f5b4f6246b4d6a63af91f57a528f2f99f2f6c5",
+        "excerpt_or_note": "Opened page explicitly distinguishes the South Australian college from Seymour College (Victoria), and identifies Glen Osmond, Adelaide. It links the official seymour.sa.edu.au site, consistent with retained official institutional evidence and pinned register acara:49810. This record retains school facts only.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:06:08.454418+00:00",
+        "review_id": "school:42b3733b368b6365",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Seymour College — Wikipedia",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/Seymour_College",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "South_Australian_candidate": [
+          "evidence:5d33c985715f03fe29ea304c18523ecf9a1a91f7f7f4bc1f418844f82b5570eb",
+          "evidence:e84d463205b5f4cbf8b64daa161525732188e26eb1e1d0937b0dd4c09d95a110",
+          "evidence:5f5bbf0c6aed736f612c3535f7f5b4f6246b4d6a63af91f57a528f2f99f2f6c5"
+        ]
+      }
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Seymour College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:437691e5d4a9c696177a7a1c253d2411a45892648b630d120532bce43c073ab9",
+    "reasoning": "APH records Louise Miller-Frost’s school as “Seymour College” but supplies no location or attendance dates. The authoritative school pages opened identify the South Australian Seymour College at Glen Osmond and its former name, Presbyterian Girls’ College. The pinned register also contains a separate exact-name Seymour College in Seymour, Victoria (acara:40851), in addition to the South Australian school (acara:49810); same-name identity cannot be distinguished using the supplied APH text. No parliamentary geography was used to select a location. Keep the school identity at ambiguous_name and require individual resolution; no exact assertion mapping is proposed. Sol retry found candidate-specific secondary evidence: Miller-Frost’s opened Wikipedia biography links its attendance statement to the South Australian college page, which identifies Glen Osmond and lists her as an alumna. This improves the candidate context without using parliamentary geography. However, the attendance sentence lacks an immediate inline source, the alumni list warns about verifiability, the cited SALIFE profile redirected to its general landing page, and the opened official member homepage supplies no school details. Retain the evidence but require primary confirmation before proposing the exact education mapping.",
+    "review_caveats": [
+      "Secondary member-to-campus evidence now points to acara:49810, but neither opened Wikipedia attendance statement had an immediate inline source; no primary attendance source was obtained within this retry budget."
+    ],
+    "review_id": "school:42b3733b368b6365",
+    "scoped_identity_context": {
+      "aph_id": "296272",
+      "education_review_id": "education:296272:42b3733b368b6365",
+      "evidence_refs": {
+        "South_Australian_candidate": [
+          "evidence:5d33c985715f03fe29ea304c18523ecf9a1a91f7f7f4bc1f418844f82b5570eb",
+          "evidence:e84d463205b5f4cbf8b64daa161525732188e26eb1e1d0937b0dd4c09d95a110"
+        ],
+        "candidate_specific_attendance": [
+          "evidence:55e4a1499413e9ea017ae0ae08c392f4acbc4e09de6bf330faa610e16ee9ab9f",
+          "evidence:84a11bb5c455dc2b65e1756479d574e2bdcf825b65548d7ed6191d1678d9e0af"
+        ],
+        "recorded_name": [
+          "evidence:d3e334f42fb6f36b0f98b86d30b508954c3aa92866d3d0d87e7900c6157a689e"
+        ]
+      },
+      "member": "MILLER-FROST, Louise Jane",
+      "name": "Seymour College"
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "caveat": "current school reopened in 2004 after the original Fitzroy High/Fitzroy Secondary College closed in 1992",
+        "institution_ref": "acara:45517",
+        "location": "Fitzroy North, VIC",
+        "school_name": "Fitzroy High School"
+      },
+      {
+        "caveat": "current school is separate from Fitzroy High School; exact historical attendance identity/continuity not resolved",
+        "institution_ref": "acara:45296",
+        "location": "Collingwood, VIC",
+        "school_name": "Collingwood College"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "280304",
+          "display_name": "THORPE, Lidia Alma",
+          "education_id": "edu-280304-4db911ac8d31077e",
+          "recorded_school_name": "Fitzroy and Collingwood Secondary Schools"
+        },
+        "evidence_id": "evidence:0b3043824f0e587954db363dc2fdd44ee7a8db66f3fa20c245409c54c9451152",
+        "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The APH Handbook record for Lidia Thorpe gives the combined attended-school text “Fitzroy and Collingwood Secondary Schools”; it provides no individual school names, locality, or dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:280304:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '280304'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "280304",
+          "reported_sequence": [
+            {
+              "school_name": "Fitzroy High School",
+              "year_level": 7
+            },
+            {
+              "school_name": "Collingwood High",
+              "year_level": 8
+            },
+            {
+              "school_name": "Fitzroy High",
+              "year_level": 9
+            }
+          ],
+          "requires_primary_corroboration": true
+        },
+        "evidence_id": "evidence:bd08e1ab2f0d42f82ea7f0d2b5cd26c32fd96d022a2fd65a5738686e08631d37",
+        "excerpt_or_note": "Opened secondary biography reports Year 7 at Fitzroy High School, Year 8 at Collingwood High, then return to Fitzroy High for Year 9 before leaving school at 14. This is a lead for distinct historical attended schools, not a verified mapping to current ACARA targets. The newspaper interview link cited in the surrounding text could not be resolved by the browser tool. No calendar attendance dates are inferred.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:08:10.299040Z",
+        "review_id": "education:280304:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Lidia Thorpe - Wikipedia",
+        "source_type": "opened_secondary_biography",
+        "source_url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "280304",
+          "left_school_age": 14,
+          "secondary_school_names_stated": false
+        },
+        "evidence_id": "evidence:892801166de016798b39dc331563a37203d1eacd9c0b106ae9da1d429c7c15fc",
+        "excerpt_or_note": "Opened official autobiographical page states that Thorpe left school at 14. It discusses childhood in Collingwood, Fitzroy, Clifton Hill and Northcote, but does not name attended secondary schools. It corroborates the school-leaving age only, not the secondary biography school identities, year levels, or continuity to current institutions.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:08:10.299040Z",
+        "review_id": "education:280304:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "About - Senator Lidia Thorpe",
+        "source_type": "official_member_autobiography",
+        "source_url": "https://www.lidiathorpe.com/about_me",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "APH uses a combined plural label and supplies no dates or separate school identities.",
+          "Official histories show Fitzroy school closure/reopening and a current partnership; they do not establish that current ACARA targets represent Thorpe’s historical schools.",
+          "No individual split assertion can be safely proposed without exact attendance identity and historical continuity evidence."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Secondary biography reports a Fitzroy Year 7 / Collingwood Year 8 / Fitzroy Year 9 sequence; primary corroboration for exact school identities and levels was not obtained.",
+          "Official autobiography corroborates leaving school at 14, but gives no attended secondary school names.",
+          "The newspaper link could not be resolved; the official Collingwood history fetch timed out.",
+          "The prior institutional date conflict, 1915 versus 1957, remains unreconciled and must not be converted into attendance dates.",
+          "Historical identity/continuity to current Fitzroy High School and Collingwood College remains unverified. The combined assertion cannot be truthfully represented by a forced single target."
+        ],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://www.lidiathorpe.com/about_me"
+          },
+          {
+            "status": "opened",
+            "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe"
+          },
+          {
+            "error": "Unable to resolve click call due to invalid arguments; destination URL not returned.",
+            "intended_source_title": "Shouty, uninformed, ineffective: How Senator Lidia Thorpe annoys the establishment",
+            "link_id": 345,
+            "source_page": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+            "status": "failed",
+            "url": null
+          },
+          {
+            "error": "TimeoutError",
+            "status": "failed",
+            "url": "https://www.collingwood.vic.edu.au/our-school/our-history/"
+          }
+        ],
+        "search_queries": [
+          "\"Lidia Thorpe\" \"Fitzroy\" \"school\"",
+          "\"Lidia Thorpe\" \"school\" site:vic.gov.au OR site:vic.edu.au"
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+      "Used the existing reusable operating_dates claim type for institution closure facts.",
+      "Preserved mixed/person identity context separately from importer institutional identity evidence."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "operating_dates",
+        "claim_value": {
+          "closed": "1992-12-31",
+          "former_name": "Fitzroy High School",
+          "opened": "1957-01-31",
+          "school_name": "Fitzroy Secondary College",
+          "school_number": "7830",
+          "status": "closed"
+        },
+        "evidence_id": "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+        "excerpt_or_note": "The Victorian Government directory says Fitzroy High School changed its name to Fitzroy Secondary College in 1991 and that school No. 7830 closed at the end of 1992.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:32:44Z",
+        "review_id": "school:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Victorian Government Schools Directory — Fitzroy Secondary College No. 7830",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:45517",
+        "claim_type": "historical_context",
+        "claim_value": {
+          "closed": 1992,
+          "collingwood_partnership": "VCE classes began in 2007 in partnership with Collingwood College",
+          "first_opened": 1915,
+          "reopened": 2004,
+          "school_name": "Fitzroy High School"
+        },
+        "evidence_id": "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183",
+        "excerpt_or_note": "The current school history distinguishes the original Fitzroy High School (closed 1992) from the later re-opening in 2004, and describes a VCE partnership with Collingwood College from 2007.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:32:44Z",
+        "review_id": "school:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Fitzroy High School — Our History",
+        "source_type": "official-school-history",
+        "source_url": "https://fitzroyhs.vic.edu.au/our-school/our-history/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:45296",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "established": 1882,
+          "location": "Collingwood, Victoria",
+          "school_name": "Collingwood College",
+          "school_type": "government P-12"
+        },
+        "evidence_id": "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1",
+        "excerpt_or_note": "The school describes Collingwood College as a government Prep-to-Year-12 school established in 1882, located in Collingwood; its secondary students currently work in a cooperative arrangement with Fitzroy High School.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:32:44Z",
+        "review_id": "school:4db911ac8d31077e",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Collingwood College — Our History",
+        "source_type": "official-school-history",
+        "source_url": "https://www.collingwood.vic.edu.au/our-school/our-history/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Collingwood_identity": [
+          "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1"
+        ],
+        "Fitzroy_history": [
+          "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+          "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183"
+        ]
+      }
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Fitzroy and Collingwood Secondary Schools",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:56a86e41b3e1014754b4737ad63eac3e71d227a7ac23cfe017e323657856916d",
+    "reasoning": "APH records the combined phrase “Fitzroy and Collingwood Secondary Schools” for Lidia Thorpe. Official Victorian sources establish that Fitzroy High School changed its name to Fitzroy Secondary College and that the 1957–1992 school closed; the current Fitzroy High School opened in 2004, so the pinned current ACARA row cannot be presumed to represent the earlier school. Collingwood College is a separate institution with its own history, and its current partnership/shared senior campus with Fitzroy High School is not evidence that the combined historical record maps to one current target. The evidence supports treating the string as potentially multiple schools but does not establish exact individual attended-school identities or any historical continuity to the pinned targets; therefore no combined mapping or split assertion proposals are made. Individual human review is required. The Sol retry added a secondary-source attendance lead describing Fitzroy High School at Year 7, Collingwood High at Year 8, and return to Fitzroy High at Year 9. The official autobiographical page corroborates leaving school at 14 only; it does not name schools. Newspaper and official-school corroboration attempts failed. Neither historical continuity nor a source-supported split mapping was established. Keep the original assertion unresolved and preserve both the earlier institutional evidence and its unreconciled 1915/1957 date conflict.",
+    "review_caveats": [
+      "The supplied sources give unreconciled Fitzroy opening/founding dates of 1915 and 1957. Preserve this conflict; do not use either as an attendance date."
+    ],
+    "review_id": "school:4db911ac8d31077e",
+    "scoped_identity_context": {
+      "education:280304:4db911ac8d31077e": {
+        "aph_id": "280304",
+        "evidence_refs": [
+          "evidence:bd08e1ab2f0d42f82ea7f0d2b5cd26c32fd96d022a2fd65a5738686e08631d37",
+          "evidence:892801166de016798b39dc331563a37203d1eacd9c0b106ae9da1d429c7c15fc"
+        ],
+        "left_school_age": 14,
+        "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+        "reported_attendance_sequence": [
+          {
+            "school_name": "Fitzroy High School",
+            "year_level": 7
+          },
+          {
+            "school_name": "Collingwood High",
+            "year_level": 8
+          },
+          {
+            "school_name": "Fitzroy High",
+            "year_level": 9
+          }
+        ],
+        "requires_primary_school_identity_corroboration": true,
+        "status": "unresolved"
+      },
+      "evidence_refs": {
+        "Collingwood_identity": [
+          "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1"
+        ],
+        "Fitzroy_history": [
+          "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+          "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183"
+        ],
+        "recorded_name": [
+          "evidence:0b3043824f0e587954db363dc2fdd44ee7a8db66f3fa20c245409c54c9451152"
+        ]
+      },
+      "recorded_name": "Fitzroy and Collingwood Secondary Schools"
+    },
+    "split_assertion_proposals": [],
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:49815",
+        "name": "Scotch College - Torrens Park Campus",
+        "reason": "Adelaide Scotch College is supported for Wong, but the exact campus is not sourced.",
+        "state": "SA"
+      },
+      {
+        "institution_ref": "acara:50507",
+        "name": "Scotch College - Mitcham Campus",
+        "reason": "Adelaide Scotch College is supported for Wong, but the exact campus is not sourced.",
+        "state": "SA"
+      },
+      {
+        "institution_ref": "acara:46172",
+        "name": "Scotch College",
+        "reason": "Distinct Melbourne school; Mark Dreyfus-specific evidence does not establish its location/campus.",
+        "state": "VIC",
+        "suburb": "Hawthorn"
+      },
+      {
+        "institution_ref": "acara:49028",
+        "name": "Scotch College",
+        "reason": "Other candidate from the pinned register; member-specific evidence does not rule it out for Dreyfus.",
+        "state": "WA",
+        "suburb": "Swanbourne"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "00AOU",
+          "attended_status": "attended_unspecified",
+          "display_name": "WONG, the Hon. Penelope (Penny) Ying-Yen",
+          "graduation_year": null,
+          "level": "secondary",
+          "recorded_school_name": "Scotch College",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:17bcb8da8ee8ee49047f577e0fc1efa9d9e373482f78a8af60bcf289674ad4ae",
+        "excerpt_or_note": "The supplied APH attendance snapshot records Scotch College as Penny Wong's attended secondary school; it gives no campus, years, or graduation claim.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:00aou:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%2700AOU%27",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWG",
+          "attended_status": "attended_unspecified",
+          "display_name": "DREYFUS, the Hon. Mark Alfred, KC",
+          "graduation_year": null,
+          "level": "secondary",
+          "recorded_school_name": "Scotch College",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:34c0c5b0b469690ac241951dcdcdec6b4b4186247f88978ca9449ceb91834daf",
+        "excerpt_or_note": "The supplied APH attendance snapshot records Scotch College as Mark Dreyfus's attended secondary school; it gives no campus, years, or graduation claim.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:hwg:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%27HWG%27",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "00AOU",
+          "reported_class": "1985",
+          "school_identity": "Scotch College Adelaide"
+        },
+        "evidence_id": "evidence:8cdbd84a047fe0f8cd5b870a3b64ed7a3c7b1d8336e273be48cf95a54f2ae367",
+        "excerpt_or_note": "The school's February 2013 report identifies Penny Wong with the 1985 cohort and says she spoke at a Scotch College assembly about her time at the College. This confirms the Adelaide school community but not which current campus record represents her attendance.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:37:07Z",
+        "review_id": "education:00aou:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Scotch College Adelaide — Scotch Reports, February 2013",
+        "source_type": "school_official_publication",
+        "source_url": "https://s3-ap-southeast-2.amazonaws.com/wh1.thewebconsole.com/wh/3261/images/SR_Feb2013.pdf",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWG",
+          "institution_name": "Scotch College",
+          "school_evidence": "Dreyfus wrote for the Scotch College newspaper and attended on a full scholarship"
+        },
+        "evidence_id": "evidence:5efbaab20d9d5a701ea2c87a36e5561a996645b6724e9cedf59e0a12acbfd22f",
+        "excerpt_or_note": "The Ormond College alumni article says Dreyfus wrote for the Scotch College newspaper and attended on a full scholarship. It does not state the school city or campus, so it cannot distinguish the Melbourne school from other Scotch Colleges on its own.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:37:07Z",
+        "review_id": "education:hwg:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Ormond College, University of Melbourne — New Old, issue 102",
+        "source_type": "university_alumni_publication",
+        "source_url": "https://cdn.ormond.unimelb.edu.au/documents/New-Old-Issue-No.-102.pdf",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:46172",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWG",
+          "attended_institution_name": "Scotch College, Melbourne",
+          "education_id": "edu-hwg-624d6a7d93a0d434",
+          "recorded_school_name": "Scotch College"
+        },
+        "evidence_id": "evidence:a84d5de877922f67c2c677fc77881e1e7767b92fcca3990e97a13af039848663",
+        "excerpt_or_note": "Opened page, Early life and education, explicitly says Dreyfus was educated at Scotch College, Melbourne on a full scholarship. This secondary location-specific claim is consistent with retained primary Ormond attendance evidence. The inline The Age citation could not be opened; its contents are not independently verified.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:09:49.118904+00:00",
+        "review_id": "education:hwg:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Mark Dreyfus — Wikipedia",
+        "source_type": "encyclopedia",
+        "source_url": "https://en.wikipedia.org/wiki/Mark_Dreyfus",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:17bcb8da8ee8ee49047f577e0fc1efa9d9e373482f78a8af60bcf289674ad4ae",
+          "evidence:8cdbd84a047fe0f8cd5b870a3b64ed7a3c7b1d8336e273be48cf95a54f2ae367",
+          "evidence:dee2c229d006729f8b831aa2ce73f2a808411d0d0ab0611e9a4266052c949212",
+          "evidence:377b17ba258f3dd9624b53fc55bddfa4338715932d46c6c355e09309e7ed1f23"
+        ],
+        "payload": {
+          "aph_id": "00AOU",
+          "institution_ref": "acara:49815",
+          "recorded_school_name": "Scotch College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Map only Wong’s exact secondary education assertion to Torrens Park. Retained official Scotch Adelaide publication identifies her with the 1985 cohort; APH records secondary attendance. Official school sources assign Middle/Senior to Torrens Park and Junior/ELC to Mitcham, and document the founding-era Torrens Park site. This campus-stage inference uses school sources, not parliamentary geography. No historical classroom, coordinates or exact attendance dates are asserted.",
+        "review_id": "education:00aou:624d6a7d93a0d434",
+        "source_url": "https://www.scotch.sa.edu.au/home/contact-us/"
+      },
+      {
+        "evidence_refs": [
+          "evidence:34c0c5b0b469690ac241951dcdcdec6b4b4186247f88978ca9449ceb91834daf",
+          "evidence:5efbaab20d9d5a701ea2c87a36e5561a996645b6724e9cedf59e0a12acbfd22f",
+          "evidence:a84d5de877922f67c2c677fc77881e1e7767b92fcca3990e97a13af039848663",
+          "evidence:14a38b8ab7685d1e5d872a25df473d278a81f181bd705c4d010b07f6ee2efd62"
+        ],
+        "payload": {
+          "aph_id": "HWG",
+          "institution_ref": "acara:46172",
+          "recorded_school_name": "Scotch College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Map only Dreyfus’s exact education assertion to Scotch College Melbourne. Opened biography explicitly names Melbourne; retained primary Ormond evidence independently supports Scotch attendance. Retained official Melbourne identity evidence and the pinned register identify acara:46172 at Hawthorn. Location-specific attendance evidence is secondary and its newspaper citation failed to open. No other member or attendance years are mapped.",
+        "review_id": "education:hwg:624d6a7d93a0d434",
+        "source_url": "https://en.wikipedia.org/wiki/Mark_Dreyfus"
+      }
+    ],
+    "attempts": [
+      {
+        "gaps": [
+          "Penny Wong's school source identifies the Adelaide college, but not which of its two current campus registry references corresponds to her historical attendance.",
+          "Mark Dreyfus-specific source identifies Scotch College but does not state the city/campus; his electorate geography was not used to infer his school location.",
+          "The Scotch College Melbourne history URL returned an internal error; it is not used to make a historical location claim.",
+          "APh API network opens were not attempted; supplied attendance snapshots and their frozen retrieval timestamps were used.",
+          "No attendance years or graduation are asserted beyond Wong's school publication reporting her cohort as 1985."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 6,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Dreyfus’s explicit Melbourne attendance identity relies on an opened secondary biography; its cited The Age article failed to open. Retained primary Ormond source supports attendance without stating city.",
+          "Wong’s campus selection combines retained primary Adelaide cohort/attendance evidence, APH secondary level, official campus-stage division and institutional history; it does not directly name her individual historical classroom or supply exact attendance dates.",
+          "No new attendance years, graduation or historical coordinates are proposed; global shared school identity remains ambiguous."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 4,
+        "status": "resolved",
+        "token_usage": null
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "historical_context",
+        "claim_value": {
+          "document": "Scotch Reports, February 2013",
+          "publisher_identity": "Scotch College Adelaide",
+          "school_community_event": "40 years of co-education celebration, November 2012"
+        },
+        "evidence_id": "evidence:1f1f3a875e74e5e878974186430a02e7e0cb4bba19f6c65b72fafdf3598449eb",
+        "excerpt_or_note": "The school publication describes a College assembly and community event, identifying the Adelaide institution's alumni context. Its evidence associates Wong with the school but does not identify the specific current campus.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:37:07Z",
+        "review_id": "school:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Scotch College Adelaide — Scotch Reports, February 2013",
+        "source_type": "school_official_publication",
+        "source_url": "https://s3-ap-southeast-2.amazonaws.com/wh1.thewebconsole.com/wh/3261/images/SR_Feb2013.pdf",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "current_address": "1 Morrison Street, Hawthorn VIC 3122",
+          "institution_ref": "acara:46172",
+          "name": "Scotch College Melbourne",
+          "school_type": "independent boys day and boarding school"
+        },
+        "evidence_id": "evidence:14a38b8ab7685d1e5d872a25df473d278a81f181bd705c4d010b07f6ee2efd62",
+        "excerpt_or_note": "The Melbourne school's official profile identifies Scotch College Melbourne and its Hawthorn address, confirming one of the distinct institutions covered by the generic name.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:37:07Z",
+        "review_id": "school:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Scotch College Melbourne — About",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.scotch.vic.edu.au/about/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49815",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "location": "Carruth Rd, Torrens Park SA",
+          "name": "Scotch College - Torrens Park Campus",
+          "other_campus": {
+            "location": "Norman Walk, Mitcham SA",
+            "name": "Mitcham Campus",
+            "school_stages": "Junior School & ELC"
+          },
+          "school_stages": "Middle & Senior School"
+        },
+        "evidence_id": "evidence:dee2c229d006729f8b831aa2ce73f2a808411d0d0ab0611e9a4266052c949212",
+        "excerpt_or_note": "Opened official page explicitly assigns Middle & Senior School to Torrens Park Campus and Junior School & ELC to Mitcham Campus. Local campus names and localities match pinned register acara:49815 and acara:50507. Register Pri/Sec labels alone do not distinguish these stages.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:09:49.118904+00:00",
+        "review_id": "school:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Scotch College Adelaide — Contact Us",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.scotch.sa.edu.au/home/contact-us/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:49815",
+        "claim_type": "historical_context",
+        "claim_value": {
+          "coeducation_started": 1972,
+          "institution": "Scotch College Adelaide",
+          "location": "Torrens Park",
+          "middle_school_launched": 1973,
+          "source_reports_move_year": 1919
+        },
+        "evidence_id": "evidence:377b17ba258f3dd9624b53fc55bddfa4338715932d46c6c355e09309e7ed1f23",
+        "excerpt_or_note": "Opened official history states Scotch moved to Torrens Park in 1919, became co-educational in 1972 and launched Middle School in 1973. This is institutional history, not an individual classroom, historical coordinate or exact attendance-date claim.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:09:49.118904+00:00",
+        "review_id": "school:624d6a7d93a0d434",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Scotch College Adelaide — History",
+        "source_type": "official-school-history",
+        "source_url": "https://www.scotch.sa.edu.au/about-us/our-history/",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Adelaide_institution_context": [
+          "evidence:1f1f3a875e74e5e878974186430a02e7e0cb4bba19f6c65b72fafdf3598449eb"
+        ],
+        "Adelaide_secondary_campus": [
+          "evidence:dee2c229d006729f8b831aa2ce73f2a808411d0d0ab0611e9a4266052c949212",
+          "evidence:377b17ba258f3dd9624b53fc55bddfa4338715932d46c6c355e09309e7ed1f23"
+        ],
+        "Melbourne_institution_context": [
+          "evidence:14a38b8ab7685d1e5d872a25df473d278a81f181bd705c4d010b07f6ee2efd62"
+        ]
+      },
+      "recorded_school_name": "Scotch College"
+    },
+    "manual_institutions": [],
+    "outcome": "mapping",
+    "payload": {
+      "recorded_name": "Scotch College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:21effadd22503c71fab07b19c085b05787ccf378e0b4aee0993c2cbf57b46338",
+    "reasoning": "The two supplied APH assertions use the generic name Scotch College, but evidence points to distinct institutions. The Scotch College Adelaide school publication identifies Penny Wong with its 1985 cohort and describes her as an alumna, establishing the Adelaide institution; however, the pinned registry contains separate Torrens Park and Mitcham campus references, and no reviewed source establishes which campus represents her secondary attendance. An Ormond College alumni article says Mark Dreyfus wrote for the Scotch College newspaper and attended on a full scholarship, but it does not state which city or campus. Scotch College Melbourne is one possible institution, yet the available member-specific source alone does not resolve the generic name. The prior task instruction requires exact member and campus evidence, so no individual map is proposed and the school-level payload remains ambiguous. Sol retry resolves both scoped assertions separately. Wong’s primary Adelaide attendance/cohort evidence and APH secondary level combine with official campus-stage descriptions and institutional history to identify Torrens Park, acara:49815. The opened Dreyfus biography explicitly names Scotch College, Melbourne, matching retained institutional identity evidence and acara:46172; retained Ormond primary evidence confirms attendance. Dreyfus’s city-specific attendance evidence is secondary and its newspaper citation failed to open. The global payload remains ambiguous and no political geography is used.",
+    "review_caveats": [
+      "Dreyfus’s explicit Melbourne attendance identity relies on an opened secondary biography; its cited The Age article failed to open. Retained primary Ormond source supports attendance without stating city.",
+      "Wong’s campus selection combines retained primary Adelaide cohort/attendance evidence, APH secondary level, official campus-stage division and institutional history; it does not directly name her individual historical classroom or supply exact attendance dates."
+    ],
+    "review_id": "school:624d6a7d93a0d434",
+    "scoped_identity_context": {
+      "member_assertions": [
+        {
+          "aph_id": "00AOU",
+          "education_id": "education:00aou:624d6a7d93a0d434",
+          "evidence_refs": [
+            "evidence:17bcb8da8ee8ee49047f577e0fc1efa9d9e373482f78a8af60bcf289674ad4ae",
+            "evidence:8cdbd84a047fe0f8cd5b870a3b64ed7a3c7b1d8336e273be48cf95a54f2ae367"
+          ],
+          "member": "WONG, the Hon. Penelope (Penny) Ying-Yen"
+        },
+        {
+          "aph_id": "HWG",
+          "education_id": "education:hwg:624d6a7d93a0d434",
+          "evidence_refs": [
+            "evidence:34c0c5b0b469690ac241951dcdcdec6b4b4186247f88978ca9449ceb91834daf",
+            "evidence:5efbaab20d9d5a701ea2c87a36e5561a996645b6724e9cedf59e0a12acbfd22f",
+            "evidence:a84d5de877922f67c2c677fc77881e1e7767b92fcca3990e97a13af039848663"
+          ],
+          "member": "DREYFUS, the Hon. Mark Alfred, KC"
+        }
+      ]
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "campus": "Senior Campus",
+        "institution_ref": "acara:45696",
+        "name": "Xavier College",
+        "reason": "Identified by the school's history, government register, and Victorian regulator; no member-specific source ties Tehan's APH assertion to this campus.",
+        "state": "VIC",
+        "suburb": "Kew"
+      },
+      {
+        "institution_ref": "acara:43223",
+        "name": "Xavier College",
+        "reason": "Distinct exact-name candidate in the pinned register; no member-specific evidence rules it out.",
+        "state": "NSW",
+        "suburb": "Llandilo"
+      },
+      {
+        "institution_ref": "acara:49726",
+        "name": "Xavier College - Head Campus",
+        "reason": "Another Xavier College registry candidate; no member-specific evidence localizes the APH record.",
+        "state": "SA",
+        "suburb": "Gawler Belt"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "210911",
+          "attended_status": "attended_unspecified",
+          "display_name": "TEHAN, the Hon. Daniel (Dan) Thomas",
+          "graduation_year": null,
+          "level": "secondary",
+          "recorded_school_name": "Xavier College",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:b108c61ece0f6a125ff80abe5026a5a8934c3e847fd77f1350edf11ac5cf62ba",
+        "excerpt_or_note": "The supplied APH snapshot records Xavier College as Dan Tehan's attended secondary school; it provides no campus, attendance dates, or graduation claim.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:210911:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%27210911%27",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "210911",
+          "school_name_in_statement": null,
+          "statement": "Dan says his family farm enabled the children to attend boarding school",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:71a0b0e4b9ff893c313ab31f0bb20dd3a9b5c88447ad3e72975337d03d528de8",
+        "excerpt_or_note": "In his maiden speech, Tehan says the family farm gave him and his siblings the opportunity to go to boarding school. The speech does not name Xavier College or identify a campus, so it does not resolve his APH school record.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:08Z",
+        "review_id": "education:210911:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Dan Tehan MP — Maiden Speech",
+        "source_type": "official_member_statement",
+        "source_url": "https://dantehan.com.au/maiden-speech/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "210911",
+          "reported_boarder": true,
+          "reported_school_name": "Xavier College, Melbourne",
+          "requires_corroboration": true,
+          "years_attended": null
+        },
+        "evidence_id": "evidence:17f5d679c10db91393826c93a85a304bc2f8103637b121fb3d1247cb034e95dd",
+        "excerpt_or_note": "Opened secondary biography says Tehan completed secondary education as a boarder at Xavier College, Melbourne. The sentence cites Ben Packham, The Weekend Australian, 27 August 2018. That cited newspaper source was restricted when opened; the separate Standard profile also failed to fetch. This is a Melbourne institution lead, not retrieved primary evidence establishing the exact attended campus. No attendance years or graduation date are inferred.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:14:55.207915Z",
+        "review_id": "education:210911:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Dan Tehan - Wikipedia",
+        "source_type": "opened_secondary_biography",
+        "source_url": "https://en.wikipedia.org/wiki/Dan_Tehan",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "Dan Tehan's official maiden speech confirms boarding-school attendance but does not name Xavier College or a campus.",
+          "The school and government sources establish a Kew Xavier College Senior Campus, but not that it is the school named in Tehan's APH record.",
+          "The pinned registry contains multiple exact Xavier College candidates; no exact member-specific mapping is supported.",
+          "No attendance years or graduation are asserted."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 6,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "The retrieved secondary biography names Xavier College, Melbourne, but does not establish an exact attended campus.",
+          "The school publication was inaccessible; the Australian source cited for Melbourne boarding attendance was restricted; the Standard profile failed to fetch.",
+          "No newly retrieved school, government or member statement explicitly connects Tehan to the Kew Senior Campus.",
+          "No attendance years or graduation date are inferred from birth date, Mansfield schooling, or political geography."
+        ],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "error": "Not accessible via this tool",
+            "status": "failed",
+            "url": "https://foundation.xavier.vic.edu.au/sites/default/files/publications/pdffiles/2022%20ED%201%20XN_LOW.pdf"
+          },
+          {
+            "status": "opened",
+            "url": "https://en.wikipedia.org/wiki/Dan_Tehan"
+          },
+          {
+            "error": "Failed to fetch restricted URL",
+            "status": "failed",
+            "url": "https://www.theaustralian.com.au/nation/education/tehans-job-win-back-the-catholic-schools-vote/news-story/e45e9378bc8cc48bbc7696a51f51e1f5"
+          },
+          {
+            "error": "Error fetching",
+            "status": "failed",
+            "url": "https://www.standard.net.au/story/3737651/the-rise-of-dan-tehan-from-the-farm-to-the-frontbench/"
+          }
+        ],
+        "search_queries": [
+          "\"Dan Tehan\" site:xavier.vic.edu.au",
+          "\"Dan Tehan\" \"Xavier\""
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Preserved mixed/person identity context separately from importer institutional identity evidence."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "historic_senior_campus": "Barkers Road, Kew",
+          "institution_ref": "acara:45696",
+          "junior_campuses": [
+            "Burke Hall",
+            "Kostka Hall"
+          ],
+          "opened": 1878,
+          "school_name": "Xavier College"
+        },
+        "evidence_id": "evidence:9a1706157f563f26564e8367c7f475f0af9f67b776c9846d23b7deb8049fa218",
+        "excerpt_or_note": "Xavier College's official history identifies its original senior campus as Barkers Road, Kew, and distinguishes the Burke Hall and Kostka Hall junior campuses. This establishes the Melbourne candidate's identity, not its link to Dan Tehan.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:08Z",
+        "review_id": "school:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Xavier College — Xavier History",
+        "source_type": "school_official_history",
+        "source_url": "https://xavier.vic.edu.au/about-xavier/xavier-history",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "135 Barkers Road, Kew VIC 3101",
+          "campus_type": "Secondary",
+          "institution_ref": "acara:45696",
+          "legal_name": "Xavier College Ltd.",
+          "main_campus": "Xavier College Senior Campus",
+          "trading_name": "Xavier College"
+        },
+        "evidence_id": "evidence:a940194e3017326b010b659ecf786a5838bd5c40b079b4cbbac0df5401108c4b",
+        "excerpt_or_note": "The Victorian regulator identifies Xavier College's main campus as its secondary Senior Campus at 135 Barkers Road, Kew. It does not establish that this is the campus in the supplied APH assertion.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:08Z",
+        "review_id": "school:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Victorian Registration and Qualifications Authority — Xavier College Ltd provider record",
+        "source_type": "government_school_register",
+        "source_url": "https://www.vrqa.vic.gov.au/StateRegister/Provider.aspx/DetailsProvider?AccountID=c22efd91-0279-e711-80e0-005056825391&SearchState=%2526PProviderName%253d%2526PPostcode%253d%2526PPostcodeIncludeSurrounding%253d%2526PSuburb%253d%2526PSuburbIncludeSurrounding%253d%2526PUseAdvancedSearchProvider%253d%2526PProviderTypeID%253d%2526PDeliversQual%253d%2526PQualificationType%253d%2526PFieldOfEducation%253d%2526PCacheGuid%253dad38db82-f20a-4b90-9480-e91d57e20a0f",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "historical_context",
+        "claim_value": {
+          "address": "135 Barkers Road",
+          "institution_name": "Xavier College",
+          "period_start": 1961,
+          "state": "VIC",
+          "suburb": "Kew"
+        },
+        "evidence_id": "evidence:a20e8ac9448cedb897ff22184af139dca60be18c2ca281bf043a7170c065c606",
+        "excerpt_or_note": "The national government register identifies a Xavier College institution in Kew, Victoria. Its entry documents one candidate institution and does not disambiguate the APH record by itself.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:08Z",
+        "review_id": "school:88f32fdf927875e8",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Government National Redress Scheme — Xavier College",
+        "source_type": "government_institution_register",
+        "source_url": "https://www.nationalredress.gov.au/institutions/xavier-college",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Kew_candidate": [
+          "evidence:9a1706157f563f26564e8367c7f475f0af9f67b776c9846d23b7deb8049fa218",
+          "evidence:a20e8ac9448cedb897ff22184af139dca60be18c2ca281bf043a7170c065c606"
+        ]
+      }
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Xavier College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:276abe52e7e677f0058abff12a83b14f739706a7b6e535e1c0ef5391125d0e8a",
+    "reasoning": "The supplied APH record names Xavier College but has no geographic qualifier. The official Victorian school regulator and Xavier College history identify one Xavier College candidate in Kew, including its secondary Senior Campus at Barkers Road; the pinned register also contains a distinct Xavier College in Llandilo, NSW (acara:43223). Tehan's own maiden speech says he had the opportunity to attend boarding school, but does not name the school or location. This evidence therefore does not connect the APH assertion specifically to the Kew campus, and political geography is not used to infer school location. No campus-specific mapping is proposed. The Sol retry located an opened secondary biography explicitly naming Xavier College, Melbourne, as Tehan's boarding school, but its cited Australian report was restricted and the separate Standard profile and school publication were inaccessible. This narrows the institution lead without independently establishing the attended campus. Preserve the Melbourne lead for corroboration, leave the original assertion unresolved, and avoid attendance-year estimates or locality inference from the other APH schooling component.",
+    "review_caveats": [],
+    "review_id": "school:88f32fdf927875e8",
+    "scoped_identity_context": {
+      "aph_id": "210911",
+      "education_id": "education:210911:88f32fdf927875e8",
+      "evidence_refs": {
+        "Kew_candidate": [
+          "evidence:9a1706157f563f26564e8367c7f475f0af9f67b776c9846d23b7deb8049fa218",
+          "evidence:f267c16479548b853fd9dfcad1054dc66334b3e80c6c84082a3e20bef009ded2",
+          "evidence:a20e8ac9448cedb897ff22184af139dca60be18c2ca281bf043a7170c065c606"
+        ],
+        "boarding_context": [
+          "evidence:71a0b0e4b9ff893c313ab31f0bb20dd3a9b5c88447ad3e72975337d03d528de8"
+        ],
+        "recorded_attendance": [
+          "evidence:b108c61ece0f6a125ff80abe5026a5a8934c3e847fd77f1350edf11ac5cf62ba"
+        ]
+      },
+      "member": "TEHAN, the Hon. Daniel (Dan) Thomas",
+      "recorded_school_name": "Xavier College",
+      "sol_retry": {
+        "aph_id": "210911",
+        "candidate_institution_ref": "acara:45696",
+        "candidate_reference_basis": "Existing institutional evidence and free pinned-register Kew lookup; secondary biography gives Melbourne only. No manual duplicate or exact campus mapping proposed.",
+        "evidence_refs": [
+          "evidence:17f5d679c10db91393826c93a85a304bc2f8103637b121fb3d1247cb034e95dd"
+        ],
+        "reported_school_name": "Xavier College, Melbourne",
+        "requires_primary_campus_corroboration": true,
+        "review_id": "education:210911:88f32fdf927875e8",
+        "status": "unresolved"
+      }
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:40238",
+        "location": "New Town, Tasmania",
+        "school_name": "Sacred Heart College"
+      },
+      {
+        "institution_ref": "acara:45682",
+        "location": "Kyneton, Victoria",
+        "school_name": "Sacred Heart College"
+      },
+      {
+        "institution_ref": "acara:45717",
+        "location": "Yarrawonga, Victoria",
+        "school_name": "Sacred Heart College"
+      },
+      {
+        "institution_ref": "acara:48917",
+        "location": "Sorrento, Western Australia",
+        "school_name": "Sacred Heart College"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": "acara:45672",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "ZN4",
+          "member": "Sarah Henderson",
+          "member_context": "born and raised in Geelong; attended Sacred Heart College and The Geelong College",
+          "recorded_school_name": "Sacred Heart College"
+        },
+        "evidence_id": "evidence:f761e67e817aaeca8cfda36dac5ea26d0c7292b242197d0bc324cd9749d92a43",
+        "excerpt_or_note": "Henderson’s official profile says she was born and raised in Geelong and attended Sacred Heart College and The Geelong College.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:51Z",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Senator Sarah Henderson — About Sarah",
+        "source_type": "member-official-profile",
+        "source_url": "https://sarahhenderson.com.au/about-sarah/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:45672",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "ZN4",
+          "attended_status": "attended_unspecified",
+          "display_name": "HENDERSON, the Hon. Sarah Moya",
+          "education_id": "edu-zn4-8cc84ad5f100dc69",
+          "recorded_school_name": "Sacred Heart College"
+        },
+        "evidence_id": "evidence:42312e28be6ad880c10b7e8e30ff8b50512ccdaa115bf98ffa507bccaa3e3368",
+        "excerpt_or_note": "The frozen APH attendance row for Sarah Henderson records Sacred Heart College; it supplies no attendance dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API — frozen attendance snapshot",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'ZN4'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:45672",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "ZN4",
+          "attended_location_in_source": "Geelong",
+          "member": "HENDERSON, the Hon. Sarah Moya",
+          "school_name_in_source": "Sacred Heart College",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:a29221c157261b706c4ba3f52cb5d15b0e551b808f23c1f27da6aa576cd183c9",
+        "excerpt_or_note": "Opened official Universities Australia event speaker biography explicitly says Sarah was born and raised in Geelong where she attended Sacred Heart College and Geelong College. The word where directly localizes the attendance to Geelong; this is not inference from childhood locality plus an unqualified attendance sentence. It supplies no Sacred Heart attendance dates, graduation, or historical campus continuity.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:24:45.640036Z",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Senator Sarah Henderson - 2025 Universities Australia Solutions Summit speaker biography",
+        "source_type": "official_event_speaker_biography",
+        "source_url": "https://events.uniaus.edu.au/2025SolutionsSummit/speaker/1759587/sarah-henderson",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "ZN4",
+          "reported_early_level": "Kindergarten",
+          "reported_school_name": "Sacred Heart College",
+          "reported_start_age": 3,
+          "years_attended": null
+        },
+        "evidence_id": "evidence:be26408bfe5a289390e26403d9fd7ed346d2d3dce5329fc21fd18547480161bc",
+        "excerpt_or_note": "Opened Geelong College archive biography says Henderson began schooling at Sacred Heart College as a three-year-old in Kindergarten. Its later 1977-1981 College enrolment and school-captain details concern The Geelong College, not Sacred Heart; those dates are not assigned to this assertion. This corroborates early attendance only and does not prove the Sacred Heart secondary-year span.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:24:45.640036Z",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "The Geelong College Illustrated Heritage Guide: HENDERSON, Sarah Moya",
+        "source_type": "official_school_archive_biography",
+        "source_url": "https://gnet.tgc.vic.edu.au/wiki/HENDERSON-Sarah-1964",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:a29221c157261b706c4ba3f52cb5d15b0e551b808f23c1f27da6aa576cd183c9",
+          "evidence:45d31e8bc537833ac110ecd107e904f9422285e09ba282a850ef8de2fa93c4e6"
+        ],
+        "payload": {
+          "aph_id": "ZN4",
+          "institution_ref": "acara:45672",
+          "recorded_school_name": "Sacred Heart College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Universities Australia explicitly links Henderson's attended Sacred Heart College to Geelong. Official college address and pinned registry identify the Geelong institution as acara:45672. This is the new campus/location evidence required after the prior inference was withheld.",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "source_url": "https://events.uniaus.edu.au/2025SolutionsSummit/speaker/1759587/sarah-henderson"
+      }
+    ],
+    "attempts": [
+      {
+        "gaps": [
+          "The Catholic education directory result for Sacred Heart College, Newtown returned HTTP 502 on open; school identity and address are independently supported by the official Sacred Heart College Geelong archives page.",
+          "APH supplies no attendance dates or graduation year."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 3,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://events.uniaus.edu.au/2025SolutionsSummit/speaker/1759587/sarah-henderson"
+          },
+          {
+            "status": "opened",
+            "url": "https://gnet.tgc.vic.edu.au/wiki/HENDERSON-Sarah-1964"
+          },
+          {
+            "status": "opened",
+            "url": "https://www.shcgeelong.catholic.edu.au/community/archives"
+          },
+          {
+            "status": "opened",
+            "url": "https://www.shcgeelong.catholic.edu.au/community/alumni"
+          }
+        ],
+        "search_queries": [
+          "\"Sarah Henderson\" site:shcgeelong.catholic.edu.au",
+          "\"Sarah Henderson\" \"Sacred Heart\""
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "resolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Classified resolved individual mappings as mapping; retained ambiguous school-wide policy.",
+      "Coordinator withheld initial mapping after QA: exact attended campus not established; raw resolved report and proposed target preserved for audit.",
+      "Replaced corrupted punctuation in paraphrased source labels with readable ASCII."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:45672",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "founded": 1860,
+          "location": "61 Retreat Road, Newtown, Victoria",
+          "name": "Sacred Heart College Geelong"
+        },
+        "evidence_id": "evidence:fb0e5a16b173c457e0fd0e248615ef6b628f8c4b9d943a930041b0be84b7a568",
+        "excerpt_or_note": "The College archives page identifies Sacred Heart College Geelong, traces its history from its 1860 foundation, and gives its address as 61 Retreat Road, Newtown VIC 3220.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:39:51Z",
+        "review_id": "school:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Sacred Heart College Geelong — Archives",
+        "source_type": "official-school-history",
+        "source_url": "https://www.shcgeelong.catholic.edu.au/community/archives",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:45672",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "61 Retreat Road, Newtown VIC 3220",
+          "city": "Geelong",
+          "school_name": "Sacred Heart College Geelong",
+          "state": "VIC",
+          "suburb": "Newtown"
+        },
+        "evidence_id": "evidence:45d31e8bc537833ac110ecd107e904f9422285e09ba282a850ef8de2fa93c4e6",
+        "excerpt_or_note": "Opened official archive page identifies Sacred Heart College Geelong and gives 61 Retreat Road, Newtown VIC 3220. The matching pinned ACARA entry is acara:45672. No historical campus continuity or attended-year location is inferred.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:24:45.640036Z",
+        "review_id": "school:8cc84ad5f100dc69",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Archives - Sacred Heart College Geelong",
+        "source_type": "official_school_history",
+        "source_url": "https://www.shcgeelong.catholic.edu.au/community/archives",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "location": [
+          "evidence:fb0e5a16b173c457e0fd0e248615ef6b628f8c4b9d943a930041b0be84b7a568"
+        ],
+        "name": [
+          "evidence:fb0e5a16b173c457e0fd0e248615ef6b628f8c4b9d943a930041b0be84b7a568"
+        ],
+        "verified_geelong_institution": [
+          "evidence:45d31e8bc537833ac110ecd107e904f9422285e09ba282a850ef8de2fa93c4e6"
+        ]
+      },
+      "location": "Newtown, Victoria",
+      "name": "Sacred Heart College Geelong"
+    },
+    "manual_institutions": [],
+    "mapping_scope": "assertion",
+    "outcome": "mapping",
+    "payload": {
+      "recorded_name": "Sacred Heart College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:d2244e8efc0ea992095bae2736a53119de98096c11fbe86b267ec9ca23c1fefe",
+    "reasoning": "The scoped Sarah Henderson assertion now supports a direct mapping to acara:45672, Sacred Heart College Geelong in Newtown. The opened Universities Australia speaker biography explicitly says she was born and raised in Geelong where she attended Sacred Heart College and Geelong College, directly linking the attended school to Geelong. The official Sacred Heart archive identifies that institution at 61 Retreat Road, Newtown and matches the pinned registry. This new explicit attendance-location evidence addresses the earlier withheld proposal; childhood locality alone and parliamentary geography are not used. The Geelong College archive independently records early Sacred Heart Kindergarten attendance, but does not establish Sacred Heart secondary-year dates. Preserve the earlier evidence, withheld proposal and curation notes as audit history. Map only this member assertion, retain global ambiguous-name policy, and assert no attendance dates, graduation or historical campus continuity.",
+    "review_caveats": [
+      "Geelong identification was inferred from childhood locality plus generic attendance. The initial target is withheld until a source establishes the attended campus.",
+      "The earlier inference and withheld proposal remain preserved for audit; the Sol speaker biography provides the subsequent explicit attendance-location link.",
+      "Geelong College archive establishes early Sacred Heart Kindergarten attendance only. The APH secondary classification and exact Sacred Heart secondary-year span are not independently validated by that source.",
+      "Sacred Heart attendance dates and graduation remain unestablished; 1977-1981 dates in the Geelong College archive concern the other institution."
+    ],
+    "review_id": "school:8cc84ad5f100dc69",
+    "scoped_identity_context": {
+      "sol_retry": {
+        "aph_id": "ZN4",
+        "candidate_institution_ref": "acara:45672",
+        "evidence_refs": [
+          "evidence:a29221c157261b706c4ba3f52cb5d15b0e551b808f23c1f27da6aa576cd183c9",
+          "evidence:be26408bfe5a289390e26403d9fd7ed346d2d3dce5329fc21fd18547480161bc"
+        ],
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "source_stated_attended_location": "Geelong"
+      }
+    },
+    "value": null,
+    "withheld_assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:fb0e5a16b173c457e0fd0e248615ef6b628f8c4b9d943a930041b0be84b7a568",
+          "evidence:f761e67e817aaeca8cfda36dac5ea26d0c7292b242197d0bc324cd9749d92a43",
+          "evidence:42312e28be6ad880c10b7e8e30ff8b50512ccdaa115bf98ffa507bccaa3e3368"
+        ],
+        "payload": {
+          "aph_id": "ZN4",
+          "institution_ref": "acara:45672",
+          "recorded_school_name": "Sacred Heart College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Map only Sarah Henderson’s exact APH education assertion to the Geelong college. Her official profile links her attendance at Sacred Heart College with being born and raised in Geelong, and the college’s official archive identifies the Geelong Sacred Heart College at Newtown; these facts match pinned ACARA institution acara:45672. The proposal is individual and awaits human review.",
+        "review_id": "education:zn4:8cc84ad5f100dc69",
+        "source_url": "https://sarahhenderson.com.au/about-sarah/"
+      }
+    ]
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:45874",
+        "location": "Bulleen, Victoria",
+        "reason": "exact-name candidate in the pinned register; attendance campus not established",
+        "school_name": "Marcellin College"
+      },
+      {
+        "institution_ref": "acara:43482",
+        "location": "Randwick, New South Wales",
+        "reason": "exact-name candidate in the pinned register; attendance campus not established",
+        "school_name": "Marcellin College"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "245392",
+          "attended_status": "attended_unspecified",
+          "display_name": "GOSLING, Luke John Anthony, OAM",
+          "education_id": "edu-245392-95d614d246623b77",
+          "recorded_school_name": "Marcellin College"
+        },
+        "evidence_id": "evidence:383992d9f2c896de963c6ef76ec88f42a0676dbf04883a26a5902bbac23b6ef7",
+        "excerpt_or_note": "The frozen APH attendance row for Luke Gosling records Marcellin College; it supplies no attendance dates or campus information.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:245392:95d614d246623b77",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API — frozen attendance snapshot",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245392'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "245392",
+          "campus_identity_in_opened_page": null,
+          "education_id": "edu-245392-95d614d246623b77",
+          "source_scope": "official member biography"
+        },
+        "evidence_id": "evidence:da70f4358a3ea7e71176d3221ec1f7526e39341ea50ac24586902465f054716f",
+        "excerpt_or_note": "Opened official member biography describes upbringing, Army service, Timor-Leste work and later career, but supplies no school name or campus. This contextual source gap adds no positive attendance assertion; the retained frozen APH record remains the attendance source.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:15:17.675775+00:00",
+        "review_id": "education:245392:95d614d246623b77",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Luke Gosling MP — About Luke",
+        "source_type": "official-member-biography",
+        "source_url": "https://lukegosling.com.au/about-luke/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "No authoritative source found within the search budget linking Luke Gosling to the Bulleen or Randwick campus.",
+          "APH supplies no attendance dates, graduation year, or campus information."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 3,
+        "source_opens": 0,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Neither query returned a source connecting Luke Gosling to a specific Marcellin institution.",
+          "Opened official member biography supplies no schooling details. Opened Bulleen college history identifies the institution but not Gosling attendance.",
+          "Frozen full schooling-field context Mt Lilydale College/Marcellin College/Balwyn High School does not directly identify Marcellin campus and is not used to infer it.",
+          "Bulleen institutional history includes an earlier Camberwell site; no individual historical campus or attendance dates are established."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 2,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:45874",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "current_address": "160 Bulleen Road, Bulleen VIC 3105",
+          "expanded_to_Bulleen": 1963,
+          "founded": 1950,
+          "founding_location": "Camberwell",
+          "name": "Marcellin College",
+          "school_type": "Catholic secondary school"
+        },
+        "evidence_id": "evidence:b9c263f766fd4ab8dc77bc3e21a46aba5feb0e7ea9e0447babe0655ce2da875b",
+        "excerpt_or_note": "Opened official page identifies Marcellin College as a Catholic secondary school in Melbourne’s east, established in Camberwell in 1950 and expanded to Bulleen in 1963. Footer gives 160 Bulleen Road, Bulleen VIC 3105, matching pinned register acara:45874. Institutional evidence only; it names no Gosling attendance and does not identify his historical campus.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:15:17.675775+00:00",
+        "review_id": "school:95d614d246623b77",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Marcellin College — Our Story",
+        "source_type": "official-school-history",
+        "source_url": "https://www.marcellin.vic.edu.au/about-us/our-story",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Bulleen_institution_context": [
+          "evidence:b9c263f766fd4ab8dc77bc3e21a46aba5feb0e7ea9e0447babe0655ce2da875b"
+        ]
+      }
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "Marcellin College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:61809f4e35f165c472cb380f1d397fa27c2de421c202b38052f3e4c4d53d96f6",
+    "reasoning": "The frozen APH row records Luke Gosling’s school as Marcellin College but does not identify a campus. The pinned register lists separate Marcellin Colleges in Bulleen, Victoria (acara:45874) and Randwick, New South Wales (acara:43482). Searches found no authoritative source connecting Gosling to either campus. His parliamentary electorate is not used to infer school location. The exact education assertion therefore remains unresolved; the school-level payload retains the shared-name ambiguity and requires individual resolution. No attendance dates or graduation year are supplied. Sol retry opened Gosling’s official member biography, which supplies no schooling information, and the official Marcellin Bulleen history, which identifies that institution and its earlier Camberwell site without mentioning Gosling. Two queries supplied no direct person-to-institution source. The full frozen APH schooling-field context supplied by the coordinator (Mt Lilydale College/Marcellin College/Balwyn High School) is contextual only and does not justify geographical inference. No mapping is proposed for the exact Gosling assertion; no unresearched member is mapped.",
+    "review_caveats": [
+      "Bulleen is an identified institutional candidate, but neither nearby schools in frozen schooling context nor political geography establishes Gosling’s institution/campus."
+    ],
+    "review_id": "school:95d614d246623b77",
+    "scoped_identity_context": {
+      "aph_id": "245392",
+      "education_review_id": "education:245392:95d614d246623b77",
+      "evidence_refs": [
+        "evidence:383992d9f2c896de963c6ef76ec88f42a0676dbf04883a26a5902bbac23b6ef7",
+        "evidence:da70f4358a3ea7e71176d3221ec1f7526e39341ea50ac24586902465f054716f"
+      ],
+      "person": "Luke Gosling",
+      "recorded_school_name": "Marcellin College"
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:43542",
+        "locality": "Lismore",
+        "name": "St John's College",
+        "reason": "Exact-name candidate in pinned register; no member-specific link found.",
+        "state": "NSW"
+      },
+      {
+        "institution_ref": "acara:43579",
+        "locality": "Dubbo",
+        "name": "St Johns College Dubbo",
+        "reason": "Near-name candidate in pinned register; no member-specific link found.",
+        "state": "NSW"
+      },
+      {
+        "institution_ref": "acara:46252",
+        "locality": "Preston",
+        "name": "St John's College Preston",
+        "reason": "Near-name candidate in pinned register; no member-specific link found.",
+        "state": "VIC"
+      },
+      {
+        "institution_ref": "acara:47753",
+        "locality": "Nambour",
+        "name": "St John's College",
+        "reason": "Exact-name candidate in pinned register; no member-specific link found.",
+        "state": "QLD"
+      },
+      {
+        "institution_ref": "acara:40350",
+        "locality": "The Gardens, Darwin",
+        "name": "St John's Catholic College",
+        "reason": "Official school identity and member-specific government library biography support this scoped target.",
+        "state": "NT"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "F2S",
+          "attendance_status": "attended_unspecified",
+          "member": "SCRYMGOUR, Marion",
+          "recorded_school_name": "St John's College"
+        },
+        "evidence_id": "evidence:b682e67cfbe71b15306d1e83ba9d683694639682df78dbee8687ee48e1f05bcb",
+        "excerpt_or_note": "The frozen APH snapshot records Marion Scrymgour's secondary-school entry as St John's College and marks the attendance status unconfirmed; it does not identify a campus or attendance dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:f2s:99cb96988751d35b",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'F2S'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:40350",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "F2S",
+          "city": "Darwin",
+          "member": "SCRYMGOUR, Marion",
+          "school_name_as_source": "St. John's College",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:d46c3f86461ff89a444879909823fafdf57b4dd860b5122ab037bee841e66160",
+        "excerpt_or_note": "Opened Library & Archives NT government collection record explicitly says Scrymgour attended St. John's College in Darwin. This person-specific locality resolves the unqualified APH St John's College assertion to the Darwin institution; no seat or other-school locality inference is used. Its sentence also names another school, which is outside this scoped assertion. Its birth-date metadata differs from frozen APH context and is not used or proposed for correction here.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:17:55.599697Z",
+        "review_id": "education:f2s:99cb96988751d35b",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Territory Stories - Marion Scrymgour",
+        "source_type": "government_library_biography",
+        "source_url": "https://territorystories.nt.gov.au/10070/222179",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "F2S",
+          "different_reported_school_name": "O'Loughlin College",
+          "does_not_state_st_johns": true
+        },
+        "evidence_id": "evidence:22b4d2b18234be8ba93096fef93ca894e8b474dea57d35febb71051b9ca8d185",
+        "excerpt_or_note": "Opened NLC report CEO biography names St Mary's Catholic Primary School and O'Loughlin College. Preserve this differing education account as a caveat: it does not mention St John's, but does not expressly deny attendance there. No additional education assertion or mapping is proposed from this out-of-scope school name.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:17:55.599697Z",
+        "review_id": "education:f2s:99cb96988751d35b",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Northern Land Council Annual Report 2020-21, CEO biography (printed page 1)",
+        "source_type": "official_employer_biography",
+        "source_url": "https://irp.cdn-website.com/98b48721/files/uploaded/1092050_NLC_AnnualReport_2020-21_WEB.pdf",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:d46c3f86461ff89a444879909823fafdf57b4dd860b5122ab037bee841e66160",
+          "evidence:9efb536f91bcdd42dd7a1893a4644c635b289cc5a7f2a4b5da472d33388a0023"
+        ],
+        "payload": {
+          "aph_id": "F2S",
+          "institution_ref": "acara:40350",
+          "recorded_school_name": "St John's College",
+          "relationship_type": "alias"
+        },
+        "reasoning": "The government library biography explicitly locates Scrymgour's attended St John's College in Darwin. The official Darwin college identity and pinned register establish acara:40350; the unqualified recorded name is an alias, not evidence of a rename.",
+        "review_id": "education:f2s:99cb96988751d35b",
+        "source_url": "https://territorystories.nt.gov.au/10070/222179"
+      }
+    ],
+    "attempts": [
+      {
+        "gaps": [
+          "No primary source retrieved establishes which St John’s College Marion Scrymgour attended.",
+          "Pinned register contains multiple distinct exact/near-name candidates; parliamentary geography is not a school-location proxy."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 2,
+        "source_opens": 0,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://territorystories.nt.gov.au/10070/222179"
+          },
+          {
+            "status": "opened",
+            "url": "https://www.stjohnsnt.catholic.edu.au/"
+          },
+          {
+            "status": "opened",
+            "url": "https://www.stjohnsnt.catholic.edu.au/enrolments/enrol-with-us/"
+          },
+          {
+            "status": "opened",
+            "url": "https://irp.cdn-website.com/98b48721/files/uploaded/1092050_NLC_AnnualReport_2020-21_WEB.pdf"
+          }
+        ],
+        "search_queries": [
+          "\"Marion Scrymgour\" \"St John\" school",
+          "\"Marion Scrymgour\" education college school"
+        ],
+        "searches": 2,
+        "source_opens": 4,
+        "status": "resolved",
+        "token_usage": null
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:40350",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "10-54 Salonika Street, The Gardens NT 0820",
+          "city": "Darwin",
+          "current_year_levels": "7-12",
+          "school_name": "St John's Catholic College",
+          "school_short_name": "St John's",
+          "state": "NT",
+          "suburb": "The Gardens"
+        },
+        "evidence_id": "evidence:9efb536f91bcdd42dd7a1893a4644c635b289cc5a7f2a4b5da472d33388a0023",
+        "excerpt_or_note": "Opened official site identifies St John's Catholic College based in Darwin as a Catholic co-educational Years 7-12 college and gives its address as 10-54 Salonika Street, The Gardens NT 0820. The pinned register independently lists this institution as acara:40350. The opened enrolment page also uses the short name St John's for the same college; no formal rename or historical campus dates are asserted.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:17:55.599697Z",
+        "review_id": "school:99cb96988751d35b",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Darwin Secondary School | St John's Catholic College",
+        "source_type": "official_school_profile",
+        "source_url": "https://www.stjohnsnt.catholic.edu.au/",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Darwin_institution": [
+          "evidence:9efb536f91bcdd42dd7a1893a4644c635b289cc5a7f2a4b5da472d33388a0023"
+        ]
+      },
+      "recorded_school_name": "St John's College",
+      "resolved_candidate_institution_ref": "acara:40350"
+    },
+    "manual_institutions": [],
+    "outcome": "mapping",
+    "payload": {
+      "recorded_name": "St John's College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:e21ff9bbdd533e1c45e2661d98486bd428ef6d8112a40b5358b304d0c3544e28",
+    "reasoning": "The scoped Marion Scrymgour assertion is supported as an alias mapping to acara:40350, St John's Catholic College in The Gardens, Darwin. The opened NT government library biography explicitly identifies her attendance at St John's College in Darwin; the opened official school site identifies the college's name and Darwin address, matching the pinned registry target. This uses direct person-specific locality evidence, not parliamentary geography or another school's location. The NLC annual report gives a differing school account naming O'Loughlin College; preserve it as contextual evidence, without treating its omission of St John's as an explicit denial. No attendance dates, formal rename, graduation or historical campus continuity are asserted. Retain the school-level ambiguous-name research policy because the unqualified name has distinct institutions.",
+    "review_caveats": [
+      "NLC 2020-21 CEO biography names O'Loughlin College; it does not explicitly deny St John's attendance. Retained separately from the direct Darwin St John's attendance evidence.",
+      "Territory Stories birth-date metadata differs from frozen APH context; no date-of-birth correction or attendance-year estimate is proposed.",
+      "No attendance dates or historical campus continuity established."
+    ],
+    "review_id": "school:99cb96988751d35b",
+    "scoped_identity_context": {
+      "aph_id": "F2S",
+      "education_id": "education:f2s:99cb96988751d35b",
+      "evidence_refs": [
+        "evidence:b682e67cfbe71b15306d1e83ba9d683694639682df78dbee8687ee48e1f05bcb"
+      ],
+      "member": "SCRYMGOUR, Marion",
+      "sol_retry": {
+        "aph_id": "F2S",
+        "candidate_institution_ref": "acara:40350",
+        "evidence_refs": [
+          "evidence:d46c3f86461ff89a444879909823fafdf57b4dd860b5122ab037bee841e66160",
+          "evidence:22b4d2b18234be8ba93096fef93ca894e8b474dea57d35febb71051b9ca8d185"
+        ],
+        "review_id": "education:f2s:99cb96988751d35b",
+        "source_stated_attended_city": "Darwin"
+      }
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:46133",
+        "location": "Glen Waverley, Victoria",
+        "reason": "separate campus entry; source does not identify the specific campus attended",
+        "school_name": "Wesley College - Glen Waverley Campus"
+      },
+      {
+        "institution_ref": "acara:46134",
+        "location": "Elsternwick, Victoria",
+        "reason": "separate campus entry; source does not identify the specific campus attended",
+        "school_name": "Wesley College - Elsternwick Campus"
+      },
+      {
+        "institution_ref": "acara:46135",
+        "location": "Windsor, Victoria",
+        "reason": "separate campus entry; source does not identify the specific campus attended",
+        "school_name": "Wesley College - St Kilda Road Junior Campus"
+      },
+      {
+        "institution_ref": "acara:49026",
+        "location": "South Perth, Western Australia",
+        "reason": "separate exact-name institution; official publication is from Melbourne Wesley College",
+        "school_name": "Wesley College"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": "acara:46132",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "86256",
+          "context": "The College publication describes Hill as a fellow chorale companion from the writer’s Wesley days.",
+          "person": "Julian Hill",
+          "recorded_school_name": "Wesley College"
+        },
+        "evidence_id": "evidence:76b28e03418bb89d2b275c12b4d6d094d84f6f6a173a9335a8e2579a80d05c64",
+        "excerpt_or_note": "In its alumni article, the College publication describes Julian Hill as a fellow chorale companion from the writer’s days at Wesley, supporting an individual link to the Melbourne Wesley College institution.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:45:06Z",
+        "review_id": "education:86256:a7e0beca95837859",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Wesley College — Lion magazine, Canberra Connections",
+        "source_type": "official-school-publication",
+        "source_url": "https://www.wesleycollege.edu.au/news-events-and-publications/lion-magazine/lion-april-2022/foundation/canberra-connections",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:46132",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "86256",
+          "attended_status": "attended_unspecified",
+          "display_name": "HILL, the Hon. Julian Christopher",
+          "education_id": "edu-86256-a7e0beca95837859",
+          "recorded_school_name": "Wesley College"
+        },
+        "evidence_id": "evidence:9d159777e23b0edcc95aabfc62352671aa5a1b289fba361f99c79a92233932ae",
+        "excerpt_or_note": "The frozen APH attendance row for Julian Hill records Wesley College and supplies no attendance dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:86256:a7e0beca95837859",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API — frozen attendance snapshot",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '86256'",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:46133",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "86256",
+          "attended_campus": "Wesley College Glen Waverley",
+          "education_id": "edu-86256-a7e0beca95837859",
+          "recorded_school_name": "Wesley College",
+          "speech_date": "2016-09-13"
+        },
+        "evidence_id": "evidence:fbff077a49fd6ac9e506e543d8743a48d57ebce107539c4e2fdab0c974ad0097",
+        "excerpt_or_note": "Opened first speech on Hill’s official website: in his personal education account, Hill names Wesley College Glen Waverley as the school to which he and his brother went after their mother used inherited funds for their education. This directly identifies attended campus; the electorate reference in the same sentence is not used as an inference. The speech supplies no attendance dates or graduation claim. Official Hansard was not separately opened.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:24:26.539104+00:00",
+        "review_id": "education:86256:a7e0beca95837859",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Julian Hill MP — First Speech, 13 September 2016",
+        "source_type": "official-member-speech",
+        "source_url": "https://www.julianhillmp.com/first-speech.html",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:fbff077a49fd6ac9e506e543d8743a48d57ebce107539c4e2fdab0c974ad0097",
+          "evidence:591cab41ee5f31156b893f52055ff273067a4d8b26e8d995de02e99f121a2e44",
+          "evidence:76b28e03418bb89d2b275c12b4d6d094d84f6f6a173a9335a8e2579a80d05c64",
+          "evidence:9d159777e23b0edcc95aabfc62352671aa5a1b289fba361f99c79a92233932ae"
+        ],
+        "payload": {
+          "aph_id": "86256",
+          "institution_ref": "acara:46133",
+          "recorded_school_name": "Wesley College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Map only Julian Hill’s exact Wesley education assertion to Glen Waverley, acara:46133. His opened official first speech directly names that campus in his personal schooling account; the opened official campus page and pinned register identify the target. The earlier college-wide Melbourne sources did not establish a campus and their acara:46132 association remains audit history, not the new mapping target. No school-wide mapping, other member, attendance dates or graduation are proposed.",
+        "review_id": "education:86256:a7e0beca95837859",
+        "source_url": "https://www.julianhillmp.com/first-speech.html"
+      }
+    ],
+    "attempts": [
+      {
+        "gaps": [
+          "The specific physical Melbourne campus is not established.",
+          "APH supplies no attendance dates or graduation year.",
+          "Russell Broadbent, the other attendance-context member, was not individually researched."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Official Hansard was not separately opened; the first speech was directly accessed on Hill’s official member website.",
+          "No attendance years or graduation year are supplied by the opened sources.",
+          "Russell Broadbent and any other unscoped member are not researched or mapped."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 2,
+        "status": "resolved",
+        "token_usage": null
+      }
+    ],
+    "coordinator_curation": [
+      "Classified resolved individual mappings as mapping; retained ambiguous school-wide policy.",
+      "Coordinator withheld initial mapping after QA: exact attended campus not established; raw resolved report and proposed target preserved for audit.",
+      "Replaced corrupted punctuation in paraphrased source labels with readable ASCII."
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:46132",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "name": "Wesley College",
+          "publisher": "Wesley College official Lion magazine"
+        },
+        "evidence_id": "evidence:186a626e854062e811b00e3f3fa12e86c0046f2b208265d2e292dd6da63160e2",
+        "excerpt_or_note": "The official Wesley College magazine page identifies its publisher as Wesley College and presents alumni material from the College community.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:45:06Z",
+        "review_id": "school:a7e0beca95837859",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Wesley College — Lion magazine, Canberra Connections",
+        "source_type": "official-school-publication",
+        "source_url": "https://www.wesleycollege.edu.au/news-events-and-publications/lion-magazine/lion-april-2022/foundation/canberra-connections",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:46133",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "acara_id": "46133",
+          "locality": "Glen Waverley, Victoria",
+          "name": "Wesley College - Glen Waverley Campus",
+          "school_stages": [
+            "Early Learning",
+            "Junior",
+            "Middle",
+            "Senior"
+          ]
+        },
+        "evidence_id": "evidence:591cab41ee5f31156b893f52055ff273067a4d8b26e8d995de02e99f121a2e44",
+        "excerpt_or_note": "Opened official campus page identifies Wesley College Glen Waverley and distinguishes it from the separately linked Elsternwick and St Kilda Road campuses. It describes dedicated Early Learning, Junior, Middle and Senior Schools. The pinned register matches this named locality/campus to acara:46133. Institutional evidence only; Hill attendance is retained separately.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:24:26.539104+00:00",
+        "review_id": "school:a7e0beca95837859",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Wesley College — Glen Waverley Campus",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.wesleycollege.edu.au/about-wesley/our-campuses/glen-waverley",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Glen_Waverley_campus": [
+          "evidence:591cab41ee5f31156b893f52055ff273067a4d8b26e8d995de02e99f121a2e44"
+        ],
+        "name": [
+          "evidence:186a626e854062e811b00e3f3fa12e86c0046f2b208265d2e292dd6da63160e2"
+        ]
+      },
+      "name": "Wesley College"
+    },
+    "manual_institutions": [],
+    "mapping_scope": "assertion",
+    "outcome": "mapping",
+    "payload": {
+      "recorded_name": "Wesley College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:7d31f04fe2a7b6f6720507f2b59ebe67469d39120e4b62248b753c0179c54be9",
+    "reasoning": "The APH snapshot records Wesley College for Julian Hill. An official Wesley College alumni magazine identifies Hill as a fellow chorale companion from the writer’s Wesley days, supporting an individual link to the Melbourne institution represented by pinned register entry acara:46132. The register also lists separate Wesley College campuses in Melbourne and a separate Wesley College in South Perth. The sources do not identify Hill’s specific physical Melbourne campus, and the other attendance-context member Russell Broadbent is not resolved here, so no school-wide mapping is proposed. No dates or graduation year are inferred. Sol retry closes the exact campus gap: Hill’s opened official first speech names Wesley College Glen Waverley in his first-person education account. The opened official Wesley campus profile and pinned register identify that campus as acara:46133. A direct proposal is made only for education:86256:a7e0beca95837859; the old withheld acara:46132 proposal and all earlier evidence remain unchanged for audit. Global shared-name ambiguity remains. No political geography, attendance years or graduation are inferred.",
+    "review_caveats": [
+      "The Melbourne college identity is supported, but acara:46132 has a specific campus location. The initial target is withheld pending a source establishing the attended campus.",
+      "The earlier withheld acara:46132 target is preserved for audit only. New direct campus evidence supports acara:46133 (Glen Waverley), while the school-wide payload remains ambiguous."
+    ],
+    "review_id": "school:a7e0beca95837859",
+    "scoped_identity_context": {
+      "aph_id": "86256",
+      "education_review_id": "education:86256:a7e0beca95837859",
+      "evidence_refs": [
+        "evidence:76b28e03418bb89d2b275c12b4d6d094d84f6f6a173a9335a8e2579a80d05c64",
+        "evidence:9d159777e23b0edcc95aabfc62352671aa5a1b289fba361f99c79a92233932ae",
+        "evidence:fbff077a49fd6ac9e506e543d8743a48d57ebce107539c4e2fdab0c974ad0097"
+      ],
+      "person": "Julian Hill",
+      "recorded_school_name": "Wesley College"
+    },
+    "value": null,
+    "withheld_assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:186a626e854062e811b00e3f3fa12e86c0046f2b208265d2e292dd6da63160e2",
+          "evidence:76b28e03418bb89d2b275c12b4d6d094d84f6f6a173a9335a8e2579a80d05c64",
+          "evidence:9d159777e23b0edcc95aabfc62352671aa5a1b289fba361f99c79a92233932ae"
+        ],
+        "payload": {
+          "aph_id": "86256",
+          "institution_ref": "acara:46132",
+          "recorded_school_name": "Wesley College",
+          "relationship_type": "direct"
+        },
+        "reasoning": "Propose a direct mapping only for Julian Hill’s exact APH education assertion to the Melbourne Wesley College institution, acara:46132. The official College magazine identifies Hill as a fellow chorale companion from Wesley; the frozen APH row records Wesley College. The proposal does not specify a physical sub-campus and remains subject to individual human review.",
+        "review_id": "education:86256:a7e0beca95837859",
+        "source_url": "https://www.wesleycollege.edu.au/news-events-and-publications/lion-magazine/lion-april-2022/foundation/canberra-connections"
+      }
+    ]
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:40022",
+        "locality": "Hobart",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "TAS"
+      },
+      {
+        "institution_ref": "acara:40679",
+        "locality": "Dalby",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "QLD"
+      },
+      {
+        "institution_ref": "acara:43651",
+        "locality": "Gunnedah",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "NSW"
+      },
+      {
+        "institution_ref": "acara:45660",
+        "locality": "Seymour",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "VIC"
+      },
+      {
+        "institution_ref": "acara:47863",
+        "locality": "Toowoomba",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "QLD"
+      },
+      {
+        "institution_ref": "acara:47881",
+        "locality": "Ipswich",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "QLD"
+      },
+      {
+        "institution_ref": "acara:47891",
+        "locality": "Maryborough",
+        "name": "St Mary's College",
+        "reason": "Same-name candidate; no member-specific campus link.",
+        "state": "QLD"
+      },
+      {
+        "institution_ref": "acara:49716",
+        "locality": "Adelaide",
+        "name": "St Mary's College",
+        "reason": "Official school site confirms this campus identity, but no member-specific link was found.",
+        "state": "SA"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "316101",
+          "attendance_status": "attended_unspecified",
+          "member": "CLUTTERHAM, Claire Louise",
+          "recorded_school_name": "St Mary's College"
+        },
+        "evidence_id": "evidence:639e712b4266f23abf97aeaa3f95a0dc45cfcb29983cbf206edd4363ddd5e018",
+        "excerpt_or_note": "The frozen APH snapshot records Claire Clutterham's secondary-school entry as St Mary's College and marks the attendance status unconfirmed; it provides no campus or attendance dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:316101:ad25b4e891c34c53",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316101'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "316101",
+          "education_id": "edu-316101-ad25b4e891c34c53",
+          "reported_schooling_context": "attended many different public schools around South Australia",
+          "st_marys_campus_identified": false
+        },
+        "evidence_id": "evidence:bf4732816856a933f1f6ee39249ae290cc8df37be5fc43aa7debec3737a40a6f",
+        "excerpt_or_note": "Opened OpenAustralia republication of the parliamentary speech identifies Clutterham as speaker at 12:52 pm and reports her statement that she attended many different public schools around South Australia. This is a first-person statement accessed through a third-party transcript republication; official Hansard was not opened. It neither names St Mary’s nor says her schooling was exclusively public, so it cannot confirm or contradict attendance at a particular St Mary’s campus.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:16:58.271059+00:00",
+        "review_id": "education:316101:ad25b4e891c34c53",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Claire Clutterham — Education speech, 30 March 2026",
+        "source_type": "parliamentary-transcript-republication",
+        "source_url": "https://www.openaustralia.org.au/debate/?id=2026-03-30.181.1",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "316101",
+          "campus_identity_in_opened_page": null,
+          "education_id": "edu-316101-ad25b4e891c34c53"
+        },
+        "evidence_id": "evidence:9fa76a7bcc3734b929304a3dfedfaae329c2ef53c52dacdeed52888cee2e7899",
+        "excerpt_or_note": "Opened official member biography describes legal and defence-industry work, community roles and family, but gives no schooling details or St Mary’s campus. No positive attendance assertion is added from this page.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:16:58.271059+00:00",
+        "review_id": "education:316101:ad25b4e891c34c53",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Claire Clutterham — About Claire",
+        "source_type": "official-member-biography",
+        "source_url": "https://claireclutterham.com.au/about-claire/",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "No primary source linked Claire Clutterham to the Adelaide campus or any other same-name college.",
+          "The exact attended campus remains unknown; do not infer it from her electorate."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 2,
+        "source_opens": 1,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "Neither query produced a member-to-St Mary’s campus attendance source.",
+          "Opened official member biography supplies no schooling details.",
+          "Opened parliamentary transcript republication describes public schooling in South Australia but neither names St Mary’s nor excludes additional non-public attendance; official Hansard was not opened.",
+          "Frozen Renmark High School/St Mary’s College/Henley High School context does not prove the middle school’s locality or campus."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 2,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "253 Franklin Street, Adelaide SA 5000",
+          "locality": "Adelaide",
+          "school_name": "St Mary's College",
+          "state": "SA"
+        },
+        "evidence_id": "evidence:19f67879aed73435685e789fe85ec46ac29ad54a84ce72b5abc020a6a4082a05",
+        "excerpt_or_note": "The school's official site identifies St Mary's College at 253 Franklin Street, Adelaide SA. This establishes one institution matching the recorded name; it does not link Claire Clutterham to this campus.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:46:48Z",
+        "review_id": "school:ad25b4e891c34c53",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "St Mary's College, Adelaide — official school history and contact details",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.stmarys.sa.edu.au/our-stories-1990.html",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "recorded_school_name": [
+          "evidence:19f67879aed73435685e789fe85ec46ac29ad54a84ce72b5abc020a6a4082a05"
+        ]
+      },
+      "recorded_school_name": "St Mary's College"
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "St Mary's College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:289b1f934ca491722a0b4857324e1984a35816677d7790096715c04931f559ae",
+    "reasoning": "The supplied APH snapshot records St Mary's College for Claire Clutterham, but attendance is marked unconfirmed and no campus is specified. The school's official site establishes that a St Mary's College operates at 253 Franklin Street, Adelaide, and the pinned register includes that candidate as acara:49716. However, the available search and source evidence did not link Clutterham to that campus. Other same-name colleges exist in the pinned register, and parliamentary geography cannot identify her school. No assertion proposal is justified. Sol retry opened Clutterham’s official biography, which gives no schooling details, and an OpenAustralia republication of her 30 March 2026 parliamentary speech, which describes attending several public schools around South Australia. The first-person statement neither names St Mary’s nor says all her schooling was public; it cannot confirm or exclude any St Mary’s candidate. The full frozen schooling-field context supplied by the coordinator (Renmark High School/St Mary’s College/Henley High School) is preserved as context rather than campus proof. Two searches yielded no direct campus attendance link. No mapping is proposed.",
+    "review_caveats": [
+      "The public-school statement is first-person material accessed through a third-party parliamentary transcript republication. It does not state exclusively public attendance and is not contrary proof against St Mary’s attendance."
+    ],
+    "review_id": "school:ad25b4e891c34c53",
+    "scoped_identity_context": {
+      "aph_id": "316101",
+      "education_id": "education:316101:ad25b4e891c34c53",
+      "evidence_refs": [
+        "evidence:639e712b4266f23abf97aeaa3f95a0dc45cfcb29983cbf206edd4363ddd5e018",
+        "evidence:bf4732816856a933f1f6ee39249ae290cc8df37be5fc43aa7debec3737a40a6f",
+        "evidence:9fa76a7bcc3734b929304a3dfedfaae329c2ef53c52dacdeed52888cee2e7899"
+      ],
+      "member": "CLUTTERHAM, Claire Louise"
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:50436",
+        "location": "Fairy Meadow, NSW",
+        "reason": "current primary school associated with the former St John Vianney site; not suitable as a secondary-level mapping without correcting the education level",
+        "school_name": "Good Samaritan Catholic Primary School"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "295676",
+          "attended_status": "attended_unspecified",
+          "display_name": "LE, Dai Trang",
+          "education_id": "edu-295676-d01606693420f46a",
+          "recorded_level": "secondary",
+          "recorded_school_name": "St John Vianney Fairy Meadow"
+        },
+        "evidence_id": "evidence:9ba7fdd4f0e8ba1c60a3f04c5cd6a27d4547d09f6746fd067f9d34e22e038912",
+        "excerpt_or_note": "The frozen APH row for Dai Le records St John Vianney Fairy Meadow as an unspecified attendance and its parsed level as secondary; no dates are supplied.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "review_id": "education:295676:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "APH Handbook API — frozen attendance snapshot",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '295676'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "alternative_reported_secondary_schools": [
+            "St Mary Star of the Sea College, Wollongong",
+            "Cerdon College, Merrylands"
+          ],
+          "aph_id": "295676",
+          "education_id": "edu-295676-d01606693420f46a",
+          "recorded_school_name": "St John Vianney Fairy Meadow"
+        },
+        "evidence_id": "evidence:0c7d4b33db4ffead5af6ac8e76c3e603b0c8b52a1bbef0a34666b86412f8be6a",
+        "excerpt_or_note": "Search-result snippet reports St Mary Star of the Sea College attendance and later Cerdon College/HSC completion. Mirror page was not opened and neither underlying citation was verified. This preserves alternative secondary-school context; it does not disprove St John Vianney attendance or identify its education stage for Dai Le.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:20:35.538509+00:00",
+        "review_id": "education:295676:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Dai Le — Wikipedia mirror search snippet",
+        "source_type": "encyclopedia-mirror-search-snippet",
+        "source_url": "https://en.chped.com/wiki/Dai_Le",
+        "stance": "contextual",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [],
+    "attempts": [
+      {
+        "gaps": [
+          "The Hansard PDF returned HTTP 403 on open; its classification is taken from the search result snippet.",
+          "The Diocese parish-history page showed a verification challenge on open; its succession detail is taken from the search result snippet.",
+          "No evidence within the budget establishes that Dai Le attended a secondary school at this site; no dates are supplied."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 2,
+        "source_opens": 2,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [
+          "The parsed secondary level conflicts with primary-school classification; no secondary target is justified.",
+          "Historical primary classification remains search-snippet evidence: prior Hansard PDF was inaccessible and the new 2012 school-list PDF also failed to open.",
+          "Opened official sources establish successor identity, but no new direct Dai Le-to-primary-stage source was found; attendance remains supported by frozen APH.",
+          "Secondary-school alternatives are retained from an unopened Wikipedia mirror snippet and are not proposed as replacements."
+        ],
+        "model": "gpt-6.1-sol",
+        "searches": 2,
+        "source_opens": 4,
+        "status": "unresolved",
+        "token_usage": null
+      }
+    ],
+    "correction_proposals": [
+      {
+        "aph_id": "295676",
+        "current_value": "secondary",
+        "education_id": "edu-295676-d01606693420f46a",
+        "evidence_refs": [
+          "evidence:9ba7fdd4f0e8ba1c60a3f04c5cd6a27d4547d09f6746fd067f9d34e22e038912",
+          "evidence:f4ab3de5d7c5c8bd7b07036f42a830bd577ff6158a5960a4e80adb9ba174a010",
+          "evidence:6cf4e5fef2f090cb3c0b766c7b9b6cc12753b1cc67edfcd99f12fd603958f050",
+          "evidence:a1ca2221dbf18f9b8ad81ec6103cbdec8f3e22b36aafc39659f858a86ad476e6",
+          "evidence:48ef1c4d3ac6b7780abbf8e419ec1951d5a540d10bb7950426ac208e0194f7bf",
+          "evidence:b5d58213ae35907089daf5a6a0cce209ce925c352515a00d8240bd9dfc3f7f6f"
+        ],
+        "field": "level",
+        "proposed_value": "primary",
+        "reasoning": "Review the parsed secondary level as a likely classification error. Historical official-document snippets classify the named Fairy Meadow school as primary; opened government identity and official school history connect it to the current primary successor. Dai Le’s named attendance comes from retained frozen APH evidence. Historical classification documents remain unopened, so this is a human-review proposal, not an automatic correction or secondary mapping. Preserve the historical school name; a successor mapping to acara:50436 requires the level correction to be reviewed first.",
+        "recorded_school_name": "St John Vianney Fairy Meadow",
+        "requires_human_review": true,
+        "review_id": "education:295676:d01606693420f46a",
+        "source_url": "https://www.chisholmblighpark.catholic.edu.au/en/Enrol/-/media/F29FE33AF1524CC68B940CD3DF6B4960.ashx"
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "school_type",
+        "claim_value": {
+          "junior_secondary_fte": null,
+          "locality": "Fairy Meadow",
+          "primary_fte": 335.0,
+          "recorded_school_name": "St John Vianney's School",
+          "senior_secondary_fte": null,
+          "state": "NSW"
+        },
+        "evidence_id": "evidence:f4ab3de5d7c5c8bd7b07036f42a830bd577ff6158a5960a4e80adb9ba174a010",
+        "excerpt_or_note": "The Hansard search result lists St John Vianney’s School, Fairy Meadow, NSW, with 335 primary FTE and no junior or senior secondary FTE. Opening the PDF returned HTTP 403; this is retained as search-result evidence with that access limitation.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:50:39Z",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Senate Hansard — 6 June 2000 school expenditure table",
+        "source_type": "official-parliamentary-record",
+        "source_url": "https://www.aph.gov.au/binaries/hansard/senate/dailys/ds060600.pdf",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:50436",
+        "claim_type": "successor",
+        "claim_value": {
+          "current_school": "Good Samaritan Catholic Primary School",
+          "historical_school": "St John Vianney school, Fairy Meadow",
+          "relationship": "opened on the Fairy Meadow site in 2012 and combined traditions of St John Vianney and St Francis Xavier schools"
+        },
+        "evidence_id": "evidence:25f50d532b12e153e66eb2273e7ed9510fd18e87b4c5b36bea5b0161d5848018",
+        "excerpt_or_note": "The Diocese parish-history search result says Good Samaritan Catholic Primary School opened on the Fairy Meadow site in 2012 and combined traditions of the St John Vianney and St Francis Xavier schools. Page access presented a verification challenge; retain this as contextual evidence pending human inspection.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:50:39Z",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Lumen Christi Parish — St John Vianney, Fairy Meadow",
+        "source_type": "official-diocese-history",
+        "source_url": "https://www.lumenchristi.org.au/item/21-st-john-vianney-fairy-meadow",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:50436",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "acara_id": "50436",
+          "address": "7 Cabbage Tree Lane, Fairy Meadow NSW 2519",
+          "name": "Good Samaritan Catholic Primary School",
+          "school_type": "primary"
+        },
+        "evidence_id": "evidence:a1ca2221dbf18f9b8ad81ec6103cbdec8f3e22b36aafc39659f858a86ad476e6",
+        "excerpt_or_note": "Opened official page identifies Good Samaritan as a Catholic parish primary school at 7 Cabbage Tree Lane, Fairy Meadow, matching the pinned register acara:50436. This is institutional identity, not Dai Le attendance.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:20:35.538509+00:00",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Good Samaritan Fairy Meadow — About Us",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.gsfmdow.catholic.edu.au/about-us/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:50436",
+        "claim_type": "successor",
+        "claim_value": {
+          "current_school": "Good Samaritan Catholic Primary School",
+          "formed_year": 2012,
+          "historical_school": "St John Vianney's, Fairy Meadow",
+          "relationship": "amalgamation with St Francis Xavier, Wollongong",
+          "site": "former St John Vianney site at Princes Highway and Cabbage Tree Lane"
+        },
+        "evidence_id": "evidence:48ef1c4d3ac6b7780abbf8e419ec1951d5a540d10bb7950426ac208e0194f7bf",
+        "excerpt_or_note": "Opened official school history directly confirms that Good Samaritan formed in 2012 by amalgamating St Francis Xavier, Wollongong and St John Vianney’s, Fairy Meadow, on the former St John Vianney site. This is successor history, not evidence that Dai Le attended the current school or a secondary course.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:20:35.538509+00:00",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Good Samaritan Fairy Meadow — About Good Samaritan",
+        "source_type": "official-school-history",
+        "source_url": "https://www.gsfmdow.catholic.edu.au/about-us/about-good-samaritan/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:50436",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "also_known_as": "Good Samaritan Catholic Primary School",
+          "historical_name": "St John Vianney's School",
+          "listed_address": "48 McGrath Street",
+          "locality": "Fairy Meadow NSW",
+          "sisters_presence_period": "1950 to 1991"
+        },
+        "evidence_id": "evidence:b5d58213ae35907089daf5a6a0cce209ce925c352515a00d8240bd9dfc3f7f6f",
+        "excerpt_or_note": "Opened government register identifies St John Vianney’s School at Fairy Meadow and lists Good Samaritan Catholic Primary School as also known as. The 1950–1991 period is explained as Sisters’ active presence, not school operating/closure dates. Its listed address differs from the current school address and is preserved without assuming historical campus coordinates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:20:35.538509+00:00",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "National Redress Scheme — St John Vianney’s School",
+        "source_type": "government-institution-register",
+        "source_url": "https://www.nationalredress.gov.au/institutions/st-john-vianneys-school-2",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "school_type",
+        "claim_value": {
+          "classification": "PRIMARY",
+          "document_date": "2012-09-19",
+          "locality": "Fairy Meadow",
+          "school_name": "St John Vianney's Primary"
+        },
+        "evidence_id": "evidence:6cf4e5fef2f090cb3c0b766c7b9b6cc12753b1cc67edfcd99f12fd603958f050",
+        "excerpt_or_note": "Search-result snippet explicitly lists St John Vianney’s Primary, FAIRY MEADOW, WOLLONGONG, PRIMARY. The document itself failed to open as not accessible via the tool. This is snippet evidence only, corroborating but not upgrading the earlier unopened Hansard classification record.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:20:35.538509+00:00",
+        "review_id": "school:d01606693420f46a",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Sibling Discount Applicable Schools — 19 September 2012",
+        "source_type": "official-school-document-search-snippet",
+        "source_url": "https://www.chisholmblighpark.catholic.edu.au/en/Enrol/-/media/F29FE33AF1524CC68B940CD3DF6B4960.ashx",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "level": [
+          "evidence:f4ab3de5d7c5c8bd7b07036f42a830bd577ff6158a5960a4e80adb9ba174a010",
+          "evidence:6cf4e5fef2f090cb3c0b766c7b9b6cc12753b1cc67edfcd99f12fd603958f050"
+        ],
+        "name": [
+          "evidence:f4ab3de5d7c5c8bd7b07036f42a830bd577ff6158a5960a4e80adb9ba174a010"
+        ],
+        "opened_successor_identity": [
+          "evidence:a1ca2221dbf18f9b8ad81ec6103cbdec8f3e22b36aafc39659f858a86ad476e6",
+          "evidence:48ef1c4d3ac6b7780abbf8e419ec1951d5a540d10bb7950426ac208e0194f7bf",
+          "evidence:b5d58213ae35907089daf5a6a0cce209ce925c352515a00d8240bd9dfc3f7f6f"
+        ]
+      },
+      "name": "St John Vianney’s School, Fairy Meadow"
+    },
+    "manual_institutions": [],
+    "outcome": "unresolved",
+    "payload": {
+      "recorded_name": "St John Vianney Fairy Meadow",
+      "requires_individual_resolution": true,
+      "resolution_reason": "no_suitable_candidate"
+    },
+    "proposal_id": "proposal:0afe92e7c7dff05b59d914f09adb6a70dc4f2a0daa98a9ef7ba8446cc76df6ee",
+    "reasoning": "APH records Dai Le’s school as ‘St John Vianney Fairy Meadow’ and the parsed education level as secondary. A 2000 Senate Hansard table identifies St John Vianney’s School in Fairy Meadow as a primary school, with primary enrolment and no junior or senior secondary enrolment. The Diocese of Wollongong search result says Good Samaritan Catholic Primary School opened on the Fairy Meadow site in 2012 and combined traditions of St John Vianney and St Francis Xavier schools; the pinned register lists Good Samaritan as acara:50436, a Catholic primary school. This conflicts with the recorded secondary level. I do not map a primary institution as secondary; an education-level correction to primary must be reviewed before any successor mapping. The person-specific APH row supplies no attendance dates. Sol retry opened the Good Samaritan official profile and history, directly verifying primary-school identity and 2012 amalgamation on the former St John Vianney site; the opened government institution register also links the names. A 2012 official school-list search snippet explicitly classifies St John Vianney’s Fairy Meadow as primary, but that PDF failed to open. The institution evidence supports a likely education-level correction for human review; it does not justify mapping a primary successor to the current secondary assertion. Alternative secondary schools appear only in an unopened encyclopedia mirror snippet and are contextual. Keep the assertion unresolved pending review of the level and historical evidence.",
+    "review_caveats": [
+      "The parsed secondary level conflicts with primary-school classification; no secondary target is justified.",
+      "Historical primary classification remains search-snippet evidence: prior Hansard PDF was inaccessible and the new 2012 school-list PDF also failed to open.",
+      "Opened official sources establish successor identity, but no new direct Dai Le-to-primary-stage source was found; attendance remains supported by frozen APH.",
+      "Secondary-school alternatives are retained from an unopened Wikipedia mirror snippet and are not proposed as replacements."
+    ],
+    "review_id": "school:d01606693420f46a",
+    "scoped_identity_context": {
+      "aph_id": "295676",
+      "education_review_id": "education:295676:d01606693420f46a",
+      "evidence_refs": [
+        "evidence:9ba7fdd4f0e8ba1c60a3f04c5cd6a27d4547d09f6746fd067f9d34e22e038912",
+        "evidence:0c7d4b33db4ffead5af6ac8e76c3e603b0c8b52a1bbef0a34666b86412f8be6a"
+      ],
+      "person": "Dai Le",
+      "recorded_level": "secondary",
+      "recorded_school_name": "St John Vianney Fairy Meadow"
+    },
+    "value": null
+  },
+  {
+    "alternatives": [
+      {
+        "institution_ref": "acara:43683",
+        "locality": "Parramatta",
+        "name": "Our Lady of Mercy College Parramatta",
+        "reason": "Official institution exists; no primary evidence ties Rowland’s attendance assertion to this campus.",
+        "state": "NSW"
+      },
+      {
+        "institution_ref": "acara:45760",
+        "locality": "Heidelberg",
+        "name": "Our Lady of Mercy College",
+        "reason": "Same-name secondary college; no member-specific campus evidence.",
+        "state": "VIC"
+      },
+      {
+        "institution_ref": "acara:52800",
+        "locality": "Australind",
+        "name": "Our Lady of Mercy College",
+        "reason": "Same-name secondary college; no member-specific campus evidence.",
+        "state": "WA"
+      }
+    ],
+    "assertion_evidence": [
+      {
+        "candidate_institution_ref": null,
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "159771",
+          "attendance_status": "attended_unspecified",
+          "member": "ROWLAND, the Hon. Michelle Anne",
+          "recorded_school_name": "Our Lady of Mercy College"
+        },
+        "evidence_id": "evidence:242e0b1417122d6ead4b61454afef88799bf6d680d637f3a657f2f6b7ece056c",
+        "excerpt_or_note": "The frozen APH snapshot records Our Lady of Mercy College as Michelle Rowland's secondary-school entry; it marks attendance unconfirmed and does not specify campus or dates.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+        "review_id": "education:159771:ebb93e10f9378a05",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '159771'",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43683",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "159771",
+          "level": "secondary",
+          "member": "ROWLAND, the Hon. Michelle Anne",
+          "school_name_in_speech": "Our Lady of Mercy Parramatta",
+          "speech_date": "2023-02-15",
+          "years_attended": null
+        },
+        "evidence_id": "evidence:28b87ff55685f576689f58f884f99d068c3103bf9d192c861b285602df53abf0",
+        "excerpt_or_note": "Opened parliamentary speech transcript identifies Michelle Rowland as speaker at 12:21 pm and records her explicit statement that she went to high school at Our Lady of Mercy Parramatta. This is direct first-person attendance testimony reproduced on a third-party Hansard mirror, not an inference from her directorship or political geography. The mirror links an official Parliament Hansard source, whose retrieval returned 403 Forbidden. No attendance years or graduation date are asserted.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:19:58.594026Z",
+        "review_id": "education:159771:ebb93e10f9378a05",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Michelle Rowland, Address-in-Reply, House of Representatives, 15 February 2023 (OpenAustralia transcript mirror)",
+        "source_type": "first_person_parliamentary_speech_mirror",
+        "source_url": "https://www.openaustralia.org.au/debate/?id=2023-02-15.184.1",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "assertion_proposals": [
+      {
+        "evidence_refs": [
+          "evidence:28b87ff55685f576689f58f884f99d068c3103bf9d192c861b285602df53abf0",
+          "evidence:1f5076202bf9a6abcc940c25921929015718b04ca896b9b0232449e160009576"
+        ],
+        "payload": {
+          "aph_id": "159771",
+          "institution_ref": "acara:43683",
+          "recorded_school_name": "Our Lady of Mercy College",
+          "relationship_type": "alias"
+        },
+        "reasoning": "Rowland explicitly identifies Our Lady of Mercy Parramatta as her high school in her parliamentary speech; official school identity and pinned registry establish acara:43683. The unqualified recorded name is an alias for this scoped assertion.",
+        "review_id": "education:159771:ebb93e10f9378a05",
+        "source_url": "https://www.openaustralia.org.au/debate/?id=2023-02-15.184.1"
+      }
+    ],
+    "attempts": [
+      {
+        "gaps": [
+          "No primary source found that says Michelle Rowland attended the Parramatta college or another campus.",
+          "An official NSW government report documents her directorship of the Parramatta college, not prior attendance."
+        ],
+        "model": "gpt-6-luna",
+        "searches": 2,
+        "source_opens": 3,
+        "status": "unresolved",
+        "token_usage": null
+      },
+      {
+        "gaps": [],
+        "model": "gpt-6.1-sol",
+        "opened_sources": [
+          {
+            "status": "opened",
+            "url": "https://www.openaustralia.org.au/debate/?id=2023-02-15.184.1"
+          },
+          {
+            "error": "403 Forbidden",
+            "status": "failed",
+            "url": "https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p%3Badv%3Dyes%3BorderBy%3D_fragment_number%2Cdoc_date-rev%3Bpage%3D0%3Bquery%3DDataset%3Ahansardr%2Chansardr80%20Date%3A15%2F2%2F2023%3Brec%3D0%3BresCount%3DDefault"
+          },
+          {
+            "status": "opened",
+            "url": "https://www.olmc.nsw.edu.au/"
+          }
+        ],
+        "search_queries": [
+          "\"Michelle Rowland\" site:olmc.nsw.edu.au",
+          "\"Michelle Rowland\" \"Our Lady\" school"
+        ],
+        "searches": 2,
+        "source_opens": 3,
+        "status": "resolved",
+        "token_usage": null
+      }
+    ],
+    "eligibility_reasons": [
+      "School evidence requires individual review"
+    ],
+    "evidence": [
+      {
+        "candidate_institution_ref": "acara:43683",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "Victoria Road, Parramatta NSW 2150",
+          "level": "secondary",
+          "locality": "Parramatta",
+          "school_name": "Our Lady of Mercy College Parramatta",
+          "sector": "Independent Catholic",
+          "state": "NSW"
+        },
+        "evidence_id": "evidence:abc442a04d5590e4a884143cb9a3e1d28365a4e634f3d5e22b8135044c9aee65",
+        "excerpt_or_note": "The official college website identifies Our Lady of Mercy College Parramatta and gives its Victoria Road, Parramatta address. The pinned register has the corresponding secondary institution as acara:43683.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:53:38Z",
+        "review_id": "school:ebb93e10f9378a05",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Our Lady of Mercy College Parramatta — official college website",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.olmc.nsw.edu.au/",
+        "stance": "supports",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43683",
+        "claim_type": "school_relationship",
+        "claim_value": {
+          "person": "Michelle Rowland",
+          "relationship": "Director of the college in 2009",
+          "school_name": "Our Lady of Mercy College, Parramatta"
+        },
+        "evidence_id": "evidence:08f8972f1d808a0a87f40ccfcc7874b3294d668fdcacc1a807af44c085607e84",
+        "excerpt_or_note": "A NSW government annual report lists Michelle Rowland as a director of Our Lady of Mercy College, Parramatta. This is an institutional relationship and does not establish her attendance there.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-13T23:53:38Z",
+        "review_id": "school:ebb93e10f9378a05",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "NSW Film and Television Office Annual Report 2008–09",
+        "source_type": "government_annual_report",
+        "source_url": "https://data.nsw.gov.au/data/dataset/b0a410bf-10d3-4684-9a9e-9cb2c6d25c83/resource/6bb4df7d-59fb-44b2-a16f-5467caf93c6a/download/document_11120.pdf",
+        "stance": "contextual",
+        "temporal_relevance": null
+      },
+      {
+        "candidate_institution_ref": "acara:43683",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "address": "Victoria Road, Parramatta NSW 2150",
+          "locality": "Parramatta",
+          "school_name": "Our Lady of Mercy College Parramatta",
+          "state": "NSW"
+        },
+        "evidence_id": "evidence:1f5076202bf9a6abcc940c25921929015718b04ca896b9b0232449e160009576",
+        "excerpt_or_note": "Opened official college site identifies Our Lady of Mercy College Parramatta and gives Victoria Road, Parramatta NSW 2150 as its address. The corresponding pinned ACARA register entry is acara:43683. This establishes institution identity separately from member attendance.",
+        "generated_by": "agent-search",
+        "geographic_relevance": null,
+        "match_strength": null,
+        "retrieved_at": "2026-10-14T00:19:58.594026Z",
+        "review_id": "school:ebb93e10f9378a05",
+        "schema_version": 1,
+        "source_quality": null,
+        "source_title": "Our Lady of Mercy College Parramatta - official college website",
+        "source_type": "school_official_profile",
+        "source_url": "https://www.olmc.nsw.edu.au/",
+        "stance": "supports",
+        "temporal_relevance": null
+      }
+    ],
+    "identity": {
+      "evidence_refs": {
+        "Parramatta_institution": [
+          "evidence:1f5076202bf9a6abcc940c25921929015718b04ca896b9b0232449e160009576"
+        ],
+        "recorded_school_name": [
+          "evidence:abc442a04d5590e4a884143cb9a3e1d28365a4e634f3d5e22b8135044c9aee65"
+        ]
+      },
+      "recorded_school_name": "Our Lady of Mercy College"
+    },
+    "manual_institutions": [],
+    "outcome": "mapping",
+    "payload": {
+      "recorded_name": "Our Lady of Mercy College",
+      "requires_individual_resolution": true,
+      "resolution_reason": "ambiguous_name"
+    },
+    "proposal_id": "proposal:66163b75da743900f19a6a59f3182be7e27078c0645277c3f6088345a6cd53dd",
+    "reasoning": "The exact Michelle Rowland education assertion supports an alias mapping to acara:43683, Our Lady of Mercy College Parramatta. In her 15 February 2023 parliamentary Address-in-Reply, the opened OpenAustralia transcript records her first-person statement that she went to high school at Our Lady of Mercy Parramatta. The opened official college site identifies the same institution and its Parramatta address, matching the pinned register. This attendance evidence is independent of the earlier directorship evidence, which is retained unchanged. The official Hansard source linked by the mirror returned 403; the source is therefore labelled accurately as a third-party transcript mirror. No attendance dates or graduation are inferred. Retain the global ambiguous-name school policy because other same-name institutions exist; the proposal is scoped to Rowland only.",
+    "review_caveats": [
+      "Direct first-person attendance statement retrieved through OpenAustralia Hansard mirror; linked official Hansard source returned 403 Forbidden. No attendance years or graduation asserted."
+    ],
+    "review_id": "school:ebb93e10f9378a05",
+    "scoped_identity_context": {
+      "aph_id": "159771",
+      "contextual_institutional_relationship_evidence_refs": [
+        "evidence:08f8972f1d808a0a87f40ccfcc7874b3294d668fdcacc1a807af44c085607e84"
+      ],
+      "education_id": "education:159771:ebb93e10f9378a05",
+      "evidence_refs": [
+        "evidence:242e0b1417122d6ead4b61454afef88799bf6d680d637f3a657f2f6b7ece056c"
+      ],
+      "member": "ROWLAND, the Hon. Michelle Anne",
+      "sol_retry": {
+        "aph_id": "159771",
+        "candidate_institution_ref": "acara:43683",
+        "evidence_refs": [
+          "evidence:28b87ff55685f576689f58f884f99d068c3103bf9d192c861b285602df53abf0"
+        ],
+        "review_id": "education:159771:ebb93e10f9378a05",
+        "source_stated_attended_school": "Our Lady of Mercy Parramatta"
+      }
+    },
+    "value": null
+  }
+]
