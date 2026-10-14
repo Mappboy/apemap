@@ -516,6 +516,16 @@ def detached_member_children(
 
 def _write_records(conn: DuckDBPyConnection, records: Records) -> None:
     """Reconcile canonical rows without weakening their foreign-key constraints."""
+    if any(row.get("sector") is None for row in records["institutions"]):
+        nullable = conn.execute(
+            "SELECT is_nullable FROM information_schema.columns "
+            "WHERE table_schema = 'main' AND table_name = 'institutions' AND column_name = 'sector'"
+        ).fetchone()
+        if nullable == ("NO",):
+            raise ValueError(
+                "Unknown institution sector requires a fresh pinned-source database rebuild; "
+                "preserve this database and rebuild to a new --db-path."
+            )
     previous = _records(conn)
     if records == previous:
         return
@@ -611,7 +621,7 @@ def _institution(
         "institution_id": reference,
         "acara_id": None,
         "school_name": payload["school_name"],
-        "sector": payload["sector"],
+        "sector": payload.get("sector"),
         "school_type": payload.get("school_type"),
         "campus_type": None,
         **{

@@ -73,7 +73,9 @@ from apemap.review.evidence import (
     evidence_applies,
     legacy_evidence,
     load_evidence,
+    member_claim_aph_id,
     validate_evidence_references,
+    validate_school_evidence_claim,
 )
 from apemap.review.scoring import score_candidates
 from apemap.review.progress import (
@@ -93,6 +95,70 @@ REGISTER_FILES = (
     "school-profile-2022.csv",
     ".no-review-aliases.json",
 )
+
+
+def school_research_members(
+    review_id: str, members: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Project every associated member's relevant public assertion deterministically."""
+    from apemap.review.context_evidence import attendance_period
+
+    result = []
+    for member in sorted(
+        members,
+        key=lambda row: (
+            str(row.get("aph_id") or "").lower(),
+            row.get("display_name") or "",
+        ),
+    ):
+        assertions = []
+        for assertion in member.get("education", []):
+            name = assertion.get("recorded_name")
+            if not name or school_review_id(name) != review_id:
+                continue
+            assertions.append(
+                {
+                    **{
+                        key: assertion.get(key)
+                        for key in (
+                            "review_id",
+                            "recorded_name",
+                            "source_url",
+                            "attended_status",
+                            "years_attended",
+                            "graduation_year",
+                            "current_resolution",
+                        )
+                    },
+                    "attendance_period": attendance_period(member, assertion),
+                }
+            )
+        result.append(
+            {
+                **{
+                    key: member.get(key)
+                    for key in (
+                        "aph_id",
+                        "display_name",
+                        "date_of_birth",
+                        "biography_url",
+                    )
+                },
+                "services": sorted(
+                    member.get("services") or [],
+                    key=lambda row: json.dumps(row, sort_keys=True, default=str),
+                ),
+                "education": sorted(
+                    assertions,
+                    key=lambda row: (
+                        row.get("review_id") or "",
+                        row.get("source_url") or "",
+                        json.dumps(row, sort_keys=True, default=str),
+                    ),
+                ),
+            }
+        )
+    return json_value(result)
 
 
 def _register_text(value: Any) -> str | None:
@@ -384,6 +450,15 @@ class ReviewService:
             raise ValueError(
                 "Member evidence cannot be attached to an institution case"
             )
+        else:
+            validate_school_evidence_claim(
+                self.research_context(
+                    review_id, candidate_id=record.candidate_institution_ref
+                ),
+                record.claim_type,
+                record.to_dict()["claim_value"],
+                record.candidate_institution_ref,
+            )
         reference = record.candidate_institution_ref
         if reference and self.resolve_institution(reference) is None:
             raise ValueError(
@@ -487,8 +562,12 @@ class ReviewService:
             ),
             None,
         )
-        if record is None or record.review_id != review_id:
+        if record is None or not evidence_applies(record, review_id):
             raise ValueError("Retained evidence does not belong to this review case")
+        if entity == "school" and member_claim_aph_id(record):
+            raise ValueError(
+                "Member-specific identity requires individual education resolution"
+            )
         if record.stance != "supports":
             raise ValueError("Only supporting identity evidence can be copied")
         if record.claim_type != "identity":
@@ -1326,7 +1405,13 @@ class ReviewService:
             },
             "member": {
                 key: member.get(key)
-                for key in ("display_name", "aph_id", "date_of_birth", "services")
+                for key in (
+                    "display_name",
+                    "aph_id",
+                    "date_of_birth",
+                    "biography_url",
+                    "services",
+                )
             },
             "assertions": [
                 {
@@ -1541,6 +1626,9 @@ class ReviewService:
             "conflicts": item.get("conflicts", [])[:10],
             "history": item.get("history", [])[-10:],
             "retained_evidence": self.retained_evidence(review_id)[:20],
+            "members": school_research_members(
+                review_id, item["context"].get("members", [])
+            ),
         }
         if selected_candidate is not None and not any(
             row.get("institution_ref") == selected_candidate.get("institution_ref")

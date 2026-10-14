@@ -27,7 +27,10 @@ def evidence_payload(
         "source_title": "School and locality evidence",
         "retrieved_at": "2026-10-09T00:00:00+00:00",
         "claim_type": "identity",
-        "claim_value": "Test High School in its locality",
+        "claim_value": {
+            "claim": "Test High School in its locality",
+            "identity_detail": {"field": "acara_id", "value": target.split(":", 1)[1]},
+        },
         "stance": stance,
         "source_quality": 1.0,
         "match_strength": 1.0,

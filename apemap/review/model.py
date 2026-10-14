@@ -399,7 +399,10 @@ def validate_event(event: ReviewEvent) -> None:
         if action == "accept":
             _text(payload.get("school_name"), "school_name")
             _text(payload.get("country"), "country")
-            if payload.get("sector") not in CANONICAL_SECTORS:
+            if (
+                payload.get("sector") is not None
+                and payload["sector"] not in CANONICAL_SECTORS
+            ):
                 raise ValueError("Invalid institution sector")
             if payload.get("institution_status", "manual") not in (
                 "manual",
