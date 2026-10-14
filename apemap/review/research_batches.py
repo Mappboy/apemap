@@ -20,20 +20,34 @@ from apemap.review.candidates import (
     json_value,
     build_candidates,
     annotate_candidates,
+    school_member_context,
 )
 from apemap.review.progress import annotate_individual_progress
 from apemap.constants import RAW_WIKIMEDIA_DIR
 from apemap.review.member_comparison import effective_member_value
-from apemap.review.evidence import EvidenceRecord, append_evidence, evidence_revision
+from apemap.review.evidence import (
+    EvidenceRecord,
+    append_evidence,
+    evidence_revision,
+    evidence_applies,
+    validate_school_evidence_claim,
+)
 from apemap.review.model import (
     active_heads,
     ReviewEvent,
     institution_review_id,
+    school_key,
     member_value_provider,
     validate_event,
 )
+from apemap.review.manual_institutions import build_manual_institution_candidate
 from apemap.review.preview import apply_preview, write_preview
-from apemap.review.service import ReviewService, build_review_event, default_reviewer
+from apemap.review.service import (
+    ReviewService,
+    build_review_event,
+    default_reviewer,
+    school_research_members,
+)
 from apemap.review.store import StaleReviewError, _decision_lock, parse_events
 
 MODELS = ("gpt-6-luna", "gpt-6.1-sol")
@@ -233,7 +247,17 @@ class ResearchBatches:
     def list_batches(self) -> list[dict[str, Any]]:
         return [_read(path) for path in sorted(self.root.glob("*/manifest.json"))]
 
-    def prepare(self, batch_id: str, kind: str, limit: int = 10) -> dict[str, Any]:
+    def prepare(
+        self,
+        batch_id: str,
+        kind: str,
+        limit: int = 10,
+        *,
+        review_ids: list[str] | None = None,
+        _origin: str | None = None,
+        _provenance: dict[str, Any] | None = None,
+        _expected_revisions: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         if kind not in OUTCOMES or not 1 <= limit <= 100:
             raise ValueError("Choose members or schools and a limit of 1–100")
         path = self.path(batch_id)
@@ -242,10 +266,18 @@ class ResearchBatches:
         heads = active_heads(self.service.events(allow_conflicts=True))
         source = self.service.source_revision(include_evidence=False)
         ledger = self.service.review_revision()
+        if _expected_revisions is not None and (
+            source != _expected_revisions.get("source_revision")
+            or ledger != _expected_revisions.get("decision_revision")
+        ):
+            raise StaleReviewError("Research inputs changed before saving the proposal")
         rows = self.service.candidates("member" if kind == "members" else "school")
         grouped: dict[str, list[dict[str, Any]]] = {}
         for row in rows:
             grouped.setdefault(row["review_id"], []).append(row)
+        requested = set(review_ids) if review_ids is not None else None
+        if requested is not None and (not requested or not requested <= grouped.keys()):
+            raise ValueError("Every requested review case must exist in this queue")
         local: dict[str, list[dict[str, Any]]] = {}
         if self.service.db_path.exists():
             with get_connection(self.service.db_path, read_only=True) as conn:
@@ -262,8 +294,12 @@ class ResearchBatches:
         matcher = self.service.matcher() if kind == "schools" and local else None
         tasks = []
         for review_id, candidates in sorted(grouped.items()):
+            if requested is not None and review_id not in requested:
+                continue
             existing = heads.get(review_id, [])
-            if any(e.effective_action in {"accept", "map", "reject"} for e in existing):
+            if requested is None and any(
+                e.effective_action in {"accept", "map", "reject"} for e in existing
+            ):
                 continue
             if kind == "members":
                 if not review_id.endswith(":wikidata_id") or any(
@@ -271,7 +307,9 @@ class ResearchBatches:
                     for row in candidates
                 ):
                     continue
-            elif any(row["evidence"].get("acara_id") for row in candidates):
+            elif requested is None and any(
+                row["evidence"].get("acara_id") for row in candidates
+            ):
                 continue
             context = (
                 self._context(review_id, candidates, local, retained)
@@ -279,11 +317,14 @@ class ResearchBatches:
                 else self.service.research_context(review_id)
             )
             if kind == "schools":
-                if context.get("selected_candidate") or (
-                    matcher
-                    and matcher.match(
-                        context["assertion"]["recorded_school_name"]
-                    ).acara_id
+                if requested is None and (
+                    context.get("selected_candidate")
+                    or (
+                        matcher
+                        and matcher.match(
+                            context["assertion"]["recorded_school_name"]
+                        ).acara_id
+                    )
                 ):
                     continue
                 if not local:
@@ -297,8 +338,12 @@ class ResearchBatches:
                     "decision_heads": [e.decision_id for e in existing],
                 }
             )
-            if len(tasks) == limit:
+            if requested is None and len(tasks) == limit:
                 break
+        if requested is not None and {task["review_id"] for task in tasks} != requested:
+            raise ValueError(
+                "Every requested case must be eligible for this batch kind"
+            )
         if (
             source != self.service.source_revision(include_evidence=False)
             or ledger != self.service.review_revision()
@@ -306,6 +351,10 @@ class ResearchBatches:
             raise StaleReviewError("Review sources changed during task selection")
         if not tasks:
             raise ValueError("No eligible unresolved cases found")
+        if _origin:
+            for task in tasks:
+                task["research_origin"] = _origin
+                task["research_provenance"] = json_value(_provenance or {})
         manifest = {
             "schema_version": 1,
             "batch_id": batch_id,
@@ -321,11 +370,181 @@ class ResearchBatches:
             "cases_per_task": 5 if kind == "members" else 1,
             "attempt_budgets": [{"searches": s, "source_opens": o} for s, o in BUDGETS],
         }
+        if _origin:
+            manifest["origin"] = _origin
+            manifest["provenance"] = json_value(_provenance or {})
+            manifest["models"] = []
+            manifest["reasoning_effort"] = None
+            manifest["attempt_budgets"] = []
         path.mkdir(parents=True)
         _write(path / "tasks.json", tasks)
         _write(path / "manifest.json", manifest)
-        (path / "instructions.md").write_text(self.instructions(kind), encoding="utf-8")
+        (path / "instructions.md").write_text(
+            "# Sourced institution proposal\n\nInspect every cited source, record an individual review, retain approved evidence, then inspect and approve the exact decision preview. This batch assembles facts deterministically and runs no research model.\n"
+            if _origin == "institution-facts"
+            else self.instructions(kind),
+            encoding="utf-8",
+        )
         return {"manifest": manifest, "path": str(path), "tasks": tasks}
+
+    def _manual_candidate(
+        self, facts: dict[str, Any], records: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        definitions = [
+            heads[0].payload
+            for heads in active_heads(
+                self.service.events(allow_conflicts=True)
+            ).values()
+            if len(heads) == 1
+            and heads[0].entity_type == "manual_institution"
+            and heads[0].effective_action == "accept"
+        ]
+        return build_manual_institution_candidate(facts, records, definitions)
+
+    def prepare_manual_proposal(
+        self,
+        batch_id: str,
+        review_id: str,
+        facts: dict[str, Any],
+        evidence: list[dict[str, Any]],
+        provenance: dict[str, Any] | None = None,
+        *,
+        expected_revisions: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
+        """Save sourced facts for separate human review; append no evidence or decisions."""
+        if not review_id.startswith("school:"):
+            raise ValueError(
+                "A manual institution proposal requires a school review case"
+            )
+        # Validate the facts before creating an on-disk batch.
+        self._manual_candidate(facts, evidence)
+        if self.path(batch_id).exists():
+            state = self.show(batch_id)
+            if expected_revisions is not None and (
+                state["manifest"]["source_revision"]
+                != expected_revisions.get("source_revision")
+                or state["manifest"]["decision_revision"]
+                != expected_revisions.get("decision_revision")
+            ):
+                raise StaleReviewError(
+                    "Saved proposal belongs to different research inputs"
+                )
+            if (
+                state["manifest"].get("origin") != "institution-facts"
+                or state["manifest"].get("provenance", {}) != (provenance or {})
+                or state["manifest"]["source_revision"]
+                != self.service.source_revision(include_evidence=False)
+                or state["manifest"]["decision_revision"]
+                != self.service.review_revision()
+                or len(state["proposals"]) != 1
+                or state["proposals"][0]["review_id"] != review_id
+                or state["proposals"][0].get("institution_candidate")
+                != json_value(facts)
+                or state["proposals"][0]["evidence"]
+                != [EvidenceRecord.from_dict(record).to_dict() for record in evidence]
+            ):
+                raise ValueError(
+                    "Existing manual proposal differs from the requested research"
+                )
+            return state
+        prepared = self.prepare(
+            batch_id,
+            "schools",
+            review_ids=[review_id],
+            _origin="institution-facts",
+            _provenance=provenance,
+            _expected_revisions=expected_revisions,
+        )
+        raw = {
+            "review_id": review_id,
+            "outcome": "mapping",
+            "value": None,
+            "reasoning": "Sourced institution facts were assembled into a deterministic candidate for human review.",
+            "alternatives": [],
+            "identity": {},
+            "payload": None,
+            "manual_institutions": [],
+            "institution_candidate": json_value(facts),
+            "evidence": evidence,
+            "attempts": [],
+        }
+        try:
+            return self.import_results(batch_id, [raw])
+        except (ValueError, TypeError, KeyError):
+            # No reviewed artifact exists yet; do not leave a misleading empty batch.
+            path = Path(prepared["path"])
+            for name in (
+                "manifest.json",
+                "tasks.json",
+                "instructions.md",
+                "batch.lock",
+            ):
+                (path / name).unlink(missing_ok=True)
+            path.rmdir()
+            raise
+
+    def _successor_candidate_payload(
+        self,
+        review_id: str,
+        payload: dict[str, Any],
+        candidate: dict[str, Any],
+        records: list[dict[str, Any]],
+    ) -> dict[str, Any]:
+        """Keep a separately sourced successor distinct from the built original identity."""
+        reference = payload.get("institution_ref")
+        original = candidate["institution_ref"]
+        if (
+            payload.get("relationship_type") != "successor"
+            or not isinstance(reference, str)
+            or not reference.startswith("acara:")
+            or reference == original
+            or self.service.resolve_institution(reference) is None
+            or payload.get("attended_institution_ref", original) != original
+        ):
+            raise ValueError(
+                "A sourced successor must select a real ACARA target distinct from the built original institution"
+            )
+        if not any(
+            record["review_id"] == review_id
+            and record["stance"] == "supports"
+            and record["claim_type"]
+            in {"successor", "relationship", "school_relationship"}
+            and record["candidate_institution_ref"] == reference
+            and isinstance(claim := record["claim_value"], dict)
+            and not claim.get("aph_id")
+            and not claim.get("assertion_review_id")
+            and claim.get("relationship_type") == "successor"
+            and claim.get("institution_ref") == reference
+            and (
+                claim.get("attended_institution_ref") == original
+                or claim.get("attended_name") == candidate["facts"]["name"]
+                and claim.get("attended_country") == candidate["facts"]["country"]
+            )
+            for record in records
+        ):
+            raise ValueError(
+                "A successor requires supporting school evidence linking the original identity to its target"
+            )
+        original_refs = {
+            ref
+            for field in ("name", "country")
+            for ref in candidate["evidence_refs"][field]
+        }
+        sources = [
+            record["source_url"]
+            for record in records
+            if record["evidence_id"] in original_refs
+        ]
+        identity_source = payload.get("attended_identity_source_url") or sources[0]
+        if identity_source not in sources:
+            raise ValueError(
+                "Original identity source must come from the independently sourced manual facts"
+            )
+        return {
+            **payload,
+            "attended_institution_ref": original,
+            "attended_identity_source_url": identity_source,
+        }
 
     def _context(
         self,
@@ -413,6 +632,10 @@ class ResearchBatches:
                 selected_candidate=None,
                 attendance_context=attendance,
             )
+            with get_connection(self.service.db_path, read_only=True) as conn:
+                context["members"] = school_research_members(
+                    review_id, school_member_context(conn, review_id, events)
+                )
         return json_value(context)
 
     @staticmethod
@@ -441,6 +664,17 @@ class ResearchBatches:
             "new targets when supported. Retain source names, timing and contrary evidence. A closure without "
             "a successor sets no current ACARA target; propose a sourced closed manual institution if justified, "
             "otherwise use resolution_reason=no_suitable_candidate. All school evidence requires human inspection.\n"
+            "For a new manual target, supply institution_candidate facts with name, country, optional status/sector/"
+            "school_type/suburb/state/latitude/longitude/reuse_ref and evidence_refs keyed by fact. Use supporting "
+            "institution_fact claims {field,value}; coordinate claims contain both latitude and longitude. "
+            "Leave payload null and manual_institutions empty: the application builds the candidate deterministically. "
+            "A sourced recorded alias requires un-attributed identity evidence {name,country,recorded_school_name}; "
+            "a member attendance finding cannot authorize a shared school mapping.\n"
+            "For a separately documented ACARA successor, preserve the existing successor payload instead. "
+            "Attach supporting school-scoped successor evidence with claim_value={relationship_type:'successor',"
+            "institution_ref:'acara:ID',attended_name:original_name,attended_country:original_country} and "
+            "candidate_institution_ref set to that ACARA target. The original manual reference is built and "
+            "stamped by the application; never use successor metadata as original institution facts.\n"
         )
 
     def _load(self, batch_id: str) -> tuple[Path, dict[str, Any], list[dict[str, Any]]]:
@@ -450,6 +684,14 @@ class ResearchBatches:
             manifest["schema_version"] != 1
             or manifest["batch_id"] != batch_id
             or _digest(tasks) != manifest["task_sha256"]
+            or any(
+                task.get("research_origin") is not None
+                and (
+                    task["research_origin"] != manifest.get("origin")
+                    or task["research_provenance"] != manifest.get("provenance")
+                )
+                for task in tasks
+            )
         ):
             raise ValueError("Batch task snapshot changed or is unsupported")
         return path, manifest, tasks
@@ -572,7 +814,10 @@ class ResearchBatches:
                 review_id = raw["review_id"]
                 seen.add(review_id)
                 proposal = self._validate_result(
-                    manifest["kind"], by_case[review_id], raw
+                    manifest["kind"],
+                    by_case[review_id],
+                    raw,
+                    origin=manifest.get("origin", "guided"),
                 )
                 prior = proposals.get(review_id)
                 if prior:
@@ -622,7 +867,12 @@ class ResearchBatches:
         return self.show(batch_id)
 
     def _validate_result(
-        self, kind: str, task: dict[str, Any], raw: dict[str, Any]
+        self,
+        kind: str,
+        task: dict[str, Any],
+        raw: dict[str, Any],
+        *,
+        origin: str = "guided",
     ) -> dict[str, Any]:
         proposal = json_value(raw)
         if (
@@ -635,7 +885,14 @@ class ResearchBatches:
             if not isinstance(raw.get(key), list):
                 raise ValueError(f"{key} must be a list")
         attempts = raw["attempts"]
-        if not 1 <= len(attempts) <= 2:
+        deterministic = origin == "institution-facts"
+        if deterministic and (
+            kind != "schools" or attempts or "institution_candidate" not in raw
+        ):
+            raise ValueError(
+                "Institution-facts proposals require sourced facts and no model attempts"
+            )
+        if not deterministic and not 1 <= len(attempts) <= 2:
             raise ValueError(
                 "Research requires one Luna attempt and at most one Sol retry"
             )
@@ -665,9 +922,30 @@ class ResearchBatches:
             raise ValueError(
                 "Sol retries are only for unresolved or failed Luna attempts"
             )
-        if (raw["outcome"] == "unresolved") != (attempts[-1]["status"] != "resolved"):
+        if not deterministic and (raw["outcome"] == "unresolved") != (
+            attempts[-1]["status"] != "resolved"
+        ):
             raise ValueError("Failed or exhausted attempts must remain unresolved")
         records = []
+        claim_context = {
+            **task["context"],
+            "members": task["context"].get("members")
+            or [
+                item["member"]
+                for item in task["context"].get("attendance_context", [])
+                if item.get("member")
+            ],
+        }
+        allowed_reviews = {task["review_id"]}
+        if kind == "schools" and "institution_candidate" in raw:
+            from apemap.review.model import education_review_id
+
+            name = task["context"]["assertion"]["recorded_school_name"]
+            allowed_reviews.update(
+                education_review_id(item["member"]["aph_id"], name)
+                for item in task["context"].get("attendance_context", [])
+                if item.get("member", {}).get("aph_id")
+            )
         for value in raw["evidence"]:
             if not isinstance(value, dict):
                 raise ValueError("Evidence must be a structured record")
@@ -675,14 +953,24 @@ class ResearchBatches:
                 record = EvidenceRecord.from_dict(value)
             except (TypeError, KeyError) as exc:
                 raise ValueError("Invalid evidence record fields") from exc
-            if (
-                record.review_id != task["review_id"]
-                or record.generated_by != "agent-search"
+            if kind == "schools" and (
+                "institution_candidate" in raw
+                or isinstance(value.get("claim_value"), dict)
+                and "aph_id" in value["claim_value"]
+            ):
+                validate_school_evidence_claim(
+                    claim_context,
+                    record.claim_type,
+                    record.claim_value,
+                    record.candidate_institution_ref,
+                )
+            if record.review_id not in allowed_reviews or (
+                not deterministic and record.generated_by != "agent-search"
             ):
                 raise ValueError(
                     "Evidence must belong to this task and identify agent provenance"
                 )
-            if any(
+            if not deterministic and any(
                 getattr(record, field) is not None
                 for field in (
                     "source_quality",
@@ -698,6 +986,43 @@ class ResearchBatches:
         if len({e["evidence_id"] for e in records}) != len(records):
             raise ValueError("Duplicate evidence records")
         proposal["evidence"] = records
+        if "institution_candidate" in raw:
+            if (
+                kind != "schools"
+                or raw["manual_institutions"]
+                or raw.get("payload")
+                and (
+                    not isinstance(raw["payload"], dict)
+                    or raw["payload"].get("relationship_type") != "successor"
+                )
+            ):
+                raise ValueError(
+                    "Institution candidates contain facts, not hand-authored mapping payloads"
+                )
+            candidate = self._manual_candidate(raw["institution_candidate"], records)
+            proposal["manual_candidate"] = candidate
+            proposal["manual_institutions"] = (
+                [candidate["definition"]] if candidate["definition"] is not None else []
+            )
+            proposal["payload"] = (
+                {
+                    "recorded_name": task["context"]["assertion"][
+                        "recorded_school_name"
+                    ],
+                    "institution_ref": candidate["institution_ref"],
+                    "relationship_type": "direct",
+                }
+                if candidate["institution_ref"]
+                else None
+            )
+            if raw.get("payload") and candidate["state"] != "needs_research":
+                if not isinstance(raw["payload"], dict):
+                    raise ValueError("School successor payload must be an object")
+                proposal["payload"] = self._successor_candidate_payload(
+                    task["review_id"], raw["payload"], candidate, records
+                )
+            if candidate["state"] == "needs_research":
+                proposal["outcome"] = "unresolved"
         proposal.setdefault("identity", {})
         if not isinstance(proposal["identity"], dict) or not isinstance(
             proposal["identity"].get("evidence_refs", {}), dict
@@ -724,7 +1049,7 @@ class ResearchBatches:
             if raw.get("payload") or raw["manual_institutions"]:
                 raise ValueError("Member proposals cannot contain school mappings")
         else:
-            payload = raw.get("payload")
+            payload = proposal.get("payload")
             if payload:
                 if (
                     not isinstance(payload, dict)
@@ -749,7 +1074,7 @@ class ResearchBatches:
                         notes=raw["reasoning"],
                     )
                 )
-            for definition in raw["manual_institutions"]:
+            for definition in proposal["manual_institutions"]:
                 if not isinstance(definition, dict):
                     raise ValueError("Manual institution definitions must be objects")
                 validate_event(
@@ -762,7 +1087,7 @@ class ResearchBatches:
                         notes=raw["reasoning"],
                     )
                 )
-        if raw["outcome"] != "unresolved" and not records:
+        if proposal["outcome"] != "unresolved" and not records:
             raise ValueError("Resolved proposals require cited evidence")
         proposal.pop("proposal_id", None)
         proposal.pop("eligibility_reasons", None)
@@ -867,6 +1192,81 @@ class ResearchBatches:
         return state
 
     @staticmethod
+    def _mapping_problems(state: dict[str, Any], proposal: dict[str, Any]) -> list[str]:
+        candidate = proposal.get("manual_candidate")
+        if not candidate:
+            return []
+        if state["manifest"].get("provenance", {}).get(
+            "requires_individual_resolution"
+        ) or any(
+            record["review_id"].startswith("education:")
+            and record["evidence_id"]
+            in {ref for refs in candidate["evidence_refs"].values() for ref in refs}
+            for record in proposal["evidence"]
+        ):
+            return [
+                "Member findings require individual school resolution. Create only, then resolve each attendance assertion."
+            ]
+        task = next(
+            task
+            for task in state["tasks"]
+            if task["review_id"] == proposal["review_id"]
+        )
+        recorded = task["context"]["assertion"]["recorded_school_name"]
+        facts = candidate["facts"]
+        name, country = facts.get("name"), facts.get("country")
+        for evidence in proposal["evidence"]:
+            claim = evidence["claim_value"]
+            if (
+                evidence["review_id"] == proposal["review_id"]
+                and evidence["claim_type"] == "identity"
+                and evidence["stance"] == "supports"
+                and evidence["candidate_institution_ref"]
+                in (None, candidate["institution_ref"])
+                and isinstance(claim, dict)
+                and not claim.get("aph_id")
+                and not claim.get("assertion_review_id")
+                and claim.get("recorded_school_name") == recorded
+                and claim.get("name") == name
+                and claim.get("country") == country
+            ):
+                return []
+        if not name or school_key(name) != school_key(recorded):
+            return [
+                "Mapping this recorded alias requires supporting school identity evidence linking it to the proposed name and country. Create only while that link needs research."
+            ]
+        for option in task["context"].get("candidates", []):
+            evidence = option.get("evidence", {})
+            payload = option.get("payload", {})
+            reference = option.get("institution_ref") or payload.get("institution_ref")
+            if not reference and evidence.get("acara_id"):
+                reference = "acara:" + str(evidence["acara_id"])
+            option_name = (
+                option.get("school_name")
+                or option.get("institution_name")
+                or evidence.get("school_name")
+                or evidence.get("institution_name")
+            )
+            if (
+                reference
+                and reference != candidate["institution_ref"]
+                and (not option_name or school_key(option_name) == school_key(name))
+            ):
+                return [
+                    "A same-name institution alternative requires supporting identity evidence before a shared school mapping. Create only while the identity remains unresolved."
+                ]
+        return []
+
+    @staticmethod
+    def _decision_evidence_refs(proposal: dict[str, Any]) -> list[str]:
+        return [
+            record["evidence_id"]
+            for record in proposal["evidence"]
+            if not proposal.get("manual_candidate")
+            or evidence_applies(EvidenceRecord.from_dict(record), proposal["review_id"])
+        ]
+
+    @staticmethod
     def _proposal_payload(
         state: dict[str, Any], proposal: dict[str, Any]
     ) -> dict[str, Any]:
@@ -885,6 +1285,26 @@ class ResearchBatches:
             "resolution_reason": "no_suitable_candidate",
             "requires_individual_resolution": True,
         }
+        if (
+            proposal.get("manual_candidate")
+            and state["reviews"]
+            .get(proposal["proposal_id"], {})
+            .get("institution_action")
+            == "create_only"
+        ):
+            payload = {
+                "recorded_name": payload["recorded_name"],
+                "resolution_reason": "no_suitable_candidate",
+                "requires_individual_resolution": True,
+            }
+        elif (
+            proposal.get("manual_candidate")
+            and state["reviews"].get(proposal["proposal_id"], {}).get("action")
+            == "accept"
+        ):
+            problems = ResearchBatches._mapping_problems(state, proposal)
+            if problems:
+                raise ValueError(" ".join(problems))
         return {
             key: value
             for key, value in payload.items()
@@ -932,7 +1352,7 @@ class ResearchBatches:
                 or actual != expected
                 or event.effective_action != action
                 or event.payload.get("evidence_refs")
-                != [e["evidence_id"] for e in proposal["evidence"]]
+                != self._decision_evidence_refs(proposal)
             ):
                 raise ValueError(
                     "Previously applied research differs from its frozen proposal"
@@ -952,6 +1372,7 @@ class ResearchBatches:
         identity_error: bool = False,
         supersedes: list[str] | None = None,
         expected_revision: str | None = None,
+        institution_action: str | None = None,
     ) -> dict[str, Any]:
         path = self.path(batch_id)
         with _decision_lock(path / "batch.lock"):
@@ -980,6 +1401,29 @@ class ResearchBatches:
             ):
                 raise ValueError(
                     "Unresolved member proposals require further research, not acceptance"
+                )
+            candidate = proposal.get("manual_candidate")
+            if candidate:
+                if proposal_id in state["applied_proposals"]:
+                    raise ValueError(
+                        "An applied manual institution proposal cannot be reviewed again"
+                    )
+                institution_action = institution_action or state["reviews"].get(
+                    proposal_id, {}
+                ).get("institution_action", "create_map")
+                if institution_action not in {"create_map", "create_only"}:
+                    raise ValueError("Choose create and map or create only")
+                if action == "accept" and candidate["state"] == "needs_research":
+                    raise ValueError(
+                        "Incomplete institution facts require further research"
+                    )
+                if action == "accept" and institution_action == "create_map":
+                    problems = self._mapping_problems(state, proposal)
+                    if problems:
+                        raise ValueError(" ".join(problems))
+            elif institution_action is not None:
+                raise ValueError(
+                    "Only sourced institution proposals have a creation choice"
                 )
             ids = {e["evidence_id"] for e in proposal["evidence"]}
             if set(inspected) != ids or any(
@@ -1014,6 +1458,8 @@ class ResearchBatches:
                 "identity_error": identity_error,
                 "supersedes": supersedes or [],
             }
+            if candidate:
+                record["institution_action"] = institution_action
             with (path / "reviews.jsonl").open("ab") as stream:
                 stream.write(
                     json.dumps(
@@ -1125,6 +1571,11 @@ class ResearchBatches:
             target = self._proposal_payload(state, proposal).get("institution_ref")
             if target:
                 refs.add(target)
+            original_target = self._proposal_payload(state, proposal).get(
+                "attended_institution_ref"
+            )
+            if original_target:
+                refs.add(original_target)
             related = {rid, *(institution_review_id(ref) for ref in refs)}
             for key in original.keys() | current.keys():
                 parts = key.split(":")
@@ -1146,11 +1597,53 @@ class ResearchBatches:
             if any(
                 {e.decision_id for e in original.get(key, [])}
                 != {e.decision_id for e in current.get(key, [])}
+                and not any(
+                    key == institution_review_id(definition["institution_ref"])
+                    and self._saved_batch_definition(state, definition)
+                    for definition in proposal["manual_institutions"]
+                )
                 for key in related
             ):
                 raise StaleReviewError(
                     "Related decisions changed since research; inspect a new batch"
                 )
+
+    def _saved_batch_definition(
+        self, state: dict[str, Any], definition: dict[str, Any]
+    ) -> bool:
+        """An identical definition already applied by this batch can serve a later subset."""
+        heads = active_heads(self.service.events(allow_conflicts=True)).get(
+            institution_review_id(definition["institution_ref"]), []
+        )
+        applied_ids = {
+            decision_id
+            for receipt in state["applications"]
+            for decision_id in receipt["events"]
+        }
+        return bool(
+            len(heads) == 1
+            and heads[0].decision_id in applied_ids
+            and heads[0].effective_action == "accept"
+            and heads[0].payload == definition
+        )
+
+    def _manual_definitions(
+        self, state: dict[str, Any], selected: list[tuple[dict[str, Any], str]]
+    ) -> list[dict[str, Any]]:
+        definitions: dict[str, dict[str, Any]] = {}
+        for proposal, _ in selected:
+            for definition in proposal["manual_institutions"]:
+                ref = definition["institution_ref"]
+                if ref in definitions and definitions[ref] != definition:
+                    raise ValueError(
+                        "Conflicting manual institution definitions share one reference"
+                    )
+                definitions[ref] = definition
+        return [
+            definition
+            for definition in definitions.values()
+            if not self._saved_batch_definition(state, definition)
+        ]
 
     def _contexts(
         self,
@@ -1195,6 +1688,8 @@ class ResearchBatches:
                     "Research assertion is no longer present in the current queue"
                 )
             contexts[rid] = self._context(rid, grouped[rid], local, [], events)
+            if "members" not in task["context"]:
+                contexts[rid].pop("members", None)
         return contexts
 
     @staticmethod
@@ -1261,6 +1756,8 @@ class ResearchBatches:
                 }
                 for item in context.get("attendance_context", [])
             ]
+            if "members" in context:
+                result["members"] = context["members"]
         return normalize(result)
 
     def _revalidation(
@@ -1299,10 +1796,13 @@ class ResearchBatches:
                     "Member identity or school attendance context changed since research"
                 )
         targets = {}
-        for proposal, _ in selected:
-            reference = self._proposal_payload(state, proposal).get("institution_ref")
-            if not reference:
-                continue
+        references = {
+            reference
+            for proposal, _ in selected
+            for field in ("institution_ref", "attended_institution_ref")
+            if (reference := self._proposal_payload(state, proposal).get(field))
+        }
+        for reference in sorted(references):
             old, new = (
                 original.resolve_institution(reference),
                 self.service.resolve_institution(reference),
@@ -1312,6 +1812,7 @@ class ResearchBatches:
                 and new is None
                 and any(
                     d["institution_ref"] == reference
+                    for proposal, _ in selected
                     for d in proposal["manual_institutions"]
                 )
             ):
@@ -1406,6 +1907,10 @@ class ResearchBatches:
         heads = active_heads(self.service.events(allow_conflicts=True))
         evidence_ids = {r.evidence_id for r in self.service.evidence_records()}
         events = []
+        pending_definitions = {
+            definition["institution_ref"]: definition
+            for definition in self._manual_definitions(state, selected)
+        }
         for proposal, scope in selected:
             review_id = proposal["review_id"]
             reviewed = state["reviews"].get(proposal["proposal_id"], {})
@@ -1417,9 +1922,7 @@ class ResearchBatches:
             if scope == "sample_unsampled" and parents:
                 raise ValueError("Sampled approval cannot supersede a prior decision")
             records = proposal["evidence"]
-            refs = [
-                e["evidence_id"] for e in records if e["evidence_id"] in evidence_ids
-            ]
+            refs = self._decision_evidence_refs(proposal)
             missing = [e for e in records if e["evidence_id"] not in evidence_ids]
             if missing:
                 raise ValueError(
@@ -1433,6 +1936,8 @@ class ResearchBatches:
                 "evidence_refs": refs,
             }
             for definition in proposal["manual_institutions"]:
+                if definition["institution_ref"] not in pending_definitions:
+                    continue
                 definition_id = institution_review_id(definition["institution_ref"])
                 if heads.get(definition_id):
                     raise ValueError(
@@ -1448,6 +1953,7 @@ class ResearchBatches:
                         notes=proposal["reasoning"],
                     )
                 )
+                pending_definitions.pop(definition["institution_ref"])
             if manifest["kind"] == "members":
                 if proposal["outcome"] != "matched":
                     raise ValueError(
@@ -1462,18 +1968,7 @@ class ResearchBatches:
                 action = "accept"
             else:
                 payload = {
-                    **(
-                        proposal.get("payload")
-                        or {
-                            "recorded_name": next(
-                                t["context"]["assertion"]["recorded_school_name"]
-                                for t in state["tasks"]
-                                if t["review_id"] == review_id
-                            ),
-                            "resolution_reason": "no_suitable_candidate",
-                            "requires_individual_resolution": True,
-                        }
-                    ),
+                    **self._proposal_payload(state, proposal),
                     **metadata,
                 }
                 action = "accept" if payload.get("institution_ref") else "research"
@@ -1765,11 +2260,9 @@ class ResearchBatches:
         ) or len(decisions) != len(approved):
             raise ValueError("Preview does not contain exactly the approved proposals")
         proposals = {p["proposal_id"]: p for p in state["proposals"]}
-        definitions = [
-            definition
-            for pid in approved
-            for definition in proposals[pid]["manual_institutions"]
-        ]
+        definitions = self._manual_definitions(
+            state, [(proposals[pid], approved[pid]) for pid in approved]
+        )
         definition_events = [
             e for e in preview["events"] if e["entity_type"] == "manual_institution"
         ]
@@ -1802,7 +2295,7 @@ class ResearchBatches:
                 or payload.get("research_batch_id") != batch_id
                 or payload.get("research_approval_scope") != approved[pid]
                 or payload.get("evidence_refs")
-                != [e["evidence_id"] for e in proposal["evidence"]]
+                != self._decision_evidence_refs(proposal)
             ):
                 raise ValueError("Preview research identity or approval scope changed")
             if state["manifest"]["kind"] == "members" and (

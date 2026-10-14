@@ -27,6 +27,9 @@
   {% if research_result %}
       {% if research_result.status == 'failed' %}<p class="error" role="alert">{{ research_result.error }}</p>{% endif %}
       {% if research_result.status == 'running' and research_case.get('job_id') %}<p>Research is running. <a href="{{ url_for('research_detail', review_id=review_id, job_id=research_case.job_id, workspace_draft_token=workspace_draft_token) }}">Refresh cited results</a>.</p>{% endif %}
+      {% if research_result.get('total_requests') %}<p>{{ research_result.get('completed_requests', 0) }} of {{ research_result.total_requests }} research requests completed.</p>{% endif %}
+      {% for request_result in research_result.get('request_results', []) if request_result.status == 'failed' %}<p class="error" role="alert">Research failed{% if request_result.get('aph_id') %} for {{ request_result.aph_id }}{% endif %}. No evidence was returned for this request.</p>{% endfor %}
+      {% if review_id.startswith('school:') %}{% set manual_research_result = research_result %}{% set manual_research_job_id = research_case.get('job_id', '') %}{% include 'manual-research-proposals.html' %}{% endif %}
       {% for suggestion in research_result.get('suggestions', []) %}
       <article class="candidate-card" data-suggestion>
         <h3>{{ suggestion.get('source_title') or 'Cited source' }}</h3>

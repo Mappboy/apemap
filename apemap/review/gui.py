@@ -2085,9 +2085,10 @@ def create_app(
                 revisions = getattr(service, "research_revisions")()
                 result = research.result(research_id, review_id, revisions)
                 index = int(request.form.get("research_suggestion_index", "-1"))
-                if result["status"] != "complete" or not 0 <= index < len(
-                    result["suggestions"]
-                ):
+                if result["status"] not in {
+                    "complete",
+                    "partial",
+                } or not 0 <= index < len(result["suggestions"]):
                     raise ValueError("Research suggestion is unavailable")
                 if request.form.get("source_inspected") != "yes":
                     raise ValueError(
@@ -2404,6 +2405,87 @@ def create_app(
         except ValueError:
             abort(409)
 
+    @app.post("/items/<path:review_id>/research/<job_id>/manual-proposals/<int:index>")
+    def save_manual_research_proposal(review_id: str, job_id: str, index: int) -> Any:
+        """Persist one frozen finding for inspection, never an authoritative decision."""
+        from apemap.review.evidence import EvidenceRecord
+        from apemap.review.research_batches import ResearchBatches, _digest
+
+        try:
+            if not isinstance(service, ReviewService) or not review_id.startswith(
+                "school:"
+            ):
+                raise ValueError("Manual research proposals require a school review")
+            token = request.form.get("workspace_draft_token", "")
+            if token:
+                read_workspace_draft(review_id, token)
+            result = research_result(review_id, job_id)
+            candidates = result.get("institution_candidates", [])
+            if result["status"] != "complete" or not 0 <= index < len(candidates):
+                raise ValueError("A completed manual institution finding is required")
+            finding = candidates[index]
+            facts = finding["facts"]
+            evidence_ids = set(finding.get("evidence_ids", []))
+            records = [
+                EvidenceRecord.from_dict(value) for value in result["suggestions"]
+            ]
+            records = [
+                record
+                for record in records
+                if (not evidence_ids or record.evidence_id in evidence_ids)
+                and not (
+                    isinstance(record.to_dict()["claim_value"], dict)
+                    and record.to_dict()["claim_value"].get("aph_id")
+                )
+            ]
+            job = research.get(job_id, review_id)
+            provenance = {
+                **getattr(job, "provenance", {"provider_id": job.provider_id}),
+                "aph_id": finding.get("aph_id"),
+                "assertion_review_id": finding.get("assertion_review_id"),
+                "requires_individual_resolution": len(job.context.get("members", []))
+                > 1,
+            }
+            binding = {
+                "review_id": review_id,
+                "facts": facts,
+                "evidence": [record.to_dict() for record in records],
+                "provenance": provenance,
+            }
+            batch_id = "school-research-" + _digest(binding)[:20]
+            ResearchBatches(service).prepare_manual_proposal(
+                batch_id,
+                review_id,
+                facts,
+                [record.to_dict() for record in records],
+                provenance,
+                expected_revisions={
+                    key: job.context[key]
+                    for key in ("source_revision", "decision_revision")
+                },
+            )
+            location = url_for("research_batch_detail", batch_id=batch_id)
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"batch_id": batch_id, "review_url": location})
+            return redirect(location, code=303)
+        except (OSError, ValueError, KeyError) as err:
+            status_code = 409 if isinstance(err, StaleReviewError) else 400
+            if request.accept_mimetypes.best == "application/json":
+                return jsonify({"error": str(err)}), status_code
+            token = request.form.get("workspace_draft_token", "")
+            if token:
+                try:
+                    draft = read_workspace_draft(review_id, token)
+                    return item_page(
+                        load_item(review_id),
+                        error=str(err),
+                        draft_values=draft,
+                        workspace_draft_token=token,
+                    ), status_code
+                except ValueError:
+                    pass
+            return render_template("error.html", message=str(err)), status_code
+
     @app.post("/items/<path:review_id>/research/<job_id>/suggestions/<int:index>")
     def inspect_suggestion(review_id: str, job_id: str, index: int) -> Any:
         try:
@@ -2412,7 +2494,7 @@ def create_app(
                     "Inspect the cited source before reviewing its evidence"
                 )
             result = research_result(review_id, job_id)
-            if result["status"] != "complete" or not 0 <= index < len(
+            if result["status"] not in {"complete", "partial"} or not 0 <= index < len(
                 result["suggestions"]
             ):
                 raise ValueError("Research suggestion is unavailable")

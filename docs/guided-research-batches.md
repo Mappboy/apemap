@@ -11,6 +11,66 @@ To accept a researched change, follow this sequence:
 change. Applying decisions saves them to the ledger; rebuilding derived data and
 publishing a dataset are separate steps.
 
+## Generate a manual institution from researched facts
+
+On a school review, **Find cited evidence** researches every associated member's
+relevant education assertion in bounded requests. Results identify completed
+requests and failures. Parliamentary geography and estimated attendance dates
+remain search leads, not institution evidence.
+
+When a result contains a manual institution finding, choose **Save manual
+institution proposal**. This saves an unreviewed persistent batch without changing
+the evidence or decision ledger. The same facts can be supplied to a guided school
+batch using `institution_candidate`; APEMAP builds the final definition.
+
+The candidate contains `name`, `country`, optional `status`, `sector`, `school_type`,
+`suburb`, `state`, paired coordinates, and `evidence_refs` keyed by fact. Guided
+imports reference the attached immutable evidence IDs. Quick-search providers
+reference zero-based suggestion indexes, which are converted locally to those IDs.
+Use `institution_fact` claims with `claim_value={"field":"name","value":"..."}`;
+coordinates require a `location` claim containing both latitude and longitude.
+Missing mandatory support or contradictory facts leave the proposal needing research.
+
+Inspect each attached source and review the **Proposed manual institution** panel.
+Name and country each require supporting evidence. Unsupported optional facts stay
+unknown. Reuse of an existing manual institution requires evidence identifying that
+exact institution; a name match alone cannot merge schools. References are generated
+deterministically, including a digest when supported identities share a slug.
+
+Choose **Create institution and map school** or **Create institution only** before
+accepting the proposal. Create-only records the institution and leaves a school
+research marker; it claims neither a current ACARA target nor a successor.
+**Needs further research** retains an unresolved proposal. Acceptance still requires
+inspection of all attached sources. Then retain approved evidence, inspect the exact
+preview and explicitly apply it. Closed schools never receive an invented successor;
+an independently supported historical original can remain separate from its successor.
+
+These generated proposals record actual provider provenance. They do not invent
+guided model attempts. Existing guided imports keep their documented attempt budgets.
+Repeated saving or applying cannot create competing duplicate definitions.
+
+For CLI facts input, replace the uppercase identifiers with your chosen batch ID
+and the actual school review ID:
+
+```text
+uv run apemap review research-batch propose-manual BATCH_ID SCHOOL_REVIEW_ID facts.json --evidence evidence.json
+```
+
+Use `research-batch review ... --institution-action create_map` or `create_only`
+with the usual inspected-evidence file. A per-member finding in a multi-member
+school case creates an institution only; resolve the members independently through
+their education assertions. Mapping a differently named institution also requires
+explicit source evidence linking the recorded name to that institution.
+
+For a guided historical-original/successor proposal, supply the existing school
+payload with `relationship_type="successor"` and the current ACARA
+`institution_ref`. APEMAP stamps the generated original's
+`attended_institution_ref`; a supplied original reference must agree. Retain a
+separate supporting `successor` claim identifying the original `attended_name`
+and `attended_country`, the current `institution_ref`, and
+`relationship_type="successor"`. Original institution facts cannot borrow sector
+or location evidence belonging to the successor.
+
 ## Review an existing batch in the local reviewer
 
 ### 1. Open the batch

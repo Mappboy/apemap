@@ -51,6 +51,7 @@ def _rows(state: dict[str, Any]) -> list[dict[str, Any]]:
                 "status_label": FILTERS[status],
                 "sample": proposal["proposal_id"] in state["sample"],
                 "applied": applied,
+                "mapping_problems": ResearchBatches._mapping_problems(state, proposal),
                 "eligibility_reasons": state.get("current_eligibility", {}).get(
                     proposal["proposal_id"], proposal["eligibility_reasons"]
                 ),
@@ -307,7 +308,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             for evidence in proposal["evidence"]
             if request.form.get("inspected_" + evidence["evidence_id"]) == "yes"
         }
-        draft = {
+        draft: dict[str, Any] = {
             "proposal_id": proposal_id,
             "action": request.form.get("action", ""),
             "inspected": inspected,
@@ -321,6 +322,10 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             "identity_error": request.form.get("identity_error") == "yes",
             "supersedes": request.form.getlist("supersedes"),
         }
+        if proposal.get("manual_candidate"):
+            draft["institution_action"] = request.form.get(
+                "institution_action", "create_map"
+            )
         try:
             if not request.form.get("binding"):
                 raise ValueError("Reload the batch before reviewing")
@@ -332,6 +337,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 notes=draft["notes"],
                 identity_error=draft["identity_error"],
                 supersedes=draft["supersedes"],
+                institution_action=draft.get("institution_action"),
                 expected_revision=request.form["binding"],
             )
         except (OSError, ValueError, KeyError) as exc:

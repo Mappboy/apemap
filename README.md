@@ -107,6 +107,11 @@ for queue navigation, independent member-field decisions, research and retained
 evidence workflow.
 Guided research proposals use [persistent research batches](docs/guided-research-batches.md):
 members can receive explicit sampled approval; schools require inspection of all evidence.
+Package 0.11.0 supplies the actual associated members to school research and can
+generate manual institution proposals from cited facts. **Find cited evidence**
+and guided batches share source inspection and exact decision previews. Unsupported
+manual-school sectors remain unknown; existing databases require a fresh build
+from pinned sources before replaying these nullable definitions.
 After saving decisions, follow [Decisions to a new release](docs/decisions-to-release.md)
 to rebuild from pinned sources, verify the consumed ledger, package the public
 bundle and prepare publication. Saving a mapping alone does not update released

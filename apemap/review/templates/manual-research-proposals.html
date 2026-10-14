@@ -1,0 +1,19 @@
+{% for finding in manual_research_result.get('institution_candidates', []) %}
+<article class="candidate-card" data-manual-proposal>
+  <h3>Proposed manual institution</h3>
+  <p>Save these researched facts for source inspection and an exact decision preview.</p>
+  <dl class="research-facts">
+    {% for field, label in [('name', 'Name'), ('country', 'Country'), ('status', 'Status'), ('sector', 'Sector'), ('suburb', 'Locality'), ('state', 'State')] %}
+    <div><dt>{{ label }}</dt><dd>{{ finding.facts.get(field) or 'Not established' }}</dd></div>
+    {% endfor %}
+  </dl>
+  {% if finding.get('aph_id') %}<p>Research lead: {{ finding.aph_id }}. Member context does not establish institution identity.</p>{% endif %}
+  {% if manual_research_result.status == 'complete' %}
+  <form method="post" action="{{ url_for('save_manual_research_proposal', review_id=review_id, job_id=manual_research_job_id, index=loop.index0) }}" data-manual-proposal-save>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token or '' }}">
+    <button type="submit">Save manual institution proposal</button>
+  </form>
+  {% else %}<p>Some research requests failed. Complete the research before saving this proposal.</p>{% endif %}
+</article>
+{% endfor %}

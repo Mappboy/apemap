@@ -32,6 +32,17 @@ parliamentary service; they never establish school location. Case-wide attendanc
 evidence stays attached to its member. Only explicitly reusable school-identity or
 relationship claims can supply another assertion using the same frozen school ID.
 
+School research includes every associated member and scopes member-specific claims
+using the supplied `aph_id`. Those claims cannot be reused for another member or
+copied into a school-wide mapping. A source saying only that a member attended a
+named school does not distinguish same-name institutions. Supporting candidate
+identity claims require sourced campus, locality, historical name or another
+distinguishing detail; inspect the source before retaining the claim.
+
+Generated manual definitions retain per-field evidence references bound to their
+originating school case. Name and country require support; optional facts require
+their own support. This narrow linkage does not permit arbitrary cross-case reuse.
+
 ```json
 {
   "candidate_institution_ref": "acara:12345",
