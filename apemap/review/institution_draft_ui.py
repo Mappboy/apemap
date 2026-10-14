@@ -308,6 +308,13 @@ def register_institution_draft_routes(
             )
             payload = _payload_from_form("manual_institution")
             check_revisions(data)
+            if (
+                request.form.get("action", "accept") != "accept"
+                or request.form.get("supersedes", "").strip()
+            ):
+                raise ValueError(
+                    "This workflow previews a new institution definition; use the school review for other outcomes"
+                )
             if request.form.get("institution_sources_confirmed") != "yes":
                 raise ValueError(
                     "Inspect and confirm the cited institution facts before previewing"

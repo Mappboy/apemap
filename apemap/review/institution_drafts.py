@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 import math
 from typing import Any
 
-from apemap.review.evidence import EvidenceRecord, member_claim_aph_id
+from apemap.review.evidence import EvidenceRecord
 from apemap.review.manual_institutions import FIELDS, manual_institution_reference
 from apemap.review.model import active_heads, institution_reference, school_key
 
@@ -25,13 +25,18 @@ def eligible_sources(
         record.evidence_id: record
         for record in records
         if record.review_id == review_id
-        and not member_claim_aph_id(record)
+        and not (
+            isinstance(record.claim_value, Mapping) and "aph_id" in record.claim_value
+        )
         and record.claim_type
         not in {
             "attendance",
             "member_attendance",
             "attendance_context",
             "parliamentary_context",
+            "member_value",
+            "member_identity",
+            "member_context",
         }
         and record.source_type != "legacy-decision"
     }

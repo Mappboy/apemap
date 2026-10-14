@@ -374,6 +374,8 @@ def test_interpretation_transport_uses_no_search_tools(
     [
         "unknown",
         "member",
+        "member_null",
+        "member_invalid",
         "candidate",
         "contradicts",
         "wrong_case",
@@ -393,8 +395,12 @@ def test_interpretation_rejects_invalid_citation_scope(
     result = InstitutionProvider().interpret_institution(context)
     if bad == "unknown":
         result["fields"]["name"]["evidence_ids"] = ["unknown"]
-    elif bad == "member":
-        record["claim_value"]["aph_id"] = "TEST"
+    elif bad in {"member", "member_null", "member_invalid"}:
+        record["claim_value"]["aph_id"] = {
+            "member": "TEST",
+            "member_null": None,
+            "member_invalid": 12,
+        }[bad]
         record["evidence_id"] = ""
     elif bad == "candidate":
         record["candidate_institution_ref"] = "acara:1"
@@ -412,7 +418,14 @@ def test_interpretation_rejects_invalid_citation_scope(
             "value": -42,
             "evidence_ids": [record["evidence_id"]],
         }
-    if bad in {"member", "candidate", "contradicts", "wrong_case"}:
+    if bad in {
+        "member",
+        "member_null",
+        "member_invalid",
+        "candidate",
+        "contradicts",
+        "wrong_case",
+    }:
         record.update(EvidenceRecord.from_dict(record).to_dict())
         for proposed in result["fields"].values():
             proposed["evidence_ids"] = [record["evidence_id"]]
@@ -609,6 +622,21 @@ def test_stale_save_preserves_edited_institution_and_writes_no_definition(
         assert values["source_url"] == "https://example.org/history"
         assert values["field_country"] == "Australia"
         assert "Historical school evidence" in failed.get_data(as_text=True)
+        assert not review_service.log_path.exists()
+    finally:
+        app.extensions["research_jobs"].close()
+
+
+@pytest.mark.parametrize("field", ["action", "supersedes"])
+def test_generated_definition_does_not_ignore_other_review_intents(
+    review_service: ReviewService, monkeypatch: pytest.MonkeyPatch, field: str
+) -> None:
+    app, client, _, job, csrf = begin(review_service, monkeypatch)
+    try:
+        form = preview_form(client, job, csrf)
+        form[field] = "reject" if field == "action" else "previous-decision"
+        response = client.post(f"/items/{CASE}/institution-draft-preview", data=form)
+        assert response.status_code == 400
         assert not review_service.log_path.exists()
     finally:
         app.extensions["research_jobs"].close()
