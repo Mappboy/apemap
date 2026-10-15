@@ -130,3 +130,8 @@ Follow the [revalidation workflow](../../../../docs/guided-research-batches.md#r
 with the individually accepted scope. Applying decisions does not publish a dataset
 or update a released website. The [acceptance record](../../../../docs/issue-77-acceptance.md)
 records source provenance, remaining cases and validation.
+
+The [final Parliament 48 school research packet](p48-final-schools-20261015/README.md)
+uses the current decisions on 15 October 2026: five unresolved assertions, two
+proposed exact mappings, two unresolved school identities and one home-education
+finding. It preserves the prior research and applies no decisions.

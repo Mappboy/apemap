@@ -1,0 +1,561 @@
+[
+  {
+    "review_id": "education:245212:8fc6e3dfab079be1",
+    "school_review_id": "school:8fc6e3dfab079be1",
+    "member": "CANAVAN, the Hon. Matthew (Matt) James",
+    "recorded_school_name": "Chisholm Catholic College",
+    "manual_institutions": [],
+    "mapping": {
+      "review_id": "education:245212:8fc6e3dfab079be1",
+      "action": "map",
+      "payload": {
+        "aph_id": "245212",
+        "recorded_school_name": "Chisholm Catholic College",
+        "institution_ref": "acara:47888",
+        "relationship_type": "direct",
+        "evidence_refs": [
+          "evidence:8835001162efce7637d9e5518c4c4c01706003da0b53ded36abb7b0add418858",
+          "evidence:58c9ab0e15fedf2b761ce5be7a8c55b7915c9054d2019704a4e3f0c90e549d4b",
+          "evidence:e333b639e77f2f95a4629cbdda6a05d01f050f7433e9f0e4cbf746fc8ad36ef0",
+          "evidence:5a9a19bdc185280e3129f7c1e69fcec13ecbce7ad1be6bf0c0d322dfdd156b97"
+        ]
+      },
+      "source_url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/"
+    },
+    "evidence": [
+      {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "245212",
+          "recorded_school_name": "Chisholm Catholic College"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:8835001162efce7637d9e5518c4c4c01706003da0b53ded36abb7b0add418858"
+      },
+      {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Queensland Senator Matthew Canavan found God in Holy Matrimony",
+        "source_type": "original-newspaper-interview",
+        "source_url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "245212",
+          "recorded_school_name": "Chisholm Catholic College",
+          "institution_ref": "acara:47888",
+          "locality": "Cornubia"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Emilie Ng’s 20 September 2016 interview explicitly places Canavan at the Cornubia college while finishing high school. This is original interview reporting, not the later blog republication.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:58c9ab0e15fedf2b761ce5be7a8c55b7915c9054d2019704a4e3f0c90e549d4b"
+      },
+      {
+        "review_id": "school:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Chisholm Catholic College Cornubia official website",
+        "source_type": "official-school-profile",
+        "source_url": "https://www.chisholm.qld.edu.au/",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Chisholm Catholic College",
+          "suburb": "Cornubia",
+          "state": "QLD",
+          "school_type": "Secondary",
+          "sector": "Catholic"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official college identifies itself as a Catholic Years 7–12 school in Cornubia, Logan. The pinned register assigns this exact school ACARA 47888; Bedford WA is a distinct school.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:e333b639e77f2f95a4629cbdda6a05d01f050f7433e9f0e4cbf746fc8ad36ef0"
+      },
+      {
+        "review_id": "school:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Chisholm Catholic College Cornubia annual report 2021",
+        "source_type": "official-school-report",
+        "source_url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Chisholm Catholic College",
+          "address": "204 California Creek Rd, Cornubia QLD 4130",
+          "opened": 1992
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Page 2 identifies the school, address, Years 7–12 and 1992 opening. No attendance-year range or graduation year is inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:5a9a19bdc185280e3129f7c1e69fcec13ecbce7ad1be6bf0c0d322dfdd156b97"
+      }
+    ],
+    "gaps": [
+      "Exact attendance years and graduation are not established."
+    ],
+    "requires_individual_review": true,
+    "outcome": "proposed_mapping",
+    "reasoning": "A person-specific original interview explicitly names Cornubia. Official school sources and the pinned register establish acara:47888. Propose only Canavan’s exact assertion; do not create a school-wide default."
+  },
+  {
+    "review_id": "education:250156:6f66165bfc8609df",
+    "school_review_id": "school:6f66165bfc8609df",
+    "member": "STEELE-JOHN, Jordon Alexander",
+    "recorded_school_name": "Home educated",
+    "manual_institutions": [],
+    "mapping": null,
+    "evidence": [
+      {
+        "review_id": "education:250156:6f66165bfc8609df",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "250156",
+          "recorded_school_name": "Home educated"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:9c594f2f48296e7acd32331be3d71ecc5260424dfff1cc1dc41d94b66c816c38"
+      }
+    ],
+    "gaps": [],
+    "requires_individual_review": true,
+    "outcome": "non_institutional_education",
+    "reasoning": "The frozen APH row records Home educated. This describes an education mode and cannot support an invented school, ACARA target, manual institution, or campus. Reuse the complete prior finding without external searches."
+  },
+  {
+    "review_id": "education:280304:4db911ac8d31077e",
+    "school_review_id": "school:4db911ac8d31077e",
+    "member": "THORPE, Lidia Alma",
+    "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+    "manual_institutions": [],
+    "mapping": null,
+    "evidence": [
+      {
+        "review_id": "education:280304:4db911ac8d31077e",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '280304'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "280304",
+          "recorded_school_name": "Fitzroy and Collingwood Secondary Schools"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:40e77e349d79a8d9597d7685d11a8a0fa062d72fcec6de0b4bea54f1ffeaba82"
+      },
+      {
+        "review_id": "school:4db911ac8d31077e",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Schools Directory: Fitzroy Secondary College No. 7830",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "operating_dates",
+        "claim_value": {
+          "school_name": "Fitzroy Secondary College",
+          "former_name": "Fitzroy High School",
+          "school_number": "7830",
+          "opened": "1957-01-31",
+          "closed": "1992-12-31",
+          "rename_year": 1991
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "Opened government entry documents the historical secondary school and closure. It does not identify all schools in Thorpe’s combined assertion or establish continuity to a current ACARA target.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:687b88acb08e9cf74a9c7a01a304560520d595f37d2dbc5714218764b072df7a"
+      }
+    ],
+    "gaps": [
+      "Original reporting supporting the exact attendance sequence was not retrieved.",
+      "The official personal biography failed to open on this run; indexed text names no schools.",
+      "No supported split assertions or historical continuity to current ACARA institutions are established.",
+      "Earlier 1915 versus 1957 founding-date accounts remain unreconciled."
+    ],
+    "requires_individual_review": true,
+    "outcome": "unresolved",
+    "reasoning": "The combined plural APH label cannot truthfully be assigned to one institution. The secondary biography repeats the Year 7 Fitzroy / Year 8 Collingwood / Year 9 Fitzroy sequence, but its cited original newspaper article was not retrieved. The historical Fitzroy closure is independently confirmed. Preserve the current ambiguous-name policy and all previous institutional evidence."
+  },
+  {
+    "review_id": "education:297964:0477b661fc755dd3",
+    "school_review_id": "school:0477b661fc755dd3",
+    "member": "COLLINS, Dr Jessica",
+    "recorded_school_name": "John Paul College",
+    "manual_institutions": [],
+    "mapping": null,
+    "evidence": [
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '297964'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:38f6701a3a25cf8840c8ddf190d1413b2bb175af60915cf3484b69556b8507b1"
+      },
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Jessica Collins first speech, 30 July 2025, Hansard mirror",
+        "source_type": "parliamentary-transcript-mirror",
+        "source_url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College",
+          "childhood_move": "Queensland to New South Wales at age 13"
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "Her own speech, accessed through OpenAustralia, says she moved from Queensland to NSW at 13. It names no secondary school. This is a research lead only and cannot identify the college or rule out earlier schooling elsewhere.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4713b54edb8a9706ca091dfcd0c7030865475fa554a59d799061870572f9c2a5"
+      },
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Jess Collins official Liberal Party NSW landing page",
+        "source_type": "official-party-profile",
+        "source_url": "https://nswliberal.org.au/jess-collins",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College",
+          "school_not_identified": true
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The opened party page identifies Collins and her policy career, but supplies no school or campus. Absence on this page does not disprove attendance.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:55106afab4ce71e459d938c8f82b8191a8c6ec7f55c9b28c3d1d4a2b90fd7c61"
+      }
+    ],
+    "gaps": [
+      "A person-specific campus or jurisdiction citation is still required.",
+      "Neither maiden-name searching nor the first speech resolves the exact school.",
+      "APH profile and original Hansard source failed; the old party biography redirected to a 404."
+    ],
+    "requires_individual_review": true,
+    "outcome": "unresolved",
+    "reasoning": "The fresh queries include Jessica Bird, the maiden-name lead in Cam’s existing decision. No person-specific source identifies which John Paul College she attended. Her first-speech childhood movement is contextual only. Preserve Cam’s research decision and the ambiguous-name school policy; the New Zealand hypothesis remains unverified."
+  },
+  {
+    "review_id": "education:e0f:2f7f6b0f23bf99d3",
+    "school_review_id": "school:2f7f6b0f23bf99d3",
+    "member": "WOOD, the Hon. Jason Peter",
+    "recorded_school_name": "Ferntree Gully Technical School",
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:ferntree-gully-technical-school",
+        "sector": "Government",
+        "institution_status": "merged",
+        "school_name": "Ferntree Gully Technical School",
+        "country": "Australia",
+        "school_type": "Secondary",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:3db1836026c3b11da7718f8b00a4ae54c0f11d42cb4e26cfcc291fdfbf8d7eaf"
+          ],
+          "country": [
+            "evidence:839318f70da7d554003959520aec78219346101f5eeae9a5135d13bf812d05c5"
+          ],
+          "status": [
+            "evidence:6ae71dd7d86e839f9ad4e43282733b524207d54948c99b7be6fb169b1be225d9"
+          ],
+          "sector": [
+            "evidence:1594285d3f2af47d47c4acfe5268f16a372bbc9bdc9d0b743cf378e2196e2839"
+          ],
+          "school_type": [
+            "evidence:36e0e470ba93f3651bf7e1baa8b654f0ae15cddaa33cfb7c3b694eba3fbed6db"
+          ]
+        },
+        "institution_evidence_review_id": "school:2f7f6b0f23bf99d3"
+      }
+    ],
+    "mapping": {
+      "review_id": "education:e0f:2f7f6b0f23bf99d3",
+      "action": "map",
+      "payload": {
+        "aph_id": "E0F",
+        "recorded_school_name": "Ferntree Gully Technical School",
+        "institution_ref": "manual:ferntree-gully-technical-school",
+        "relationship_type": "direct",
+        "evidence_refs": [
+          "evidence:4e3690dba1bbe598f02db02197630d0873e51424fd8d17d0b596c5f095af3a77",
+          "evidence:5772e7445a61a0d5902d278e0a4d408eef3d704eac1a3c390c4fa597beead7ec",
+          "evidence:fa1dab8161453c8561d733190059d14df97a08cdd2b732493d310ab1faacd7a0"
+        ]
+      },
+      "source_url": "https://www.jasonwood.com.au/maiden_speech"
+    },
+    "evidence": [
+      {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "E0F",
+          "recorded_school_name": "Ferntree Gully Technical School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4e3690dba1bbe598f02db02197630d0873e51424fd8d17d0b596c5f095af3a77"
+      },
+      {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Jason Wood maiden speech",
+        "source_type": "member-first-speech",
+        "source_url": "https://www.jasonwood.com.au/maiden_speech",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "E0F",
+          "recorded_school_name": "Ferntree Gully Technical School",
+          "institution_ref": "manual:ferntree-gully-technical-school"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Wood’s own published maiden speech explicitly identifies his education at Ferntree Gully Technical School.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:5772e7445a61a0d5902d278e0a4d408eef3d704eac1a3c390c4fa597beead7ec"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Ferntree Gully Technical School",
+          "country": "Australia",
+          "sector": "Government",
+          "school_number": "7145",
+          "school_type": "Secondary",
+          "renamed_to": "Glenfern Secondary College",
+          "rename_year": 1990,
+          "closed": "1996-12-31",
+          "merge_year": 1997,
+          "merged_into": "Ferntree Gully College No. 7827"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The Victorian state-school directory identifies the technical school as No. 7145, renamed Glenfern in 1990 and merged with No. 7827 in 1997. Its address is listed under the Glenfern entry; no historical campus coordinates are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:fa1dab8161453c8561d733190059d14df97a08cdd2b732493d310ab1faacd7a0"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Ferntree Gully Technical School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:3db1836026c3b11da7718f8b00a4ae54c0f11d42cb4e26cfcc291fdfbf8d7eaf"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "Australia"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:839318f70da7d554003959520aec78219346101f5eeae9a5135d13bf812d05c5"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "sector",
+          "value": "Government"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1594285d3f2af47d47c4acfe5268f16a372bbc9bdc9d0b743cf378e2196e2839"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "status",
+          "value": "merged"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6ae71dd7d86e839f9ad4e43282733b524207d54948c99b7be6fb169b1be225d9"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "school_type",
+          "value": "Secondary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:36e0e470ba93f3651bf7e1baa8b654f0ae15cddaa33cfb7c3b694eba3fbed6db"
+      }
+    ],
+    "gaps": [
+      "No historical campus coordinates or exact attendance dates are proposed.",
+      "The listed address is not asserted to be valid throughout Wood’s attendance."
+    ],
+    "requires_individual_review": true,
+    "outcome": "proposed_mapping",
+    "reasoning": "Wood’s own speech establishes attendance; the historical state-school register establishes the original institution. Propose a direct assertion mapping after individually accepting the manual historical definition. The separately numbered merger school is not substituted as his attended institution."
+  }
+]

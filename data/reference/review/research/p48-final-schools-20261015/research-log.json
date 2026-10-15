@@ -1,0 +1,135 @@
+{
+  "researcher": "current Codex session",
+  "model": null,
+  "model_note": "The callable session does not expose its exact model identifier. No Luna or Sol research workers were invoked for this follow-up.",
+  "token_usage": null,
+  "method": "Explicitly requested final follow-up; three queries and six source-open attempts maximum per case. All prior attempts remain in prior-research.json; budgets are not presented as unused historical attempts.",
+  "cases": [
+    {
+      "review_id": "education:245212:8fc6e3dfab079be1",
+      "search_queries": [
+        "\"Matt Canavan\" \"Chisholm\" college",
+        "site.chisholm.qld.edu.au Canavan",
+        "\"Canavan\" \"Chisholm\" \"Cornubia\""
+      ],
+      "searches": 3,
+      "source_opens": 4,
+      "opened_sources": [
+        {
+          "url": "https://www.chisholm.qld.edu.au/",
+          "status": "opened"
+        },
+        {
+          "url": "https://atributetoaustralianchristians.wordpress.com/2022/02/18/matt-canavan/",
+          "status": "opened; discovery only, original interview followed"
+        },
+        {
+          "url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:250156:6f66165bfc8609df",
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": []
+    },
+    {
+      "review_id": "education:280304:4db911ac8d31077e",
+      "search_queries": [
+        "\"Lidia Thorpe\" \"Fitzroy\" \"Collingwood\" school",
+        "\"Lidia Thorpe\" \"Collingwood High\" Latimore 2022",
+        "\"Lidia Thorpe\" school Fitzroy Collingwood biography Latimore"
+      ],
+      "searches": 3,
+      "source_opens": 6,
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+          "status": "opened; secondary lead only"
+        },
+        {
+          "url": null,
+          "status": "failed click: Wikipedia reference 345, invalid arguments"
+        },
+        {
+          "url": "https://www.lidiathorpe.com/about_me",
+          "status": "failed: internal error"
+        },
+        {
+          "url": "https://www.smh.com.au/national/shouty-uninformed-ineffective-how-senator-lidia-thorpe-annoys-the-establishment-20220419-p5aelh.html",
+          "status": "failed: unverified reconstructed URL, not evidence and not a verified citation"
+        },
+        {
+          "url": null,
+          "status": "failed click: Wikipedia find result reference 345, invalid arguments"
+        },
+        {
+          "url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:297964:0477b661fc755dd3",
+      "search_queries": [
+        "\"Jessica Collins\" \"John Paul\" school",
+        "\"Jessica Collins\" senator school education first speech John college",
+        "\"Jessica Bird\" \"John Paul\" college"
+      ],
+      "searches": 3,
+      "source_opens": 6,
+      "opened_sources": [
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+          "status": "failed: internal error"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+          "status": "failed find on indexed APH profile: internal error; conservatively counted as another access attempt"
+        },
+        {
+          "url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+          "status": "opened"
+        },
+        {
+          "url": null,
+          "status": "failed click: OpenAustralia Hansard source reference 14, internal error"
+        },
+        {
+          "url": "https://nswliberal.org.au/jessica-collins/meet-jessica",
+          "status": "redirected to https://nswliberal.org.au/404; unavailable biography"
+        },
+        {
+          "url": "https://nswliberal.org.au/jess-collins",
+          "status": "opened; no school named"
+        }
+      ]
+    },
+    {
+      "review_id": "education:e0f:2f7f6b0f23bf99d3",
+      "search_queries": [
+        "\"Jason Wood\" \"Ferntree Gully\" technical school",
+        "site.vic.gov.au \"Ferntree Gully Technical\" school"
+      ],
+      "searches": 2,
+      "source_opens": 2,
+      "opened_sources": [
+        {
+          "url": "https://www.jasonwood.com.au/maiden_speech",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+          "status": "opened"
+        }
+      ]
+    }
+  ]
+}
