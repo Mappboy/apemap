@@ -1,0 +1,61 @@
+{
+  "applied_at": "2026-10-15T22:24:01.623341+00:00",
+  "approval_sha256": "0941d74e0ec2e6b2522a08e5e1d6b891cf364659819147f5ba3c5e17bc10cce8",
+  "events": [
+    "18bde520-c32a-477d-8f90-7e9984f2000e",
+    "10ddc9a2-73f2-4f43-bb41-c80f41b18488",
+    "7d8fc6ff-a900-413d-a3fe-6b0eda88a731",
+    "5b409aab-cc21-4168-a33c-28dc267dded2",
+    "9a4f3794-cc2a-447e-a6f2-aafcf9eeca42",
+    "a1c260fd-6d1d-43ea-bd18-c834efc439e7",
+    "ca157176-6d4e-4f98-ac2f-609c65212657",
+    "01d38e53-0307-4861-9470-c2dfcd38bc31",
+    "cf173415-2c67-446c-be14-eb068eee04a1",
+    "8ceb4405-fc28-452f-a23c-c372c08b4e84",
+    "ea0b7ad6-706f-41f2-9501-38895bc93ea5",
+    "ac9f19b0-5da5-46c1-805b-f02a8e6655a2",
+    "ba14fade-120f-4129-b940-164ffb74f257",
+    "73b2f361-c837-4040-9f10-f670af3c0240",
+    "325ec11d-c5e2-43cc-a6f2-95b24ca22603",
+    "a0f154be-8422-42b1-a660-7b369a62bc52",
+    "a142d7b1-e068-4580-9e30-31a05b788a31",
+    "b91c7a90-042b-4fe4-a44d-65b188d4d7be",
+    "a6b9855a-56da-4ee7-92d6-0f3f3a80a3a0",
+    "1a435622-df97-4c67-ae2c-8e572b45b842",
+    "2c1cf8d4-da4a-4d24-a99e-4baeb378a046",
+    "3428e655-4e22-47b3-a12b-d59a4e9da976",
+    "327c4970-7571-4b09-b70a-4d028e31de42",
+    "f765eeac-8444-4fd9-922d-467f19f83648",
+    "b62896b6-4bb5-4790-80f2-0a81bb4b8cbf"
+  ],
+  "queue_changes": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "attendance_assertions": 351,
+      "mapped_assertions": 342,
+      "unresolved_assertions": 9
+    },
+    "canonical_before": {
+      "attendance_assertions": 351,
+      "mapped_assertions": 331,
+      "unresolved_assertions": 20
+    },
+    "pending_after": 37,
+    "pending_before": 37,
+    "removed_review_ids": [],
+    "status_counts_after": {
+      "accepted": 248,
+      "needs_individual_review": 2,
+      "pending": 37,
+      "rejected": 1,
+      "resolved_individually": 18
+    },
+    "status_counts_before": {
+      "accepted": 248,
+      "needs_individual_review": 2,
+      "pending": 37,
+      "rejected": 1,
+      "resolved_individually": 18
+    }
+  }
+}
