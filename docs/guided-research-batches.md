@@ -207,6 +207,12 @@ reload. Repeating application of the same successfully applied preview recovers
 its receipt instead of appending duplicate decisions. Previously applied proposals
 are excluded from later previews.
 
+Later manual decisions can supersede an applied decision while retaining its
+research provenance. The batch verifies the original application against the
+frozen proposal and keeps that application in its history. Later supersessions
+are not treated as new applications of the old proposal; the current decision
+remains authoritative.
+
 If decisions were appended but receipt writing failed, reopen the saved exact
 preview and choose **Recover this application receipt**, or repeat the same CLI
 apply command and approval hash. Recovery appends zero events. A missing receipt

@@ -1320,13 +1320,36 @@ class ResearchBatches:
     def _applied_proposals(self, state: dict[str, Any]) -> dict[str, list[str]]:
         proposals = {p["proposal_id"]: p for p in state["proposals"]}
         result: dict[str, list[str]] = {}
-        for event in self.service.events(allow_conflicts=True):
+        events = self.service.events(allow_conflicts=True)
+        by_id = {event.decision_id: event for event in events}
+        for event in events:
             pid = event.payload.get("research_proposal_id")
             if (
                 event.payload.get("research_batch_id") != state["manifest"]["batch_id"]
                 or not isinstance(pid, str)
                 or pid not in proposals
             ):
+                continue
+            # Manual supersessions can inherit research provenance. Only the
+            # original application must match the frozen proposal.
+            pending = list(event.supersedes)
+            visited = set()
+            inherited = False
+            while pending:
+                identifier = pending.pop()
+                if identifier in visited:
+                    continue
+                visited.add(identifier)
+                parent = by_id[identifier]
+                if (
+                    parent.payload.get("research_batch_id")
+                    == state["manifest"]["batch_id"]
+                    and parent.payload.get("research_proposal_id") == pid
+                ):
+                    inherited = True
+                    break
+                pending.extend(parent.supersedes)
+            if inherited:
                 continue
             proposal = proposals[pid]
             expected = self._proposal_payload(state, proposal)

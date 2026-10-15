@@ -8,8 +8,9 @@ import pytest
 from apemap.db import get_connection
 from apemap.review.evidence import EvidenceRecord
 from apemap.review.model import school_review_id
-from apemap.review.store import StaleReviewError
+from apemap.review.store import StaleReviewError, append_events
 from apemap.review.research_batches import ResearchBatches
+from apemap.review.service import build_review_event
 from tests.test_research_batches import accept, batches as batches, school_proposal
 from tests.test_review_service import review_service as review_service
 
@@ -64,6 +65,118 @@ def fake_school(batches: ResearchBatches, monkeypatch: pytest.MonkeyPatch) -> st
         batches.service, "show", lambda key: {"context": {"members": []}}
     )
     return rid
+
+
+@pytest.mark.parametrize("reverse_history", [False, True])
+@pytest.mark.parametrize("tagged_intermediate", [False, True])
+def test_applied_research_survives_later_manual_decisions(
+    batches: ResearchBatches,
+    monkeypatch: pytest.MonkeyPatch,
+    reverse_history: bool,
+    tagged_intermediate: bool,
+) -> None:
+    rid = fake_school(batches, monkeypatch)
+    task = batches.prepare("history", "schools", review_ids=[rid])["tasks"][0]
+    state = batches.import_results("history", [school_proposal(task)])
+    item = state["proposals"][0]
+    accept(batches, "history", item)
+    batches.retain("history")
+    metadata = {
+        "research_batch_id": "history",
+        "research_proposal_id": item["proposal_id"],
+        "research_approval_scope": "individual",
+        "evidence_refs": [record["evidence_id"] for record in item["evidence"]],
+    }
+    prior = build_review_event(
+        rid,
+        "research",
+        {"recorded_name": "Historical School"},
+        notes="Earlier research decision",
+    )
+    original = build_review_event(
+        rid,
+        "research",
+        {**item["payload"], **metadata},
+        supersedes=[prior.decision_id],
+        notes="Applied frozen research",
+    )
+    intermediate_payload = dict(original.payload)
+    if not tagged_intermediate:
+        for key in metadata.keys() - {"evidence_refs"}:
+            intermediate_payload.pop(key)
+    intermediate = build_review_event(
+        rid,
+        "research",
+        intermediate_payload,
+        supersedes=[original.decision_id],
+        notes="Later reviewer note",
+    )
+    later = build_review_event(
+        rid,
+        "map",
+        {
+            "recorded_name": "Historical School",
+            "institution_ref": "acara:1",
+            "relationship_type": "direct",
+            **metadata,
+            "evidence_refs": list(reversed(metadata["evidence_refs"])),
+        },
+        source_url="https://education.example.org/correction",
+        supersedes=[intermediate.decision_id],
+    )
+    history = [prior, original, intermediate, later]
+    append_events(
+        batches.service.log_path,
+        list(reversed(history)) if reverse_history else history,
+        expected_revision=batches.service.review_revision(),
+    )
+    ledger = batches.service.log_path.read_bytes()
+    frozen = (batches.path("history") / "proposals-0001.json").read_bytes()
+    state = batches.show("history")
+    assert state["applied_proposals"] == {item["proposal_id"]: [original.decision_id]}
+    with pytest.raises(ValueError, match="No approved proposals"):
+        batches.retain("history")
+    assert batches.service.log_path.read_bytes() == ledger
+    assert (batches.path("history") / "proposals-0001.json").read_bytes() == frozen
+
+
+@pytest.mark.parametrize("changed_field", ["payload", "evidence_refs"])
+def test_superseded_application_still_must_match_frozen_proposal(
+    batches: ResearchBatches,
+    monkeypatch: pytest.MonkeyPatch,
+    changed_field: str,
+) -> None:
+    rid = fake_school(batches, monkeypatch)
+    task = batches.prepare("history", "schools", review_ids=[rid])["tasks"][0]
+    item = batches.import_results("history", [school_proposal(task)])["proposals"][0]
+    payload = {
+        **item["payload"],
+        "research_batch_id": "history",
+        "research_proposal_id": item["proposal_id"],
+        "research_approval_scope": "individual",
+        "evidence_refs": [record["evidence_id"] for record in item["evidence"]],
+    }
+    if changed_field == "payload":
+        payload["resolution_reason"] = "ambiguous_name"
+    else:
+        payload["evidence_refs"] = payload["evidence_refs"][:1]
+    original = build_review_event(
+        rid, "research", payload, notes="Incorrect application"
+    )
+    later = build_review_event(
+        rid,
+        "research",
+        payload,
+        supersedes=[original.decision_id],
+        notes="Later reviewer note",
+    )
+    append_events(
+        batches.service.log_path,
+        [original, later],
+        expected_revision=batches.service.review_revision(),
+    )
+    with pytest.raises(ValueError, match="Previously applied research differs"):
+        batches.show("history")
 
 
 def test_manual_prepare_is_persistent_and_writes_no_ledgers(
