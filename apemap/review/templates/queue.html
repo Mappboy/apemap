@@ -51,6 +51,8 @@
         {% endif %}
       {% elif row.school is defined %}
         {{ row.school.targets | length }} possible targets · {{ row.school.leads | length }} unresolved evidence leads{% if row.school.saved_reference %}<small>Saved mapping: {{ row.school.saved_reference }}</small>{% endif %}
+        {% if row.get('individual_resolution') %}{% set progress = row.individual_resolution %}<small>{{ progress.resolved_count }} resolved · {{ progress.unresolved_count }} unresolved · {{ progress.withdrawn_count }} withdrawn</small>
+        {% for assertion in progress.assertions if assertion.current_resolution.get('resolution_scope') == 'assertion' %}<small>Active member decision: <a href="{{ url_for('detail', review_id=assertion.review_id) }}">{{ assertion.display_name }}</a> · {{ assertion.current_resolution.get('institution_name') or assertion.current_resolution.get('institution_ref') or assertion.current_resolution.status|replace('_', ' ') }}{% if assertion.current_resolution.get('institution_name') and assertion.current_resolution.get('institution_ref') %} · {{ assertion.current_resolution.institution_ref }}{% endif %}</small>{% endfor %}{% endif %}
       {% else %}
         <details><summary>Inspect evidence</summary><pre>{{ row.get('evidence', row.get('payload', {})) | json_text }}</pre></details>
       {% endif %}

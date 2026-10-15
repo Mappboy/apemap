@@ -11,6 +11,16 @@ To accept a researched change, follow this sequence:
 change. Applying decisions saves them to the ledger; rebuilding derived data and
 publishing a dataset are separate steps.
 
+The live **Unmatched schools** list reads active member-specific decisions even
+when no school-wide individual-resolution flag was recorded. For names without a
+reviewed shared mapping, once every retained assertion is mapped or withdrawn,
+the school is marked
+**Resolved individually** and leaves that list. Partial, conflicting and research
+outcomes remain visible with their current member decisions and target references.
+School details and the **All review items** list show the resolved targets. No
+school-wide mapping is created by this derived progress, and source-derived
+automatic matches alone do not count as reviewed decisions.
+
 ## Unmatched schools across all parliaments
 
 The `all-unmatched-schools-20261015` batch appears in the ordinary **Research

@@ -26,7 +26,7 @@ from apemap.review.progress import (
     school_resolution_progress,
 )
 from apemap.review.schools import school_view
-from apemap.review.service import ReviewService
+from apemap.review.service import ReviewService, build_review_event
 from apemap.review.store import StaleReviewError, encode_event
 from tests.db_fixtures import DatabaseFactory
 
@@ -168,6 +168,138 @@ def progress_service(
 
 def completed() -> list[ReviewEvent]:
     return [policy(), education("APH-1"), education("APH-2", reference="acara:2")]
+
+
+@pytest.mark.parametrize("legacy_research", [False, True])
+@pytest.mark.integration
+def test_applied_assertion_maps_complete_without_an_individual_policy(
+    progress_conn: duckdb.DuckDBPyConnection, legacy_research: bool
+) -> None:
+    events = completed()[1:]
+    if legacy_research:
+        events.insert(0, replace(policy(), payload={"recorded_name": NAME}))
+    result = school_resolution_progress(progress_conn, events, resolve=resolve)[
+        SCHOOL_ID
+    ]
+    assert result["status"] == "resolved_individually"
+    assert result["resolved_count"] == 2 and result["unresolved_count"] == 0
+    assert {
+        row["current_resolution"]["institution_ref"] for row in result["assertions"]
+    } == {"acara:1", "acara:2"}
+    assert not any(
+        event.effective_action in {"accept", "map"} and event.entity_type == "school"
+        for event in events
+    )
+
+
+@pytest.mark.parametrize(
+    "remaining", ["pending", "research", "conflict", "unavailable", "withdrawn"]
+)
+@pytest.mark.integration
+def test_no_policy_progress_keeps_incomplete_assertions_visible(
+    progress_conn: duckdb.DuckDBPyConnection, remaining: str
+) -> None:
+    events = [education("APH-1")]
+    if remaining == "research":
+        events.append(education("APH-2", "research", None))
+    elif remaining == "conflict":
+        events.extend(
+            [
+                education("APH-2", decision_id="first"),
+                education("APH-2", reference="acara:2", decision_id="second"),
+            ]
+        )
+    elif remaining == "unavailable":
+        events.append(education("APH-2", reference="acara:999"))
+    elif remaining == "withdrawn":
+        events.append(education("APH-2", "reject", None))
+    result = school_resolution_progress(progress_conn, events, resolve=resolve)[
+        SCHOOL_ID
+    ]
+    assert result["status"] == (
+        "resolved_individually"
+        if remaining == "withdrawn"
+        else "needs_individual_review"
+    )
+    assert result["resolved_count"] == 1
+    assert result["unresolved_count"] == (0 if remaining == "withdrawn" else 1)
+
+
+@pytest.mark.integration
+def test_no_policy_mapping_requires_source_inventory() -> None:
+    result = school_resolution_progress(None, completed()[1:], resolve=resolve)[
+        SCHOOL_ID
+    ]
+    assert not result["available"] and result["status"] == "needs_individual_review"
+
+
+@pytest.mark.parametrize("action", ["accept", "reject"])
+@pytest.mark.integration
+def test_assertion_progress_preserves_shared_school_disposition(
+    progress_conn: duckdb.DuckDBPyConnection, action: str
+) -> None:
+    default = replace(
+        policy(),
+        action=action,
+        payload={
+            "recorded_name": NAME,
+            "institution_ref": "acara:1",
+            "relationship_type": "direct",
+        },
+    )
+    events = [default, education("APH-1")]
+    result = school_resolution_progress(
+        progress_conn, events, {SCHOOL_ID}, resolve=resolve
+    )[SCHOOL_ID]
+    assert result["status"] == ("accepted" if action == "accept" else "rejected")
+
+
+@pytest.mark.parametrize("manual_target", [False, True])
+@pytest.mark.integration
+def test_no_policy_queue_and_detail_use_active_member_mappings(
+    progress_service: ReviewService,
+    manual_target: bool,
+) -> None:
+    from apemap.review.gui import create_app
+
+    events = completed()[1:]
+    target = "acara:2"
+    if manual_target:
+        target = "manual:overseas-college"
+        events[-1] = education("APH-2", reference=target)
+        events.insert(
+            0,
+            build_review_event(
+                "institution:" + target,
+                "accept",
+                {
+                    "institution_ref": target,
+                    "school_name": "Overseas College",
+                    "country": "Kenya",
+                },
+                source_url=SOURCE,
+                reviewer="Fixture reviewer",
+            ),
+        )
+    progress_service.log_path.write_bytes(
+        b"".join(encode_event(event) for event in events)
+    )
+    before = progress_service.log_path.read_bytes()
+    item = progress_service.show(SCHOOL_ID)
+    assert item["status"] == "resolved_individually"
+    assert item["context"]["individual_resolution"]["resolved_count"] == 2
+    assert all(
+        row["status"] == "resolved_individually"
+        for row in progress_service.candidates("school")
+    )
+    client = create_app(progress_service).test_client()
+    unmatched = client.get("/schools/unmatched").get_data(as_text=True)
+    assert "/items/" + SCHOOL_ID not in unmatched
+    all_items = client.get("/?entity=school").get_data(as_text=True)
+    assert "2 resolved" in all_items and target in all_items
+    detail = client.get("/items/" + SCHOOL_ID).get_data(as_text=True)
+    assert "2 resolved" in detail and "acara:1" in detail and target in detail
+    assert progress_service.log_path.read_bytes() == before
 
 
 @pytest.mark.integration
@@ -372,13 +504,16 @@ def test_frozen_inventory_reopens_when_source_build_adds_an_assertion(
     )
 
 
+@pytest.mark.parametrize("individual_policy", [False, True])
 @pytest.mark.integration
 def test_show_queue_status_and_exports_share_derived_completion(
     progress_service: ReviewService,
     tmp_path: Path,
+    individual_policy: bool,
 ) -> None:
     service = progress_service
-    service.log_path.write_bytes(b"".join(encode_event(event) for event in completed()))
+    events = completed() if individual_policy else completed()[1:]
+    service.log_path.write_bytes(b"".join(encode_event(event) for event in events))
     item = service.show(SCHOOL_ID)
     assert item["status"] == "resolved_individually"
     assert item["context"]["individual_resolution"]["resolved_count"] == 2
@@ -391,12 +526,12 @@ def test_show_queue_status_and_exports_share_derived_completion(
     )
     with get_connection(service.db_path) as conn:
         annotated = annotate_individual_progress(
-            annotate_candidates(build_candidates(conn), completed()),
+            annotate_candidates(build_candidates(conn), events),
             school_resolution_progress(
-                conn, completed(), resolve=service.institution_resolver()
+                conn, events, resolve=service.institution_resolver()
             ),
         )
-        load_into_duckdb(conn, completed(), annotated)
+        load_into_duckdb(conn, events, annotated)
         assert conn.execute(
             "SELECT COUNT(*) FROM resolved_school_mappings"
         ).fetchone() == (0,)

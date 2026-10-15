@@ -166,6 +166,7 @@ When the user corrects your approach, append a one-line rule here before ending 
 - Validate proposed mapping evidence references against the exact target; preserve superseded candidate evidence without selecting it for a new target.
 - Read saved manual institutions from active definition events; local register search returns ACARA schools only.
 - Scope unmatched-school research across all parliaments unless restricted explicitly; deliver it in the normal Research batches review workflow, not a separate packet page, and verify it in the running reviewer.
+- Derive unmatched-school completion from active attendance decisions even without a school-wide individual-resolution policy; verify queue removal and displayed targets after application.
 ## 11. Other important factors
 
 ### Repository map
