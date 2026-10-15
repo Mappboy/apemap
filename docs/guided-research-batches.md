@@ -11,6 +11,21 @@ To accept a researched change, follow this sequence:
 change. Applying decisions saves them to the ledger; rebuilding derived data and
 publishing a dataset are separate steps.
 
+## Read saved research packets
+
+The **Saved research packets** section on **Research batches** includes completed
+research saved outside the guided model-attempt format. Open a packet to inspect
+every finding, source, proposed mapping, institution definition and research log.
+**Open this member's education review** takes you to the exact attendance assertion
+and preserves your queue filters. Review and apply any changes there through the
+normal evidence and decision-preview workflow.
+
+These packet pages are read-only. Their `packet.json` manifest pins the displayed
+files by SHA-256 with LF-normalized line endings; other changes produce an error.
+Displaying a packet does not create guided attempts, approve sources, or append
+decisions. The final Parliament
+48 packet is `p48-final-schools-20261015`.
+
 ## Generate a manual institution from researched facts
 
 On a school review, **Find cited evidence** researches every associated member's

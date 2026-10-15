@@ -2,7 +2,15 @@
 {% block title %}Research batches{% endblock %}
 {% block content %}
 <div class="research-batches">
-<h1>Guided research batches</h1>
+<h1>Research batches</h1>
+{% if packets %}<section aria-labelledby="saved-packets"><h2 id="saved-packets">Saved research packets</h2>
+{% for packet in packets %}<article class="research-source">
+{% if packet.error %}<h3>{{ packet.batch_id }}</h3><p class="error" role="alert">{{ packet.error }}</p>{% else %}
+<h3><a href="{{ url_for('research_packet_detail', batch_id=packet.manifest.batch_id) }}">{{ packet.manifest.title }}</a></h3>
+<p>{{ packet.manifest.batch_id }} · {{ packet.manifest.created_at[:10] }} · {{ packet.manifest.case_count }} findings</p>
+<p>Sources and proposed mappings for individual education review.</p>{% endif %}
+</article>{% endfor %}</section>{% endif %}
+<h2>Guided research batches</h2>
 {% if operation_error %}<p class="error" role="alert">Batch was not prepared: {{ operation_error }}</p>{% endif %}
 <div class="table-wrap"><table class="research-batch-list">
 <thead><tr><th>Batch</th><th>Research</th><th>Reviews</th><th>Applied</th><th>Status</th></tr></thead>

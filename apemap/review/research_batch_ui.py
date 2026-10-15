@@ -12,6 +12,7 @@ from uuid import uuid4
 from flask import Flask, abort, redirect, render_template, request, url_for
 
 from apemap.review.research_batches import ResearchBatches, _digest
+from apemap.review.research_packets import load_research_packet
 from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError
 
@@ -128,9 +129,16 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 )
             except (OSError, ValueError, KeyError) as exc:
                 saved.append({"manifest": manifest, "error": str(exc)})
+        packets = []
+        for path in sorted(batches.root.glob("*/packet.json")):
+            try:
+                packets.append(load_research_packet(path.parent))
+            except (OSError, ValueError, KeyError) as exc:
+                packets.append({"batch_id": path.parent.name, "error": str(exc)})
         return render_template(
             "research-batches.html",
             batches=saved,
+            packets=packets,
             operation_error=error,
             draft=request.form,
         )
@@ -257,6 +265,16 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
     @app.get("/research-batches")
     def research_batch_list() -> str:
         return listing()
+
+    @app.get("/research-packets/<batch_id>")
+    def research_packet_detail(batch_id: str) -> Any:
+        try:
+            packet = load_research_packet(batches.path(batch_id))
+            return render_template("research-packet.html", packet=packet)
+        except FileNotFoundError:
+            abort(404)
+        except (OSError, ValueError, KeyError) as exc:
+            return render_template("error.html", message=str(exc)), 400
 
     @app.post("/research-batches/prepare")
     def research_batch_prepare() -> Any:
