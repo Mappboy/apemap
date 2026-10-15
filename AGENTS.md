@@ -165,7 +165,7 @@ When the user corrects your approach, append a one-line rule here before ending 
 - Count every query in batched research search calls toward the per-case search budget.
 - Validate proposed mapping evidence references against the exact target; preserve superseded candidate evidence without selecting it for a new target.
 - Read saved manual institutions from active definition events; local register search returns ACARA schools only.
-- Verify delivered school research appears in Research batches and opens in the running reviewer before handoff.
+- Scope unmatched-school research across all parliaments unless restricted explicitly; deliver it in the normal Research batches review workflow, not a separate packet page, and verify it in the running reviewer.
 ## 11. Other important factors
 
 ### Repository map

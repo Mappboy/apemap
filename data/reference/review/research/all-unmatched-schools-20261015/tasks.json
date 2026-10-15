@@ -1,0 +1,3055 @@
+[
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "St Paul's School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1988,
+            "label": "Estimated secondary attendance: 1982–1988 (birth year +12 to +18; research only)",
+            "start_year": 1982
+          },
+          "graduation_year": null,
+          "recorded_name": "St Paul's School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AKI'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:45686",
+          "latitude": -37.7389,
+          "longitude": 144.968,
+          "myschool_id": null,
+          "postcode": "3058",
+          "school_name": "St Paul's School",
+          "state": "VIC",
+          "suburb": "Coburg"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:45825",
+          "latitude": -37.9228,
+          "longitude": 145.041,
+          "myschool_id": null,
+          "postcode": "3204",
+          "school_name": "St Paul's School",
+          "state": "VIC",
+          "suburb": "Bentleigh"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:45907",
+          "latitude": -37.7875,
+          "longitude": 144.808,
+          "myschool_id": null,
+          "postcode": "3020",
+          "school_name": "St Paul's School",
+          "state": "VIC",
+          "suburb": "Sunshine West"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:46072",
+          "latitude": -37.868,
+          "longitude": 145.412,
+          "myschool_id": null,
+          "postcode": "3793",
+          "school_name": "St Paul's School",
+          "state": "VIC",
+          "suburb": "Monbulk"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:47729",
+          "latitude": -27.6356,
+          "longitude": 153.111,
+          "myschool_id": null,
+          "postcode": "4114",
+          "school_name": "St Paul's School",
+          "state": "QLD",
+          "suburb": "Woodridge"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's School"
+          ],
+          "institution_ref": "acara:47999",
+          "latitude": -27.3159,
+          "longitude": 153.004,
+          "myschool_id": null,
+          "postcode": "4036",
+          "school_name": "St Paul's School",
+          "state": "QLD",
+          "suburb": "Bald Hills"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Primary School"
+          ],
+          "institution_ref": "acara:43292",
+          "latitude": -32.9794,
+          "longitude": 151.694,
+          "myschool_id": null,
+          "postcode": "2290",
+          "school_name": "St Paul's Primary School",
+          "state": "NSW",
+          "suburb": "Gateshead"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Primary School"
+          ],
+          "institution_ref": "acara:43314",
+          "latitude": -32.721,
+          "longitude": 151.53,
+          "myschool_id": null,
+          "postcode": "2320",
+          "school_name": "St Paul's Primary School",
+          "state": "NSW",
+          "suburb": "Rutherford"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Grammar School"
+          ],
+          "institution_ref": "acara:44000",
+          "latitude": -33.693,
+          "longitude": 150.715,
+          "myschool_id": null,
+          "postcode": "2749",
+          "school_name": "St Paul's Grammar School",
+          "state": "NSW",
+          "suburb": "Cranebrook"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Primary School"
+          ],
+          "institution_ref": "acara:46015",
+          "latitude": -34.2046,
+          "longitude": 142.156,
+          "myschool_id": null,
+          "postcode": "3500",
+          "school_name": "St Paul's Primary School",
+          "state": "VIC",
+          "suburb": "Mildura"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Primary School"
+          ],
+          "institution_ref": "acara:48925",
+          "latitude": -31.9254,
+          "longitude": 115.864,
+          "myschool_id": null,
+          "postcode": "6050",
+          "school_name": "St Paul's Primary School",
+          "state": "WA",
+          "suburb": "Mount Lawley"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Primary School"
+          ],
+          "institution_ref": "acara:48968",
+          "latitude": -20.7331,
+          "longitude": 116.85,
+          "myschool_id": null,
+          "postcode": "6714",
+          "school_name": "St Paul's Primary School",
+          "state": "WA",
+          "suburb": "Karratha"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Catholic School"
+          ],
+          "institution_ref": "acara:40042",
+          "latitude": -42.7373,
+          "longitude": 147.248,
+          "myschool_id": null,
+          "postcode": "7030",
+          "school_name": "St Paul's Catholic School",
+          "state": "TAS",
+          "suburb": "Bridgewater"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Vincent de Paul's School"
+          ],
+          "institution_ref": "acara:45852",
+          "latitude": -37.7421,
+          "longitude": 144.924,
+          "myschool_id": null,
+          "postcode": "3041",
+          "school_name": "St Vincent de Paul's School",
+          "state": "VIC",
+          "suburb": "Strathmore"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Vincent de Paul's School"
+          ],
+          "institution_ref": "acara:45923",
+          "latitude": -38.2306,
+          "longitude": 146.415,
+          "myschool_id": null,
+          "postcode": "3840",
+          "school_name": "St Vincent de Paul's School",
+          "state": "VIC",
+          "suburb": "Morwell"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Kealba Catholic School"
+          ],
+          "institution_ref": "acara:46031",
+          "latitude": -37.7337,
+          "longitude": 144.82,
+          "myschool_id": null,
+          "postcode": "3021",
+          "school_name": "St Paul's Kealba Catholic School",
+          "state": "VIC",
+          "suburb": "Kealba"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Catholic Primary School"
+          ],
+          "institution_ref": "acara:40353",
+          "latitude": -12.387,
+          "longitude": 130.858,
+          "myschool_id": null,
+          "postcode": "0810",
+          "school_name": "St Paul's Catholic Primary School",
+          "state": "NT",
+          "suburb": "Rapid Creek"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Catholic Primary School"
+          ],
+          "institution_ref": "acara:43331",
+          "latitude": -34.5723,
+          "longitude": 150.765,
+          "myschool_id": null,
+          "postcode": "2527",
+          "school_name": "St Paul's Catholic Primary School",
+          "state": "NSW",
+          "suburb": "Albion Park"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Catholic Primary School"
+          ],
+          "institution_ref": "acara:43334",
+          "latitude": -34.0531,
+          "longitude": 150.696,
+          "myschool_id": null,
+          "postcode": "2570",
+          "school_name": "St Paul's Catholic Primary School",
+          "state": "NSW",
+          "suburb": "Camden"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Paul's Catholic Primary School"
+          ],
+          "institution_ref": "acara:43346",
+          "latitude": -34.5458,
+          "longitude": 150.371,
+          "myschool_id": null,
+          "postcode": "2577",
+          "school_name": "St Paul's Catholic Primary School",
+          "state": "NSW",
+          "suburb": "Moss Vale"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "00AKI",
+        "biography_url": "https://handbook.aph.gov.au/individual/00AKI",
+        "date_of_birth": "1970-11-18",
+        "display_name": "DUTTON, the Hon. Peter Craig",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 42,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 43,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 44,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 45,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 46,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "parliament": 47,
+            "state": "QLD"
+          }
+        ]
+      },
+      "review_id": "education:00aki:267904ceccd83f6c",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:00aki:267904ceccd83f6c"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Aquinas College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1980,
+            "label": "Estimated secondary attendance: 1974–1980 (birth year +12 to +18; research only)",
+            "start_year": 1974
+          },
+          "graduation_year": null,
+          "recorded_name": "Aquinas College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '00AN3'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:45947",
+          "latitude": -37.823,
+          "longitude": 145.235,
+          "myschool_id": null,
+          "postcode": "3134",
+          "school_name": "Aquinas College",
+          "state": "VIC",
+          "suburb": "Ringwood"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:47860",
+          "latitude": -27.9751,
+          "longitude": 153.384,
+          "myschool_id": null,
+          "postcode": "4214",
+          "school_name": "Aquinas College",
+          "state": "QLD",
+          "suburb": "Ashmore"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:48916",
+          "latitude": -32.024,
+          "longitude": 115.865,
+          "myschool_id": null,
+          "postcode": "6152",
+          "school_name": "Aquinas College",
+          "state": "WA",
+          "suburb": "Salter Point"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas Catholic College"
+          ],
+          "institution_ref": "acara:43492",
+          "latitude": -34.02,
+          "longitude": 151.021,
+          "myschool_id": null,
+          "postcode": "2234",
+          "school_name": "Aquinas Catholic College",
+          "state": "NSW",
+          "suburb": "Menai"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas Aquinas College"
+          ],
+          "institution_ref": "acara:46346",
+          "latitude": -38.083,
+          "longitude": 145.623,
+          "myschool_id": null,
+          "postcode": "3813",
+          "school_name": "St Thomas Aquinas College",
+          "state": "VIC",
+          "suburb": "Tynong"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "00AN3",
+        "biography_url": "https://handbook.aph.gov.au/individual/00AN3",
+        "date_of_birth": "1962-03-02",
+        "display_name": "O'CONNOR, the Hon. Brendan Patrick John",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 42,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 43,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 44,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 45,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 46,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "parliament": 47,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:00an3:f7672e7d8f58a176",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:00an3:f7672e7d8f58a176"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "St Joseph's College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1983,
+            "label": "Estimated secondary attendance: 1977–1983 (birth year +12 to +18; research only)",
+            "start_year": 1977
+          },
+          "graduation_year": null,
+          "recorded_name": "St Joseph's College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '125865'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:43317",
+          "latitude": -32.6978,
+          "longitude": 151.458,
+          "myschool_id": null,
+          "postcode": "2321",
+          "school_name": "St Joseph's College",
+          "state": "NSW",
+          "suburb": "Lochinvar"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:43547",
+          "latitude": -28.2102,
+          "longitude": 153.537,
+          "myschool_id": null,
+          "postcode": "2486",
+          "school_name": "St Joseph's College",
+          "state": "NSW",
+          "suburb": "Banora Point"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:43680",
+          "latitude": -33.8304,
+          "longitude": 151.139,
+          "myschool_id": null,
+          "postcode": "2110",
+          "school_name": "St Joseph's College",
+          "state": "NSW",
+          "suburb": "Hunters Hill"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:45972",
+          "latitude": -37.8905,
+          "longitude": 145.295,
+          "myschool_id": null,
+          "postcode": "3156",
+          "school_name": "St Joseph's College",
+          "state": "VIC",
+          "suburb": "Ferntree Gully"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:47854",
+          "latitude": -27.4568,
+          "longitude": 153.025,
+          "myschool_id": null,
+          "postcode": "4000",
+          "school_name": "St Joseph's College",
+          "state": "QLD",
+          "suburb": "Brisbane"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:47861",
+          "latitude": -27.5714,
+          "longitude": 151.971,
+          "myschool_id": null,
+          "postcode": "4350",
+          "school_name": "St Joseph's College",
+          "state": "QLD",
+          "suburb": "Rangeville"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:48860",
+          "latitude": -35.0002,
+          "longitude": 117.904,
+          "myschool_id": null,
+          "postcode": "6330",
+          "school_name": "St Joseph's College",
+          "state": "WA",
+          "suburb": "Albany"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College"
+          ],
+          "institution_ref": "acara:52499",
+          "latitude": -27.8314,
+          "longitude": 153.33534,
+          "myschool_id": null,
+          "postcode": "4209",
+          "school_name": "St Joseph's College",
+          "state": "QLD",
+          "suburb": "Coomera"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's Nudgee College"
+          ],
+          "institution_ref": "acara:47879",
+          "latitude": -27.3594,
+          "longitude": 153.062,
+          "myschool_id": null,
+          "postcode": "4034",
+          "school_name": "St Joseph's Nudgee College",
+          "state": "QLD",
+          "suburb": "Boondall"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College Mildura"
+          ],
+          "institution_ref": "acara:45674",
+          "latitude": -34.1887,
+          "longitude": 142.153,
+          "myschool_id": null,
+          "postcode": "3500",
+          "school_name": "St Joseph's College Mildura",
+          "state": "VIC",
+          "suburb": "Mildura"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College Geelong"
+          ],
+          "institution_ref": "acara:45853",
+          "latitude": -38.1502,
+          "longitude": 144.332,
+          "myschool_id": null,
+          "postcode": "3220",
+          "school_name": "St Joseph's College Geelong",
+          "state": "VIC",
+          "suburb": "Newtown"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College - Kildare"
+          ],
+          "institution_ref": "acara:53263",
+          "latitude": -36.1291424068358,
+          "longitude": 144.705009193932,
+          "myschool_id": null,
+          "postcode": "3564",
+          "school_name": "St Joseph's College - Kildare",
+          "state": "VIC",
+          "suburb": "Echuca"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's Catholic College"
+          ],
+          "institution_ref": "acara:40351",
+          "latitude": -14.4619,
+          "longitude": 132.276,
+          "myschool_id": null,
+          "postcode": "0850",
+          "school_name": "St Joseph's Catholic College",
+          "state": "NT",
+          "suburb": "Katherine"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's Catholic College"
+          ],
+          "institution_ref": "acara:43270",
+          "latitude": -33.4369,
+          "longitude": 151.347,
+          "myschool_id": null,
+          "postcode": "2250",
+          "school_name": "St Joseph's Catholic College",
+          "state": "NSW",
+          "suburb": "East Gosford"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's Catholic College"
+          ],
+          "institution_ref": "acara:43321",
+          "latitude": -32.1676,
+          "longitude": 150.888,
+          "myschool_id": null,
+          "postcode": "2336",
+          "school_name": "St Joseph's Catholic College",
+          "state": "NSW",
+          "suburb": "Aberdeen"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's Regional College"
+          ],
+          "institution_ref": "acara:43540",
+          "latitude": -31.455,
+          "longitude": 152.831,
+          "myschool_id": null,
+          "postcode": "2444",
+          "school_name": "St Joseph's Regional College",
+          "state": "NSW",
+          "suburb": "Port Macquarie"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College, Melbourne"
+          ],
+          "institution_ref": "acara:40682",
+          "latitude": null,
+          "longitude": null,
+          "myschool_id": null,
+          "postcode": "3051",
+          "school_name": "St Joseph's College, Melbourne",
+          "state": "VIC",
+          "suburb": "North Melbourne"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College - Brigidine Campus"
+          ],
+          "institution_ref": "acara:45732",
+          "latitude": -36.1181,
+          "longitude": 144.743,
+          "myschool_id": null,
+          "postcode": "3564",
+          "school_name": "St Joseph's College - Brigidine Campus",
+          "state": "VIC",
+          "suburb": "Echuca"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College Mildura - Mercy Campus"
+          ],
+          "institution_ref": "acara:52406",
+          "latitude": -34.1776,
+          "longitude": 142.142,
+          "myschool_id": null,
+          "postcode": "3500",
+          "school_name": "St Joseph's College Mildura - Mercy Campus",
+          "state": "VIC",
+          "suburb": "Mildura"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Joseph's College - Waterford Place Campus"
+          ],
+          "institution_ref": "acara:40968",
+          "latitude": -27.4573,
+          "longitude": 153.028,
+          "myschool_id": null,
+          "postcode": "4000",
+          "school_name": "St Joseph's College - Waterford Place Campus",
+          "state": "QLD",
+          "suburb": "Spring Hill"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "125865",
+        "biography_url": "https://handbook.aph.gov.au/individual/125865",
+        "date_of_birth": "1965-05-13",
+        "display_name": "McVEIGH, the Hon. Dr John Joseph",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Groom",
+            "parliament": 45,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Groom",
+            "parliament": 46,
+            "state": "QLD"
+          }
+        ]
+      },
+      "review_id": "education:125865:633836c18308dfa3",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:125865:633836c18308dfa3"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "St Thomas",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1992,
+            "label": "Estimated secondary attendance: 1986–1992 (birth year +12 to +18; research only)",
+            "start_year": 1986
+          },
+          "graduation_year": null,
+          "recorded_name": "St Thomas",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '241067'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' School"
+          ],
+          "institution_ref": "acara:45756",
+          "latitude": -38.2398,
+          "longitude": 142.91,
+          "myschool_id": null,
+          "postcode": "3264",
+          "school_name": "St Thomas' School",
+          "state": "VIC",
+          "suburb": "Terang"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' School"
+          ],
+          "institution_ref": "acara:46004",
+          "latitude": -38.0994,
+          "longitude": 147.083,
+          "myschool_id": null,
+          "postcode": "3850",
+          "school_name": "St Thomas' School",
+          "state": "VIC",
+          "suburb": "Sale"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' School"
+          ],
+          "institution_ref": "acara:47737",
+          "latitude": -27.4871,
+          "longitude": 153.072,
+          "myschool_id": null,
+          "postcode": "4152",
+          "school_name": "St Thomas' School",
+          "state": "QLD",
+          "suburb": "Camp Hill"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' School"
+          ],
+          "institution_ref": "acara:47848",
+          "latitude": -16.9945,
+          "longitude": 145.426,
+          "myschool_id": null,
+          "postcode": "4880",
+          "school_name": "St Thomas' School",
+          "state": "QLD",
+          "suburb": "Mareeba"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' School"
+          ],
+          "institution_ref": "acara:49745",
+          "latitude": -34.9536,
+          "longitude": 138.592,
+          "myschool_id": null,
+          "postcode": "5034",
+          "school_name": "St Thomas' School",
+          "state": "SA",
+          "suburb": "Goodwood"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More School"
+          ],
+          "institution_ref": "acara:46046",
+          "latitude": -37.5535,
+          "longitude": 143.8,
+          "myschool_id": null,
+          "postcode": "3350",
+          "school_name": "St Thomas More School",
+          "state": "VIC",
+          "suburb": "Alfredton"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More School"
+          ],
+          "institution_ref": "acara:49741",
+          "latitude": -34.7154,
+          "longitude": 138.681,
+          "myschool_id": null,
+          "postcode": "5113",
+          "school_name": "St Thomas More School",
+          "state": "SA",
+          "suburb": "Elizabeth Park"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More's School"
+          ],
+          "institution_ref": "acara:45952",
+          "latitude": -37.9084,
+          "longitude": 145.353,
+          "myschool_id": null,
+          "postcode": "3160",
+          "school_name": "St Thomas More's School",
+          "state": "VIC",
+          "suburb": "Belgrave"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More's School"
+          ],
+          "institution_ref": "acara:45975",
+          "latitude": -37.7073,
+          "longitude": 144.945,
+          "myschool_id": null,
+          "postcode": "3046",
+          "school_name": "St Thomas More's School",
+          "state": "VIC",
+          "suburb": "Hadfield"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More's School"
+          ],
+          "institution_ref": "acara:46057",
+          "latitude": -38.1977,
+          "longitude": 145.101,
+          "myschool_id": null,
+          "postcode": "3930",
+          "school_name": "St Thomas More's School",
+          "state": "VIC",
+          "suburb": "Mount Eliza"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More College"
+          ],
+          "institution_ref": "acara:47885",
+          "latitude": -27.5737,
+          "longitude": 153.049,
+          "myschool_id": null,
+          "postcode": "4109",
+          "school_name": "St Thomas More College",
+          "state": "QLD",
+          "suburb": "Sunnybank"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas Aquinas School"
+          ],
+          "institution_ref": "acara:45890",
+          "latitude": -38.0902,
+          "longitude": 144.359,
+          "myschool_id": null,
+          "postcode": "3214",
+          "school_name": "St Thomas Aquinas School",
+          "state": "VIC",
+          "suburb": "Norlane"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas Primary School"
+          ],
+          "institution_ref": "acara:46103",
+          "latitude": -38.1878,
+          "longitude": 144.557,
+          "myschool_id": null,
+          "postcode": "3222",
+          "school_name": "St Thomas Primary School",
+          "state": "VIC",
+          "suburb": "Drysdale"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas' Primary School"
+          ],
+          "institution_ref": "acara:48882",
+          "latitude": -31.9775,
+          "longitude": 115.789,
+          "myschool_id": null,
+          "postcode": "6010",
+          "school_name": "St Thomas' Primary School",
+          "state": "WA",
+          "suburb": "Claremont"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas Aquinas College"
+          ],
+          "institution_ref": "acara:46346",
+          "latitude": -38.083,
+          "longitude": 145.623,
+          "myschool_id": null,
+          "postcode": "3813",
+          "school_name": "St Thomas Aquinas College",
+          "state": "VIC",
+          "suburb": "Tynong"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas the Apostle School"
+          ],
+          "institution_ref": "acara:45887",
+          "latitude": -37.8232,
+          "longitude": 145.157,
+          "myschool_id": null,
+          "postcode": "3130",
+          "school_name": "St Thomas the Apostle School",
+          "state": "VIC",
+          "suburb": "Blackburn"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas the Apostle School"
+          ],
+          "institution_ref": "acara:46040",
+          "latitude": -37.6822,
+          "longitude": 145.119,
+          "myschool_id": null,
+          "postcode": "3088",
+          "school_name": "St Thomas the Apostle School",
+          "state": "VIC",
+          "suburb": "Greensborough"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Mount St Thomas Public School"
+          ],
+          "institution_ref": "acara:42846",
+          "latitude": -34.4369,
+          "longitude": 150.87,
+          "myschool_id": null,
+          "postcode": "2500",
+          "school_name": "Mount St Thomas Public School",
+          "state": "NSW",
+          "suburb": "Wollongong"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More Primary School"
+          ],
+          "institution_ref": "acara:47910",
+          "latitude": -26.405,
+          "longitude": 153.102,
+          "myschool_id": null,
+          "postcode": "4567",
+          "school_name": "St Thomas More Primary School",
+          "state": "QLD",
+          "suburb": "Sunshine Beach"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas More's Primary School"
+          ],
+          "institution_ref": "acara:47789",
+          "latitude": -27.5802,
+          "longitude": 151.962,
+          "myschool_id": null,
+          "postcode": "4350",
+          "school_name": "St Thomas More's Primary School",
+          "state": "QLD",
+          "suburb": "Toowoomba"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "241067",
+        "biography_url": "https://handbook.aph.gov.au/individual/241067",
+        "date_of_birth": "1974-03-05",
+        "display_name": "COLEMAN, the Hon. David Bernard",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Banks",
+            "parliament": 44,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Banks",
+            "parliament": 45,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Banks",
+            "parliament": 46,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Banks",
+            "parliament": 47,
+            "state": "NSW"
+          }
+        ]
+      },
+      "review_id": "education:241067:267d4b4d8da8c0b6",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:241067:267d4b4d8da8c0b6"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Aquinas College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1999,
+            "label": "Estimated secondary attendance: 1993–1999 (birth year +12 to +18; research only)",
+            "start_year": 1993
+          },
+          "graduation_year": null,
+          "recorded_name": "Aquinas College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '242515'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:45947",
+          "latitude": -37.823,
+          "longitude": 145.235,
+          "myschool_id": null,
+          "postcode": "3134",
+          "school_name": "Aquinas College",
+          "state": "VIC",
+          "suburb": "Ringwood"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:47860",
+          "latitude": -27.9751,
+          "longitude": 153.384,
+          "myschool_id": null,
+          "postcode": "4214",
+          "school_name": "Aquinas College",
+          "state": "QLD",
+          "suburb": "Ashmore"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas College"
+          ],
+          "institution_ref": "acara:48916",
+          "latitude": -32.024,
+          "longitude": 115.865,
+          "myschool_id": null,
+          "postcode": "6152",
+          "school_name": "Aquinas College",
+          "state": "WA",
+          "suburb": "Salter Point"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Aquinas Catholic College"
+          ],
+          "institution_ref": "acara:43492",
+          "latitude": -34.02,
+          "longitude": 151.021,
+          "myschool_id": null,
+          "postcode": "2234",
+          "school_name": "Aquinas Catholic College",
+          "state": "NSW",
+          "suburb": "Menai"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Thomas Aquinas College"
+          ],
+          "institution_ref": "acara:46346",
+          "latitude": -38.083,
+          "longitude": 145.623,
+          "myschool_id": null,
+          "postcode": "3813",
+          "school_name": "St Thomas Aquinas College",
+          "state": "VIC",
+          "suburb": "Tynong"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "242515",
+        "biography_url": "https://handbook.aph.gov.au/individual/242515",
+        "date_of_birth": "1981-09-11",
+        "display_name": "SUKKAR, the Hon. Michael Sven",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Deakin",
+            "parliament": 44,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Deakin",
+            "parliament": 45,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Deakin",
+            "parliament": 46,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Deakin",
+            "parliament": 47,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:242515:f7672e7d8f58a176",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:242515:f7672e7d8f58a176"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Chisholm Catholic College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1998,
+            "label": "Estimated secondary attendance: 1992–1998 (birth year +12 to +18; research only)",
+            "start_year": 1992
+          },
+          "graduation_year": null,
+          "recorded_name": "Chisholm Catholic College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Chisholm Catholic College"
+          ],
+          "institution_ref": "acara:47888",
+          "latitude": -27.6673,
+          "longitude": 153.205,
+          "myschool_id": null,
+          "postcode": "4130",
+          "school_name": "Chisholm Catholic College",
+          "state": "QLD",
+          "suburb": "Cornubia"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Chisholm Catholic College"
+          ],
+          "institution_ref": "acara:48902",
+          "latitude": -31.9105,
+          "longitude": 115.899,
+          "myschool_id": null,
+          "postcode": "6052",
+          "school_name": "Chisholm Catholic College",
+          "state": "WA",
+          "suburb": "Bedford"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Caroline Chisholm Catholic College"
+          ],
+          "institution_ref": "acara:40900",
+          "latitude": -37.7863,
+          "longitude": 144.85,
+          "myschool_id": null,
+          "postcode": "3019",
+          "school_name": "Caroline Chisholm Catholic College",
+          "state": "VIC",
+          "suburb": "Braybrook"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Caroline Chisholm Catholic College - Sacred Heart Campus"
+          ],
+          "institution_ref": "acara:46044",
+          "latitude": -37.7859,
+          "longitude": 144.85,
+          "myschool_id": null,
+          "postcode": "3019",
+          "school_name": "Caroline Chisholm Catholic College - Sacred Heart Campus",
+          "state": "VIC",
+          "suburb": "Braybrook"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Caroline Chisholm Catholic College - Christ the King Campus"
+          ],
+          "institution_ref": "acara:46045",
+          "latitude": -37.7868,
+          "longitude": 144.862,
+          "myschool_id": null,
+          "postcode": "3019",
+          "school_name": "Caroline Chisholm Catholic College - Christ the King Campus",
+          "state": "VIC",
+          "suburb": "Braybrook"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "245212",
+        "biography_url": "https://handbook.aph.gov.au/individual/245212",
+        "date_of_birth": "1980-12-17",
+        "display_name": "CANAVAN, the Hon. Matthew (Matt) James",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 44,
+            "state": "QLD"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 45,
+            "state": "QLD"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 46,
+            "state": "QLD"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 47,
+            "state": "QLD"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 48,
+            "state": "QLD"
+          }
+        ]
+      },
+      "review_id": "education:245212:8fc6e3dfab079be1",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:245212:8fc6e3dfab079be1"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "St Patrick's College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1990,
+            "label": "Estimated secondary attendance: 1984–1990 (birth year +12 to +18; research only)",
+            "start_year": 1984
+          },
+          "graduation_year": null,
+          "recorded_name": "St Patrick's College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '247742'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College"
+          ],
+          "institution_ref": "acara:40251",
+          "latitude": -41.4736,
+          "longitude": 147.127,
+          "myschool_id": null,
+          "postcode": "7250",
+          "school_name": "St Patrick's College",
+          "state": "TAS",
+          "suburb": "Prospect Vale"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College"
+          ],
+          "institution_ref": "acara:40684",
+          "latitude": -21.1386,
+          "longitude": 149.184,
+          "myschool_id": null,
+          "postcode": "4740",
+          "school_name": "St Patrick's College",
+          "state": "QLD",
+          "suburb": "Mackay"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College"
+          ],
+          "institution_ref": "acara:45634",
+          "latitude": -37.5597,
+          "longitude": 143.832,
+          "myschool_id": null,
+          "postcode": "3350",
+          "school_name": "St Patrick's College",
+          "state": "VIC",
+          "suburb": "Ballarat"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College"
+          ],
+          "institution_ref": "acara:47857",
+          "latitude": -27.3233,
+          "longitude": 153.083,
+          "myschool_id": null,
+          "postcode": "4017",
+          "school_name": "St Patrick's College",
+          "state": "QLD",
+          "suburb": "Shorncliffe"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College"
+          ],
+          "institution_ref": "acara:47893",
+          "latitude": -26.1921,
+          "longitude": 152.667,
+          "myschool_id": null,
+          "postcode": "4570",
+          "school_name": "St Patrick's College",
+          "state": "QLD",
+          "suburb": "Gympie"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's Marist College"
+          ],
+          "institution_ref": "acara:43229",
+          "latitude": -33.8027,
+          "longitude": 151.047,
+          "myschool_id": null,
+          "postcode": "2117",
+          "school_name": "St Patrick's Marist College",
+          "state": "NSW",
+          "suburb": "Dundas"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's Technical College"
+          ],
+          "institution_ref": "acara:40783",
+          "latitude": -34.7109,
+          "longitude": 138.664,
+          "myschool_id": null,
+          "postcode": "5113",
+          "school_name": "St Patrick's Technical College",
+          "state": "SA",
+          "suburb": "Edinburgh North"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College Sutherland"
+          ],
+          "institution_ref": "acara:43493",
+          "latitude": -34.0339,
+          "longitude": 151.059,
+          "myschool_id": null,
+          "postcode": "2232",
+          "school_name": "St Patrick's College Sutherland",
+          "state": "NSW",
+          "suburb": "Sutherland"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College Townsville"
+          ],
+          "institution_ref": "acara:47913",
+          "latitude": -19.2523,
+          "longitude": 146.817,
+          "myschool_id": null,
+          "postcode": "4810",
+          "school_name": "St Patrick's College Townsville",
+          "state": "QLD",
+          "suburb": "Townsville"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College, Strathfield"
+          ],
+          "institution_ref": "acara:43662",
+          "latitude": -33.8746,
+          "longitude": 151.074,
+          "myschool_id": null,
+          "postcode": "2135",
+          "school_name": "St Patrick's College, Strathfield",
+          "state": "NSW",
+          "suburb": "Strathfield"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College Campbelltown"
+          ],
+          "institution_ref": "acara:43659",
+          "latitude": -34.0778,
+          "longitude": 150.824,
+          "myschool_id": null,
+          "postcode": "2560",
+          "school_name": "St Patrick's College Campbelltown",
+          "state": "NSW",
+          "suburb": "Campbelltown"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick's College - Mercy Campus"
+          ],
+          "institution_ref": "acara:47903",
+          "latitude": -21.1548,
+          "longitude": 149.184,
+          "myschool_id": null,
+          "postcode": "4740",
+          "school_name": "St Patrick's College - Mercy Campus",
+          "state": "QLD",
+          "suburb": "South Mackay"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Patrick’s College - Croagh Patrick Centre"
+          ],
+          "institution_ref": "acara:52292",
+          "latitude": -41.4707,
+          "longitude": 147.123,
+          "myschool_id": null,
+          "postcode": "7250",
+          "school_name": "St Patrick’s College - Croagh Patrick Centre",
+          "state": "TAS",
+          "suburb": "Prospect"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "247742",
+        "biography_url": "https://handbook.aph.gov.au/individual/247742",
+        "date_of_birth": "1972-06-06",
+        "display_name": "HOWARTH, the Hon. Luke Ronald",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Petrie",
+            "parliament": 44,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Petrie",
+            "parliament": 45,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Petrie",
+            "parliament": 46,
+            "state": "QLD"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Petrie",
+            "parliament": 47,
+            "state": "QLD"
+          }
+        ]
+      },
+      "review_id": "education:247742:873379743ae77d6e",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:247742:873379743ae77d6e"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Home educated",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 2012,
+            "label": "Estimated secondary attendance: 2006–2012 (birth year +12 to +18; research only)",
+            "start_year": 2006
+          },
+          "graduation_year": null,
+          "recorded_name": "Home educated",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "250156",
+        "biography_url": "https://handbook.aph.gov.au/individual/250156",
+        "date_of_birth": "1994-10-14",
+        "display_name": "STEELE-JOHN, Jordon Alexander",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 45,
+            "state": "WA"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 46,
+            "state": "WA"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 47,
+            "state": "WA"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 48,
+            "state": "WA"
+          }
+        ]
+      },
+      "review_id": "education:250156:6f66165bfc8609df",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:250156:6f66165bfc8609df"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Lwak Girls",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1980,
+            "label": "Estimated secondary attendance: 1974–1980 (birth year +12 to +18; research only)",
+            "start_year": 1974
+          },
+          "graduation_year": null,
+          "recorded_name": "Lwak Girls",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '270552'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "270552",
+        "biography_url": "https://handbook.aph.gov.au/individual/270552",
+        "date_of_birth": "1962-09-23",
+        "display_name": "GICHUHI, Lucy",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 45,
+            "state": "SA"
+          }
+        ]
+      },
+      "review_id": "education:270552:553255a6eba1c1aa",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:270552:553255a6eba1c1aa"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "unknown",
+            "end_year": null,
+            "label": "Attendance period unknown",
+            "start_year": null
+          },
+          "graduation_year": null,
+          "recorded_name": "Fitzroy and Collingwood Secondary Schools",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '280304'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Fitzroy High School"
+          ],
+          "institution_ref": "acara:45517",
+          "latitude": -37.7849,
+          "longitude": 144.987,
+          "myschool_id": null,
+          "postcode": "3068",
+          "school_name": "Fitzroy High School",
+          "state": "VIC",
+          "suburb": "Fitzroy North"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Collingwood College"
+          ],
+          "institution_ref": "acara:45296",
+          "latitude": -37.803,
+          "longitude": 144.99,
+          "myschool_id": null,
+          "postcode": "3066",
+          "school_name": "Collingwood College",
+          "state": "VIC",
+          "suburb": "Collingwood"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "280304",
+        "biography_url": "https://handbook.aph.gov.au/individual/280304",
+        "date_of_birth": null,
+        "display_name": "THORPE, Lidia Alma",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 46,
+            "state": "VIC"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 47,
+            "state": "VIC"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 48,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:280304:4db911ac8d31077e",
+      "school_relationship": {
+        "action": "research",
+        "decision_id": "16c35d59-8ea8-4054-9d42-a41e5c7ab122",
+        "entity_type": "school",
+        "legacy": null,
+        "notes": "APH records the combined phrase “Fitzroy and Collingwood Secondary Schools” for Lidia Thorpe. Official Victorian sources establish that Fitzroy High School changed its name to Fitzroy Secondary College and that the 1957–1992 school closed; the current Fitzroy High School opened in 2004, so the pinned current ACARA row cannot be presumed to represent the earlier school. Collingwood College is a separate institution with its own history, and its current partnership/shared senior campus with Fitzroy High School is not evidence that the combined historical record maps to one current target. The evidence supports treating the string as potentially multiple schools but does not establish exact individual attended-school identities or any historical continuity to the pinned targets; therefore no combined mapping or split assertion proposals are made. Individual human review is required. The Sol retry added a secondary-source attendance lead describing Fitzroy High School at Year 7, Collingwood High at Year 8, and return to Fitzroy High at Year 9. The official autobiographical page corroborates leaving school at 14 only; it does not name schools. Newspaper and official-school corroboration attempts failed. Neither historical continuity nor a source-supported split mapping was established. Keep the original assertion unresolved and preserve both the earlier institutional evidence and its unreconciled 1915/1957 date conflict.",
+        "payload": {
+          "evidence_refs": [
+            "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+            "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183",
+            "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1"
+          ],
+          "recorded_name": "Fitzroy and Collingwood Secondary Schools",
+          "requires_individual_resolution": true,
+          "research_approval_scope": "individual",
+          "research_batch_id": "p48-unmapped-schools-20261014-ready",
+          "research_proposal_id": "proposal:977b627ff42d97e366e078445525a325ed0eba5e93e71fb0c4fc9891e8500886",
+          "resolution_reason": "ambiguous_name"
+        },
+        "recorded_at": "2026-10-14T02:13:46.301597+00:00",
+        "replacement_action": null,
+        "review_id": "school:4db911ac8d31077e",
+        "reviewed_at": "2026-10-14",
+        "reviewer": "Cam",
+        "schema_version": 1,
+        "source_url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+        "supersedes": []
+      },
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:280304:4db911ac8d31077e"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Belilios Public Girls School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1982,
+            "label": "Estimated secondary attendance: 1976–1982 (birth year +12 to +18; research only)",
+            "start_year": 1976
+          },
+          "graduation_year": null,
+          "recorded_name": "Belilios Public Girls School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '282918'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "282918",
+        "biography_url": "https://handbook.aph.gov.au/individual/282918",
+        "date_of_birth": "1964-04-06",
+        "display_name": "LIU, Gladys",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Chisholm",
+            "parliament": 46,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:282918:d9a195f1e187af61",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:282918:d9a195f1e187af61"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "John Paul College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 2001,
+            "label": "Estimated secondary attendance: 1995–2001 (birth year +12 to +18; research only)",
+            "start_year": 1995
+          },
+          "graduation_year": null,
+          "recorded_name": "John Paul College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '297964'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "John Paul College"
+          ],
+          "institution_ref": "acara:45994",
+          "latitude": -38.1346,
+          "longitude": 145.139,
+          "myschool_id": null,
+          "postcode": "3199",
+          "school_name": "John Paul College",
+          "state": "VIC",
+          "suburb": "Frankston"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "John Paul College"
+          ],
+          "institution_ref": "acara:48060",
+          "latitude": -27.6336,
+          "longitude": 153.148,
+          "myschool_id": null,
+          "postcode": "4127",
+          "school_name": "John Paul College",
+          "state": "QLD",
+          "suburb": "Daisy Hill"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "John Paul College"
+          ],
+          "institution_ref": "acara:48982",
+          "latitude": -30.7546,
+          "longitude": 121.469,
+          "myschool_id": null,
+          "postcode": "6430",
+          "school_name": "John Paul College",
+          "state": "WA",
+          "suburb": "Kalgoorlie"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St John Paul College"
+          ],
+          "institution_ref": "acara:43545",
+          "latitude": -30.3238,
+          "longitude": 153.098,
+          "myschool_id": null,
+          "postcode": "2450",
+          "school_name": "St John Paul College",
+          "state": "NSW",
+          "suburb": "Coffs Harbour"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St John Paul II College"
+          ],
+          "institution_ref": "acara:50591",
+          "latitude": -35.1776,
+          "longitude": 149.101,
+          "myschool_id": null,
+          "postcode": "2913",
+          "school_name": "St John Paul II College",
+          "state": "ACT",
+          "suburb": "Nicholls"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St John Paul II Catholic College (Nirimba)"
+          ],
+          "institution_ref": "acara:40905",
+          "latitude": -33.7257,
+          "longitude": 150.881,
+          "myschool_id": null,
+          "postcode": "2763",
+          "school_name": "St John Paul II Catholic College (Nirimba)",
+          "state": "NSW",
+          "suburb": "Nirimba Fields"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St John Paul II Catholic College",
+            "St John Paul II Catholic College (Schofields)"
+          ],
+          "institution_ref": "acara:43222",
+          "latitude": -33.7053734567285,
+          "longitude": 150.892171654762,
+          "myschool_id": null,
+          "postcode": "2762",
+          "school_name": "St John Paul II Catholic College (Schofields)",
+          "state": "NSW",
+          "suburb": "Schofields"
+        }
+      ],
+      "conflicts": [],
+      "decision": {
+        "action": "research",
+        "decision_id": "b23838b1-fee5-430e-8bc0-e8824355355e",
+        "entity_type": "member_education",
+        "legacy": null,
+        "notes": "Most likely New Zealand John Paul College. Used Jessica Bird her maiden name.",
+        "payload": {
+          "aph_id": "297964",
+          "attended_status": "attended_unspecified",
+          "confidence": "unconfirmed",
+          "recorded_school_name": "John Paul College",
+          "resolution_only": true,
+          "resolution_reason": "no_suitable_candidate",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00"
+        },
+        "recorded_at": "2026-10-14T03:56:54.063302+00:00",
+        "replacement_action": null,
+        "review_id": "education:297964:0477b661fc755dd3",
+        "reviewed_at": "2026-10-14",
+        "reviewer": "Cam",
+        "schema_version": 1,
+        "source_url": "",
+        "supersedes": []
+      },
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "297964",
+        "biography_url": "https://handbook.aph.gov.au/individual/297964",
+        "date_of_birth": "1983-10-03",
+        "display_name": "COLLINS, Dr Jessica",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 48,
+            "state": "NSW"
+          }
+        ]
+      },
+      "review_id": "education:297964:0477b661fc755dd3",
+      "school_relationship": {
+        "action": "research",
+        "decision_id": "fd57ec83-edd4-4c87-8b0b-400b014cd810",
+        "entity_type": "school",
+        "legacy": null,
+        "notes": "The APH-derived case record gives only the unqualified name John Paul College. The local pinned institution register contains several distinct schools with this exact name (including Frankston VIC, Daisy Hill QLD, and Kalgoorlie WA) and a similarly named St John Paul College in Coffs Harbour NSW. Official Victorian and Queensland sources confirm distinct institutions; no person-specific source located in the allowed search budget identifies which one Jessica Collins attended. A school-wide mapping would therefore be unsafe. Leave the school policy at ambiguous_name and resolve this member assertion separately when individual evidence is available. The Sol retry researched only education:297964:0477b661fc755dd3. Two queries and four source opens, including one failed official-page fetch, supplied no campus-specific attendance evidence. The scoped assertion remains unresolved, and the ambiguous-name school policy remains necessary.",
+        "payload": {
+          "evidence_refs": [
+            "evidence:16bd09b408aba35f42e09bed65162eea81f10f0c2416ea5bdbbb8616ca6201ec",
+            "evidence:834053acfff520b8332448e8b4006a56cb25167bb3486c8f0bcf5647d1ad152a"
+          ],
+          "recorded_name": "John Paul College",
+          "requires_individual_resolution": true,
+          "research_approval_scope": "individual",
+          "research_batch_id": "p48-unmapped-schools-20261014-ready",
+          "research_proposal_id": "proposal:483321cab513c56e01b61d1c7e1577dc10d055ebd1a0fa7734d6530c7e5e77ce",
+          "resolution_reason": "ambiguous_name"
+        },
+        "recorded_at": "2026-10-14T02:13:46.300578+00:00",
+        "replacement_action": null,
+        "review_id": "school:0477b661fc755dd3",
+        "reviewed_at": "2026-10-14",
+        "reviewer": "Cam",
+        "schema_version": 1,
+        "source_url": "https://vrqa.vic.gov.au/StateRegister/Provider.aspx/DetailsProvider?AccountID=8d4c0e48-0179-e711-80e0-005056825391",
+        "supersedes": []
+      },
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [
+      "b23838b1-fee5-430e-8bc0-e8824355355e"
+    ],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:297964:0477b661fc755dd3"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Assumption College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1978,
+            "label": "Estimated secondary attendance: 1972–1978 (birth year +12 to +18; research only)",
+            "start_year": 1972
+          },
+          "graduation_year": null,
+          "recorded_name": "Assumption College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '56430'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Assumption College"
+          ],
+          "institution_ref": "acara:45647",
+          "latitude": -37.301,
+          "longitude": 144.948,
+          "myschool_id": null,
+          "postcode": "3764",
+          "school_name": "Assumption College",
+          "state": "VIC",
+          "suburb": "Kilmore"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Assumption College"
+          ],
+          "institution_ref": "acara:47894",
+          "latitude": -28.2253,
+          "longitude": 152.028,
+          "myschool_id": null,
+          "postcode": "4370",
+          "school_name": "Assumption College",
+          "state": "QLD",
+          "suburb": "Warwick"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "56430",
+        "biography_url": "https://handbook.aph.gov.au/individual/56430",
+        "date_of_birth": "1960-07-28",
+        "display_name": "DRUM, the Hon. Damian Kevin",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Murray",
+            "parliament": 45,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Nicholls",
+            "parliament": 46,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:56430:2340b6eede488795",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:56430:2340b6eede488795"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Edmund Rice College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1983,
+            "label": "Estimated secondary attendance: 1977–1983 (birth year +12 to +18; research only)",
+            "start_year": 1977
+          },
+          "graduation_year": null,
+          "recorded_name": "Edmund Rice College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'A9B'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [
+        {
+          "country": null,
+          "historical_names": [
+            "Edmund Rice College"
+          ],
+          "institution_ref": "acara:43663",
+          "latitude": -34.4199,
+          "longitude": 150.863,
+          "myschool_id": null,
+          "postcode": "2500",
+          "school_name": "Edmund Rice College",
+          "state": "NSW",
+          "suburb": "West Wollongong"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "Edmund Rice College"
+          ],
+          "institution_ref": "acara:48871",
+          "latitude": -31.31289,
+          "longitude": 116.17798,
+          "myschool_id": null,
+          "postcode": "6502",
+          "school_name": "Edmund Rice College",
+          "state": "WA",
+          "suburb": "Bindoon"
+        },
+        {
+          "country": null,
+          "historical_names": [
+            "St Mary's College Melbourne",
+            "St Mary’s College Melbourne - Edmund Rice Campus"
+          ],
+          "institution_ref": "acara:45632",
+          "latitude": -37.8594,
+          "longitude": 144.997,
+          "myschool_id": null,
+          "postcode": "3183",
+          "school_name": "St Mary’s College Melbourne - Edmund Rice Campus",
+          "state": "VIC",
+          "suburb": "St Kilda East"
+        }
+      ],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "A9B",
+        "biography_url": "https://handbook.aph.gov.au/individual/A9B",
+        "date_of_birth": "1965-06-29",
+        "display_name": "JONES, the Hon. Stephen Patrick",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Throsby",
+            "parliament": 43,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Throsby",
+            "parliament": 44,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Whitlam",
+            "parliament": 45,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Whitlam",
+            "parliament": 46,
+            "state": "NSW"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Whitlam",
+            "parliament": 47,
+            "state": "NSW"
+          }
+        ]
+      },
+      "review_id": "education:a9b:94cf572855aa803a",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:a9b:94cf572855aa803a"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Ferntree Gully Technical School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1986,
+            "label": "Estimated secondary attendance: 1980–1986 (birth year +12 to +18; research only)",
+            "start_year": 1980
+          },
+          "graduation_year": null,
+          "recorded_name": "Ferntree Gully Technical School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "E0F",
+        "biography_url": "https://handbook.aph.gov.au/individual/E0F",
+        "date_of_birth": "1968-05-24",
+        "display_name": "WOOD, the Hon. Jason Peter",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 42,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 44,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 45,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 46,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 47,
+            "state": "VIC"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "La Trobe",
+            "parliament": 48,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:e0f:2f7f6b0f23bf99d3",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:e0f:2f7f6b0f23bf99d3"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Bunbury Techincal School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1972,
+            "label": "Estimated secondary attendance: 1966–1972 (birth year +12 to +18; research only)",
+            "start_year": 1966
+          },
+          "graduation_year": null,
+          "recorded_name": "Bunbury Techincal School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWP'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "HWP",
+        "biography_url": "https://handbook.aph.gov.au/individual/HWP",
+        "date_of_birth": "1954-02-18",
+        "display_name": "MARINO, the Hon. Nola Bethwyn",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 42,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 43,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 44,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 45,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 46,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Forrest",
+            "parliament": 47,
+            "state": "WA"
+          }
+        ]
+      },
+      "review_id": "education:hwp:5ebd76ef99402512",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:hwp:5ebd76ef99402512"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Box Hill Technical College",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1976,
+            "label": "Estimated secondary attendance: 1970–1976 (birth year +12 to +18; research only)",
+            "start_year": 1970
+          },
+          "graduation_year": null,
+          "recorded_name": "Box Hill Technical College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HYM'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "HYM",
+        "biography_url": "https://handbook.aph.gov.au/individual/HYM",
+        "date_of_birth": "1958-09-01",
+        "display_name": "IRONS, the Hon. Stephen (Steve) James",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Swan",
+            "parliament": 42,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Swan",
+            "parliament": 43,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Swan",
+            "parliament": 44,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Swan",
+            "parliament": 45,
+            "state": "WA"
+          },
+          {
+            "chamber": "representatives",
+            "electorate": "Swan",
+            "parliament": 46,
+            "state": "WA"
+          }
+        ]
+      },
+      "review_id": "education:hym:3a40a73718408507",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:hym:3a40a73718408507"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Greythorn High School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "unknown",
+            "end_year": null,
+            "label": "Attendance period unknown",
+            "start_year": null
+          },
+          "graduation_year": null,
+          "recorded_name": "Greythorn High School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'IWK'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "IWK",
+        "biography_url": "https://handbook.aph.gov.au/individual/IWK",
+        "date_of_birth": null,
+        "display_name": "WHITE, Linda",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 47,
+            "state": "VIC"
+          }
+        ]
+      },
+      "review_id": "education:iwk:e5b7ed4b6c400eb3",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:iwk:e5b7ed4b6c400eb3"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1965,
+            "label": "Estimated secondary attendance: 1959–1965 (birth year +12 to +18; research only)",
+            "start_year": 1959
+          },
+          "graduation_year": null,
+          "recorded_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'JH5'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "JH5",
+        "biography_url": "https://handbook.aph.gov.au/individual/JH5",
+        "date_of_birth": "1947-08-20",
+        "display_name": "GEORGE, Jennie, AO",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Throsby",
+            "parliament": 42,
+            "state": "NSW"
+          }
+        ]
+      },
+      "review_id": "education:jh5:c00d327efd749d08",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:jh5:c00d327efd749d08"
+  },
+  {
+    "context": {
+      "assertion": {
+        "effective_institution_ref": null,
+        "graduation_year": null,
+        "recorded_school_name": "Notre Dame Academy (Toledo, Ohio)",
+        "years_attended": null
+      },
+      "assertions": [
+        {
+          "attendance_period": {
+            "basis": "estimated",
+            "end_year": 1986,
+            "label": "Estimated secondary attendance: 1980–1986 (birth year +12 to +18; research only)",
+            "start_year": 1980
+          },
+          "graduation_year": null,
+          "recorded_name": "Notre Dame Academy (Toledo, Ohio)",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'LNW'",
+          "years_attended": null
+        }
+      ],
+      "candidates": [],
+      "conflicts": [],
+      "decision": null,
+      "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "evidence_revision": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "member": {
+        "aph_id": "LNW",
+        "biography_url": "https://handbook.aph.gov.au/individual/LNW",
+        "date_of_birth": "1968-12-19",
+        "display_name": "KENEALLY, the Hon. Kristina Kerscher AO",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 45,
+            "state": "NSW"
+          },
+          {
+            "chamber": "senate",
+            "electorate": "",
+            "parliament": 46,
+            "state": "NSW"
+          }
+        ]
+      },
+      "review_id": "education:lnw:b90cc8fe47a3d6f4",
+      "school_relationship": null,
+      "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194"
+    },
+    "decision_heads": [],
+    "research_origin": "agent-session",
+    "research_provenance": {
+      "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+      "generated_by": "codex-session",
+      "model": null,
+      "prior_research": "prior-research.json",
+      "research_log": "research-log.json",
+      "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+      "search_budget_per_new_case": {
+        "searches": 3,
+        "source_opens": 6
+      },
+      "token_usage": null
+    },
+    "review_id": "education:lnw:b90cc8fe47a3d6f4"
+  }
+]

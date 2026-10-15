@@ -11,6 +11,22 @@ To accept a researched change, follow this sequence:
 change. Applying decisions saves them to the ledger; rebuilding derived data and
 publishing a dataset are separate steps.
 
+## Unmatched schools across all parliaments
+
+The `all-unmatched-schools-20261015` batch appears in the ordinary **Research
+batches** table and opens at `/research-batches/all-unmatched-schools-20261015`.
+Its scope is every attendance assertion still unresolved after projecting the
+current decision ledger, without a Parliament 48 restriction. Same-name schools
+are separate proposals for each member. Source inspection, individual review,
+evidence retention and exact decision previews use the existing batch workflow.
+
+These proposals record `origin=agent-session`, with the actual search log and
+prior research references saved alongside the frozen tasks. Exact session model
+identifiers and token usage are unavailable and recorded as null. No Luna or Sol
+attempts are inferred. The existing guided-model attempt rules remain unchanged.
+Unresolved findings include non-institutional education and source entries that
+describe employment rather than attendance; they do not create school mappings.
+
 ## Read saved research packets
 
 The **Saved research packets** section on **Research batches** includes completed

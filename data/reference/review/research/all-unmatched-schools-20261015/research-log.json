@@ -1,0 +1,613 @@
+{
+  "provenance": {
+    "generated_by": "codex-session",
+    "model": null,
+    "token_usage": null,
+    "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+    "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+    "search_budget_per_new_case": {
+      "searches": 3,
+      "source_opens": 6
+    },
+    "research_log": "research-log.json",
+    "prior_research": "prior-research.json"
+  },
+  "cases": [
+    {
+      "review_id": "education:00aki:267904ceccd83f6c",
+      "search_count": 3,
+      "source_open_count": 3,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "Peter Dutton St Paul School Bald Hills attended site:stpauls.qld.edu.au",
+        "\"Peter Dutton\" \"St Paul\" school attended",
+        "Peter Dutton Bald Hills school site:aph.gov.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Peter_Dutton",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.stpauls.qld.edu.au/",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.stpauls.qld.edu.au/alumni-stories/",
+          "result": "opened; no Dutton attendance confirmation retained"
+        }
+      ],
+      "source_opens": 3,
+      "searches": 3
+    },
+    {
+      "review_id": "education:00an3:f7672e7d8f58a176",
+      "search_count": 3,
+      "source_open_count": 5,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": "Aquinas alumni source opened for Sukkar reused as institution identity for OConnor without another fetch.",
+      "search_queries": [
+        "Brendan O Connor Aquinas College attended school",
+        "\"Brendan O’Connor\" \"Aquinas\" Ringwood",
+        "Brendan OConnor Aquinas College Ringwood politician"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)#cite_note-6",
+          "result": "clicked citation anchor; returned same article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened at references"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened at references again"
+        },
+        {
+          "url": "https://brendanoconnor.com.au/",
+          "result": "opened; no school information, site makes inaccurate Burke tenure claim, not retained as authoritative evidence"
+        }
+      ],
+      "source_opens": 5,
+      "searches": 3
+    },
+    {
+      "review_id": "education:125865:633836c18308dfa3",
+      "search_count": 3,
+      "source_open_count": 6,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "John McVeigh St Joseph College Toowoomba old boy",
+        "\"John McVeigh\" \"St Joseph\" school parliament",
+        "John McVeigh St Joseph College Toowoomba education"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.sjc.qld.edu.au/our-college/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)#cite_note-3",
+          "result": "clicked citation anchor; returned same article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)",
+          "result": "opened at references"
+        },
+        {
+          "url": "https://www.johnmcveigh.com.au/",
+          "result": "clicked About reference; tool Internal Error, exact destination unavailable in returned result"
+        },
+        {
+          "url": "https://schoolsdirectory.eq.edu.au/Details/5323",
+          "result": "opened; official centre name St Joseph's College (Rangeville), statistical locality Rangeville, sjc.qld.edu.au website, Toowoomba address"
+        }
+      ],
+      "source_opens": 6,
+      "searches": 3
+    },
+    {
+      "review_id": "education:241067:267d4b4d8da8c0b6",
+      "search_count": 3,
+      "source_open_count": 4,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "David Coleman St Thomas school Christian Brothers",
+        "\"David Coleman\" \"St Thomas\" school",
+        "David Coleman St Thomas Lewisham parliament maiden speech"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-6",
+          "result": "clicked First speech citation anchor; returned article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-14",
+          "result": "clicked About citation anchor; returned article"
+        },
+        {
+          "url": "https://www.davidcoleman.com.au/about/",
+          "result": "failed: timeout (400)"
+        }
+      ],
+      "source_opens": 4,
+      "searches": 3
+    },
+    {
+      "review_id": "education:242515:f7672e7d8f58a176",
+      "search_count": 1,
+      "source_open_count": 1,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Michael Sukkar\" \"Aquinas\" site:edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://www.aquinas.vic.edu.au/alumni/",
+          "result": "opened"
+        }
+      ],
+      "source_opens": 1,
+      "searches": 1
+    },
+    {
+      "review_id": "education:245212:8fc6e3dfab079be1",
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "search_queries": [
+          "\"Matt Canavan\" \"Chisholm\" college",
+          "site.chisholm.qld.edu.au Canavan",
+          "\"Canavan\" \"Chisholm\" \"Cornubia\""
+        ],
+        "searches": 3,
+        "source_opens": 4,
+        "opened_sources": [
+          {
+            "url": "https://www.chisholm.qld.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://atributetoaustralianchristians.wordpress.com/2022/02/18/matt-canavan/",
+            "status": "opened; discovery only, original interview followed"
+          },
+          {
+            "url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    {
+      "review_id": "education:247742:873379743ae77d6e",
+      "search_count": 3,
+      "source_open_count": 4,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Luke Howarth\" \"Patrick\" site:edu.au",
+        "Luke Howarth St Patricks Shorncliffe old boy",
+        "Luke Howarth school St Patrick College education"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+          "result": "opened at early life"
+        },
+        {
+          "url": "https://www.stpatricks.qld.edu.au/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth#cite_note-4",
+          "result": "clicked parliament citation anchor; returned article"
+        }
+      ],
+      "source_opens": 4,
+      "searches": 3
+    },
+    {
+      "review_id": "education:250156:6f66165bfc8609df",
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:250156:6f66165bfc8609df",
+        "search_queries": [],
+        "searches": 0,
+        "source_opens": 0,
+        "opened_sources": []
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    {
+      "review_id": "education:270552:553255a6eba1c1aa",
+      "search_queries": [
+        "Lucy Gichuhi Lwak Girls school maiden speech",
+        "\"Lucy Gichuhi\" \"Lwak\"",
+        "Lwak Girls school Kenya site:go.ke"
+      ],
+      "searches": 3,
+      "source_opens": 5,
+      "opened_sources": [
+        {
+          "url": "https://www.openaustralia.org.au/senate/?id=2017-06-21.133.1",
+          "status": "opened"
+        },
+        {
+          "url": "OpenAustralia Senate speech link 14 (no resolved URL returned)",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.ca.go.ke/node/439",
+          "status": "opened"
+        },
+        {
+          "url": "https://libraryir.parliament.go.ke/bitstreams/efa5bc74-c6ce-40f1-bb12-6fed333265bc/download",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.ca.go.ke/node/439 [line 420 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:280304:4db911ac8d31077e",
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:280304:4db911ac8d31077e",
+        "search_queries": [
+          "\"Lidia Thorpe\" \"Fitzroy\" \"Collingwood\" school",
+          "\"Lidia Thorpe\" \"Collingwood High\" Latimore 2022",
+          "\"Lidia Thorpe\" school Fitzroy Collingwood biography Latimore"
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+            "status": "opened; secondary lead only"
+          },
+          {
+            "url": null,
+            "status": "failed click: Wikipedia reference 345, invalid arguments"
+          },
+          {
+            "url": "https://www.lidiathorpe.com/about_me",
+            "status": "failed: internal error"
+          },
+          {
+            "url": "https://www.smh.com.au/national/shouty-uninformed-ineffective-how-senator-lidia-thorpe-annoys-the-establishment-20220419-p5aelh.html",
+            "status": "failed: unverified reconstructed URL, not evidence and not a verified citation"
+          },
+          {
+            "url": null,
+            "status": "failed click: Wikipedia find result reference 345, invalid arguments"
+          },
+          {
+            "url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    {
+      "review_id": "education:282918:d9a195f1e187af61",
+      "search_queries": [
+        "Gladys Liu Belilios Public school first speech",
+        "\"Belilios Public School\" site:edb.gov.hk"
+      ],
+      "searches": 2,
+      "source_opens": 4,
+      "opened_sources": [
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/46th_Parliament/Gladys_Liu",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/46th_Parliament/Gladys_Liu",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html [line 30 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:297964:0477b661fc755dd3",
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "search_queries": [
+          "\"Jessica Collins\" \"John Paul\" school",
+          "\"Jessica Collins\" senator school education first speech John college",
+          "\"Jessica Bird\" \"John Paul\" college"
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+            "status": "failed: internal error"
+          },
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+            "status": "failed find on indexed APH profile: internal error; conservatively counted as another access attempt"
+          },
+          {
+            "url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+            "status": "opened"
+          },
+          {
+            "url": null,
+            "status": "failed click: OpenAustralia Hansard source reference 14, internal error"
+          },
+          {
+            "url": "https://nswliberal.org.au/jessica-collins/meet-jessica",
+            "status": "redirected to https://nswliberal.org.au/404; unavailable biography"
+          },
+          {
+            "url": "https://nswliberal.org.au/jess-collins",
+            "status": "opened; no school named"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    {
+      "review_id": "education:56430:2340b6eede488795",
+      "search_count": 3,
+      "source_open_count": 5,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Damian Drum\" \"Assumption\" site:edu.au",
+        "Damian Drum Assumption Kilmore old collegian",
+        "\"Damian Drum\" site:assumption.vic.edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://sites.google.com/assumption.vic.edu.au/ack-alumni-vflafl-players/home",
+          "result": "opened; embedded list not exposed"
+        },
+        {
+          "url": "https://www.assumption.vic.edu.au/contact-us/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Damian_Drum",
+          "result": "opened; no Assumption match"
+        },
+        {
+          "url": "https://assets.website-files.com/5d0b2f88641a5824608cbb94/5d34fb536b1d5c4d302274a7_AssumptionCollege_ShandonCalls_Autumn.pdf",
+          "result": "opened; no Drum match"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Assumption_College%2C_Kilmore",
+          "result": "opened; no Drum match"
+        }
+      ],
+      "source_opens": 5,
+      "searches": 3
+    },
+    {
+      "review_id": "education:a9b:94cf572855aa803a",
+      "search_count": 3,
+      "source_open_count": 2,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Stephen Jones\" \"Edmund Rice\"",
+        "Stephen Jones Edmund Rice site:aph.gov.au",
+        "\"Stephen Jones\" site:edmundricecollege.nsw.edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://www.abc.net.au/news/2016-06-16/mp-opens-up-on-child-sex-abuse/7515624",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.edmundricecollege.nsw.edu.au/",
+          "result": "opened"
+        }
+      ],
+      "source_opens": 2,
+      "searches": 3
+    },
+    {
+      "review_id": "education:e0f:2f7f6b0f23bf99d3",
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "search_queries": [
+          "\"Jason Wood\" \"Ferntree Gully\" technical school",
+          "site.vic.gov.au \"Ferntree Gully Technical\" school"
+        ],
+        "searches": 2,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.jasonwood.com.au/maiden_speech",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    {
+      "review_id": "education:hwp:5ebd76ef99402512",
+      "search_queries": [
+        "Nola Marino Bunbury Technical school education",
+        "\"Nola Marino\" \"Technical\"",
+        "\"Bunbury Technical School\" history"
+      ],
+      "searches": 3,
+      "source_opens": 3,
+      "opened_sources": [
+        {
+          "url": "https://www.parliament.wa.gov.au/publications/tabledpapers.nsf/displaypaper/3710322ab4a80ccf473c1bdb48256fef0051a46d/%24file/south%2Bwest%2Bregional%2Bcollege%2Btafe%2Bar%2B2004.pdf",
+          "status": "failed"
+        },
+        {
+          "url": "https://inherit.dplh.wa.gov.au/public/inventory/details/33d006ba-ad0c-4de1-8eb2-02cec230800b",
+          "status": "opened"
+        },
+        {
+          "url": "https://inherit.dplh.wa.gov.au/public/inventory/printsinglerecord/42228824-1bc6-4022-8ef1-171b854c40b2",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "review_id": "education:hym:3a40a73718408507",
+      "search_queries": [
+        "Steve Irons Box Hill Technical College first speech",
+        "\"Box Hill Technical College\" site:vic.gov.au",
+        "\"Box Hill Technical\" \"Irons\""
+      ],
+      "searches": 3,
+      "source_opens": 3,
+      "opened_sources": [
+        {
+          "url": "https://www.vic.gov.au/whitehorse-technical-college-number-7406",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050 [line 20 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:iwk:e5b7ed4b6c400eb3",
+      "search_queries": [
+        "Linda White Greythorn High School first speech",
+        "\"Linda White\" \"Greythorn\"",
+        "\"Greythorn\" site:vic.gov.au school"
+      ],
+      "searches": 3,
+      "source_opens": 1,
+      "opened_sources": [
+        {
+          "url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:jh5:c00d327efd749d08",
+      "search_queries": [
+        "\"Jennie George\" \"Bankstown\" teacher"
+      ],
+      "searches": 1,
+      "source_opens": 1,
+      "opened_sources": [
+        {
+          "url": "https://www.womeninunions.org/node/3074",
+          "status": "opened"
+        }
+      ]
+    },
+    {
+      "review_id": "education:lnw:b90cc8fe47a3d6f4",
+      "search_queries": [
+        "Kristina Keneally Notre Dame Academy Toledo school official"
+      ],
+      "searches": 1,
+      "source_opens": 4,
+      "opened_sources": [
+        {
+          "url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/ [line 145 reopen]",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf [line 2128 reopen]",
+          "status": "opened"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3117 @@
+[
+  {
+    "review_id": "education:00aki:267904ceccd83f6c",
+    "member": "DUTTON, the Hon. Peter Craig",
+    "aph_id": "00AKI",
+    "recorded_school_name": "St Paul's School",
+    "outcome": "mapping",
+    "reasoning": "The exact APH assertion gives attendance at St Paul's School. The opened secondary biography explicitly identifies the Bald Hills Anglican school; the school-owned homepage identifies its Bald Hills address. This distinguishes the ACARA target from same-name primary schools. Attendance identification remains secondary-source based; no attendance dates or graduation are proposed.",
+    "evidence": [
+      {
+        "review_id": "education:00aki:267904ceccd83f6c",
+        "candidate_institution_ref": null,
+        "source_title": "Peter Dutton - early life",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/Peter_Dutton",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "00AKI",
+          "recorded_school_name": "St Paul's School",
+          "summary": "The biography explicitly identifies Dutton's high school as St Paul's School, Bald Hills."
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The biography explicitly identifies Dutton's high school as St Paul's School, Bald Hills.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4f17d15e02a5b00524bf9fe18715805ae9614f251c22f1ff47c0e8f82c80c418"
+      },
+      {
+        "review_id": "education:00aki:267904ceccd83f6c",
+        "candidate_institution_ref": "acara:47999",
+        "source_title": "St Paul's School homepage",
+        "source_type": "school",
+        "source_url": "https://www.stpauls.qld.edu.au/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:47999",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Bald Hills"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school identifies itself as an Anglican school at 34 Strathpine Road, Bald Hills, Queensland.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:d9699fed90d0b6a3042b67b628f35b8a51ae3a4924548f8085f340b5e92427cf"
+      },
+      {
+        "review_id": "education:00aki:267904ceccd83f6c",
+        "candidate_institution_ref": "acara:47999",
+        "source_title": "Peter Dutton - early life - exact attendance identity",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/Peter_Dutton",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "aph_id": "00AKI",
+          "recorded_school_name": "St Paul's School",
+          "institution_ref": "acara:47999",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Bald Hills"
+          },
+          "summary": "The biography explicitly identifies Dutton's high school as St Paul's School, Bald Hills."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The biography explicitly identifies Dutton's high school as St Paul's School, Bald Hills. The named locality distinguishes this target from same-name alternatives.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:66bb0cf49f570bc8e824fec8019466f6754e7ecccdbbd73e49719134ae021262"
+      }
+    ],
+    "payload": {
+      "aph_id": "00AKI",
+      "recorded_school_name": "St Paul's School",
+      "evidence_refs": [
+        "evidence:4f17d15e02a5b00524bf9fe18715805ae9614f251c22f1ff47c0e8f82c80c418",
+        "evidence:d9699fed90d0b6a3042b67b628f35b8a51ae3a4924548f8085f340b5e92427cf",
+        "evidence:66bb0cf49f570bc8e824fec8019466f6754e7ecccdbbd73e49719134ae021262"
+      ],
+      "institution_ref": "acara:47999",
+      "relationship_type": "direct"
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 3,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "Peter Dutton St Paul School Bald Hills attended site:stpauls.qld.edu.au",
+        "\"Peter Dutton\" \"St Paul\" school attended",
+        "Peter Dutton Bald Hills school site:aph.gov.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Peter_Dutton",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.stpauls.qld.edu.au/",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.stpauls.qld.edu.au/alumni-stories/",
+          "result": "opened; no Dutton attendance confirmation retained"
+        }
+      ],
+      "source_opens": 3,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:00an3:f7672e7d8f58a176",
+    "member": "O'CONNOR, the Hon. Brendan Patrick John",
+    "aph_id": "00AN3",
+    "recorded_school_name": "Aquinas College",
+    "outcome": "mapping",
+    "reasoning": "The APH assertion names Aquinas College. The opened secondary biography identifies Aquinas College Melbourne and links the Ringwood institution. The separately opened school-owned Aquinas alumni page establishes the Ringwood school identity but does not confirm O'Connor attendance. This is an advisory candidate with secondary attendance identification, requiring human source review; do not infer it from his electorate.",
+    "evidence": [
+      {
+        "review_id": "education:00an3:f7672e7d8f58a176",
+        "candidate_institution_ref": null,
+        "source_title": "Brendan O'Connor biography",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "00AN3",
+          "recorded_school_name": "Aquinas College",
+          "summary": "The biography identifies attendance at Aquinas College Melbourne, linking the Ringwood school."
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The biography identifies attendance at Aquinas College Melbourne, linking the Ringwood school.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:239067072b22d3489da4f5305a2ab3c888db1b9faef8526465f3786becc1d835"
+      },
+      {
+        "review_id": "education:00an3:f7672e7d8f58a176",
+        "candidate_institution_ref": "acara:45947",
+        "source_title": "Aquinas College alumni",
+        "source_type": "school",
+        "source_url": "https://www.aquinas.vic.edu.au/alumni/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:45947",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Ringwood"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school page identifies Aquinas College at 46 Great Ryrie Street, Ringwood.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:e0675136487b37c72eec727717092a2bf05dddc6e62277fb933dcc82ec972b77"
+      },
+      {
+        "review_id": "education:00an3:f7672e7d8f58a176",
+        "candidate_institution_ref": "acara:45947",
+        "source_title": "Brendan O'Connor biography - exact attendance identity",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "aph_id": "00AN3",
+          "recorded_school_name": "Aquinas College",
+          "institution_ref": "acara:45947",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Ringwood"
+          },
+          "summary": "The biography identifies attendance at Aquinas College Melbourne, linking the Ringwood school."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The biography identifies attendance at Aquinas College Melbourne, linking the Ringwood school. The named locality distinguishes this target from same-name alternatives.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:ec87a755c47074572d37b708f6a6e712346b432f83782ac49268815d1cf2a5ce"
+      }
+    ],
+    "payload": {
+      "aph_id": "00AN3",
+      "recorded_school_name": "Aquinas College",
+      "evidence_refs": [
+        "evidence:239067072b22d3489da4f5305a2ab3c888db1b9faef8526465f3786becc1d835",
+        "evidence:e0675136487b37c72eec727717092a2bf05dddc6e62277fb933dcc82ec972b77",
+        "evidence:ec87a755c47074572d37b708f6a6e712346b432f83782ac49268815d1cf2a5ce"
+      ],
+      "institution_ref": "acara:45947",
+      "relationship_type": "direct"
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 5,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": "Aquinas alumni source opened for Sukkar reused as institution identity for OConnor without another fetch.",
+      "search_queries": [
+        "Brendan O Connor Aquinas College attended school",
+        "\"Brendan O’Connor\" \"Aquinas\" Ringwood",
+        "Brendan OConnor Aquinas College Ringwood politician"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)#cite_note-6",
+          "result": "clicked citation anchor; returned same article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened at references"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Brendan_O%27Connor_(politician)",
+          "result": "opened at references again"
+        },
+        {
+          "url": "https://brendanoconnor.com.au/",
+          "result": "opened; no school information, site makes inaccurate Burke tenure claim, not retained as authoritative evidence"
+        }
+      ],
+      "source_opens": 5,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:125865:633836c18308dfa3",
+    "member": "McVEIGH, the Hon. Dr John Joseph",
+    "aph_id": "125865",
+    "recorded_school_name": "St Joseph's College",
+    "outcome": "mapping",
+    "reasoning": "The exact APH assertion and secondary biography record St Joseph's College attendance. The latter links the Toowoomba school, separately from Downlands College. The school-owned site confirms the Toowoomba identity. A cited former member About page failed to fetch; retain that primary-source gap. No parliamentary-geography inference or attendance year is used. A final permitted source open of the Queensland government directory identifies this same sjc.qld.edu.au institution as St Joseph's College (Rangeville), with Rangeville locality and a Toowoomba postal address. Rangeville is independently sourced; Toowoomba was a city label, not the registry suburb. The government page does not itself assert member attendance.",
+    "evidence": [
+      {
+        "review_id": "education:125865:633836c18308dfa3",
+        "candidate_institution_ref": null,
+        "source_title": "John McVeigh biography",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "125865",
+          "recorded_school_name": "St Joseph's College",
+          "summary": "The biography lists St Joseph's College and Downlands separately and links the former to the Toowoomba college."
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The biography lists St Joseph's College and Downlands separately and links the former to the Toowoomba college.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1b91a1078abe1fc747f21448e31991fad43c9742a6130fcc4eca5771865bcff6"
+      },
+      {
+        "review_id": "education:125865:633836c18308dfa3",
+        "candidate_institution_ref": "acara:47861",
+        "source_title": "St Joseph's College Our College",
+        "source_type": "school",
+        "source_url": "https://www.sjc.qld.edu.au/our-college/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:47861",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Toowoomba"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school states St Joseph's College was founded in 1956 and is located in Toowoomba, Queensland.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1be289460be8ee1bd547fa8b592f7dc9a2234615a708381924a7462cc16556ac"
+      },
+      {
+        "review_id": "education:125865:633836c18308dfa3",
+        "candidate_institution_ref": "acara:47861",
+        "source_title": "Queensland Department of Education - St Joseph's College (Rangeville)",
+        "source_type": "government_school_directory",
+        "source_url": "https://schoolsdirectory.eq.edu.au/Details/5323",
+        "retrieved_at": "2026-10-15T11:16:47.499458+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:47861",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Rangeville"
+          },
+          "school_name": "St Joseph's College",
+          "website": "https://www.sjc.qld.edu.au/",
+          "address": "54 James Street, Toowoomba 4350",
+          "summary": "Government directory names St Joseph's College (Rangeville), identifies Rangeville statistical locality and the sjc.qld.edu.au website. This bridges the school's Toowoomba city identity to the register's Rangeville locality; it does not assert McVeigh attendance."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The government directory calls the institution St Joseph's College (Rangeville), lists Rangeville as its statistical locality, gives 54 James Street Toowoomba, and links sjc.qld.edu.au. The website matches the independently opened Toowoomba school source.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:c1623749b6ef62112800f450e68dfa41590eab6aa788571b45c474fbea15d5e3"
+      }
+    ],
+    "payload": {
+      "aph_id": "125865",
+      "recorded_school_name": "St Joseph's College",
+      "evidence_refs": [
+        "evidence:1b91a1078abe1fc747f21448e31991fad43c9742a6130fcc4eca5771865bcff6",
+        "evidence:1be289460be8ee1bd547fa8b592f7dc9a2234615a708381924a7462cc16556ac",
+        "evidence:c1623749b6ef62112800f450e68dfa41590eab6aa788571b45c474fbea15d5e3"
+      ],
+      "institution_ref": "acara:47861",
+      "relationship_type": "direct"
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 6,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "John McVeigh St Joseph College Toowoomba old boy",
+        "\"John McVeigh\" \"St Joseph\" school parliament",
+        "John McVeigh St Joseph College Toowoomba education"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.sjc.qld.edu.au/our-college/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)#cite_note-3",
+          "result": "clicked citation anchor; returned same article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/John_McVeigh_(politician)",
+          "result": "opened at references"
+        },
+        {
+          "url": "https://www.johnmcveigh.com.au/",
+          "result": "clicked About reference; tool Internal Error, exact destination unavailable in returned result"
+        },
+        {
+          "url": "https://schoolsdirectory.eq.edu.au/Details/5323",
+          "result": "opened; official centre name St Joseph's College (Rangeville), statistical locality Rangeville, sjc.qld.edu.au website, Toowoomba address"
+        }
+      ],
+      "source_opens": 6,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:241067:267d4b4d8da8c0b6",
+    "member": "COLEMAN, the Hon. David Bernard",
+    "aph_id": "241067",
+    "recorded_school_name": "St Thomas",
+    "outcome": "unresolved",
+    "reasoning": "The secondary source explicitly identifies St Thomas as Saint Thomas a Becket PRIMARY school, Lewisham, and separately names Christian Brothers High School as Coleman's later school. This contradicts the supplied assertion's secondary classification and may indicate truncated or misplaced APH source text. Do not map this assertion to a secondary St Thomas school or substitute Christian Brothers attendance. Primary corroboration and the original field parsing require inspection; the attempted member website timed out.",
+    "evidence": [
+      {
+        "review_id": "education:241067:267d4b4d8da8c0b6",
+        "candidate_institution_ref": null,
+        "source_title": "David Coleman early life and education",
+        "source_type": "secondary",
+        "source_url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "241067",
+          "recorded_school_name": "St Thomas",
+          "summary": "The biography distinguishes Saint Thomas a Becket PRIMARY school, Lewisham, from Christian Brothers High School in Lewisham."
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The biography distinguishes Saint Thomas a Becket PRIMARY school, Lewisham, from Christian Brothers High School in Lewisham.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:d9767cdbb8b27e771429037d0282dcb0a6b962491663ebcc09b41e6510b7393f"
+      }
+    ],
+    "payload": {
+      "aph_id": "241067",
+      "recorded_school_name": "St Thomas",
+      "evidence_refs": [
+        "evidence:d9767cdbb8b27e771429037d0282dcb0a6b962491663ebcc09b41e6510b7393f"
+      ],
+      "resolution_reason": "ambiguous_name",
+      "resolution_only": true
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 4,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "David Coleman St Thomas school Christian Brothers",
+        "\"David Coleman\" \"St Thomas\" school",
+        "David Coleman St Thomas Lewisham parliament maiden speech"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-6",
+          "result": "clicked First speech citation anchor; returned article"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-14",
+          "result": "clicked About citation anchor; returned article"
+        },
+        {
+          "url": "https://www.davidcoleman.com.au/about/",
+          "result": "failed: timeout (400)"
+        }
+      ],
+      "source_opens": 4,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/issue-77-schools-pilot/proposals-0005.json",
+        "sha256_lf": "84df5c869bea6a15ecf6e8db50e2c20ab361a04c23622b4fb6457e75795de63d"
+      },
+      {
+        "path": "data/reference/review/research/issue-77-schools-pilot/proposals-0006.json",
+        "sha256_lf": "802381cb7d79023e034181ad3736075a8d248f11553f6cd5337675ef5b578540"
+      },
+      {
+        "path": "data/reference/review/research/issue-77-schools-pilot/proposals-0007.json",
+        "sha256_lf": "3c1f1cae3d68366e385ed2ec582752e6a0c38610e0298061642022071f873848"
+      }
+    ]
+  },
+  {
+    "review_id": "education:242515:f7672e7d8f58a176",
+    "member": "SUKKAR, the Hon. Michael Sven",
+    "aph_id": "242515",
+    "recorded_school_name": "Aquinas College",
+    "outcome": "mapping",
+    "reasoning": "The school-owned Aquinas alumni page explicitly identifies Michael Sukkar among former students and gives Peer Year 1999; its footer gives the Ringwood address. The local pinned profile identifies this institution as acara:45947, distinct from Aquinas in Ashmore and Salter Point. Restrict the mapping to Sukkar's exact assertion; peer year is not transcribed as a graduation claim.",
+    "evidence": [
+      {
+        "review_id": "education:242515:f7672e7d8f58a176",
+        "candidate_institution_ref": null,
+        "source_title": "Aquinas alumni - Michael Sukkar",
+        "source_type": "school",
+        "source_url": "https://www.aquinas.vic.edu.au/alumni/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "242515",
+          "recorded_school_name": "Aquinas College",
+          "summary": "The school names Michael Sukkar as an alumnus and lists Peer Year 1999."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school names Michael Sukkar as an alumnus and lists Peer Year 1999.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:f51b146f4bab334047415e8fa4c10827cc11d53467e581f52825b6332a217eb1"
+      },
+      {
+        "review_id": "education:242515:f7672e7d8f58a176",
+        "candidate_institution_ref": "acara:45947",
+        "source_title": "Aquinas College Ringwood identity",
+        "source_type": "school",
+        "source_url": "https://www.aquinas.vic.edu.au/alumni/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:45947",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Ringwood"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The page footer identifies Aquinas College at 46 Great Ryrie Street, Ringwood, Victoria.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:33ec26fa05b2908610521e78a11f44c5e1c0f1e125120301e7335c11c88c83cf"
+      },
+      {
+        "review_id": "education:242515:f7672e7d8f58a176",
+        "candidate_institution_ref": "acara:45947",
+        "source_title": "Aquinas alumni - Michael Sukkar - exact attendance identity",
+        "source_type": "school",
+        "source_url": "https://www.aquinas.vic.edu.au/alumni/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "aph_id": "242515",
+          "recorded_school_name": "Aquinas College",
+          "institution_ref": "acara:45947",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Ringwood"
+          },
+          "summary": "The school names Michael Sukkar as an alumnus and lists Peer Year 1999."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school names Michael Sukkar as an alumnus and lists Peer Year 1999. The named locality distinguishes this target from same-name alternatives.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4a31f91fec1b2d07699d6107316c3318f025797cc63db2f7d38512742e448088"
+      }
+    ],
+    "payload": {
+      "aph_id": "242515",
+      "recorded_school_name": "Aquinas College",
+      "evidence_refs": [
+        "evidence:f51b146f4bab334047415e8fa4c10827cc11d53467e581f52825b6332a217eb1",
+        "evidence:33ec26fa05b2908610521e78a11f44c5e1c0f1e125120301e7335c11c88c83cf",
+        "evidence:4a31f91fec1b2d07699d6107316c3318f025797cc63db2f7d38512742e448088"
+      ],
+      "institution_ref": "acara:45947",
+      "relationship_type": "direct"
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 1,
+      "source_open_count": 1,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Michael Sukkar\" \"Aquinas\" site:edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://www.aquinas.vic.edu.au/alumni/",
+          "result": "opened"
+        }
+      ],
+      "source_opens": 1,
+      "searches": 1
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:245212:8fc6e3dfab079be1",
+    "school_review_id": "school:8fc6e3dfab079be1",
+    "member": "CANAVAN, the Hon. Matthew (Matt) James",
+    "recorded_school_name": "Chisholm Catholic College",
+    "manual_institutions": [],
+    "evidence": [
+      {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "245212",
+          "recorded_school_name": "Chisholm Catholic College"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:8835001162efce7637d9e5518c4c4c01706003da0b53ded36abb7b0add418858"
+      },
+      {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Queensland Senator Matthew Canavan found God in Holy Matrimony",
+        "source_type": "original-newspaper-interview",
+        "source_url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "identity",
+        "claim_value": {
+          "aph_id": "245212",
+          "recorded_school_name": "Chisholm Catholic College",
+          "institution_ref": "acara:47888",
+          "locality": "Cornubia",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Cornubia"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Emilie Ng’s 20 September 2016 interview explicitly places Canavan at the Cornubia college while finishing high school. This is original interview reporting, not the later blog republication.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:8765fd27673ca4ca4f7723ca5b25b6cfd7fef138eef980448e3b091a048bfa6e"
+      },
+      {
+        "review_id": "school:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Chisholm Catholic College Cornubia official website",
+        "source_type": "official-school-profile",
+        "source_url": "https://www.chisholm.qld.edu.au/",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Chisholm Catholic College",
+          "suburb": "Cornubia",
+          "state": "QLD",
+          "school_type": "Secondary",
+          "sector": "Catholic"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official college identifies itself as a Catholic Years 7–12 school in Cornubia, Logan. The pinned register assigns this exact school ACARA 47888; Bedford WA is a distinct school.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:e333b639e77f2f95a4629cbdda6a05d01f050f7433e9f0e4cbf746fc8ad36ef0"
+      },
+      {
+        "review_id": "school:8fc6e3dfab079be1",
+        "candidate_institution_ref": "acara:47888",
+        "source_title": "Chisholm Catholic College Cornubia annual report 2021",
+        "source_type": "official-school-report",
+        "source_url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Chisholm Catholic College",
+          "address": "204 California Creek Rd, Cornubia QLD 4130",
+          "opened": 1992
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Page 2 identifies the school, address, Years 7–12 and 1992 opening. No attendance-year range or graduation year is inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:5a9a19bdc185280e3129f7c1e69fcec13ecbce7ad1be6bf0c0d322dfdd156b97"
+      }
+    ],
+    "gaps": [
+      "Exact attendance years and graduation are not established."
+    ],
+    "outcome": "mapping",
+    "reasoning": "A person-specific original interview explicitly names Cornubia. Official school sources and the pinned register establish acara:47888. Propose only Canavan’s exact assertion; do not create a school-wide default.",
+    "payload": {
+      "aph_id": "245212",
+      "recorded_school_name": "Chisholm Catholic College",
+      "institution_ref": "acara:47888",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:8835001162efce7637d9e5518c4c4c01706003da0b53ded36abb7b0add418858",
+        "evidence:8765fd27673ca4ca4f7723ca5b25b6cfd7fef138eef980448e3b091a048bfa6e",
+        "evidence:e333b639e77f2f95a4629cbdda6a05d01f050f7433e9f0e4cbf746fc8ad36ef0",
+        "evidence:5a9a19bdc185280e3129f7c1e69fcec13ecbce7ad1be6bf0c0d322dfdd156b97"
+      ]
+    },
+    "value": null,
+    "identity": {},
+    "alternatives": [],
+    "attempts": [],
+    "research_log": {
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:245212:8fc6e3dfab079be1",
+        "search_queries": [
+          "\"Matt Canavan\" \"Chisholm\" college",
+          "site.chisholm.qld.edu.au Canavan",
+          "\"Canavan\" \"Chisholm\" \"Cornubia\""
+        ],
+        "searches": 3,
+        "source_opens": 4,
+        "opened_sources": [
+          {
+            "url": "https://www.chisholm.qld.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://atributetoaustralianchristians.wordpress.com/2022/02/18/matt-canavan/",
+            "status": "opened; discovery only, original interview followed"
+          },
+          {
+            "url": "https://catholicleader.com.au/people/queensland-senator-matthew-canavan-found-god-in-holy-matrimony/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/prior-research.json",
+        "sha256_lf": "3c1cf6d391017f7abef253d059b594b6d3ca4f4255a156b744b2f025c70196a7"
+      },
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/results.json",
+        "sha256_lf": "2ec6ebf6f9a6e71978c2a91cd1f681c9f7849a30f97941d1317234ea03d30b09"
+      }
+    ]
+  },
+  {
+    "review_id": "education:247742:873379743ae77d6e",
+    "member": "HOWARTH, the Hon. Luke Ronald",
+    "aph_id": "247742",
+    "recorded_school_name": "St Patrick's College",
+    "outcome": "unresolved",
+    "reasoning": "The APH attendance assertion supplies only the unqualified name St Patrick's College. The opened Shorncliffe school site establishes that candidate's identity but supplies no Howarth attendance claim; the opened member biography does not name his school. Three queries did not locate person-specific evidence choosing among the many same-name institutions. Preserve the Shorncliffe lead without selecting it; neither upbringing nor electorate determines school location.",
+    "evidence": [
+      {
+        "review_id": "education:247742:873379743ae77d6e",
+        "candidate_institution_ref": "acara:47857",
+        "source_title": "St Patrick's College Shorncliffe",
+        "source_type": "school",
+        "source_url": "https://www.stpatricks.qld.edu.au/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:47857",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Shorncliffe"
+          }
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The school identifies itself at 60 Park Parade, Shorncliffe, Queensland, and states it opened in 1952. This does not identify Howarth as an attendee.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6ce4aa4f0b36f0d2194ecd77586584606743b45317b63c43d22daa8374bd2053"
+      }
+    ],
+    "payload": {
+      "aph_id": "247742",
+      "recorded_school_name": "St Patrick's College",
+      "evidence_refs": [
+        "evidence:6ce4aa4f0b36f0d2194ecd77586584606743b45317b63c43d22daa8374bd2053"
+      ],
+      "resolution_reason": "ambiguous_name",
+      "resolution_only": true
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 4,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Luke Howarth\" \"Patrick\" site:edu.au",
+        "Luke Howarth St Patricks Shorncliffe old boy",
+        "Luke Howarth school St Patrick College education"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+          "result": "opened at early life"
+        },
+        {
+          "url": "https://www.stpatricks.qld.edu.au/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Luke_Howarth#cite_note-4",
+          "result": "clicked parliament citation anchor; returned article"
+        }
+      ],
+      "source_opens": 4,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:250156:6f66165bfc8609df",
+    "school_review_id": "school:6f66165bfc8609df",
+    "member": "STEELE-JOHN, Jordon Alexander",
+    "recorded_school_name": "Home educated",
+    "manual_institutions": [],
+    "evidence": [
+      {
+        "review_id": "education:250156:6f66165bfc8609df",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "250156",
+          "recorded_school_name": "Home educated"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:9c594f2f48296e7acd32331be3d71ecc5260424dfff1cc1dc41d94b66c816c38"
+      }
+    ],
+    "gaps": [],
+    "outcome": "unresolved",
+    "reasoning": "The frozen APH row records Home educated. This describes an education mode and cannot support an invented school, ACARA target, manual institution, or campus. Reuse the complete prior finding without external searches.",
+    "payload": {
+      "aph_id": "250156",
+      "recorded_school_name": "Home educated",
+      "resolution_only": true,
+      "resolution_reason": "no_suitable_candidate",
+      "evidence_refs": [
+        "evidence:9c594f2f48296e7acd32331be3d71ecc5260424dfff1cc1dc41d94b66c816c38"
+      ]
+    },
+    "value": null,
+    "identity": {},
+    "alternatives": [],
+    "attempts": [],
+    "research_log": {
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:250156:6f66165bfc8609df",
+        "search_queries": [],
+        "searches": 0,
+        "source_opens": 0,
+        "opened_sources": []
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/prior-research.json",
+        "sha256_lf": "3c1cf6d391017f7abef253d059b594b6d3ca4f4255a156b744b2f025c70196a7"
+      },
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/results.json",
+        "sha256_lf": "2ec6ebf6f9a6e71978c2a91cd1f681c9f7849a30f97941d1317234ea03d30b09"
+      },
+      {
+        "path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+        "sha256_lf": "8308106d4b0e853653d13d105cb44abaeacb6161b1cf5c17f6881bf5663e2f86"
+      }
+    ]
+  },
+  {
+    "review_id": "education:270552:553255a6eba1c1aa",
+    "member": "GICHUHI, Lucy",
+    "recorded_school_name": "Lwak Girls",
+    "outcome": "mapping",
+    "reasoning": "Gichuhi names Lwak Girls High School in her own Senate first speech. The Kenyan regulator identifies Lwak Girls in Rarieda, Siaya. Preserve the overseas historical identity; no coordinates or historical sector are verified.",
+    "evidence": [
+      {
+        "review_id": "education:270552:553255a6eba1c1aa",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '270552'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "270552",
+          "education_id": "edu-270552-553255a6eba1c1aa",
+          "recorded_school_name": "Lwak Girls",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:646d9859c06edad82f071d0d5563f85febf98e54a7b97e2dbfbbf1f5eae92e11"
+      },
+      {
+        "review_id": "education:270552:553255a6eba1c1aa",
+        "candidate_institution_ref": null,
+        "source_title": "Lucy Gichuhi Senate first speech, 21 June 2017",
+        "source_type": "parliamentary-transcript",
+        "source_url": "https://www.openaustralia.org.au/senate/?id=2017-06-21.133.1",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "270552",
+          "school_name": "Lwak Girls High School",
+          "recorded_school_name": "Lwak Girls",
+          "identity_detail": null,
+          "claim": "Her first-person speech lists Lwak Girls High School among schools she attended. Official Hansard link failed; opened OpenAustralia mirror retained."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Her first-person speech lists Lwak Girls High School among schools she attended. Official Hansard link failed; opened OpenAustralia mirror retained.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:91f3265269333952e3895e41f35fbf9e67cea055edfe41fd226124ee4fa9c1cc"
+      },
+      {
+        "review_id": "education:270552:553255a6eba1c1aa",
+        "candidate_institution_ref": "manual:lwak-girls-high-school",
+        "source_title": "Communications Authority of Kenya: Education Broadband Connectivity Project",
+        "source_type": "government-register",
+        "source_url": "https://www.ca.go.ke/node/439",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "school_name": "Lwak Girls",
+          "country": "Kenya",
+          "county": "Siaya",
+          "sub_county": "Rarieda",
+          "identity_detail": {
+            "field": "country",
+            "value": "Kenya"
+          },
+          "claim": "Government regulator lists Lwak Girls under Siaya, Rarieda. The school financial-statement PDF failed to open; no financial data retained."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Government regulator lists Lwak Girls under Siaya, Rarieda. The school financial-statement PDF failed to open; no financial data retained.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4e50c9e196cc8a538b7e28121d6d355f58c89e987ff6fada9e3e7fd9f3f484ac"
+      },
+      {
+        "review_id": "education:270552:553255a6eba1c1aa",
+        "candidate_institution_ref": null,
+        "source_title": "Communications Authority of Kenya: Education Broadband Connectivity Project",
+        "source_type": "government-register",
+        "source_url": "https://www.ca.go.ke/node/439",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Lwak Girls"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact name='Lwak Girls'. Government regulator lists Lwak Girls under Siaya, Rarieda. The school financial-statement PDF failed to open; no financial data retained.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:f508ab3877304a30168e7cd885d68be98d56e851ace36759f22c5af5cc2c1c7f"
+      },
+      {
+        "review_id": "education:270552:553255a6eba1c1aa",
+        "candidate_institution_ref": null,
+        "source_title": "Communications Authority of Kenya: Education Broadband Connectivity Project",
+        "source_type": "government-register",
+        "source_url": "https://www.ca.go.ke/node/439",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "Kenya"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact country='Kenya'. Government regulator lists Lwak Girls under Siaya, Rarieda. The school financial-statement PDF failed to open; no financial data retained.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:7390ecba357465aa45453f8cd49f07d3c7cb38f4e9771b79a4c9a822313438ab"
+      }
+    ],
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:lwak-girls-high-school",
+        "school_name": "Lwak Girls",
+        "country": "Kenya",
+        "institution_status": "unknown",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:f508ab3877304a30168e7cd885d68be98d56e851ace36759f22c5af5cc2c1c7f"
+          ],
+          "country": [
+            "evidence:7390ecba357465aa45453f8cd49f07d3c7cb38f4e9771b79a4c9a822313438ab"
+          ]
+        },
+        "institution_evidence_review_id": "education:270552:553255a6eba1c1aa"
+      }
+    ],
+    "research_log": {
+      "search_queries": [
+        "Lucy Gichuhi Lwak Girls school maiden speech",
+        "\"Lucy Gichuhi\" \"Lwak\"",
+        "Lwak Girls school Kenya site:go.ke"
+      ],
+      "searches": 3,
+      "source_opens": 5,
+      "opened_sources": [
+        {
+          "url": "https://www.openaustralia.org.au/senate/?id=2017-06-21.133.1",
+          "status": "opened"
+        },
+        {
+          "url": "OpenAustralia Senate speech link 14 (no resolved URL returned)",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.ca.go.ke/node/439",
+          "status": "opened"
+        },
+        {
+          "url": "https://libraryir.parliament.go.ke/bitstreams/efa5bc74-c6ce-40f1-bb12-6fed333265bc/download",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.ca.go.ke/node/439 [line 420 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [
+      "Historical sector, coordinates and attendance years remain unknown; sector omitted."
+    ],
+    "payload": {
+      "aph_id": "270552",
+      "recorded_school_name": "Lwak Girls",
+      "institution_ref": "manual:lwak-girls-high-school",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:646d9859c06edad82f071d0d5563f85febf98e54a7b97e2dbfbbf1f5eae92e11",
+        "evidence:91f3265269333952e3895e41f35fbf9e67cea055edfe41fd226124ee4fa9c1cc",
+        "evidence:4e50c9e196cc8a538b7e28121d6d355f58c89e987ff6fada9e3e7fd9f3f484ac"
+      ]
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:280304:4db911ac8d31077e",
+    "school_review_id": "school:4db911ac8d31077e",
+    "member": "THORPE, Lidia Alma",
+    "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+    "manual_institutions": [],
+    "evidence": [
+      {
+        "review_id": "education:280304:4db911ac8d31077e",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '280304'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "280304",
+          "recorded_school_name": "Fitzroy and Collingwood Secondary Schools"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:40e77e349d79a8d9597d7685d11a8a0fa062d72fcec6de0b4bea54f1ffeaba82"
+      },
+      {
+        "review_id": "school:4db911ac8d31077e",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Schools Directory: Fitzroy Secondary College No. 7830",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "operating_dates",
+        "claim_value": {
+          "school_name": "Fitzroy Secondary College",
+          "former_name": "Fitzroy High School",
+          "school_number": "7830",
+          "opened": "1957-01-31",
+          "closed": "1992-12-31",
+          "rename_year": 1991
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "Opened government entry documents the historical secondary school and closure. It does not identify all schools in Thorpe’s combined assertion or establish continuity to a current ACARA target.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:687b88acb08e9cf74a9c7a01a304560520d595f37d2dbc5714218764b072df7a"
+      }
+    ],
+    "gaps": [
+      "Original reporting supporting the exact attendance sequence was not retrieved.",
+      "The official personal biography failed to open on this run; indexed text names no schools.",
+      "No supported split assertions or historical continuity to current ACARA institutions are established.",
+      "Earlier 1915 versus 1957 founding-date accounts remain unreconciled."
+    ],
+    "outcome": "unresolved",
+    "reasoning": "The combined plural APH label cannot truthfully be assigned to one institution. The secondary biography repeats the Year 7 Fitzroy / Year 8 Collingwood / Year 9 Fitzroy sequence, but its cited original newspaper article was not retrieved. The historical Fitzroy closure is independently confirmed. Preserve the current ambiguous-name policy and all previous institutional evidence.",
+    "payload": {
+      "aph_id": "280304",
+      "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+      "resolution_only": true,
+      "resolution_reason": "ambiguous_name",
+      "evidence_refs": [
+        "evidence:40e77e349d79a8d9597d7685d11a8a0fa062d72fcec6de0b4bea54f1ffeaba82",
+        "evidence:687b88acb08e9cf74a9c7a01a304560520d595f37d2dbc5714218764b072df7a"
+      ]
+    },
+    "value": null,
+    "identity": {},
+    "alternatives": [],
+    "attempts": [],
+    "research_log": {
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:280304:4db911ac8d31077e",
+        "search_queries": [
+          "\"Lidia Thorpe\" \"Fitzroy\" \"Collingwood\" school",
+          "\"Lidia Thorpe\" \"Collingwood High\" Latimore 2022",
+          "\"Lidia Thorpe\" school Fitzroy Collingwood biography Latimore"
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+            "status": "opened; secondary lead only"
+          },
+          {
+            "url": null,
+            "status": "failed click: Wikipedia reference 345, invalid arguments"
+          },
+          {
+            "url": "https://www.lidiathorpe.com/about_me",
+            "status": "failed: internal error"
+          },
+          {
+            "url": "https://www.smh.com.au/national/shouty-uninformed-ineffective-how-senator-lidia-thorpe-annoys-the-establishment-20220419-p5aelh.html",
+            "status": "failed: unverified reconstructed URL, not evidence and not a verified citation"
+          },
+          {
+            "url": null,
+            "status": "failed click: Wikipedia find result reference 345, invalid arguments"
+          },
+          {
+            "url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/prior-research.json",
+        "sha256_lf": "3c1cf6d391017f7abef253d059b594b6d3ca4f4255a156b744b2f025c70196a7"
+      },
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/results.json",
+        "sha256_lf": "2ec6ebf6f9a6e71978c2a91cd1f681c9f7849a30f97941d1317234ea03d30b09"
+      },
+      {
+        "path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+        "sha256_lf": "8308106d4b0e853653d13d105cb44abaeacb6161b1cf5c17f6881bf5663e2f86"
+      }
+    ]
+  },
+  {
+    "review_id": "education:282918:d9a195f1e187af61",
+    "member": "LIU, Gladys",
+    "recorded_school_name": "Belilios Public Girls School",
+    "outcome": "mapping",
+    "reasoning": "Frozen APH names Belilios Public Girls School. Hong Kong Education Bureau identifies Belilios Public School as a government girls secondary school. The APH first-speech search result independently names Belilios attendance in Hong Kong, but full speech opens failed; frozen APH remains the selected attendance evidence.",
+    "evidence": [
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '282918'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "282918",
+          "education_id": "edu-282918-d9a195f1e187af61",
+          "recorded_school_name": "Belilios Public Girls School",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:18ccbb8d2c38212c34966650744809e0982308cb4d51beb0f1928007dd66cb80"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": "manual:belilios-public-school",
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "school_name": "Belilios Public School",
+          "region": "Hong Kong",
+          "country": "China",
+          "school_number": "510378",
+          "school_type": "Secondary",
+          "sector": "Government",
+          "girls": true,
+          "identity_detail": {
+            "field": "country",
+            "value": "China"
+          },
+          "claim": "The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:37c4c6fe807ed4ca0716b1925313c29781538d82882c66c8efedb0fc0c43baee"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Belilios Public School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact name='Belilios Public School'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:ff637fa7a646992b8dccbaa3733353352b65fffe4f378313fdfa9d7d1e272673"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "China"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact country='China'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:d5e37ea714d8ae120d277c4f0820a96d4fe974916dc6b54d7663dbdb13c7795c"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "sector",
+          "value": "Government"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact sector='Government'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:5f848410ffa925368cbd1ef1685a2e9abbd8498d169d6df486fdc3c10785d243"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "status",
+          "value": "current"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact status='current'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:b77fe22e067449e5697aa0df099c240a490aac261521ab3e7eebefa152d3230b"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "state",
+          "value": "Hong Kong"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact state='Hong Kong'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:cf5f75ea8b04fda20d1c645aad575bbb18fd0b7c5184b50354d3ff1a4204fa22"
+      },
+      {
+        "review_id": "education:282918:d9a195f1e187af61",
+        "candidate_institution_ref": null,
+        "source_title": "Hong Kong Education Bureau school list, Eastern district",
+        "source_type": "government-school-register",
+        "source_url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "school_type",
+          "value": "Secondary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact school_type='Secondary'. The official register lists Belilios Public School, girls, under Government Secondary Schools. Its present address is 51 Tin Hau Temple Road; no historical campus coordinates inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:912ef710e7619f45c1a879a36ea7471b0b7c6d578eb6f55a3f4ef2f477724c8f"
+      }
+    ],
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:belilios-public-school",
+        "school_name": "Belilios Public School",
+        "country": "China",
+        "state": "Hong Kong",
+        "institution_status": "current",
+        "sector": "Government",
+        "school_type": "Secondary",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:ff637fa7a646992b8dccbaa3733353352b65fffe4f378313fdfa9d7d1e272673"
+          ],
+          "country": [
+            "evidence:d5e37ea714d8ae120d277c4f0820a96d4fe974916dc6b54d7663dbdb13c7795c"
+          ],
+          "sector": [
+            "evidence:5f848410ffa925368cbd1ef1685a2e9abbd8498d169d6df486fdc3c10785d243"
+          ],
+          "status": [
+            "evidence:b77fe22e067449e5697aa0df099c240a490aac261521ab3e7eebefa152d3230b"
+          ],
+          "state": [
+            "evidence:cf5f75ea8b04fda20d1c645aad575bbb18fd0b7c5184b50354d3ff1a4204fa22"
+          ],
+          "school_type": [
+            "evidence:912ef710e7619f45c1a879a36ea7471b0b7c6d578eb6f55a3f4ef2f477724c8f"
+          ]
+        },
+        "institution_evidence_review_id": "education:282918:d9a195f1e187af61"
+      }
+    ],
+    "research_log": {
+      "search_queries": [
+        "Gladys Liu Belilios Public school first speech",
+        "\"Belilios Public School\" site:edb.gov.hk"
+      ],
+      "searches": 2,
+      "source_opens": 4,
+      "opened_sources": [
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/46th_Parliament/Gladys_Liu",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/46th_Parliament/Gladys_Liu",
+          "status": "failed"
+        },
+        {
+          "url": "https://www.edb.gov.hk/en/student-parents/sch-info/sch-search/schlist-by-district/school-list-hke.html [line 30 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [
+      "APH first-speech result explicitly corroborates Belilios attendance, but both full-source opens failed; result retained as a disclosed lead only."
+    ],
+    "payload": {
+      "aph_id": "282918",
+      "recorded_school_name": "Belilios Public Girls School",
+      "institution_ref": "manual:belilios-public-school",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:18ccbb8d2c38212c34966650744809e0982308cb4d51beb0f1928007dd66cb80",
+        "evidence:37c4c6fe807ed4ca0716b1925313c29781538d82882c66c8efedb0fc0c43baee"
+      ]
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:297964:0477b661fc755dd3",
+    "school_review_id": "school:0477b661fc755dd3",
+    "member": "COLLINS, Dr Jessica",
+    "recorded_school_name": "John Paul College",
+    "manual_institutions": [],
+    "evidence": [
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '297964'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:38f6701a3a25cf8840c8ddf190d1413b2bb175af60915cf3484b69556b8507b1"
+      },
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Jessica Collins first speech, 30 July 2025, Hansard mirror",
+        "source_type": "parliamentary-transcript-mirror",
+        "source_url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College",
+          "childhood_move": "Queensland to New South Wales at age 13"
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "Her own speech, accessed through OpenAustralia, says she moved from Queensland to NSW at 13. It names no secondary school. This is a research lead only and cannot identify the college or rule out earlier schooling elsewhere.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4713b54edb8a9706ca091dfcd0c7030865475fa554a59d799061870572f9c2a5"
+      },
+      {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "candidate_institution_ref": null,
+        "source_title": "Jess Collins official Liberal Party NSW landing page",
+        "source_type": "official-party-profile",
+        "source_url": "https://nswliberal.org.au/jess-collins",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "attendance_context",
+        "claim_value": {
+          "aph_id": "297964",
+          "recorded_school_name": "John Paul College",
+          "school_not_identified": true
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "The opened party page identifies Collins and her policy career, but supplies no school or campus. Absence on this page does not disprove attendance.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:55106afab4ce71e459d938c8f82b8191a8c6ec7f55c9b28c3d1d4a2b90fd7c61"
+      }
+    ],
+    "gaps": [
+      "A person-specific campus or jurisdiction citation is still required.",
+      "Neither maiden-name searching nor the first speech resolves the exact school.",
+      "APH profile and original Hansard source failed; the old party biography redirected to a 404."
+    ],
+    "outcome": "unresolved",
+    "reasoning": "The fresh queries include Jessica Bird, the maiden-name lead in Cam’s existing decision. No person-specific source identifies which John Paul College she attended. Her first-speech childhood movement is contextual only. Preserve Cam’s research decision and the ambiguous-name school policy; the New Zealand hypothesis remains unverified.",
+    "payload": {
+      "aph_id": "297964",
+      "recorded_school_name": "John Paul College",
+      "resolution_only": true,
+      "resolution_reason": "ambiguous_name",
+      "evidence_refs": [
+        "evidence:4713b54edb8a9706ca091dfcd0c7030865475fa554a59d799061870572f9c2a5",
+        "evidence:55106afab4ce71e459d938c8f82b8191a8c6ec7f55c9b28c3d1d4a2b90fd7c61",
+        "evidence:38f6701a3a25cf8840c8ddf190d1413b2bb175af60915cf3484b69556b8507b1"
+      ]
+    },
+    "value": null,
+    "identity": {},
+    "alternatives": [],
+    "attempts": [],
+    "research_log": {
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:297964:0477b661fc755dd3",
+        "search_queries": [
+          "\"Jessica Collins\" \"John Paul\" school",
+          "\"Jessica Collins\" senator school education first speech John college",
+          "\"Jessica Bird\" \"John Paul\" college"
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+            "status": "failed: internal error"
+          },
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+            "status": "failed find on indexed APH profile: internal error; conservatively counted as another access attempt"
+          },
+          {
+            "url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+            "status": "opened"
+          },
+          {
+            "url": null,
+            "status": "failed click: OpenAustralia Hansard source reference 14, internal error"
+          },
+          {
+            "url": "https://nswliberal.org.au/jessica-collins/meet-jessica",
+            "status": "redirected to https://nswliberal.org.au/404; unavailable biography"
+          },
+          {
+            "url": "https://nswliberal.org.au/jess-collins",
+            "status": "opened; no school named"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/prior-research.json",
+        "sha256_lf": "3c1cf6d391017f7abef253d059b594b6d3ca4f4255a156b744b2f025c70196a7"
+      },
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/results.json",
+        "sha256_lf": "2ec6ebf6f9a6e71978c2a91cd1f681c9f7849a30f97941d1317234ea03d30b09"
+      },
+      {
+        "path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+        "sha256_lf": "8308106d4b0e853653d13d105cb44abaeacb6161b1cf5c17f6881bf5663e2f86"
+      }
+    ]
+  },
+  {
+    "review_id": "education:56430:2340b6eede488795",
+    "member": "DRUM, the Hon. Damian Kevin",
+    "aph_id": "56430",
+    "recorded_school_name": "Assumption College",
+    "outcome": "unresolved",
+    "reasoning": "The exact APH assertion supplies Assumption College with no locality. A search-result Wikipedia mirror lists Damian Drum as a Kilmore old collegian, but the opened current school article and member biography do not contain Drum, and the opened school-hosted alumni page's embedded full player list is not exposed. The opened 2019 school magazine also did not contain Drum. The primary school contact page establishes Kilmore only as an institution; no primary person-specific confirmation was found within three queries. Preserve Kilmore acara:45647 as a lead, not a selected mapping, and retain same-name Warwick acara:47894 as an alternative.",
+    "evidence": [
+      {
+        "review_id": "education:56430:2340b6eede488795",
+        "candidate_institution_ref": "acara:45647",
+        "source_title": "Assumption College contact",
+        "source_type": "school",
+        "source_url": "https://www.assumption.vic.edu.au/contact-us/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:45647",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "Kilmore"
+          }
+        },
+        "stance": "contextual",
+        "excerpt_or_note": "Assumption College identifies its address as 39 Sutherland Street, Kilmore, Victoria.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:eac05244c68d0de4f2eb0705cdc5237c21e9fe91b45135023aa5772c5fb0e3c0"
+      }
+    ],
+    "payload": {
+      "aph_id": "56430",
+      "recorded_school_name": "Assumption College",
+      "evidence_refs": [
+        "evidence:eac05244c68d0de4f2eb0705cdc5237c21e9fe91b45135023aa5772c5fb0e3c0"
+      ],
+      "resolution_reason": "ambiguous_name",
+      "resolution_only": true
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 5,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Damian Drum\" \"Assumption\" site:edu.au",
+        "Damian Drum Assumption Kilmore old collegian",
+        "\"Damian Drum\" site:assumption.vic.edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://sites.google.com/assumption.vic.edu.au/ack-alumni-vflafl-players/home",
+          "result": "opened; embedded list not exposed"
+        },
+        {
+          "url": "https://www.assumption.vic.edu.au/contact-us/",
+          "result": "opened"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Damian_Drum",
+          "result": "opened; no Assumption match"
+        },
+        {
+          "url": "https://assets.website-files.com/5d0b2f88641a5824608cbb94/5d34fb536b1d5c4d302274a7_AssumptionCollege_ShandonCalls_Autumn.pdf",
+          "result": "opened; no Drum match"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Assumption_College%2C_Kilmore",
+          "result": "opened; no Drum match"
+        }
+      ],
+      "source_opens": 5,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:a9b:94cf572855aa803a",
+    "member": "JONES, the Hon. Stephen Patrick",
+    "aph_id": "A9B",
+    "recorded_school_name": "Edmund Rice College",
+    "outcome": "mapping",
+    "reasoning": "The ABC report names Stephen Jones as a former Edmund Rice College school captain and dux in West Wollongong and reports his own experience there. This provides person-specific locality evidence independent of parliamentary geography. The school-owned homepage identifies the Wollongong institution, and the local ACARA profile gives acara:43663, distinct from Bindoon acara:48871. No dates or graduation status are added.",
+    "evidence": [
+      {
+        "review_id": "education:a9b:94cf572855aa803a",
+        "candidate_institution_ref": null,
+        "source_title": "Stephen Jones discusses former school",
+        "source_type": "news_interview",
+        "source_url": "https://www.abc.net.au/news/2016-06-16/mp-opens-up-on-child-sex-abuse/7515624",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "A9B",
+          "recorded_school_name": "Edmund Rice College",
+          "summary": "The ABC identifies Jones as a former captain and dux at Edmund Rice College, West Wollongong, and reports his personal experience at the school."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The ABC identifies Jones as a former captain and dux at Edmund Rice College, West Wollongong, and reports his personal experience at the school.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6ed377f4c169f279d441d9e036fac2bb8cb6d44049e07287ddb878ace1e51d19"
+      },
+      {
+        "review_id": "education:a9b:94cf572855aa803a",
+        "candidate_institution_ref": "acara:43663",
+        "source_title": "Edmund Rice College homepage",
+        "source_type": "school",
+        "source_url": "https://www.edmundricecollege.nsw.edu.au/",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "institution_ref": "acara:43663",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "West Wollongong"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The school homepage identifies Edmund Rice College as a Catholic boys school in Wollongong.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:f1a8309bdd2efb7f604f5cfd03fd5970f16f30750ced4daea9116378f8926ae8"
+      },
+      {
+        "review_id": "education:a9b:94cf572855aa803a",
+        "candidate_institution_ref": "acara:43663",
+        "source_title": "Stephen Jones discusses former school - exact attendance identity",
+        "source_type": "news_interview",
+        "source_url": "https://www.abc.net.au/news/2016-06-16/mp-opens-up-on-child-sex-abuse/7515624",
+        "retrieved_at": "2026-10-15T11:10:29.665310+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "aph_id": "A9B",
+          "recorded_school_name": "Edmund Rice College",
+          "institution_ref": "acara:43663",
+          "identity_detail": {
+            "field": "suburb",
+            "value": "West Wollongong"
+          },
+          "summary": "The ABC identifies Jones as a former captain and dux at Edmund Rice College, West Wollongong, and reports his personal experience at the school."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The ABC identifies Jones as a former captain and dux at Edmund Rice College, West Wollongong, and reports his personal experience at the school. The named locality distinguishes this target from same-name alternatives.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:5dfd33d553c11059f9a564df043738f662cec678d8b46d9c5c224ee20b2a7476"
+      }
+    ],
+    "payload": {
+      "aph_id": "A9B",
+      "recorded_school_name": "Edmund Rice College",
+      "evidence_refs": [
+        "evidence:6ed377f4c169f279d441d9e036fac2bb8cb6d44049e07287ddb878ace1e51d19",
+        "evidence:f1a8309bdd2efb7f604f5cfd03fd5970f16f30750ced4daea9116378f8926ae8",
+        "evidence:5dfd33d553c11059f9a564df043738f662cec678d8b46d9c5c224ee20b2a7476"
+      ],
+      "institution_ref": "acara:43663",
+      "relationship_type": "direct"
+    },
+    "manual_institutions": [],
+    "research_log": {
+      "search_count": 3,
+      "source_open_count": 2,
+      "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+      "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+      "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+      "shared_source_reuse": null,
+      "search_queries": [
+        "\"Stephen Jones\" \"Edmund Rice\"",
+        "Stephen Jones Edmund Rice site:aph.gov.au",
+        "\"Stephen Jones\" site:edmundricecollege.nsw.edu.au"
+      ],
+      "opened_sources": [
+        {
+          "url": "https://www.abc.net.au/news/2016-06-16/mp-opens-up-on-child-sex-abuse/7515624",
+          "result": "opened"
+        },
+        {
+          "url": "https://www.edmundricecollege.nsw.edu.au/",
+          "result": "opened"
+        }
+      ],
+      "source_opens": 2,
+      "searches": 3
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:e0f:2f7f6b0f23bf99d3",
+    "school_review_id": "school:2f7f6b0f23bf99d3",
+    "member": "WOOD, the Hon. Jason Peter",
+    "recorded_school_name": "Ferntree Gully Technical School",
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:ferntree-gully-technical-school",
+        "sector": "Government",
+        "institution_status": "merged",
+        "school_name": "Ferntree Gully Technical School",
+        "country": "Australia",
+        "school_type": "Secondary",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:3db1836026c3b11da7718f8b00a4ae54c0f11d42cb4e26cfcc291fdfbf8d7eaf"
+          ],
+          "country": [
+            "evidence:839318f70da7d554003959520aec78219346101f5eeae9a5135d13bf812d05c5"
+          ],
+          "status": [
+            "evidence:6ae71dd7d86e839f9ad4e43282733b524207d54948c99b7be6fb169b1be225d9"
+          ],
+          "sector": [
+            "evidence:1594285d3f2af47d47c4acfe5268f16a372bbc9bdc9d0b743cf378e2196e2839"
+          ],
+          "school_type": [
+            "evidence:36e0e470ba93f3651bf7e1baa8b654f0ae15cddaa33cfb7c3b694eba3fbed6db"
+          ]
+        },
+        "institution_evidence_review_id": "school:2f7f6b0f23bf99d3"
+      }
+    ],
+    "evidence": [
+      {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "E0F",
+          "recorded_school_name": "Ferntree Gully Technical School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The pinned APH-derived source row records this education description. It does not identify a campus or establish dates or graduation.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4e3690dba1bbe598f02db02197630d0873e51424fd8d17d0b596c5f095af3a77"
+      },
+      {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Jason Wood maiden speech",
+        "source_type": "member-first-speech",
+        "source_url": "https://www.jasonwood.com.au/maiden_speech",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "identity",
+        "claim_value": {
+          "aph_id": "E0F",
+          "recorded_school_name": "Ferntree Gully Technical School",
+          "institution_ref": "manual:ferntree-gully-technical-school",
+          "identity_detail": {
+            "field": "institution_ref",
+            "value": "manual:ferntree-gully-technical-school"
+          }
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Wood’s own published maiden speech explicitly identifies his education at Ferntree Gully Technical School.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:aef0fb0af4de455ae4922ff8cc2e0e3c4075ea304d597cbe6ed3272c89153b59"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_identity",
+        "claim_value": {
+          "school_name": "Ferntree Gully Technical School",
+          "country": "Australia",
+          "sector": "Government",
+          "school_number": "7145",
+          "school_type": "Secondary",
+          "renamed_to": "Glenfern Secondary College",
+          "rename_year": 1990,
+          "closed": "1996-12-31",
+          "merge_year": 1997,
+          "merged_into": "Ferntree Gully College No. 7827"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The Victorian state-school directory identifies the technical school as No. 7145, renamed Glenfern in 1990 and merged with No. 7827 in 1997. Its address is listed under the Glenfern entry; no historical campus coordinates are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:fa1dab8161453c8561d733190059d14df97a08cdd2b732493d310ab1faacd7a0"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Ferntree Gully Technical School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:3db1836026c3b11da7718f8b00a4ae54c0f11d42cb4e26cfcc291fdfbf8d7eaf"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "Australia"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:839318f70da7d554003959520aec78219346101f5eeae9a5135d13bf812d05c5"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "sector",
+          "value": "Government"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1594285d3f2af47d47c4acfe5268f16a372bbc9bdc9d0b743cf378e2196e2839"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "status",
+          "value": "merged"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6ae71dd7d86e839f9ad4e43282733b524207d54948c99b7be6fb169b1be225d9"
+      },
+      {
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+        "source_title": "Historical Victorian State Schools Directory: Glenfern Secondary College No. 7145",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+        "retrieved_at": "2026-10-15T04:30:31.292451+00:00",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "school_type",
+          "value": "Secondary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact derived from the opened Victorian historical State Schools Directory for No. 7145; the directory identifies the former technical school, secondary level, Victorian jurisdiction and later merger. No coordinates are assigned.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:36e0e470ba93f3651bf7e1baa8b654f0ae15cddaa33cfb7c3b694eba3fbed6db"
+      }
+    ],
+    "gaps": [
+      "No historical campus coordinates or exact attendance dates are proposed.",
+      "The listed address is not asserted to be valid throughout Wood’s attendance."
+    ],
+    "outcome": "mapping",
+    "reasoning": "Wood’s own speech establishes attendance; the historical state-school register establishes the original institution. Propose a direct assertion mapping after individually accepting the manual historical definition. The separately numbered merger school is not substituted as his attended institution.",
+    "payload": {
+      "aph_id": "E0F",
+      "recorded_school_name": "Ferntree Gully Technical School",
+      "institution_ref": "manual:ferntree-gully-technical-school",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:4e3690dba1bbe598f02db02197630d0873e51424fd8d17d0b596c5f095af3a77",
+        "evidence:aef0fb0af4de455ae4922ff8cc2e0e3c4075ea304d597cbe6ed3272c89153b59",
+        "evidence:fa1dab8161453c8561d733190059d14df97a08cdd2b732493d310ab1faacd7a0"
+      ]
+    },
+    "value": null,
+    "identity": {},
+    "alternatives": [],
+    "attempts": [],
+    "research_log": {
+      "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+      "previous_case": {
+        "review_id": "education:e0f:2f7f6b0f23bf99d3",
+        "search_queries": [
+          "\"Jason Wood\" \"Ferntree Gully\" technical school",
+          "site.vic.gov.au \"Ferntree Gully Technical\" school"
+        ],
+        "searches": 2,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.jasonwood.com.au/maiden_speech",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.vic.gov.au/glenfern-secondary-college-number-7145",
+            "status": "opened"
+          }
+        ]
+      },
+      "search_queries": [],
+      "searches": 0,
+      "source_opens": 0,
+      "opened_sources": [],
+      "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+    },
+    "prior_research": [
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/prior-research.json",
+        "sha256_lf": "3c1cf6d391017f7abef253d059b594b6d3ca4f4255a156b744b2f025c70196a7"
+      },
+      {
+        "path": "data/reference/review/research/p48-final-schools-20261015/results.json",
+        "sha256_lf": "2ec6ebf6f9a6e71978c2a91cd1f681c9f7849a30f97941d1317234ea03d30b09"
+      }
+    ]
+  },
+  {
+    "review_id": "education:hwp:5ebd76ef99402512",
+    "member": "MARINO, the Hon. Nola Bethwyn",
+    "recorded_school_name": "Bunbury Techincal School",
+    "outcome": "unresolved",
+    "reasoning": "APH records misspelled Bunbury Techincal School. Government heritage information establishes Bunbury Technical College as tertiary training and its subsequent TAFE identity, but the opened material does not establish the precise historical school, period or level Marino attended. Do not map to a modern secondary school or infer a campus from current TAFE.",
+    "evidence": [
+      {
+        "review_id": "education:hwp:5ebd76ef99402512",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HWP'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HWP",
+          "education_id": "edu-hwp-5ebd76ef99402512",
+          "recorded_school_name": "Bunbury Techincal School",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:865fcb22bf005dd2ff7b1200637f2f4c1d7ec0368787c6ca3e2e20de0b1d281d"
+      },
+      {
+        "review_id": "education:hwp:5ebd76ef99402512",
+        "candidate_institution_ref": null,
+        "source_title": "WA Heritage Council: South West College of TAFE",
+        "source_type": "government-heritage-register",
+        "source_url": "https://inherit.dplh.wa.gov.au/public/inventory/details/33d006ba-ad0c-4de1-8eb2-02cec230800b",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "name": "Bunbury Technical College",
+          "country": "Australia",
+          "state": "WA",
+          "opened": 1970,
+          "education_type": "technical and tertiary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The opened heritage record describes Bunbury Technical College built in 1970, higher education and technical training, later TAFE. It does not establish Marino attendance at that campus.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:e512e8e6d4d218b2017e50ffb3f4af8d05b7fcb1cf22e7c2ff01a46b07404e0e"
+      }
+    ],
+    "manual_institutions": [],
+    "research_log": {
+      "search_queries": [
+        "Nola Marino Bunbury Technical school education",
+        "\"Nola Marino\" \"Technical\"",
+        "\"Bunbury Technical School\" history"
+      ],
+      "searches": 3,
+      "source_opens": 3,
+      "opened_sources": [
+        {
+          "url": "https://www.parliament.wa.gov.au/publications/tabledpapers.nsf/displaypaper/3710322ab4a80ccf473c1bdb48256fef0051a46d/%24file/south%2Bwest%2Bregional%2Bcollege%2Btafe%2Bar%2B2004.pdf",
+          "status": "failed"
+        },
+        {
+          "url": "https://inherit.dplh.wa.gov.au/public/inventory/details/33d006ba-ad0c-4de1-8eb2-02cec230800b",
+          "status": "opened"
+        },
+        {
+          "url": "https://inherit.dplh.wa.gov.au/public/inventory/printsinglerecord/42228824-1bc6-4022-8ef1-171b854c40b2",
+          "status": "failed"
+        }
+      ]
+    },
+    "gaps": [
+      "Member-specific corroboration not located within three queries. The official college annual-report search result outlines Technical School to College succession but the PDF failed to open. Level and exact historical identity remain uncertain."
+    ],
+    "payload": null,
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:hym:3a40a73718408507",
+    "member": "IRONS, the Hon. Stephen (Steve) James",
+    "recorded_school_name": "Box Hill Technical College",
+    "outcome": "unresolved",
+    "reasoning": "APH names Box Hill Technical College. Victorian government directory documents Box Hill Technical School No.7050 renamed to current Box Hill Senior Secondary College in 1995; it does not explicitly equate the recorded College wording with that School. College versus school identity and potential tertiary education require corroboration before selecting acara:45326.",
+    "evidence": [
+      {
+        "review_id": "education:hym:3a40a73718408507",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HYM'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "HYM",
+          "education_id": "edu-hym-3a40a73718408507",
+          "recorded_school_name": "Box Hill Technical College",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:04d8da841e9d3a289124c454135136c303953ad049be7c5d0b80751f0bd751bc"
+      },
+      {
+        "review_id": "education:hym:3a40a73718408507",
+        "candidate_institution_ref": "acara:45326",
+        "source_title": "Victorian Government Schools Directory: Box Hill Senior Secondary College No.7050",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "name": "Box Hill Senior Secondary College",
+          "former_name": "Box Hill Technical School",
+          "school_number": 7050,
+          "rename_year": 1995,
+          "country": "Australia",
+          "identity_detail": {
+            "field": "country",
+            "value": "Australia"
+          },
+          "claim": "The official directory documents the School-to-Senior Secondary College rename. It does not name Box Hill Technical College as an alias. Current ACARA row 45326 matches the current name at Mont Albert North."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official directory documents the School-to-Senior Secondary College rename. It does not name Box Hill Technical College as an alias. Current ACARA row 45326 matches the current name at Mont Albert North.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:88b1473710ef0b189df98bb9bce8c0fc786229f5705ac7d1692d1ea754ab7ddf"
+      }
+    ],
+    "manual_institutions": [],
+    "research_log": {
+      "search_queries": [
+        "Steve Irons Box Hill Technical College first speech",
+        "\"Box Hill Technical College\" site:vic.gov.au",
+        "\"Box Hill Technical\" \"Irons\""
+      ],
+      "searches": 3,
+      "source_opens": 3,
+      "opened_sources": [
+        {
+          "url": "https://www.vic.gov.au/whitehorse-technical-college-number-7406",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050",
+          "status": "opened"
+        },
+        {
+          "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050 [line 20 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [
+      "No member-specific source beyond frozen APH identifies exact Box Hill institution. Preserve acara:45326 as contextual candidate, not approved target."
+    ],
+    "payload": null,
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:iwk:e5b7ed4b6c400eb3",
+    "member": "WHITE, Linda",
+    "recorded_school_name": "Greythorn High School",
+    "outcome": "mapping",
+    "reasoning": "Frozen APH names Greythorn High School. The Victorian government directory identifies the exact historical secondary school No.7875, closed 31 December 1991 and merged with Balwyn in 1992. Map directly to the historical school; no succession or current Balwyn campus coordinates are assigned.",
+    "evidence": [
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'IWK'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "IWK",
+          "education_id": "edu-iwk-e5b7ed4b6c400eb3",
+          "recorded_school_name": "Greythorn High School",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:7cfbe5b74838781fcb83919193dcc49214cf7d24141257de0c3886f5b1b52140"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": "manual:greythorn-high-school",
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "name": "Greythorn High School",
+          "school_number": 7875,
+          "country": "Australia",
+          "school_type": "Secondary",
+          "closed": "1991-12-31",
+          "merged_with": "Balwyn High School",
+          "merger_year": 1992,
+          "identity_detail": {
+            "field": "country",
+            "value": "Australia"
+          },
+          "claim": "Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:e5d8835435bf229609dfa3d45f7302aaaeb4254d00188623283185f55ae39bc9"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Greythorn High School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact name='Greythorn High School'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6c39c098825a07f588c43a89090edddaad789bbde098d295dbbedbc7464c23c6"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "Australia"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact country='Australia'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1542056a02e22b179fb74c01881ddb50a730b86dd24981c53836a1b341a8d3a8"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "sector",
+          "value": "Government"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact sector='Government'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:3991dc5a2b9ac7340ec05350afe0328a5a17614ffc07ec9d5b47d3895fc78ecf"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "status",
+          "value": "closed"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact status='closed'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:7e6670a8b452648467a1644025db3389119f9d43d01122378196f7f37affdb90"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "state",
+          "value": "VIC"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact state='VIC'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:509fbef612257ceb81bc9a2fc44f73d6a044270c44b7435adb5ad1bb15189215"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "suburb",
+          "value": "Balwyn North"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact suburb='Balwyn North'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4177bb24278ae3132a76574442dbe020491a0d72ab9634dd847df1469259d5cf"
+      },
+      {
+        "review_id": "education:iwk:e5b7ed4b6c400eb3",
+        "candidate_institution_ref": null,
+        "source_title": "Victorian Government Schools Directory: Greythorn High School No.7875",
+        "source_type": "government-school-register",
+        "source_url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "school_type",
+          "value": "Secondary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact school_type='Secondary'. Official government school directory identifies Greythorn No.7875 at 2 Greythorn Road, Balwyn North, opened 1958; historical identity is distinct from the successor Balwyn school. No coordinate inference.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:4f725ebc5881af36cf49da05b9cb2ef04fb3d6293ce4f80ddf5656a4eed182f7"
+      }
+    ],
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:greythorn-high-school",
+        "school_name": "Greythorn High School",
+        "country": "Australia",
+        "state": "VIC",
+        "suburb": "Balwyn North",
+        "institution_status": "closed",
+        "sector": "Government",
+        "school_type": "Secondary",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:6c39c098825a07f588c43a89090edddaad789bbde098d295dbbedbc7464c23c6"
+          ],
+          "country": [
+            "evidence:1542056a02e22b179fb74c01881ddb50a730b86dd24981c53836a1b341a8d3a8"
+          ],
+          "sector": [
+            "evidence:3991dc5a2b9ac7340ec05350afe0328a5a17614ffc07ec9d5b47d3895fc78ecf"
+          ],
+          "status": [
+            "evidence:7e6670a8b452648467a1644025db3389119f9d43d01122378196f7f37affdb90"
+          ],
+          "state": [
+            "evidence:509fbef612257ceb81bc9a2fc44f73d6a044270c44b7435adb5ad1bb15189215"
+          ],
+          "suburb": [
+            "evidence:4177bb24278ae3132a76574442dbe020491a0d72ab9634dd847df1469259d5cf"
+          ],
+          "school_type": [
+            "evidence:4f725ebc5881af36cf49da05b9cb2ef04fb3d6293ce4f80ddf5656a4eed182f7"
+          ]
+        },
+        "institution_evidence_review_id": "education:iwk:e5b7ed4b6c400eb3"
+      }
+    ],
+    "research_log": {
+      "search_queries": [
+        "Linda White Greythorn High School first speech",
+        "\"Linda White\" \"Greythorn\"",
+        "\"Greythorn\" site:vic.gov.au school"
+      ],
+      "searches": 3,
+      "source_opens": 1,
+      "opened_sources": [
+        {
+          "url": "https://www.vic.gov.au/greythorn-high-school-number-7875",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [],
+    "payload": {
+      "aph_id": "IWK",
+      "recorded_school_name": "Greythorn High School",
+      "institution_ref": "manual:greythorn-high-school",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:7cfbe5b74838781fcb83919193dcc49214cf7d24141257de0c3886f5b1b52140",
+        "evidence:e5d8835435bf229609dfa3d45f7302aaaeb4254d00188623283185f55ae39bc9"
+      ]
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  },
+  {
+    "review_id": "education:jh5:c00d327efd749d08",
+    "member": "GEORGE, Jennie, AO",
+    "recorded_school_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School",
+    "outcome": "unresolved",
+    "reasoning": "The exact derived school string is employment. Frozen APH has SecondarySchool empty and contains the string in Occupations. George describes her first teaching appointment at Bankstown Girls High School in her own interview. No attendance mapping or institution split is justified.",
+    "evidence": [
+      {
+        "review_id": "education:jh5:c00d327efd749d08",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'JH5'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "employment",
+        "claim_value": {
+          "aph_id": "JH5",
+          "education_id": "edu-jh5-c00d327efd749d08",
+          "recorded_school_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School",
+          "SecondarySchool": "",
+          "Occupations_entry": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The frozen APH snapshot has an empty SecondarySchool and the exact recorded string in Occupations; this describes employment, not attendance.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:1edb7b7b22ffa397318e3ad4b9bbec2194fb87333d7c3391cad0d65ade7b05b2"
+      },
+      {
+        "review_id": "education:jh5:c00d327efd749d08",
+        "candidate_institution_ref": null,
+        "source_title": "Jennie George oral history interview, Women in Unions",
+        "source_type": "first-person-interview",
+        "source_url": "https://www.womeninunions.org/node/3074",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "employment",
+        "claim_value": {
+          "aph_id": "JH5",
+          "school_name": "Bankstown Girls High School",
+          "role": "teacher",
+          "appointment_year": 1969,
+          "recorded_school_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "George describes going out teaching in 1969, her union role at Bankstown Girls High School and that school as her first appointment; employment is not attendance.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:aae69d681fa5460b2a7ee0edb1b9857b40c28c286486738100d6ae567d810505"
+      }
+    ],
+    "manual_institutions": [],
+    "research_log": {
+      "search_queries": [
+        "\"Jennie George\" \"Bankstown\" teacher"
+      ],
+      "searches": 1,
+      "source_opens": 1,
+      "opened_sources": [
+        {
+          "url": "https://www.womeninunions.org/node/3074",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [
+      "The source data/parser correction requires separate reviewed action. No new school attendance asserted."
+    ],
+    "payload": null,
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "finding_type": "parser_contamination",
+    "prior_research": []
+  },
+  {
+    "review_id": "education:lnw:b90cc8fe47a3d6f4",
+    "member": "KENEALLY, the Hon. Kristina Kerscher AO",
+    "recorded_school_name": "Notre Dame Academy (Toledo, Ohio)",
+    "outcome": "mapping",
+    "reasoning": "The school official impact report profiles Kristina (Kerscher) Keneally as an alumna and identifies her Australian political career. Frozen APH explicitly locates Notre Dame Academy in Toledo, Ohio; the official school homepage confirms Toledo. Map to this overseas identity without historical coordinates.",
+    "evidence": [
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Frozen APH Handbook individual record",
+        "source_type": "local_aph_snapshot",
+        "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'LNW'",
+        "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+        "claim_type": "attendance",
+        "claim_value": {
+          "aph_id": "LNW",
+          "education_id": "edu-lnw-b90cc8fe47a3d6f4",
+          "recorded_school_name": "Notre Dame Academy (Toledo, Ohio)",
+          "identity_detail": null,
+          "claim": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Frozen APH SecondarySchool field contains the recorded school string; no attendance dates or graduation are inferred.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:9a7d1a6f26ca312e164724dc0eb300dcf84d67020a16636820a1caa72e6486b0"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": "manual:notre-dame-academy-toledo",
+        "source_title": "Notre Dame Academy Impact Report 2024-2025, Hall of Fame",
+        "source_type": "official-school-publication",
+        "source_url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "aph_id": "LNW",
+          "name": "Kristina (Kerscher) Keneally",
+          "school_name": "Notre Dame Academy",
+          "class_label": "87",
+          "recorded_school_name": "Notre Dame Academy (Toledo, Ohio)",
+          "identity_detail": {
+            "field": "institution_ref",
+            "value": "manual:notre-dame-academy-toledo"
+          },
+          "claim": "The school official report identifies Kristina Kerscher Keneally as its alumna and describes her Australian parliamentary career."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Page 11 identifies Kristina (Kerscher) Keneally, her Australian Senate and NSW Premier career, and her time at NDA. The class label is preserved as source text; attendance dates or graduation year are not added to the assertion.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:d21c860fd72743d176b4181e7e8eb102ad9d42fb7190ffc85c630acd14931ed3"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": "manual:notre-dame-academy-toledo",
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "identity",
+        "claim_value": {
+          "school_name": "Notre Dame Academy",
+          "city": "Toledo",
+          "state": "Ohio",
+          "country": "United States",
+          "identity_detail": {
+            "field": "country",
+            "value": "United States"
+          },
+          "claim": "The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states."
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:9a5cc3b7162b84185860e41c8fd6517a9ea50b2a1e79021186e9d4d036d2e838"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "name",
+          "value": "Notre Dame Academy"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact name='Notre Dame Academy'. The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:6d4fbe3e1d26b754c1efa6c6d62c8f95c2f16d8d9c22b1f1d7cb103b7afee7e1"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "country",
+          "value": "United States"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact country='United States'. The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:66bc951fca8790944202947e2b3e08f937c59c3f986725664270a8e6cb774fab"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy Impact Report 2024-2025",
+        "source_type": "official-school-publication",
+        "source_url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "sector",
+          "value": "Catholic"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official impact report mission describes Notre Dame Academy as a Catholic college preparatory school for young women.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:d41d7a11227036958e83f852b9f3fc55f1c388a15bb4948e2037bec471240e9f"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "status",
+          "value": "current"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact status='current'. The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:f6f3ba4e3eb13d55f24d815b8c77801a9209b65f323f9120e78be1db2f327772"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "state",
+          "value": "Ohio"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact state='Ohio'. The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:17df5d13d87f5f21643d565ae6bfcc773414ce4d42afb3ab96c19f57c5c59abf"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy official website",
+        "source_type": "official-school-website",
+        "source_url": "https://nda.org/",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "suburb",
+          "value": "Toledo"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "Institution fact suburb='Toledo'. The official school homepage lists 3535 W Sylvania Avenue, Toledo OH 43623 and sponsorship by the Sisters of Notre Dame; this is the Ohio school, not same-name academies in other US states.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:ec9aa6f170147930f4de3edb5ee16e528c904dc63eaa6417bd1691d76c799cb7"
+      },
+      {
+        "review_id": "education:lnw:b90cc8fe47a3d6f4",
+        "candidate_institution_ref": null,
+        "source_title": "Notre Dame Academy Impact Report 2024-2025",
+        "source_type": "official-school-publication",
+        "source_url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf",
+        "retrieved_at": "2026-10-15T11:05:48Z",
+        "claim_type": "institution_fact",
+        "claim_value": {
+          "field": "school_type",
+          "value": "Secondary"
+        },
+        "stance": "supports",
+        "excerpt_or_note": "The official impact report mission describes Notre Dame Academy as a Catholic college preparatory school for young women.",
+        "generated_by": "agent-search",
+        "source_quality": null,
+        "match_strength": null,
+        "temporal_relevance": null,
+        "geographic_relevance": null,
+        "schema_version": 1,
+        "evidence_id": "evidence:ba6d011a154582083e30c44d1ebe3d5079a4c26e80ae27bec64e6b00cc8a1503"
+      }
+    ],
+    "manual_institutions": [
+      {
+        "institution_ref": "manual:notre-dame-academy-toledo",
+        "school_name": "Notre Dame Academy",
+        "country": "United States",
+        "state": "Ohio",
+        "suburb": "Toledo",
+        "institution_status": "current",
+        "sector": "Catholic",
+        "school_type": "Secondary",
+        "institution_fact_evidence_refs": {
+          "name": [
+            "evidence:6d4fbe3e1d26b754c1efa6c6d62c8f95c2f16d8d9c22b1f1d7cb103b7afee7e1"
+          ],
+          "country": [
+            "evidence:66bc951fca8790944202947e2b3e08f937c59c3f986725664270a8e6cb774fab"
+          ],
+          "sector": [
+            "evidence:d41d7a11227036958e83f852b9f3fc55f1c388a15bb4948e2037bec471240e9f"
+          ],
+          "status": [
+            "evidence:f6f3ba4e3eb13d55f24d815b8c77801a9209b65f323f9120e78be1db2f327772"
+          ],
+          "state": [
+            "evidence:17df5d13d87f5f21643d565ae6bfcc773414ce4d42afb3ab96c19f57c5c59abf"
+          ],
+          "suburb": [
+            "evidence:ec9aa6f170147930f4de3edb5ee16e528c904dc63eaa6417bd1691d76c799cb7"
+          ],
+          "school_type": [
+            "evidence:ba6d011a154582083e30c44d1ebe3d5079a4c26e80ae27bec64e6b00cc8a1503"
+          ]
+        },
+        "institution_evidence_review_id": "education:lnw:b90cc8fe47a3d6f4"
+      }
+    ],
+    "research_log": {
+      "search_queries": [
+        "Kristina Keneally Notre Dame Academy Toledo school official"
+      ],
+      "searches": 1,
+      "source_opens": 4,
+      "opened_sources": [
+        {
+          "url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/ [line 145 reopen]",
+          "status": "opened"
+        },
+        {
+          "url": "https://nda.org/clientuploads/Impact_Report/NDA_Impact_Report_24-25.pdf [line 2128 reopen]",
+          "status": "opened"
+        }
+      ]
+    },
+    "gaps": [],
+    "payload": {
+      "aph_id": "LNW",
+      "recorded_school_name": "Notre Dame Academy (Toledo, Ohio)",
+      "institution_ref": "manual:notre-dame-academy-toledo",
+      "relationship_type": "direct",
+      "evidence_refs": [
+        "evidence:9a7d1a6f26ca312e164724dc0eb300dcf84d67020a16636820a1caa72e6486b0",
+        "evidence:d21c860fd72743d176b4181e7e8eb102ad9d42fb7190ffc85c630acd14931ed3",
+        "evidence:9a5cc3b7162b84185860e41c8fd6517a9ea50b2a1e79021186e9d4d036d2e838"
+      ]
+    },
+    "alternatives": [],
+    "identity": {},
+    "value": null,
+    "attempts": [],
+    "prior_research": []
+  }
+]

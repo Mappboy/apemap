@@ -3,14 +3,7 @@
 {% block content %}
 <div class="research-batches">
 <h1>Research batches</h1>
-{% if packets %}<section aria-labelledby="saved-packets"><h2 id="saved-packets">Saved research packets</h2>
-{% for packet in packets %}<article class="research-source">
-{% if packet.error %}<h3>{{ packet.batch_id }}</h3><p class="error" role="alert">{{ packet.error }}</p>{% else %}
-<h3><a href="{{ url_for('research_packet_detail', batch_id=packet.manifest.batch_id) }}">{{ packet.manifest.title }}</a></h3>
-<p>{{ packet.manifest.batch_id }} · {{ packet.manifest.created_at[:10] }} · {{ packet.manifest.case_count }} findings</p>
-<p>Sources and proposed mappings for individual education review.</p>{% endif %}
-</article>{% endfor %}</section>{% endif %}
-<h2>Guided research batches</h2>
+<h2>Saved research batches</h2>
 {% if operation_error %}<p class="error" role="alert">Batch was not prepared: {{ operation_error }}</p>{% endif %}
 <div class="table-wrap"><table class="research-batch-list">
 <thead><tr><th>Batch</th><th>Research</th><th>Reviews</th><th>Applied</th><th>Status</th></tr></thead>
@@ -23,6 +16,13 @@
 <td>{% if item.summary.applied == batch.case_count %}<span class="status-badge status-accepted">Applied</span>{% elif item.summary.researched < batch.case_count %}<span class="status-badge status-pending">Research incomplete</span>{% elif item.summary.unreviewed %}<span class="status-badge status-pending">Review in progress</span>{% else %}<span class="status-badge status-needs_research">Reviewed</span>{% endif %}{% if item.blockers %}<small>{{ item.blockers|join('; ') }}</small>{% endif %}</td>{% endif %}</tr>
 {% else %}<tr><td colspan="5">No research batches have been prepared.</td></tr>{% endfor %}</tbody>
 </table></div>
+{% if packets %}<section aria-labelledby="saved-packets"><h2 id="saved-packets">Saved research packets</h2>
+{% for packet in packets %}<article class="research-source">
+{% if packet.error %}<h3>{{ packet.batch_id }}</h3><p class="error" role="alert">{{ packet.error }}</p>{% else %}
+<h3><a href="{{ url_for('research_packet_detail', batch_id=packet.manifest.batch_id) }}">{{ packet.manifest.title }}</a></h3>
+<p>{{ packet.manifest.batch_id }} · {{ packet.manifest.created_at[:10] }} · {{ packet.manifest.case_count }} findings</p>
+<p>Sources and proposed mappings for individual education review.</p>{% endif %}
+</article>{% endfor %}</section>{% endif %}
 <details class="research-prepare" {% if operation_error %}open{% endif %}><summary>Prepare a research batch</summary>
 <form method="post" action="{{ url_for('research_batch_prepare') }}" class="filters">
 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

@@ -1,0 +1,616 @@
+{
+  "selection": "Every projected member_education record with institution_resolution=unresolved; no parliament restriction.",
+  "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194",
+  "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+  "ledger_sha256": {
+    "C:\\Users\\Cam.Chimera\\Code\\apemap\\data\\reference\\review\\decisions.jsonl": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+    "C:\\Users\\Cam.Chimera\\Code\\apemap\\data\\reference\\review\\evidence.jsonl": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845"
+  },
+  "assertion_count": 20,
+  "school_description_count": 19,
+  "queue_school_ids": [
+    "school:0477b661fc755dd3",
+    "school:093cff2b37e44619",
+    "school:2340b6eede488795",
+    "school:267904ceccd83f6c",
+    "school:267d4b4d8da8c0b6",
+    "school:2f7f6b0f23bf99d3",
+    "school:3a40a73718408507",
+    "school:4db911ac8d31077e",
+    "school:553255a6eba1c1aa",
+    "school:5ebd76ef99402512",
+    "school:6065cbdd9b574a67",
+    "school:633836c18308dfa3",
+    "school:6f66165bfc8609df",
+    "school:7c604789e447d661",
+    "school:873379743ae77d6e",
+    "school:8c297525aa6b886d",
+    "school:8fc6e3dfab079be1",
+    "school:94cf572855aa803a",
+    "school:9e3c431ad5af3c26",
+    "school:a273f25b8c284186",
+    "school:a56ca5a3c6a27aa2",
+    "school:aefa5e19c98ebee4",
+    "school:b90cc8fe47a3d6f4",
+    "school:be5fb91293ee1e6b",
+    "school:c00d327efd749d08",
+    "school:c2181e71db56a3f8",
+    "school:c3307671e175bb67",
+    "school:c6bb89815d87c4e7",
+    "school:cf6577bf96921969",
+    "school:d1a4bf32115f0db9",
+    "school:d56cd65cb492a25d",
+    "school:d9a195f1e187af61",
+    "school:e45a23e4e7f97ee0",
+    "school:e5b7ed4b6c400eb3",
+    "school:e6a59fe5ef70daa4",
+    "school:efa2a549e8597a38",
+    "school:f7672e7d8f58a176",
+    "school:f96d6b3bddee1602",
+    "school:fbfb9ce8ff88363b",
+    "school:fe6ff4d6d2b0a5e9"
+  ],
+  "scope_school_ids": [
+    "school:0477b661fc755dd3",
+    "school:2340b6eede488795",
+    "school:267904ceccd83f6c",
+    "school:267d4b4d8da8c0b6",
+    "school:2f7f6b0f23bf99d3",
+    "school:3a40a73718408507",
+    "school:4db911ac8d31077e",
+    "school:553255a6eba1c1aa",
+    "school:5ebd76ef99402512",
+    "school:633836c18308dfa3",
+    "school:6f66165bfc8609df",
+    "school:873379743ae77d6e",
+    "school:8fc6e3dfab079be1",
+    "school:94cf572855aa803a",
+    "school:b90cc8fe47a3d6f4",
+    "school:c00d327efd749d08",
+    "school:d9a195f1e187af61",
+    "school:e5b7ed4b6c400eb3",
+    "school:f7672e7d8f58a176"
+  ],
+  "queue": [
+    {
+      "review_id": "school:0477b661fc755dd3",
+      "status": "needs_individual_review",
+      "parliaments": [
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "John Paul College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:093cff2b37e44619",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Gosford High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:2340b6eede488795",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Assumption College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:267904ceccd83f6c",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "St Paul's School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:267d4b4d8da8c0b6",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "St Thomas"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:2f7f6b0f23bf99d3",
+      "status": "pending",
+      "parliaments": [
+        42,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Ferntree Gully Technical School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:3a40a73718408507",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Box Hill Technical College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:4db911ac8d31077e",
+      "status": "needs_individual_review",
+      "parliaments": [
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Fitzroy and Collingwood Secondary Schools"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:553255a6eba1c1aa",
+      "status": "pending",
+      "parliaments": [
+        45
+      ],
+      "payload": {
+        "recorded_name": "Lwak Girls"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:5ebd76ef99402512",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "Bunbury Techincal School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:6065cbdd9b574a67",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "St Peters Catholic College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:633836c18308dfa3",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "St Joseph's College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:6f66165bfc8609df",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Home educated"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:7c604789e447d661",
+      "status": "rejected",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "MLC"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:873379743ae77d6e",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "St Patrick's College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:8c297525aa6b886d",
+      "status": "pending",
+      "parliaments": [
+        47
+      ],
+      "payload": {
+        "recorded_name": "St George Girls High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:8fc6e3dfab079be1",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Chisholm Catholic College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:94cf572855aa803a",
+      "status": "pending",
+      "parliaments": [
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "Edmund Rice College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:9e3c431ad5af3c26",
+      "status": "pending",
+      "parliaments": [
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Newington College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:a273f25b8c284186",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "St Bernard's College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:a56ca5a3c6a27aa2",
+      "status": "pending",
+      "parliaments": [
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Mackay State High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:aefa5e19c98ebee4",
+      "status": "pending",
+      "parliaments": [
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Woonona High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:b90cc8fe47a3d6f4",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Notre Dame Academy (Toledo, Ohio)"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:be5fb91293ee1e6b",
+      "status": "pending",
+      "parliaments": [
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Swan Hill College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:c00d327efd749d08",
+      "status": "pending",
+      "parliaments": [
+        42
+      ],
+      "payload": {
+        "recorded_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:c2181e71db56a3f8",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "St Colman's School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:c3307671e175bb67",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Mater Dei College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:c6bb89815d87c4e7",
+      "status": "pending",
+      "parliaments": [
+        46
+      ],
+      "payload": {
+        "recorded_name": "Santa Sabina College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:cf6577bf96921969",
+      "status": "pending",
+      "parliaments": [
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "Haileybury College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:d1a4bf32115f0db9",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Church of England Grammar School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:d56cd65cb492a25d",
+      "status": "pending",
+      "parliaments": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Corpus Christi College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:d9a195f1e187af61",
+      "status": "pending",
+      "parliaments": [
+        46
+      ],
+      "payload": {
+        "recorded_name": "Belilios Public Girls School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:e45a23e4e7f97ee0",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "Warilla High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:e5b7ed4b6c400eb3",
+      "status": "pending",
+      "parliaments": [
+        47
+      ],
+      "payload": {
+        "recorded_name": "Greythorn High School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:e6a59fe5ef70daa4",
+      "status": "pending",
+      "parliaments": [
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "St. Michael's Collegiate School, Hobart"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:efa2a549e8597a38",
+      "status": "pending",
+      "parliaments": [
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Wilderness School"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:f7672e7d8f58a176",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "Aquinas College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:f96d6b3bddee1602",
+      "status": "pending",
+      "parliaments": [
+        46,
+        47,
+        48
+      ],
+      "payload": {
+        "recorded_name": "Marist College, Canberra"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:fbfb9ce8ff88363b",
+      "status": "pending",
+      "parliaments": [
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "payload": {
+        "recorded_name": "De La Salle College"
+      },
+      "individual_progress": null
+    },
+    {
+      "review_id": "school:fe6ff4d6d2b0a5e9",
+      "status": "pending",
+      "parliaments": [
+        46,
+        47
+      ],
+      "payload": {
+        "recorded_name": "Wynyard High School"
+      },
+      "individual_progress": null
+    }
+  ]
+}

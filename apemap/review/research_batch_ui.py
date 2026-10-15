@@ -46,6 +46,11 @@ def _rows(state: dict[str, Any]) -> list[dict[str, Any]]:
                     context["member"]["display_name"]
                     if state["manifest"]["kind"] == "members"
                     else context["assertion"]["recorded_school_name"]
+                    + (
+                        " · " + context["member"]["display_name"]
+                        if proposal["review_id"].startswith("education:")
+                        else ""
+                    )
                 ),
                 "review": review,
                 "status": status,

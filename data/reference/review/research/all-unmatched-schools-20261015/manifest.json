@@ -1,0 +1,29 @@
+{
+  "attempt_budgets": [],
+  "batch_id": "all-unmatched-schools-20261015",
+  "case_count": 20,
+  "cases_per_task": 1,
+  "created_at": "2026-10-15T11:13:55.096227+00:00",
+  "decision_revision": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+  "kind": "schools",
+  "max_workers": 2,
+  "models": [],
+  "origin": "agent-session",
+  "provenance": {
+    "availability_note": "Exact model identifiers and token usage are unavailable for the current Codex session and its research workers.",
+    "generated_by": "codex-session",
+    "model": null,
+    "prior_research": "prior-research.json",
+    "research_log": "research-log.json",
+    "scope": "All projected unresolved attendance assertions across all parliaments, not just Parliament 48.",
+    "search_budget_per_new_case": {
+      "searches": 3,
+      "source_opens": 6
+    },
+    "token_usage": null
+  },
+  "reasoning_effort": null,
+  "schema_version": 1,
+  "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194",
+  "task_sha256": "7c63f33806f1f3cc3994cbbf0fbb5a443571b9860f270bf8b3f96f7bc7133e03"
+}
