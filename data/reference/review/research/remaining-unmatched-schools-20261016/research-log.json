@@ -1,0 +1,1439 @@
+{
+  "execution": "Current Codex session and its research workers; exact model identity and token usage unavailable. No guided-model attempts inferred.",
+  "budget_per_exact_assertion": {
+    "search_queries": 3,
+    "source_open_attempts": 6
+  },
+  "fresh_search_queries": 80,
+  "fresh_source_open_attempts": 78,
+  "accounting": "Every query object counts separately, including batched calls. Failed opens count. Shared fetched pages are explicitly attributed to the case that opened them. Original research logs and attempts remain preserved separately and are not treated as fresh unused budgets.",
+  "cases": [
+    {
+      "review_id": "education:11788:7c604789e447d661",
+      "school_review_id": "school:7c604789e447d661",
+      "recorded_school_name": "MLC",
+      "member": "ALDRED, Mary",
+      "research_scope": "verification_of_applied_mapping",
+      "research_log": {
+        "search_queries": [
+          "\"Mary Aldred\" MLC college Kew",
+          "\"Mary Aldred\" site:mlc.vic.edu.au",
+          "\"Mary Aldred\" \"Methodist Ladies\""
+        ],
+        "searches": 3,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Mary_Aldred",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.mlc.vic.edu.au/",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": [
+        {
+          "review_id": "education:11788:7c604789e447d661",
+          "candidate_institution_ref": "acara:46144",
+          "source_title": "Retained decision 3bbc40cf-2dfc-4ed0-ac37-27bc1a79e5bb",
+          "source_type": "legacy-decision",
+          "source_url": "https://en.wikipedia.org/wiki/Mary_Aldred",
+          "retrieved_at": "2026-10-02 10:00:00+10:00",
+          "claim_type": "attendance",
+          "claim_value": {
+            "decision_id": "3bbc40cf-2dfc-4ed0-ac37-27bc1a79e5bb",
+            "action": "accept",
+            "payload": {
+              "aph_id": "11788",
+              "attended_status": "attended_unspecified",
+              "confidence": "verified",
+              "institution_ref": "acara:46144",
+              "recorded_school_name": "MLC",
+              "retrieved_at": "2026-10-02 10:00:00+10:00"
+            }
+          },
+          "stance": "supports",
+          "excerpt_or_note": "Source retained with accept decision",
+          "generated_by": "importer",
+          "source_quality": null,
+          "match_strength": null,
+          "temporal_relevance": null,
+          "geographic_relevance": null,
+          "schema_version": 1,
+          "evidence_id": "evidence:6ca444bc4de173db98e024486da7f12939d5665891b2e095cbaf101400fb9d18"
+        }
+      ]
+    },
+    {
+      "review_id": "education:132880:f96d6b3bddee1602",
+      "school_review_id": "school:f96d6b3bddee1602",
+      "recorded_school_name": "Marist College, Canberra",
+      "member": "MULINO, the Hon. Dr Daniel",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Daniel Mulino\" \"Marist\" school",
+          "\"Daniel Mulino\" site:maristc.act.edu.au",
+          "\"Mulino\" \"Marist\" \"2019\""
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Daniel_Mulino",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.maristc.act.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://s3-ap-southeast-2.amazonaws.com/digistorm-websites/mcc-au-act-102-website/content/Documents/News/2019/Enews/190530/Enews_30_May_2019.pdf?mtime=20190530184132",
+            "status": "opened via external reference"
+          },
+          {
+            "url": "https://s3-ap-southeast-2.amazonaws.com/digistorm-websites/mcc-au-act-102-website/content/Documents/News/2019/Enews/190530/Enews_30_May_2019.pdf?mtime=20190530184132",
+            "status": "opened at line85"
+          },
+          {
+            "url": "https://s3-ap-southeast-2.amazonaws.com/digistorm-websites/mcc-au-act-102-website/content/Documents/News/2019/Enews/190530/Enews_30_May_2019.pdf?mtime=20190530184132",
+            "status": "opened at line96"
+          },
+          {
+            "url": "https://www.maristc.act.edu.au/contact",
+            "status": "opened"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:203092:9e3c431ad5af3c26",
+      "school_review_id": "school:9e3c431ad5af3c26",
+      "recorded_school_name": "Newington College",
+      "member": "ZIMMERMAN, Trent Moir",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Trent Zimmerman\" site:newington.nsw.edu.au",
+          "\"Trent Zimmerman\" Newington",
+          "\"Trent Zimmerman\" \"Newington\" site:newington.nsw.edu.au OR site:insites.newington.nsw.edu.au"
+        ],
+        "searches": 3,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.newington.nsw.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Trent_Zimmerman",
+            "status": "opened"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:241067:267d4b4d8da8c0b6",
+      "school_review_id": "school:267d4b4d8da8c0b6",
+      "recorded_school_name": "St Thomas",
+      "member": "COLEMAN, the Hon. David Bernard",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"David Coleman\" \"St Thomas\" school Lewisham",
+          "\"David Coleman\" \"Lewisham\" school",
+          "\"Coleman\" \"Thomas\" site:sttlewisham.catholic.edu.au"
+        ],
+        "searches": 3,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=241067",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.davidcoleman.com.au/about",
+            "status": "failed"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_count": 3,
+          "source_open_count": 4,
+          "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+          "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+          "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+          "shared_source_reuse": null,
+          "search_queries": [
+            "David Coleman St Thomas school Christian Brothers",
+            "\"David Coleman\" \"St Thomas\" school",
+            "David Coleman St Thomas Lewisham parliament maiden speech"
+          ],
+          "opened_sources": [
+            {
+              "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)",
+              "result": "opened"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-6",
+              "result": "clicked First speech citation anchor; returned article"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/David_Coleman_(Australian_politician)#cite_note-14",
+              "result": "clicked About citation anchor; returned article"
+            },
+            {
+              "url": "https://www.davidcoleman.com.au/about/",
+              "result": "failed: timeout (400)"
+            }
+          ],
+          "source_opens": 4,
+          "searches": 3
+        },
+        "attempts": [],
+        "reasoning": "The secondary source explicitly identifies St Thomas as Saint Thomas a Becket PRIMARY school, Lewisham, and separately names Christian Brothers High School as Coleman's later school. This contradicts the supplied assertion's secondary classification and may indicate truncated or misplaced APH source text. Do not map this assertion to a secondary St Thomas school or substitute Christian Brothers attendance. Primary corroboration and the original field parsing require inspection; the attempted member website timed out."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:247742:873379743ae77d6e",
+      "school_review_id": "school:873379743ae77d6e",
+      "recorded_school_name": "St Patrick's College",
+      "member": "HOWARTH, the Hon. Luke Ronald",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Luke Howarth\" \"St Patrick\" school",
+          "\"Luke Howarth\" \"St Patrick’s\"",
+          "\"Howarth\" \"old boy\" \"Patrick\""
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=247742",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.stpatricks.qld.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.lukehowarth.com.au/about/",
+            "status": "failed"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_count": 3,
+          "source_open_count": 4,
+          "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+          "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+          "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+          "shared_source_reuse": null,
+          "search_queries": [
+            "\"Luke Howarth\" \"Patrick\" site:edu.au",
+            "Luke Howarth St Patricks Shorncliffe old boy",
+            "Luke Howarth school St Patrick College education"
+          ],
+          "opened_sources": [
+            {
+              "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+              "result": "opened"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/Luke_Howarth",
+              "result": "opened at early life"
+            },
+            {
+              "url": "https://www.stpatricks.qld.edu.au/",
+              "result": "opened"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/Luke_Howarth#cite_note-4",
+              "result": "clicked parliament citation anchor; returned article"
+            }
+          ],
+          "source_opens": 4,
+          "searches": 3
+        },
+        "attempts": [],
+        "reasoning": "The APH attendance assertion supplies only the unqualified name St Patrick's College. The opened Shorncliffe school site establishes that candidate's identity but supplies no Howarth attendance claim; the opened member biography does not name his school. Three queries did not locate person-specific evidence choosing among the many same-name institutions. Preserve the Shorncliffe lead without selecting it; neither upbringing nor electorate determines school location."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:248353:d56cd65cb492a25d",
+      "school_review_id": "school:d56cd65cb492a25d",
+      "recorded_school_name": "Corpus Christi College",
+      "member": "McBRIDE, the Hon. Emma Margaret",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Emma McBride Corpus Christi College school Tuggerah",
+          "\"Emma McBride\" \"Corpus Christi\"",
+          "\"Emma McBride\" school college Tuggerah"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://coastcommunitynews.com.au/central-coast/news/2018/03/emma-mcbride-says-nbn-ndis-biggest-issues/",
+            "status": "opened; first-person Tuggerah schooling statement"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/St_Peter%27s_Catholic_College%2C_Tuggerah",
+            "status": "opened"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/St_Peter%27s_Catholic_College%2C_Tuggerah#external-Our-Origin",
+            "status": "clicked external Our Origin reference; Internal Error, destination unavailable"
+          }
+        ],
+        "gaps": [
+          "No adequately corroborated exact target selection; inspect retained contrary sources and historical leads."
+        ],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:249127:093cff2b37e44619",
+      "school_review_id": "school:093cff2b37e44619",
+      "recorded_school_name": "Gosford High School",
+      "member": "CONROY, the Hon. Patrick (Pat) Martin",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Pat Conroy Gosford High School alumni"
+        ],
+        "searches": 1,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.crawfordfund.org/events/2024-conference/speakers-chairs-moderators/the-hon-pat-conroy-mp/",
+            "status": "opened"
+          },
+          {
+            "url": "https://gosford-h.schools.nsw.gov.au/",
+            "status": "opened; school identity also reused for Whitten"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:250156:6f66165bfc8609df",
+      "school_review_id": "school:6f66165bfc8609df",
+      "recorded_school_name": "Home educated",
+      "member": "STEELE-JOHN, Jordon Alexander",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Jordon Steele-John\" \"home\" education"
+        ],
+        "searches": 1,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://purl.slwa.wa.gov.au/slwa_b6724501_2.pdf",
+            "status": "opened"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+          "previous_case": {
+            "review_id": "education:250156:6f66165bfc8609df",
+            "search_queries": [],
+            "searches": 0,
+            "source_opens": 0,
+            "opened_sources": []
+          },
+          "search_queries": [],
+          "searches": 0,
+          "source_opens": 0,
+          "opened_sources": [],
+          "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+        },
+        "attempts": [],
+        "reasoning": "The frozen APH row records Home educated. This describes an education mode and cannot support an invented school, ACARA target, manual institution, or campus. Reuse the complete prior finding without external searches."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:264449:e6a59fe5ef70daa4",
+      "school_review_id": "school:e6a59fe5ef70daa4",
+      "recorded_school_name": "St. Michael's Collegiate School, Hobart",
+      "member": "CHANDLER, Claire",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Claire Chandler\" \"Collegiate\"",
+          "Claire Chandler Collegiate site:collegiate.tas.edu.au",
+          "\"Claire Chandler\" \"Collegiate\" first speech"
+        ],
+        "searches": 3,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.openaustralia.org.au/senate/?gid=2019-07-23.146.1",
+            "status": "opened"
+          },
+          {
+            "url": "https://collegiate.tas.edu.au/",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:273829:fbfb9ce8ff88363b",
+      "school_review_id": "school:fbfb9ce8ff88363b",
+      "recorded_school_name": "De La Salle College",
+      "member": "ANNING, William Fraser (Fraser)",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Fraser Anning De La Salle College school Yeppoon",
+          "\"Fraser Anning\" \"De La Salle\"",
+          "\"Fraser Anning\" school DeLaSalle"
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Fraser_Anning",
+            "status": "opened; no De La Salle match"
+          }
+        ],
+        "gaps": [
+          "No adequately corroborated exact target selection; inspect retained contrary sources and historical leads."
+        ],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:280304:4db911ac8d31077e",
+      "school_review_id": "school:4db911ac8d31077e",
+      "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+      "member": "THORPE, Lidia Alma",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Lidia Thorpe\" \"Fitzroy\" \"Year 7\"",
+          "\"Thorpe\" \"Fitzroy\" school interview 2017",
+          "\"Lidia Thorpe\" school site:lidiathorpe.com"
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://www.lidiathorpe.com/about_me",
+            "status": "opened"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+          "previous_case": {
+            "review_id": "education:280304:4db911ac8d31077e",
+            "search_queries": [
+              "\"Lidia Thorpe\" \"Fitzroy\" \"Collingwood\" school",
+              "\"Lidia Thorpe\" \"Collingwood High\" Latimore 2022",
+              "\"Lidia Thorpe\" school Fitzroy Collingwood biography Latimore"
+            ],
+            "searches": 3,
+            "source_opens": 6,
+            "opened_sources": [
+              {
+                "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+                "status": "opened; secondary lead only"
+              },
+              {
+                "url": null,
+                "status": "failed click: Wikipedia reference 345, invalid arguments"
+              },
+              {
+                "url": "https://www.lidiathorpe.com/about_me",
+                "status": "failed: internal error"
+              },
+              {
+                "url": "https://www.smh.com.au/national/shouty-uninformed-ineffective-how-senator-lidia-thorpe-annoys-the-establishment-20220419-p5aelh.html",
+                "status": "failed: unverified reconstructed URL, not evidence and not a verified citation"
+              },
+              {
+                "url": null,
+                "status": "failed click: Wikipedia find result reference 345, invalid arguments"
+              },
+              {
+                "url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+                "status": "opened"
+              }
+            ]
+          },
+          "search_queries": [],
+          "searches": 0,
+          "source_opens": 0,
+          "opened_sources": [],
+          "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+        },
+        "attempts": [],
+        "reasoning": "The combined plural APH label cannot truthfully be assigned to one institution. The secondary biography repeats the Year 7 Fitzroy / Year 8 Collingwood / Year 9 Fitzroy sequence, but its cited original newspaper article was not retrieved. The historical Fitzroy closure is independently confirmed. Preserve the current ambiguous-name policy and all previous institutional evidence."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:282212:7c604789e447d661",
+      "school_review_id": "school:7c604789e447d661",
+      "recorded_school_name": "MLC",
+      "member": "THWAITES, the Hon. Kate Lynne",
+      "research_scope": "verification_of_applied_mapping",
+      "research_log": {
+        "search_queries": [
+          "\"Kate Thwaites\" \"MLC\"",
+          "\"Kate Thwaites\" \"Methodist Ladies\"",
+          "\"Kate Thwaites\" school education"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Kate_Thwaites",
+            "status": "opened"
+          },
+          {
+            "url": "Wikipedia Kate Thwaites citation link 113 (ParlInfo first speech; failed tool click, no resolved URL returned)",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.katethwaites.com/about-kate/",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ],
+        "shared_source_reuse": [
+          {
+            "url": "https://www.mlc.vic.edu.au/",
+            "fetched_for": "education:11788:7c604789e447d661",
+            "retrieved_at": "2026-10-16T01:21:37+00:00",
+            "new_fetch": false
+          }
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": [
+        {
+          "review_id": "education:282212:7c604789e447d661",
+          "candidate_institution_ref": "acara:46144",
+          "source_title": "Retained decision ec874537-5d37-4b60-9bc0-56206d957600",
+          "source_type": "legacy-decision",
+          "source_url": "https://en.wikipedia.org/wiki/Kate_Thwaites",
+          "retrieved_at": "2026-10-02 10:00:00+10:00",
+          "claim_type": "attendance",
+          "claim_value": {
+            "decision_id": "ec874537-5d37-4b60-9bc0-56206d957600",
+            "action": "accept",
+            "payload": {
+              "aph_id": "282212",
+              "attended_status": "attended_unspecified",
+              "confidence": "verified",
+              "institution_ref": "acara:46144",
+              "recorded_school_name": "MLC",
+              "retrieved_at": "2026-10-02 10:00:00+10:00"
+            }
+          },
+          "stance": "supports",
+          "excerpt_or_note": "Only indirect evidence but grew up in Victoria so most likely this MLC",
+          "generated_by": "importer",
+          "source_quality": null,
+          "match_strength": null,
+          "temporal_relevance": null,
+          "geographic_relevance": null,
+          "schema_version": 1,
+          "evidence_id": "evidence:076bc4dd5c7fd0dec27ac1e9b67b2f41acf7e5011eae5dbab246f2b5172d367c"
+        }
+      ]
+    },
+    {
+      "review_id": "education:282306:fe6ff4d6d2b0a5e9",
+      "school_review_id": "school:fe6ff4d6d2b0a5e9",
+      "recorded_school_name": "Wynyard High School",
+      "member": "PEARCE, Gavin Bruce",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Gavin Pearce\" \"Wynyard\" school",
+          "\"Wynyard High School\" Tasmania official",
+          "\"Gavin Pearce\" \"Wynyard High School\""
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://www.decyp.tas.gov.au/institution/wynyard-high-school/",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:282982:c6bb89815d87c4e7",
+      "school_review_id": "school:c6bb89815d87c4e7",
+      "recorded_school_name": "Santa Sabina College",
+      "member": "MARTIN, Dr. Fiona Barbouttis",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Fiona Martin\" site:ssc.nsw.edu.au",
+          "Fiona Martin Santa Sabina College alumni",
+          "\"Fiona Martin\" \"Santa Sabina\" school"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Fiona_Martin",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.ssc.nsw.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://sleep4performance.com/podcast/s5-ep-07-dr-fiona-martin-mp-house-of-representatives/",
+            "status": "opened"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:297964:0477b661fc755dd3",
+      "school_review_id": "school:0477b661fc755dd3",
+      "recorded_school_name": "John Paul College",
+      "member": "COLLINS, Dr Jessica",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Jessica Bird\" \"John Paul\" college",
+          "\"Jessica Collins\" \"Rotorua\" school",
+          "\"Jessica Bird\" school senator New Zealand"
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+            "status": "failed"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "reused_from": "data/reference/review/research/p48-final-schools-20261015/research-log.json",
+          "previous_case": {
+            "review_id": "education:297964:0477b661fc755dd3",
+            "search_queries": [
+              "\"Jessica Collins\" \"John Paul\" school",
+              "\"Jessica Collins\" senator school education first speech John college",
+              "\"Jessica Bird\" \"John Paul\" college"
+            ],
+            "searches": 3,
+            "source_opens": 6,
+            "opened_sources": [
+              {
+                "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+                "status": "failed: internal error"
+              },
+              {
+                "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=297964",
+                "status": "failed find on indexed APH profile: internal error; conservatively counted as another access attempt"
+              },
+              {
+                "url": "https://www.openaustralia.org.au/senate/?id=2025-07-30.189.1",
+                "status": "opened"
+              },
+              {
+                "url": null,
+                "status": "failed click: OpenAustralia Hansard source reference 14, internal error"
+              },
+              {
+                "url": "https://nswliberal.org.au/jessica-collins/meet-jessica",
+                "status": "redirected to https://nswliberal.org.au/404; unavailable biography"
+              },
+              {
+                "url": "https://nswliberal.org.au/jess-collins",
+                "status": "opened; no school named"
+              }
+            ]
+          },
+          "search_queries": [],
+          "searches": 0,
+          "source_opens": 0,
+          "opened_sources": [],
+          "note": "Previously completed research reused with original retrieval dates. No new search budget is claimed."
+        },
+        "attempts": [],
+        "reasoning": "The fresh queries include Jessica Bird, the maiden-name lead in Cam’s existing decision. No person-specific source identifies which John Paul College she attended. Her first-speech childhood movement is contextual only. Preserve Cam’s research decision and the ambiguous-name school policy; the New Zealand hypothesis remains unverified."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:299145:aefa5e19c98ebee4",
+      "school_review_id": "school:aefa5e19c98ebee4",
+      "recorded_school_name": "Woonona High School",
+      "member": "BYRNES, Alison",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Alison Byrnes \"Woonona High\" school"
+        ],
+        "searches": 1,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.theillawarraflame.com.au/qa-with-alison-byrnes-federal-member-for-cunningham/",
+            "status": "opened"
+          },
+          {
+            "url": "https://woonona-h.schools.nsw.gov.au/contact-us",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:299352:be5fb91293ee1e6b",
+      "school_review_id": "school:be5fb91293ee1e6b",
+      "recorded_school_name": "Swan Hill College",
+      "member": "STEWART, Jana Naretha Ann",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Jana Stewart\" \"Swan Hill College\""
+        ],
+        "searches": 1,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://janastewart.com.au/media-and-news/media-releases/new-regional-university-study-hub-in-swan-hill/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.shc.vic.edu.au/wp-content/uploads/2025/10/Swan-Hill-College-Newswan-October-17-2025.pdf",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.shc.vic.edu.au/",
+            "status": "failed"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:300123:8c297525aa6b886d",
+      "school_review_id": "school:8c297525aa6b886d",
+      "recorded_school_name": "St George Girls High School",
+      "member": "WARE, Jennifer (Jenny) Lesley",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Jenny Ware \"St George Girls\" school",
+          "\"Jenny Ware\" \"St George\" first speech",
+          "\"Jenny Ware\" \"St George Girls High School\""
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://stgeorgegi-h.schools.nsw.gov.au/",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:317026:093cff2b37e44619",
+      "school_review_id": "school:093cff2b37e44619",
+      "recorded_school_name": "Gosford High School",
+      "member": "WHITTEN, Tyron",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Tyron Whitten Gosford High School",
+          "\"Tyron Whitten\" school Gosford"
+        ],
+        "searches": 2,
+        "source_opens": 0,
+        "opened_sources": [],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": "Gosford school identity reused from the single fetch logged under Conroy."
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:56430:2340b6eede488795",
+      "school_review_id": "school:2340b6eede488795",
+      "recorded_school_name": "Assumption College",
+      "member": "DRUM, the Hon. Damian Kevin",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Damian Drum\" \"Assumption\" college",
+          "\"Damian Drum\" site:assumption.vic.edu.au",
+          "Assumption College Kilmore \"Drum\" Hall Excellence"
+        ],
+        "searches": 3,
+        "source_opens": 5,
+        "opened_sources": [
+          {
+            "url": "https://www.openaustralia.org.au/debates/?id=2017-08-16.126.1",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.mrra.asn.au/political-contacts1/State/State%20Reps%20Photos/Drum%20Damian.htm",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.assumption.vic.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://ncreview.com.au/2023/03/13/assumption-alumni-recognised-in-colleges-130-year-celebration/",
+            "status": "opened"
+          },
+          {
+            "url": "OpenAustralia Daniher Drive Hansard source link 25; parlinfo.aph.gov.au destination failed",
+            "status": "failed"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_count": 3,
+          "source_open_count": 5,
+          "cached_page_find_operations": "Used find on already-open pages to inspect names, school terms, and citation references; no additional external fetch assumed.",
+          "prior_local_research": "Searched existing research JSON/Markdown and inspected pinned scope; no reusable member-school evidence located.",
+          "local_register": "data/external/school-profile-2022.csv; direct inspection of ACARA SML ID, School Name, Suburb and State.",
+          "shared_source_reuse": null,
+          "search_queries": [
+            "\"Damian Drum\" \"Assumption\" site:edu.au",
+            "Damian Drum Assumption Kilmore old collegian",
+            "\"Damian Drum\" site:assumption.vic.edu.au"
+          ],
+          "opened_sources": [
+            {
+              "url": "https://sites.google.com/assumption.vic.edu.au/ack-alumni-vflafl-players/home",
+              "result": "opened; embedded list not exposed"
+            },
+            {
+              "url": "https://www.assumption.vic.edu.au/contact-us/",
+              "result": "opened"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/Damian_Drum",
+              "result": "opened; no Assumption match"
+            },
+            {
+              "url": "https://assets.website-files.com/5d0b2f88641a5824608cbb94/5d34fb536b1d5c4d302274a7_AssumptionCollege_ShandonCalls_Autumn.pdf",
+              "result": "opened; no Drum match"
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/Assumption_College%2C_Kilmore",
+              "result": "opened; no Drum match"
+            }
+          ],
+          "source_opens": 5,
+          "searches": 3
+        },
+        "attempts": [],
+        "reasoning": "The exact APH assertion supplies Assumption College with no locality. A search-result Wikipedia mirror lists Damian Drum as a Kilmore old collegian, but the opened current school article and member biography do not contain Drum, and the opened school-hosted alumni page's embedded full player list is not exposed. The opened 2019 school magazine also did not contain Drum. The primary school contact page establishes Kilmore only as an institution; no primary person-specific confirmation was found within three queries. Preserve Kilmore acara:45647 as a lead, not a selected mapping, and retain same-name Warwick acara:47894 as an alternative."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:56430:c2181e71db56a3f8",
+      "school_review_id": "school:c2181e71db56a3f8",
+      "recorded_school_name": "St Colman's School",
+      "member": "DRUM, the Hon. Damian Kevin",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Damian Drum St Colman School Mortlake school",
+          "\"Damian Drum\" \"Colman\"",
+          "\"Damian Drum\" \"Colman\" school"
+        ],
+        "searches": 3,
+        "source_opens": 5,
+        "opened_sources": [
+          {
+            "url": "https://directory.vic.catholic.edu.au/schools/ballarat/primary/st-colmans-school",
+            "status": "failed: Internal Error"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Notre_Dame_College,_Shepparton",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.notredame.vic.edu.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.mercy.vic.edu.au/community/hcsn/",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.notredame.vic.edu.au/#link0",
+            "status": "clicked page link0; Internal Error"
+          }
+        ],
+        "gaps": [
+          "No adequately corroborated exact target selection; inspect retained contrary sources and historical leads."
+        ],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:bfq:efa2a549e8597a38",
+      "school_review_id": "school:efa2a549e8597a38",
+      "recorded_school_name": "Wilderness School",
+      "member": "POCOCK, Dr Barbara Ann AM",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Barbara Pocock\" \"Wilderness\" school",
+          "\"Wilderness School\" Medindie official"
+        ],
+        "searches": 2,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.barbarapocock.com.au/assets/images/general/CV-Pocock-FULL.pdf",
+            "status": "opened"
+          },
+          {
+            "url": "https://wilderness.com.au/our-home",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:dzp:e45a23e4e7f97ee0",
+      "school_review_id": "school:e45a23e4e7f97ee0",
+      "recorded_school_name": "Warilla High School",
+      "member": "BIRD, the Hon. Sharon Leah",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Sharon Bird\" \"Warilla High\"",
+          "\"Sharon Bird\" school attended Warilla",
+          "\"Sharon Bird\" \"Warilla\" education"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://warilla-h.schools.nsw.gov.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://warilla-h.schools.nsw.gov.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://warilla-h.schools.nsw.gov.au/contact-us",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:ecv:fbfb9ce8ff88363b",
+      "school_review_id": "school:fbfb9ce8ff88363b",
+      "recorded_school_name": "De La Salle College",
+      "member": "HAYES, Christopher (Chris) Patrick",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Chris Hayes De La Salle College school Revesby",
+          "\"Chris Hayes\" \"De La Salle\""
+        ],
+        "searches": 2,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://assets.cdn.thewebconsole.com/S3WEB6094/images/Journal-La-Salle-December-2016-optimised-edition.pdf",
+            "status": "opened; page4 Chris Hayes alumni feature"
+          },
+          {
+            "url": "https://dlsrevesby.syd.catholic.edu.au/contact-us",
+            "status": "opened"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:hwp:5ebd76ef99402512",
+      "school_review_id": "school:5ebd76ef99402512",
+      "recorded_school_name": "Bunbury Techincal School",
+      "member": "MARINO, the Hon. Nola Bethwyn",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Nola Marino\" school Bunbury education",
+          "\"Bunbury Technical School\" \"Marino\"",
+          "\"Marino\" \"Techincal\" school"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=HWP",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.nolamarino.com.au/about-nola/",
+            "status": "failed"
+          },
+          {
+            "url": "https://inherit.dplh.wa.gov.au/public/inventory/details/33d006ba-ad0c-4de1-8eb2-02cec230800b",
+            "status": "opened"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_queries": [
+            "Nola Marino Bunbury Technical school education",
+            "\"Nola Marino\" \"Technical\"",
+            "\"Bunbury Technical School\" history"
+          ],
+          "searches": 3,
+          "source_opens": 3,
+          "opened_sources": [
+            {
+              "url": "https://www.parliament.wa.gov.au/publications/tabledpapers.nsf/displaypaper/3710322ab4a80ccf473c1bdb48256fef0051a46d/%24file/south%2Bwest%2Bregional%2Bcollege%2Btafe%2Bar%2B2004.pdf",
+              "status": "failed"
+            },
+            {
+              "url": "https://inherit.dplh.wa.gov.au/public/inventory/details/33d006ba-ad0c-4de1-8eb2-02cec230800b",
+              "status": "opened"
+            },
+            {
+              "url": "https://inherit.dplh.wa.gov.au/public/inventory/printsinglerecord/42228824-1bc6-4022-8ef1-171b854c40b2",
+              "status": "failed"
+            }
+          ]
+        },
+        "attempts": [],
+        "reasoning": "APH records misspelled Bunbury Techincal School. Government heritage information establishes Bunbury Technical College as tertiary training and its subsequent TAFE identity, but the opened material does not establish the precise historical school, period or level Marino attended. Do not map to a modern secondary school or infer a campus from current TAFE."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:hym:3a40a73718408507",
+      "school_review_id": "school:3a40a73718408507",
+      "recorded_school_name": "Box Hill Technical College",
+      "member": "IRONS, the Hon. Stephen (Steve) James",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Steve Irons\" \"Box Hill\" \"college\"",
+          "\"Box Hill Technical College\" history site:boxhill.edu.au",
+          "\"Irons\" \"Technical College\" parliament"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://www.boxhill.edu.au/about-us/our-history/",
+            "status": "partial"
+          },
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=HYM",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.boxhill.edu.au/about-us/centenary-your-story/",
+            "status": "partial"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_queries": [
+            "Steve Irons Box Hill Technical College first speech",
+            "\"Box Hill Technical College\" site:vic.gov.au",
+            "\"Box Hill Technical\" \"Irons\""
+          ],
+          "searches": 3,
+          "source_opens": 3,
+          "opened_sources": [
+            {
+              "url": "https://www.vic.gov.au/whitehorse-technical-college-number-7406",
+              "status": "opened"
+            },
+            {
+              "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050",
+              "status": "opened"
+            },
+            {
+              "url": "https://www.vic.gov.au/box-hill-senior-secondary-college-number-7050 [line 20 reopen]",
+              "status": "opened"
+            }
+          ]
+        },
+        "attempts": [],
+        "reasoning": "APH names Box Hill Technical College. Victorian government directory documents Box Hill Technical School No.7050 renamed to current Box Hill Senior Secondary College in 1995; it does not explicitly equate the recorded College wording with that School. College versus school identity and potential tertiary education require corroboration before selecting acara:45326."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:hze:6065cbdd9b574a67",
+      "school_review_id": "school:6065cbdd9b574a67",
+      "recorded_school_name": "St Peters Catholic College",
+      "member": "SESELJA, the Hon. Zdenko Matthew (Zed)",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Zed Seselja \"St Peters\" school Weston",
+          "\"Zed Seselja\" \"Peter\" school",
+          "\"St Peter's\" \"MacKillop\" college history Canberra"
+        ],
+        "searches": 3,
+        "source_opens": 1,
+        "opened_sources": [
+          {
+            "url": "https://www.mackillop.act.edu.au/index.php/our-school/the-history-of-mackillop",
+            "status": "opened"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:i0q:a273f25b8c284186",
+      "school_review_id": "school:a273f25b8c284186",
+      "recorded_school_name": "St Bernard's College",
+      "member": "RYAN, the Hon. Scott Michael",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "Scott Ryan St Bernard College school alumni",
+          "\"Scott Ryan\" \"St Bernard\" Essendon",
+          "\"Scott Ryan\" \"Bernard\" site:scottryan.com.au OR site:sbc.vic.edu.au"
+        ],
+        "searches": 3,
+        "source_opens": 4,
+        "opened_sources": [
+          {
+            "url": "https://scottryan.com.au/biography",
+            "status": "failed: Internal Error"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Scott_Ryan_(Australian_politician)",
+            "status": "opened; St Kevins education account"
+          },
+          {
+            "url": "https://abcdocz.com/doc/53603/the-strand-st.-bernard%E2%80%99s-college",
+            "status": "opened; reproduced school magazine lists Scott Ryan90"
+          },
+          {
+            "url": "https://www.sbc.vic.edu.au/",
+            "status": "opened"
+          }
+        ],
+        "gaps": [
+          "No adequately corroborated exact target selection; inspect retained contrary sources and historical leads."
+        ],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:jh5:c00d327efd749d08",
+      "school_review_id": "school:c00d327efd749d08",
+      "recorded_school_name": "Secondary school teacher at Bankstown Girls' School and Queanbeyan High School",
+      "member": "GEORGE, Jennie, AO",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Jennie George\" \"Queanbeyan\" teacher"
+        ],
+        "searches": 1,
+        "source_opens": 2,
+        "opened_sources": [
+          {
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=JH5",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.womeninunions.org/node/3074",
+            "status": "opened"
+          }
+        ]
+      },
+      "reused_research": {
+        "artifact": "data\\reference\\review\\research\\all-unmatched-schools-20261015\\results.json",
+        "research_log": {
+          "search_queries": [
+            "\"Jennie George\" \"Bankstown\" teacher"
+          ],
+          "searches": 1,
+          "source_opens": 1,
+          "opened_sources": [
+            {
+              "url": "https://www.womeninunions.org/node/3074",
+              "status": "opened"
+            }
+          ]
+        },
+        "attempts": [],
+        "reasoning": "The exact derived school string is employment. Frozen APH has SecondarySchool empty and contains the string in Occupations. George describes her first teaching appointment at Bankstown Girls High School in her own interview. No attendance mapping or institution split is justified."
+      },
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:m2y:cf6577bf96921969",
+      "school_review_id": "school:cf6577bf96921969",
+      "recorded_school_name": "Haileybury College",
+      "member": "TUDGE, the Hon. Alan Edward",
+      "research_scope": "outstanding_attendance_review",
+      "research_log": {
+        "search_queries": [
+          "\"Alan Tudge\" \"Haileybury\" school",
+          "\"Alan Tudge\" \"Keysborough\"",
+          "Haileybury senior school Keysborough 1963 history"
+        ],
+        "searches": 3,
+        "source_opens": 3,
+        "opened_sources": [
+          {
+            "url": "https://www.haileybury.com.au/",
+            "status": "opened"
+          },
+          {
+            "url": "https://rlcnews.com.au/wp-content/uploads/2018/08/RLCN_May_2011.pdf",
+            "status": "opened; page15 interview"
+          },
+          {
+            "url": "https://www.haileybury.com.au/about/history",
+            "status": "opened"
+          }
+        ],
+        "gaps": [],
+        "execution": "Current Codex session web research; exact model identity and token usage unavailable. No guided-model attempts inferred. Each query in a batched call counted. Cached page find operations reused fetched content.",
+        "prior_local_context": ".cache/remaining-27-scope.json and pinned data/raw/historical/acara/school-profile-2008-2025.csv; prior research search found no reusable exact evidence for these cases.",
+        "source_reuse": null
+      },
+      "reused_research": null,
+      "prior_evidence": []
+    },
+    {
+      "review_id": "education:m56:7c604789e447d661",
+      "school_review_id": "school:7c604789e447d661",
+      "recorded_school_name": "MLC",
+      "member": "PAYNE, the Hon. Marise Ann",
+      "research_scope": "verification_of_applied_mapping",
+      "research_log": {
+        "search_queries": [
+          "\"Marise Payne\" \"MLC\" school",
+          "\"Marise Payne\" site:mlcsyd.nsw.edu.au",
+          "\"Marise Payne (1981)\""
+        ],
+        "searches": 3,
+        "source_opens": 6,
+        "opened_sources": [
+          {
+            "url": "https://www.mlcsyd.nsw.edu.au/news-publications",
+            "status": "failed"
+          },
+          {
+            "url": "https://www.mlcsyd.nsw.edu.au/",
+            "status": "failed"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/MLC_School",
+            "status": "opened"
+          },
+          {
+            "url": "https://www.australianartilleryassociation.org/history/12_field_regiment_%28vietnam%29_association/documents/bulletin_39/biography_marise_payne.pdf",
+            "status": "metadata_only"
+          },
+          {
+            "url": "https://www.australianartilleryassociation.org/history/12_field_regiment_%28vietnam%29_association/documents/bulletin_39/biography_marise_payne.pdf",
+            "status": "failed"
+          },
+          {
+            "url": "Wikipedia MLC School citation link 512 (primary Marise Payne alumni page; invalid tool click, no resolved URL returned)",
+            "status": "failed"
+          }
+        ],
+        "cached_page_find_operations": "Finds on already opened pages inspected identifying names/locations and citation links; no new source access counted. Search-result snippets alone are not treated as fully retrieved primary sources.",
+        "retrieval_window_utc": [
+          "2026-10-16T01:17:53+00:00",
+          "2026-10-16T01:21:37+00:00"
+        ]
+      },
+      "reused_research": null,
+      "prior_evidence": [
+        {
+          "review_id": "education:m56:7c604789e447d661",
+          "candidate_institution_ref": "acara:44010",
+          "source_title": "Retained decision a29f4861-d877-4f63-afa8-551a92d9745a",
+          "source_type": "legacy-decision",
+          "source_url": "https://en.wikipedia.org/wiki/Marise_Payne",
+          "retrieved_at": "2026-10-02 10:00:00+10:00",
+          "claim_type": "attendance",
+          "claim_value": {
+            "decision_id": "a29f4861-d877-4f63-afa8-551a92d9745a",
+            "action": "accept",
+            "payload": {
+              "aph_id": "M56",
+              "attended_status": "attended_unspecified",
+              "confidence": "unconfirmed",
+              "institution_ref": "acara:44010",
+              "recorded_school_name": "MLC",
+              "retrieved_at": "2026-10-02 10:00:00+10:00"
+            }
+          },
+          "stance": "supports",
+          "excerpt_or_note": "Source retained with accept decision",
+          "generated_by": "importer",
+          "source_quality": null,
+          "match_strength": null,
+          "temporal_relevance": null,
+          "geographic_relevance": null,
+          "schema_version": 1,
+          "evidence_id": "evidence:a48072c918b0814c1f18afacb664dce83b5200ab5dde325d95d0d0cda35d2bd2"
+        }
+      ]
+    }
+  ]
+}

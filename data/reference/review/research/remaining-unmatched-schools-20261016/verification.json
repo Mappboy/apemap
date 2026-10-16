@@ -1,0 +1,110 @@
+{
+  "school_names": 27,
+  "outstanding_member_records": 28,
+  "supplemental_verifications": 3,
+  "proposals": 31,
+  "proposed_mappings": 16,
+  "manual_definitions": 1,
+  "evidence_records": 92,
+  "fresh_search_queries": 80,
+  "fresh_source_open_attempts": 78,
+  "authority_and_database_unchanged": true,
+  "reviews": 0,
+  "applied_proposals": 0,
+  "isolated_preview_and_apply": {
+    "events": 32,
+    "queue": {
+      "pending_before": 17,
+      "pending_after": 0,
+      "removed_review_ids": [
+        "school:093cff2b37e44619",
+        "school:6065cbdd9b574a67",
+        "school:8c297525aa6b886d",
+        "school:9e3c431ad5af3c26",
+        "school:a273f25b8c284186",
+        "school:aefa5e19c98ebee4",
+        "school:be5fb91293ee1e6b",
+        "school:c2181e71db56a3f8",
+        "school:c6bb89815d87c4e7",
+        "school:cf6577bf96921969",
+        "school:d56cd65cb492a25d",
+        "school:e45a23e4e7f97ee0",
+        "school:e6a59fe5ef70daa4",
+        "school:efa2a549e8597a38",
+        "school:f96d6b3bddee1602",
+        "school:fbfb9ce8ff88363b",
+        "school:fe6ff4d6d2b0a5e9"
+      ],
+      "added_review_ids": [],
+      "status_counts_before": {
+        "accepted": 249,
+        "needs_individual_review": 9,
+        "pending": 17,
+        "rejected": 1,
+        "resolved_individually": 30
+      },
+      "status_counts_after": {
+        "accepted": 249,
+        "needs_individual_review": 12,
+        "rejected": 1,
+        "resolved_individually": 44
+      },
+      "canonical_before": {
+        "attendance_assertions": 351,
+        "mapped_assertions": 342,
+        "unresolved_assertions": 9
+      },
+      "canonical_after": {
+        "attendance_assertions": 351,
+        "mapped_assertions": 336,
+        "unresolved_assertions": 15
+      }
+    }
+  },
+  "checks": {
+    "batch_verifier": {
+      "command": "uv run --no-sync --cache-dir .cache/uv python data/reference/review/research/remaining-unmatched-schools-20261016/verify.py --preview-check",
+      "result": "passed"
+    },
+    "pytest": {
+      "command": "uv run --no-sync --cache-dir .cache/uv pytest -n 4 --basetemp .cache/remaining27-full --tb=short",
+      "passed": 1335,
+      "skipped": 3,
+      "warnings": 1,
+      "seconds": 276.75
+    },
+    "ruff_check": {
+      "command": "uv run --no-sync --cache-dir .cache/uv ruff check .",
+      "result": "passed"
+    },
+    "ruff_format": {
+      "command": "uv run --no-sync --cache-dir .cache/uv ruff format --check .",
+      "result": "passed"
+    },
+    "maintained_typing": {
+      "command": "uv run --no-sync --cache-dir .cache/uv ty check apemap data/reference/review/research/remaining-unmatched-schools-20261016/verify.py",
+      "result": "passed"
+    },
+    "repository_typing": {
+      "command": "uv run --no-sync --cache-dir .cache/uv ty check",
+      "result": "158 pre-existing diagnostics; unchanged from prior checkpoint"
+    },
+    "lock": {
+      "command": "uv --cache-dir .cache/uv lock --check",
+      "result": "passed"
+    },
+    "browser": {
+      "normal_batch_list": true,
+      "researched": "31/31",
+      "reviewed": "0/31",
+      "applied": 0,
+      "mapping_inspected": "education:56430:2340b6eede488795 -> acara:45647"
+    }
+  },
+  "version": {
+    "previous_package": "0.14.1",
+    "target_package": "0.14.1",
+    "reason": "Unapplied research-data-only checkpoint; no behavior or contract change",
+    "dataset_release": null
+  }
+}

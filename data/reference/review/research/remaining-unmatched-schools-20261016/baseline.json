@@ -1,0 +1,15 @@
+{
+  "selection": "All 27 names in the live Unmatched schools queue across all parliaments: 28 outstanding attendance reviews plus three explicitly labelled verifications of already-applied MLC mappings. Existing applied decisions remain unchanged.",
+  "package_version": "0.14.1",
+  "source_revision": "33b50092d8c612480327daf2ed5e64a0858a967b19eb4757a73bf41d48412194",
+  "decision_revision": "99fd45d5bd18025a07ebd273f73fb944ab19eaa40722f7b3aa3ad9e95c5b55d3",
+  "authority_hashes": {
+    "decisions.jsonl": "99fd45d5bd18025a07ebd273f73fb944ab19eaa40722f7b3aa3ad9e95c5b55d3",
+    "evidence.jsonl": "3da2cfa8ee1f21462f6793afb54c0f7cd03dc1e7b324cfe2dbc2a8bf0584f723"
+  },
+  "database_sha256": "3e9a0793260c762822279ed8de5b83d3c0c9ac55d008944c02d853c1d2137d64",
+  "school_count": 27,
+  "assertion_review_count": 31,
+  "outstanding_assertion_count": 28,
+  "supplemental_verification_count": 3
+}
