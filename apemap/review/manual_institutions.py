@@ -8,6 +8,7 @@ import json
 import re
 from typing import Any
 
+from apemap.ingest.matching import is_home_educated
 from apemap.review.evidence import EvidenceRecord
 from apemap.review.model import (
     ReviewEvent,
@@ -167,6 +168,8 @@ def build_manual_institution_candidate(
         FIELDS.keys() | {"reuse_ref", "evidence_refs"}
     ):
         raise ValueError("Institution candidate must contain known structured facts")
+    if isinstance(facts.get("name"), str) and is_home_educated(facts["name"]):
+        raise ValueError("Home education has no institution")
     records = _records(evidence)
     references = _references(facts.get("evidence_refs", {}))
     if any(ref not in records for refs in references.values() for ref in refs):

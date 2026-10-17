@@ -25,7 +25,7 @@ from apemap.constants import (
     RAW_WIKIMEDIA_DIR,
 )
 from apemap.db import get_connection
-from apemap.ingest.matching import SchoolMatcher, normalize_school_key
+from apemap.ingest.matching import SchoolMatcher, is_home_educated, normalize_school_key
 from apemap.review.candidates import (
     _rows,
     member_candidates,
@@ -1014,6 +1014,8 @@ class ReviewService:
             context["school_relationship"] = (
                 relationship.to_dict() if relationship else None
             )
+            if is_home_educated(name):
+                context["institution_resolution"] = "home_educated"
             context["resolution_warnings"] = [
                 warning
                 for warning in relationship_conflicts(events)
@@ -1096,6 +1098,9 @@ class ReviewService:
                 if entity == "school" and "individual_resolution" in context
                 else "conflict"
                 if len(heads) > 1
+                else "accepted"
+                if context.get("institution_resolution") == "home_educated"
+                and (decision is None or decision.effective_action != "reject")
                 else decision.status
                 if decision
                 else "pending"
@@ -1274,6 +1279,11 @@ class ReviewService:
                 if edu_heads
                 else "pending"
             )
+            if is_home_educated(rec_school) and edu_status not in {
+                "conflict",
+                "rejected",
+            }:
+                edu_status = "accepted"
             education_items.append(
                 {
                     "recorded_school_name": rec_school,
@@ -1692,6 +1702,8 @@ class ReviewService:
         events: list[ReviewEvent] | None = None,
     ) -> list[dict[str, Any]]:
         """Compare distinct institutions for one assertion; never choose authority."""
+        if is_home_educated(recorded_name):
+            return []
         if entity_for_review_id(review_id) != "member_education":
             raise ValueError(
                 "Candidate evidence ranking requires an education assertion"
@@ -1740,6 +1752,8 @@ class ReviewService:
         events: list[ReviewEvent] | None = None,
     ) -> list[dict[str, Any]]:
         """Rank local and already-referenced institutions for one school identity."""
+        if is_home_educated(recorded_name):
+            return []
         if entity_for_review_id(review_id) != "school":
             raise ValueError("School candidate ranking requires a school identity")
         selected = self.events(allow_conflicts=True) if events is None else events
@@ -2621,7 +2635,9 @@ class ReviewService:
 
 def _coverage_counts(records: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
     education = records["member_education"]
-    used = {row["institution_id"] for row in education}
+    used = {
+        row["institution_id"] for row in education if row["institution_id"] is not None
+    }
     resolved = {
         row["institution_id"]
         for row in records["institutions"]
@@ -2631,7 +2647,12 @@ def _coverage_counts(records: dict[str, list[dict[str, Any]]]) -> dict[str, int]
         "members": len(records["members"]),
         "members_with_education": len({row["member_id"] for row in education}),
         "members_with_resolved_education": len(
-            {row["member_id"] for row in education if row["institution_id"] in resolved}
+            {
+                row["member_id"]
+                for row in education
+                if row["institution_id"] in resolved
+                or row.get("institution_resolution") == "home_educated"
+            }
         ),
         "resolved_institutions": len(used & resolved),
         "unresolved_institutions": len(used - resolved),

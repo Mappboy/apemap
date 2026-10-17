@@ -15,6 +15,7 @@ from urllib.parse import parse_qs, urlsplit
 from duckdb import ConnectionException, IOException
 
 from apemap.db import get_connection
+from apemap.ingest.matching import is_home_educated
 from apemap.review.candidates import (
     _rows,
     json_value,
@@ -298,6 +299,11 @@ class ResearchBatches:
         )
         grouped: dict[str, list[dict[str, Any]]] = {}
         for row in rows:
+            if kind == "schools" and is_home_educated(
+                row.get("payload", {}).get("recorded_school_name")
+                or row.get("payload", {}).get("recorded_name", "")
+            ):
+                continue
             grouped.setdefault(row["review_id"], []).append(row)
         requested = set(review_ids) if review_ids is not None else None
         if requested is not None and (not requested or not requested <= grouped.keys()):

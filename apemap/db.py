@@ -118,7 +118,8 @@ def backfill_recorded_school_ids(conn: DuckDBPyConnection) -> None:
             continue
         rows = conn.execute(
             f"SELECT education_id, school_name_as_recorded FROM {table} "
-            "WHERE recorded_school_id IS NULL AND NULLIF(TRIM(school_name_as_recorded), '') IS NOT NULL"
+            "WHERE recorded_school_id IS NULL AND NULLIF(TRIM(school_name_as_recorded), '') IS NOT NULL "
+            "AND institution_resolution IS DISTINCT FROM 'home_educated'"
         ).fetchall()
         if rows:
             conn.executemany(
@@ -247,6 +248,25 @@ def init_schema(conn: DuckDBPyConnection) -> None:
             conn.execute(
                 f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {sql_type}"
             )
+    nullable = conn.execute(
+        "SELECT is_nullable FROM information_schema.columns "
+        "WHERE table_schema='main' AND table_name='member_education' AND column_name='institution_id'"
+    ).fetchone()
+    if nullable == ("NO",):
+        # DuckDB requires explicit indexes to be detached for this schema change.
+        indexes = conn.execute(
+            "SELECT index_name, sql FROM duckdb_indexes() "
+            "WHERE schema_name='main' AND table_name='member_education' ORDER BY index_name"
+        ).fetchall()
+        for name, _ in indexes:
+            conn.execute('DROP INDEX "' + name.replace('"', '""') + '"')
+        try:
+            conn.execute(
+                "ALTER TABLE member_education ALTER COLUMN institution_id DROP NOT NULL"
+            )
+        finally:
+            for _, statement in indexes:
+                conn.execute(statement)
     source_exists = conn.execute(
         "SELECT count(*) FROM information_schema.tables WHERE table_name = 'review_source_member_education'"
     ).fetchone()

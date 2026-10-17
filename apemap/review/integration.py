@@ -21,6 +21,7 @@ from apemap.ingest.aph import parse_individual
 from apemap.ingest.matching import (
     SchoolMatcher,
     extract_schools_from_bio_text,
+    is_home_educated,
     is_international_text,
     normalize_school_key,
     split_school_string,
@@ -156,6 +157,7 @@ def _records(conn: DuckDBPyConnection, *, source: bool = False) -> Records:
                 if (
                     isinstance(recorded, str)
                     and recorded.strip()
+                    and row.get("institution_resolution") != "home_educated"
                     and not row.get("recorded_school_id")
                 ):
                     row["recorded_school_id"] = school_review_id(str(recorded))
@@ -291,6 +293,31 @@ def _individual_source_facts(
         schools = extract_schools_from_bio_text(parsed.bio_texts)
     institutions: dict[str, dict[str, Any]] = {}
     for recorded in dict.fromkeys(schools):
+        if is_home_educated(recorded):
+            digest = hashlib.sha256(
+                normalize_school_key(recorded).encode()
+            ).hexdigest()[:16]
+            facts["member_education"].append(
+                {
+                    "education_id": f"edu-{member.aph_id.lower()}-{digest}",
+                    "member_id": member.member_id,
+                    "institution_id": None,
+                    "level": "secondary",
+                    "years_attended": None,
+                    "graduation_year": None,
+                    "attended_status": "attended_unspecified",
+                    "source_url": parsed.source_url,
+                    "retrieved_at": retrieved_at,
+                    "confidence": "unconfirmed",
+                    "reviewer_notes": f"Parsed from APH Handbook text '{recorded}'",
+                    "school_name_as_recorded": recorded,
+                    "institution_resolution": "home_educated",
+                    "resolution_source_url": None,
+                    "evidence_origin": "aph",
+                    **dict.fromkeys(CONTEXT_FIELDS),
+                }
+            )
+            continue
         match = matcher.match(recorded)
         institutions.setdefault(match.institution_id, _matched_institution(match))
         alias = (
@@ -729,7 +756,9 @@ def _education_claim(
         "school_name_as_recorded": recorded,
         "evidence_origin": "manual",
         **dict.fromkeys(CONTEXT_FIELDS),
-        "recorded_school_id": school_review_id(recorded),
+        "recorded_school_id": None
+        if is_home_educated(recorded)
+        else school_review_id(recorded),
     }
 
 
@@ -741,6 +770,14 @@ def _unresolve_education(
     matcher: SchoolMatcher,
 ) -> None:
     """Leave attendance evidence intact while withholding institution identity."""
+    if is_home_educated(recorded):
+        row.update(
+            institution_id=None,
+            institution_resolution="home_educated",
+            resolution_source_url=None,
+            **dict.fromkeys(CONTEXT_FIELDS),
+        )
+        return
     identifier = f"inst-unmatched-reviewed-{school_digest(recorded)}"
     institutions.setdefault(
         identifier,
@@ -841,6 +878,9 @@ def _project(
     member_aph_ids = {row["member_id"]: str(row["aph_id"]) for row in members.values()}
     for row in result["member_education"]:
         raw_name = _recorded_education_name(row, institutions)
+        if is_home_educated(raw_name):
+            _unresolve_education(row, raw_name, institutions, definitions, matcher)
+            continue
         aph_id = member_aph_ids.get(row["member_id"])
         assertion = (
             assertions.get(education_review_id(aph_id, raw_name)) if aph_id else None
@@ -919,7 +959,9 @@ def _project(
             ancestor = accepted_education_ancestor(event, events)
             if ancestor is not None:
                 match_confidence = (
-                    "verified"
+                    str(ancestor.payload["confidence"])
+                    if is_home_educated(recorded)
+                    else "verified"
                     if ancestor.payload.get("institution_ref")
                     or schools.get(school_key(recorded))
                     or school_key(recorded) in attendance_confidence_keys
@@ -933,6 +975,12 @@ def _project(
                 ]
                 rows = [claim]
                 result["member_education"].append(claim)
+            if is_home_educated(recorded):
+                for row in rows:
+                    _unresolve_education(
+                        row, recorded, institutions, definitions, matcher
+                    )
+                continue
             if event.effective_action == "map":
                 if not rows:
                     raise ValueError(
@@ -1005,7 +1053,9 @@ def _project(
                 and (school is None or reference != school.payload["institution_ref"])
             )
             resolution = event if own_resolution else school
-            if reference:
+            if is_home_educated(recorded):
+                identifier, match_confidence = None, str(payload["confidence"])
+            elif reference:
                 identifier, match_confidence = _institution(
                     str(reference), institutions, definitions, matcher
                 )
@@ -1047,13 +1097,22 @@ def _project(
                     else None,
                 }
             )
-            _apply_school_context(
-                result["member_education"][-1],
-                resolution,
-                institutions,
-                definitions,
-                matcher,
-            )
+            if is_home_educated(recorded):
+                _unresolve_education(
+                    result["member_education"][-1],
+                    recorded,
+                    institutions,
+                    definitions,
+                    matcher,
+                )
+            else:
+                _apply_school_context(
+                    result["member_education"][-1],
+                    resolution,
+                    institutions,
+                    definitions,
+                    matcher,
+                )
         elif event.entity_type == "service":
             assert member is not None
             parliament = int(payload["parliament_number"])

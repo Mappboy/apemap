@@ -470,7 +470,11 @@ def test_new_target_excludes_other_candidate_refs_only_in_guided_preview(
     }
     prior = service.save(
         service.prepare(
-            review_id, "research", prior_payload, notes="Unresolved competing schools"
+            review_id,
+            "research",
+            prior_payload,
+            reviewer="Test reviewer",
+            notes="Unresolved competing schools",
         )
     )
     retained_before = service.evidence_path.read_bytes()
@@ -483,6 +487,7 @@ def test_new_target_excludes_other_candidate_refs_only_in_guided_preview(
             action="supersede",
             replacement_action="map",
             supersedes=prior.decision_id,
+            reviewer="Test reviewer",
             payload_mode=payload_mode,
             payload=json.dumps(
                 {
@@ -534,6 +539,7 @@ def test_guided_mapping_reports_malformed_evidence_refs(
             action="map",
             payload_mode="guided",
             payload=json.dumps({"evidence_refs": refs}),
+            reviewer="Test reviewer",
             field_aph_id="TEST",
             field_recorded_school_name="Test High School",
             field_institution_ref="acara:2",

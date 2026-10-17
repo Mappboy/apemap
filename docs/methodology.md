@@ -45,6 +45,14 @@ An explicit assertion that a parliamentarian attended an educational institution
 - Attendance status (`graduated`, `attended_did_not_graduate`, `attended_unspecified`)
 - Provenance audit trail (`source_url`, `retrieved_at`, `confidence`, `reviewer_notes`).
 
+The explicit description `Home educated` is retained as a resolved assertion with
+`institution_resolution = 'home_educated'` and a NULL `institution_id`. It has no
+recorded or attended school identity and does not enter school matching or
+research queues. Its source wording and provenance remain in canonical exports
+and attendance views (`identity_basis = 'non_institution'`); school-specific
+analysis and maps do not assign it a school, sector or location. Combined source
+text such as `Home educated / Actual School` produces separate assertions.
+
 ---
 
 ## 3. Parliament Cohort Definitions

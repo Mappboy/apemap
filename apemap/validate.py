@@ -101,7 +101,9 @@ def validate_database(
             """
             SELECT count(*) FROM member_education e
             LEFT JOIN institutions i ON e.institution_id = i.institution_id
-            WHERE i.institution_id IS NULL
+            WHERE (e.institution_id IS NOT NULL AND i.institution_id IS NULL)
+                OR (e.institution_id IS NULL AND e.institution_resolution IS DISTINCT FROM 'home_educated')
+                OR (e.institution_id IS NOT NULL AND e.institution_resolution = 'home_educated')
             """,
         ),
         (
