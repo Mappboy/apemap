@@ -91,12 +91,14 @@ def test_applied_research_survives_later_manual_decisions(
         rid,
         "research",
         {"recorded_name": "Historical School"},
+        reviewer="Test reviewer",
         notes="Earlier research decision",
     )
     original = build_review_event(
         rid,
         "research",
         {**item["payload"], **metadata},
+        reviewer="Test reviewer",
         supersedes=[prior.decision_id],
         notes="Applied frozen research",
     )
@@ -108,6 +110,7 @@ def test_applied_research_survives_later_manual_decisions(
         rid,
         "research",
         intermediate_payload,
+        reviewer="Test reviewer",
         supersedes=[original.decision_id],
         notes="Later reviewer note",
     )
@@ -122,6 +125,7 @@ def test_applied_research_survives_later_manual_decisions(
             "evidence_refs": list(reversed(metadata["evidence_refs"])),
         },
         source_url="https://education.example.org/correction",
+        reviewer="Test reviewer",
         supersedes=[intermediate.decision_id],
     )
     history = [prior, original, intermediate, later]
@@ -161,12 +165,17 @@ def test_superseded_application_still_must_match_frozen_proposal(
     else:
         payload["evidence_refs"] = payload["evidence_refs"][:1]
     original = build_review_event(
-        rid, "research", payload, notes="Incorrect application"
+        rid,
+        "research",
+        payload,
+        reviewer="Test reviewer",
+        notes="Incorrect application",
     )
     later = build_review_event(
         rid,
         "research",
         payload,
+        reviewer="Test reviewer",
         supersedes=[original.decision_id],
         notes="Later reviewer note",
     )
