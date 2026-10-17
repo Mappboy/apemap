@@ -95,6 +95,7 @@
 </div>
 {% if preview %}
 <section id="preview"><h2>Validated semantic preview</h2><p>Review the affected values before saving. This preview has not changed any file.</p>
+  {% if preview.get('excluded_evidence_refs') %}<p class="notice" role="status">Evidence for other candidates was excluded from this mapping. The sources remain in retained research and earlier decisions.</p><ul>{% for ref in preview.excluded_evidence_refs %}<li><code>{{ ref }}</code></li>{% endfor %}</ul>{% endif %}
   {% include "relationship-preview.html" %}
   <p>{{ preview.changes|length }} change group(s) passed validation. Review the affected values above before saving.</p>
   <details class="technical-details"><summary>Technical details: full changes, validation, and decision record</summary>

@@ -1,0 +1,175 @@
+{
+  "review_id": "education:56430:c2181e71db56a3f8",
+  "institution_ref": "acara:45715",
+  "relationship_type": "successor",
+  "evidence": [
+    {
+      "review_id": "education:56430:c2181e71db56a3f8",
+      "candidate_institution_ref": "acara:45715",
+      "source_title": "Notre Dame College Shepparton official history",
+      "source_type": "official-school-history",
+      "source_url": "https://www.notredame.vic.edu.au/our-college/our-history",
+      "retrieved_at": "2026-10-17T01:12:03Z",
+      "claim_type": "relationship",
+      "claim_value": {
+        "from": "St Colman’s College",
+        "to": "Notre Dame College",
+        "relationship": "merger",
+        "merger_year": 1984,
+        "with": "Sacred Heart College",
+        "original_type": "Catholic boys secondary school"
+      },
+      "stance": "supports",
+      "excerpt_or_note": "Official history distinguishes the two separate colleges, their shared senior classes from1975, the April1983 amalgamation announcement and the new coeducational college opening the following year. This is succession after merger, not simply renaming.",
+      "generated_by": "agent-search",
+      "source_quality": null,
+      "match_strength": null,
+      "temporal_relevance": null,
+      "geographic_relevance": null,
+      "schema_version": 1,
+      "evidence_id": "evidence:d0f4958d1b8905e649367af8bcf2b07ad7fb02829f94f9c712182dabbaad0121"
+    },
+    {
+      "review_id": "education:56430:c2181e71db56a3f8",
+      "candidate_institution_ref": "acara:45715",
+      "source_title": "Notre Dame College official40th anniversary newsletter,12December2024",
+      "source_type": "official-school-history",
+      "source_url": "https://www.notredame.vic.edu.au/news/12-december-2024-newsletter-celebrating-40-years-of-notre-dame-college",
+      "retrieved_at": "2026-10-17T01:12:03Z",
+      "claim_type": "identity",
+      "claim_value": {
+        "claim": "Notre Dame College Shepparton opened in1984 from the merger of Sacred Heart and St Colman’s colleges.",
+        "identity_detail": {
+          "field": "institution_ref",
+          "value": "acara:45715"
+        }
+      },
+      "stance": "supports",
+      "excerpt_or_note": "Official anniversary account confirms the1984 merger and identifies Notre Dame as the new Catholic coeducational secondary college in Shepparton.",
+      "generated_by": "agent-search",
+      "source_quality": null,
+      "match_strength": null,
+      "temporal_relevance": null,
+      "geographic_relevance": null,
+      "schema_version": 1,
+      "evidence_id": "evidence:df6c8cdc768103f57411fbfba6338b75cab661042538e016875fefc69bf4fffe"
+    },
+    {
+      "review_id": "education:56430:c2181e71db56a3f8",
+      "candidate_institution_ref": "acara:45715",
+      "source_title": "National Redress Scheme: historical Notre Dame College Shepparton1951–1984",
+      "source_type": "government-institution-register",
+      "source_url": "https://www.nationalredress.gov.au/institutions/notre-dame-college-shepparton-0",
+      "retrieved_at": "2026-10-17T01:12:03Z",
+      "claim_type": "original_identity",
+      "claim_value": {
+        "school_name": "St Colman’s College",
+        "country": "Australia",
+        "suburb": "Shepparton",
+        "state": "VIC",
+        "operating_period": "1951–1984"
+      },
+      "stance": "supports",
+      "excerpt_or_note": "Government institution entry for1951–1984 lists St Colman’s College among its aliases, at139KnightStreetShepparton. Current coordinates are not inferred as historical attendance coordinates.",
+      "generated_by": "agent-search",
+      "source_quality": null,
+      "match_strength": null,
+      "temporal_relevance": null,
+      "geographic_relevance": null,
+      "schema_version": 1,
+      "evidence_id": "evidence:bcb400b623167bebad5221689d47c99f3ba22b30dbcc1c83c17f9884f6adcf4d"
+    },
+    {
+      "review_id": "education:56430:c2181e71db56a3f8",
+      "candidate_institution_ref": "acara:45715",
+      "source_title": "National Redress Scheme: Notre Dame College1984 onwards",
+      "source_type": "government-institution-register",
+      "source_url": "https://www.nationalredress.gov.au/institutions/notre-dame-college",
+      "retrieved_at": "2026-10-17T01:12:03Z",
+      "claim_type": "identity",
+      "claim_value": {
+        "claim": "Notre Dame College1984 onwards is at139KnightStreetSheppartonVIC3630Australia.",
+        "identity_detail": {
+          "field": "suburb",
+          "value": "Shepparton"
+        }
+      },
+      "stance": "supports",
+      "excerpt_or_note": "Government entry distinguishes the current Notre Dame College1984-onward identity. The pinned ACARA head-campus45715 is Notre Dame CollegeShepparton;45716 is its separate Emmaus subcampus.",
+      "generated_by": "agent-search",
+      "source_quality": null,
+      "match_strength": null,
+      "temporal_relevance": null,
+      "geographic_relevance": null,
+      "schema_version": 1,
+      "evidence_id": "evidence:14d9d0bd2a0eea4d46dcb472bab965b6530f37bc9430472e01e76ce82db768be"
+    }
+  ],
+  "permissible_minimum_payload": {
+    "aph_id": "56430",
+    "recorded_school_name": "St Colman's School",
+    "institution_ref": "acara:45715",
+    "relationship_type": "successor",
+    "evidence_refs": [
+      "evidence:d0f4958d1b8905e649367af8bcf2b07ad7fb02829f94f9c712182dabbaad0121",
+      "evidence:df6c8cdc768103f57411fbfba6338b75cab661042538e016875fefc69bf4fffe",
+      "evidence:bcb400b623167bebad5221689d47c99f3ba22b30dbcc1c83c17f9884f6adcf4d",
+      "evidence:14d9d0bd2a0eea4d46dcb472bab965b6530f37bc9430472e01e76ce82db768be"
+    ]
+  },
+  "research_log": {
+    "search_queries": [
+      "site.notredame.vic.edu.au St Colman's College history Notre Dame 1984",
+      "site:ndc.vic.edu.au \"Colman\" history",
+      "\"Damian Drum\" \"Colman\" Shepparton parliament"
+    ],
+    "searches": 3,
+    "source_opens": 4,
+    "opened_sources": [
+      {
+        "url": "https://www.notredame.vic.edu.au/our-college/our-history",
+        "status": "opened"
+      },
+      {
+        "url": "https://www.notredame.vic.edu.au/news/12-december-2024-newsletter-celebrating-40-years-of-notre-dame-college",
+        "status": "opened"
+      },
+      {
+        "url": "https://www.nationalredress.gov.au/institutions/notre-dame-college-shepparton-0",
+        "status": "opened"
+      },
+      {
+        "url": "https://www.nationalredress.gov.au/institutions/notre-dame-college",
+        "status": "opened"
+      }
+    ]
+  },
+  "limitations": [
+    "New sources prove historicalinstitutionidentity and mergerrelationship, not newmemberattendance. Preserve existingAPH attendance and source evidence; source member-link proof separately from merger.",
+    "Minimum scoped successor is permissible without originalmanualreference; this leaves separate provisionaloriginalassertionidentity.",
+    "If attended_institution_ref is supplied it must be accepted manualinstitutiondifferentfrom45715, with attended_identity_source_url. Do notset historicalscope marker manually.",
+    "No verifiedhistoricalcoordinates,campuscontinuity or newattendanceyears."
+  ],
+  "before_authority_sha256": {
+    "decisions.jsonl": "d8ccb728d96cbde9e791978836b4d92c391b9919590d180e9d1adc99d729d872",
+    "evidence.jsonl": "37093248cfc700eed884d01c1096895f911a296d37644b467d5704cd78f66598"
+  },
+  "database_sha256": "3e9a0793260c762822279ed8de5b83d3c0c9ac55d008944c02d853c1d2137d64",
+  "pinned_target": {
+    "institution_ref": "acara:45715",
+    "acara_id": "45715",
+    "school_name": "Notre Dame College",
+    "state": "VIC",
+    "suburb": "Shepparton",
+    "sector": "Catholic",
+    "school_type": "Sec",
+    "institution_status": "current",
+    "postcode": "3630",
+    "latitude": -36.3747,
+    "longitude": 145.408,
+    "historical_names": [
+      "Notre Dame College"
+    ],
+    "myschool_id": null
+  }
+}

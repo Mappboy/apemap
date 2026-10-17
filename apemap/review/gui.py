@@ -881,6 +881,8 @@ def create_app(
         values: Mapping[str, Any] = (
             request.form if draft_values is None else draft_values
         )
+        if preview and preview.get("excluded_evidence_refs"):
+            values = {**values, "evidence_refs": chosen.get("evidence_refs", [])}
         evidence_context = {
             "comparison_members": _comparison_members(item),
             "evidence_preview": evidence_preview,
@@ -2853,6 +2855,26 @@ def create_app(
                 payload.pop("context_evidence_refs", None)
                 if roles:
                     payload["context_evidence_refs"] = roles
+            excluded_refs: list[str] = []
+            if (
+                guided
+                and item["entity_type"] == "member_education"
+                and (replacement_action or action) in {"accept", "map"}
+                and payload.get("institution_ref")
+            ):
+                other_candidates = {
+                    record["evidence_id"]
+                    for record in item.get("retained_evidence", [])
+                    if record.get("candidate_institution_ref")
+                    not in (None, payload["institution_ref"])
+                }
+                refs = payload.get("evidence_refs", [])
+                if isinstance(refs, list) and all(isinstance(ref, str) for ref in refs):
+                    excluded_refs = sorted(set(refs) & other_candidates)
+                if excluded_refs:
+                    payload["evidence_refs"] = [
+                        ref for ref in refs if ref not in other_candidates
+                    ]
             preview = service.prepare(
                 review_id,
                 action,
@@ -2863,6 +2885,8 @@ def create_app(
                 supersedes=supersedes or None,
                 replacement_action=replacement_action,
             )
+            if excluded_refs:
+                preview["excluded_evidence_refs"] = excluded_refs
             if school_workflow and preview["revision"] != item["form_revision"]:
                 raise StaleReviewError(
                     "Decisions changed while previewing; review and preview again"
