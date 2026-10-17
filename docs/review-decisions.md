@@ -346,8 +346,28 @@ Only evidence with the same explicit reference is grouped under one target.
 Choose **Same school**, **Alternate name**, **Renamed school**, or **Successor
 institution**, then optionally supply a supporting source URL. **Use this source** explicitly
 copies an evidence link; selecting a school preserves your source, reviewer and
-notes. For non-ACARA schools, enter an existing `manual:` reference, or open the
-manual-institution form in another tab and save its definition first.
+notes. For non-ACARA schools, **Use this institution** selects a matching saved
+manual definition without saving a school mapping. Matching names remain leads
+for the reviewer to verify.
+
+**Generate institution from evidence** uses the selected configured research
+provider to interpret retained claims and notes in one request, with no web-search
+tools. It opens the guided institution editor with citations beside suggested
+facts, unresolved gaps and conflicting evidence. Unknown sector stays blank;
+country and coordinates need their own supporting citations. Inspect the sources,
+edit the facts and citations, confirm the inspection, then **Validate and preview**.
+Only **Save this decision** appends the manual definition and its reviewed field
+provenance. Generation and preview change neither ledger. Existing strict
+structured-fact research proposals keep their separate validation workflow.
+
+Saving returns to the originating school draft with the reference selected,
+preserving its notes, reviewer, relationship, selected evidence and queue filters.
+Preview and save the school mapping separately. Changed sources, evidence or
+decisions invalidate a generated draft; regenerate it using the current evidence.
+Generation requires an online configured provider; saved-institution reuse works
+without one. The ordinary form flow works with JavaScript disabled: use **Check
+progress** while generation is running. Signed drafts and previews expire after
+15 minutes, and restarting the server discards unfinished generation jobs.
 
 The school page shows associated parliamentarians with links to their Parliamentary
 Handbook biographies, attendance review items and original attendance sources.

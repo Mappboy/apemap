@@ -220,6 +220,13 @@ def validate_event(event: ReviewEvent) -> None:
     if action in ("accept", "map") and event.entity_type != "school":
         evidence_url(event.source_url)
     payload = event.payload
+    if (
+        "institution_draft_provenance" in payload
+        and event.entity_type != "manual_institution"
+    ):
+        raise ValueError(
+            "Institution draft provenance requires a manual institution definition"
+        )
     if "resolution_reason" in payload:
         if (
             payload["resolution_reason"] not in RESOLUTION_REASONS
@@ -399,7 +406,10 @@ def validate_event(event: ReviewEvent) -> None:
         if action == "accept":
             _text(payload.get("school_name"), "school_name")
             _text(payload.get("country"), "country")
-            if payload.get("sector") not in CANONICAL_SECTORS:
+            if (
+                payload.get("sector") is not None
+                and payload["sector"] not in CANONICAL_SECTORS
+            ):
                 raise ValueError("Invalid institution sector")
             if payload.get("institution_status", "manual") not in (
                 "manual",

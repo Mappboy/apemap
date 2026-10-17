@@ -1,0 +1,1572 @@
+[
+  {
+    "review_id": "education:245212:8fc6e3dfab079be1",
+    "school_review_id": "school:8fc6e3dfab079be1",
+    "source_path": "data/reference/review/research/p48-unmapped-schools-20261014/budget-exceptions.json",
+    "previous_result": {
+      "index": 18,
+      "reason": "Actual query count exceeds the prescribed Luna budget; retained as advisory research and excluded from standard approval batch.",
+      "result": {
+        "alternatives": [
+          {
+            "institution_ref": "acara:48902",
+            "locality": "Bedford",
+            "name": "Chisholm Catholic College",
+            "reason": "A distinct exact-name school in the pinned register, inconsistent with the member-specific Slacks Creek and Queensland Logan-area context.",
+            "state": "WA"
+          }
+        ],
+        "assertion_evidence": [
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "attendance",
+            "claim_value": {
+              "aph_id": "245212",
+              "attended_status": "attended_unspecified",
+              "display_name": "CANAVAN, the Hon. Matthew (Matt) James",
+              "graduation_year": null,
+              "level": "secondary",
+              "recorded_school_name": "Chisholm Catholic College",
+              "years_attended": null
+            },
+            "evidence_id": "evidence:a56ae7d54d39f37d4bd5ca004af19c0fb795ba90e6ba0729fd26a8f8d27ec235",
+            "excerpt_or_note": "The supplied APH snapshot records Chisholm Catholic College as Matt Canavan's attended secondary school; it gives no dates or graduation claim.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-02T08:23:59.813516+10:00",
+            "review_id": "education:245212:8fc6e3dfab079be1",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Australian Parliament House Handbook API record (supplied local snapshot)",
+            "source_type": "local_aph_snapshot",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%27245212%27",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "attendance",
+            "claim_value": {
+              "aph_id": "245212",
+              "biographical_locality": "Slacks Creek",
+              "description": "profile states he grew up in Slacks Creek, attended Chisholm Catholic College, and was active in Edmund Rice Camp",
+              "school_name": "Chisholm Catholic College"
+            },
+            "evidence_id": "evidence:5491b0320fcac486298e2d7c8865414f746776c2df49289e377d4a70e8ec9e66",
+            "excerpt_or_note": "The profile on Matt Canavan's LNP-associated political profile page states that he grew up in Slacks Creek and attended Chisholm Catholic College. It does not itself give a school address; the Brisbane Catholic Education report below identifies the exact-name Queensland college in Cornubia, Logan.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:41:53Z",
+            "review_id": "education:245212:8fc6e3dfab079be1",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "LNP / Advoc8 — Matt Canavan profile",
+            "source_type": "political_party_profile",
+            "source_url": "https://app.advoc8.co/public/profiles/br4CqQ",
+            "stance": "supports",
+            "temporal_relevance": null
+          }
+        ],
+        "assertion_proposals": [
+          {
+            "evidence_refs": [
+              "evidence:a56ae7d54d39f37d4bd5ca004af19c0fb795ba90e6ba0729fd26a8f8d27ec235",
+              "evidence:5491b0320fcac486298e2d7c8865414f746776c2df49289e377d4a70e8ec9e66",
+              "evidence:32beda10b7f2a951b8d0132912ac04264da846a6f2e15a1d0e5df7f7222471e6",
+              "evidence:d4e085343b31295b2c537eb732bc6d335e844a698b749f5803e980709d6c6440"
+            ],
+            "payload": {
+              "aph_id": "245212",
+              "institution_ref": "acara:47888",
+              "recorded_school_name": "Chisholm Catholic College",
+              "relationship_type": "direct"
+            },
+            "reasoning": "Map only Matt Canavan's exact APH attendance assertion. His LNP-associated profile links his Chisholm Catholic College attendance with his upbringing in Slacks Creek; Brisbane Catholic Education identifies the exact-name school in the Cornubia/Logan area. The proposal uses the pinned QLD institution acara:47888 and does not infer attendance dates or graduation.",
+            "review_id": "education:245212:8fc6e3dfab079be1",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID%20eq%20%27245212%27"
+          }
+        ],
+        "attempts": [
+          {
+            "gaps": [
+              "The supplied APH API URL open returned an internal error; its record is included as the local frozen snapshot with its original retrieval timestamp.",
+              "Four query objects were used, exceeding the task's three-object search limit by one; the actual count is preserved here.",
+              "No attendance years or graduation are stated."
+            ],
+            "model": "gpt-6-luna",
+            "searches": 4,
+            "source_opens": 6,
+            "status": "resolved",
+            "token_usage": null
+          }
+        ],
+        "evidence": [
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "institution_identity",
+            "claim_value": {
+              "level": "secondary Years 7-12",
+              "locality": "Cornubia",
+              "opened": 1992,
+              "postal_address": "204 California Creek Road, Cornubia QLD 4130",
+              "school_name": "Chisholm Catholic College",
+              "sector": "Catholic, Brisbane Catholic Education",
+              "state": "QLD"
+            },
+            "evidence_id": "evidence:32beda10b7f2a951b8d0132912ac04264da846a6f2e15a1d0e5df7f7222471e6",
+            "excerpt_or_note": "The Brisbane Catholic Education report identifies Chisholm Catholic College at Cornubia in Queensland, serving the Cornubia, Logan and Redland Bay area. The pinned register has the matching QLD institution as acara:47888.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:41:53Z",
+            "review_id": "school:8fc6e3dfab079be1",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Brisbane Catholic Education — Chisholm Catholic College, Cornubia, Annual Report 2021",
+            "source_type": "government_school_report",
+            "source_url": "https://www.bne.catholic.edu.au/schools-curriculum/school-reporting/Annual%20Reports/2021/Annual%20Report%202021%20-%20CORNUBIA%20-%20Chisholm%20Catholic%20College.pdf",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": null,
+            "claim_type": "institution_identity",
+            "claim_value": {
+              "institution_variant": "Cornubia QLD",
+              "school_name": "Chisholm Catholic College"
+            },
+            "evidence_id": "evidence:d4e085343b31295b2c537eb732bc6d335e844a698b749f5803e980709d6c6440",
+            "excerpt_or_note": "The official college website identifies itself as Chisholm Catholic College Cornubia, corroborating the school identity and geography in the Brisbane Catholic Education report.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:41:53Z",
+            "review_id": "school:8fc6e3dfab079be1",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Chisholm Catholic College Cornubia — official school website",
+            "source_type": "school_official_profile",
+            "source_url": "https://www.chisholm.qld.edu.au/",
+            "stance": "supports",
+            "temporal_relevance": null
+          }
+        ],
+        "identity": {
+          "evidence_refs": {
+            "institution_identity": [
+              "evidence:32beda10b7f2a951b8d0132912ac04264da846a6f2e15a1d0e5df7f7222471e6",
+              "evidence:d4e085343b31295b2c537eb732bc6d335e844a698b749f5803e980709d6c6440"
+            ],
+            "recorded_school_name": [
+              "evidence:32beda10b7f2a951b8d0132912ac04264da846a6f2e15a1d0e5df7f7222471e6",
+              "evidence:d4e085343b31295b2c537eb732bc6d335e844a698b749f5803e980709d6c6440"
+            ]
+          },
+          "institution_ref": "acara:47888",
+          "recorded_school_name": "Chisholm Catholic College"
+        },
+        "manual_institutions": [],
+        "outcome": "mapping",
+        "payload": null,
+        "reasoning": "The supplied APH record uses the exact name Chisholm Catholic College. Matt Canavan's LNP-associated political profile says he grew up in Slacks Creek and attended Chisholm Catholic College; Brisbane Catholic Education identifies the exact-name Chisholm Catholic College in Cornubia, serving the Cornubia/Logan area. The pinned local register's Queensland entry is acara:47888. This links the member-specific biography to the Queensland school, rather than using his parliamentary seat as a geographic proxy. The register also includes a distinct exact-name college in Bedford, WA; its geography does not fit the profile's school-age Slacks Creek context. No attendance dates or graduation are inferred.",
+        "review_caveats": [],
+        "review_id": "school:8fc6e3dfab079be1",
+        "scoped_identity_context": {
+          "aph_id": "245212",
+          "education_id": "education:245212:8fc6e3dfab079be1",
+          "evidence_refs": [
+            "evidence:a56ae7d54d39f37d4bd5ca004af19c0fb795ba90e6ba0729fd26a8f8d27ec235",
+            "evidence:5491b0320fcac486298e2d7c8865414f746776c2df49289e377d4a70e8ec9e66"
+          ],
+          "member": "CANAVAN, the Hon. Matthew (Matt) James"
+        },
+        "value": "acara:47888"
+      },
+      "task": {
+        "context": {
+          "assertion": {
+            "effective_institution_ref": null,
+            "recorded_school_name": "Chisholm Catholic College"
+          },
+          "attendance_context": [
+            {
+              "attendance": {
+                "attended_identity_source_url": null,
+                "attended_institution_id": null,
+                "attended_status": "attended_unspecified",
+                "campus_continuity": null,
+                "campus_continuity_source_url": null,
+                "confidence": "unconfirmed",
+                "education_id": "edu-245212-8fc6e3dfab079be1",
+                "evidence_origin": "aph",
+                "graduation_year": null,
+                "historical_broad_sector": null,
+                "historical_broad_sector_source_url": null,
+                "historical_context_scope": null,
+                "historical_detailed_sector": null,
+                "historical_detailed_sector_source_url": null,
+                "historical_latitude": null,
+                "historical_location_source_url": null,
+                "historical_longitude": null,
+                "historical_scope_confirmed": null,
+                "institution_id": "inst-unmatched-chisholm-catholic-college",
+                "institution_resolution": "unresolved",
+                "level": "secondary",
+                "member_id": "aph-245212",
+                "recorded_school_id": "school:8fc6e3dfab079be1",
+                "resolution_source_url": null,
+                "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                "reviewer_notes": "Parsed from APH Handbook text 'Chisholm Catholic College'; matched status: unconfirmed; Historical name maps to several ACARA identifiers; manual review required",
+                "school_name_as_recorded": "Chisholm Catholic College",
+                "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                "years_attended": null
+              },
+              "member": {
+                "aph_id": "245212",
+                "date_of_birth": "1980-12-17",
+                "display_name": "CANAVAN, the Hon. Matthew (Matt) James"
+              },
+              "parliamentary_services": [
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": false,
+                  "is_opening_day_member": false,
+                  "member_id": "aph-245212",
+                  "parliament_number": 44,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2016-05-09",
+                  "service_id": "srv-245212-44-486fea2c16fe5d33",
+                  "service_start": "2014-07-01",
+                  "source_service_end": "2016-07-02",
+                  "source_service_start": "2014-07-01",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                },
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-245212",
+                  "parliament_number": 45,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2019-04-11",
+                  "service_id": "srv-245212-45-539e812133e0e67d",
+                  "service_start": "2016-08-30",
+                  "source_service_end": "2022-06-30",
+                  "source_service_start": "2016-07-02",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                },
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": true,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-245212",
+                  "parliament_number": 48,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": null,
+                  "service_id": "srv-245212-48-f9b13ffdeb06e3d4",
+                  "service_start": "2025-07-22",
+                  "source_service_end": "2026-09-21",
+                  "source_service_start": "2022-07-01",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                },
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-245212",
+                  "parliament_number": 46,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2022-04-11",
+                  "service_id": "srv-245212-46-74811f3115b0f410",
+                  "service_start": "2019-07-02",
+                  "source_service_end": "2022-06-30",
+                  "source_service_start": "2016-07-02",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                },
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-245212",
+                  "parliament_number": 47,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2025-03-28",
+                  "service_id": "srv-245212-47-1565261f793a8435",
+                  "service_start": "2022-07-26",
+                  "source_service_end": "2026-09-21",
+                  "source_service_start": "2022-07-01",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                }
+              ]
+            }
+          ],
+          "candidates": [
+            {
+              "accepted_candidate": false,
+              "candidate_id": "candidate:f0a6d47b824aad5628ddf12803dd5fff40fe1fb9e2904fb26f501642ae5c94e6",
+              "conflicts": [],
+              "decision_id": null,
+              "entity_type": "school",
+              "evidence": {
+                "acara_id": null,
+                "campus_type": null,
+                "country": null,
+                "institution_id": "inst-unmatched-chisholm-catholic-college",
+                "institution_status": "unknown",
+                "latitude": null,
+                "longitude": null,
+                "postcode": null,
+                "school_name": "Chisholm Catholic College",
+                "school_type": "Secondary",
+                "sector": "Other",
+                "state": null,
+                "suburb": null
+              },
+              "parliaments": [
+                44,
+                45,
+                46,
+                47,
+                48
+              ],
+              "payload": {
+                "recorded_name": "Chisholm Catholic College"
+              },
+              "review_id": "school:8fc6e3dfab079be1",
+              "status": "pending"
+            }
+          ],
+          "conflicts": [],
+          "individual_resolution_required": false,
+          "p48_unmapped_assertions": [
+            {
+              "attendance": {
+                "attended_identity_source_url": null,
+                "attended_institution_id": null,
+                "attended_status": "attended_unspecified",
+                "campus_continuity": null,
+                "campus_continuity_source_url": null,
+                "confidence": "unconfirmed",
+                "education_id": "edu-245212-8fc6e3dfab079be1",
+                "evidence_origin": "aph",
+                "graduation_year": null,
+                "historical_broad_sector": null,
+                "historical_broad_sector_source_url": null,
+                "historical_context_scope": null,
+                "historical_detailed_sector": null,
+                "historical_detailed_sector_source_url": null,
+                "historical_latitude": null,
+                "historical_location_source_url": null,
+                "historical_longitude": null,
+                "historical_scope_confirmed": null,
+                "institution_id": "inst-unmatched-chisholm-catholic-college",
+                "institution_resolution": "unresolved",
+                "level": "secondary",
+                "member_id": "aph-245212",
+                "recorded_school_id": "school:8fc6e3dfab079be1",
+                "resolution_source_url": null,
+                "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                "reviewer_notes": "Parsed from APH Handbook text 'Chisholm Catholic College'; matched status: unconfirmed; Historical name maps to several ACARA identifiers; manual review required",
+                "school_name_as_recorded": "Chisholm Catholic College",
+                "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                "years_attended": null
+              },
+              "member": {
+                "aph_id": "245212",
+                "date_of_birth": "1980-12-17",
+                "display_name": "CANAVAN, the Hon. Matthew (Matt) James",
+                "family_name": "Canavan",
+                "gender": "Male",
+                "given_name": "Matthew",
+                "member_id": "aph-245212",
+                "wikidata_id": null
+              },
+              "parliamentary_services": [
+                {
+                  "chamber": "senate",
+                  "electorate": null,
+                  "is_current_member": true,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-245212",
+                  "parliament_number": 48,
+                  "party": "The Nationals",
+                  "party_abbrev": "NP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": null,
+                  "service_id": "srv-245212-48-f9b13ffdeb06e3d4",
+                  "service_start": "2025-07-22",
+                  "source_service_end": "2026-09-21",
+                  "source_service_start": "2022-07-01",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '245212'",
+                  "state_or_territory": "QLD"
+                }
+              ],
+              "review_id": "education:245212:8fc6e3dfab079be1"
+            }
+          ],
+          "retained_evidence": [],
+          "review_id": "school:8fc6e3dfab079be1",
+          "selected_candidate": null
+        },
+        "decision_heads": [],
+        "review_id": "school:8fc6e3dfab079be1"
+      }
+    }
+  },
+  {
+    "review_id": "education:250156:6f66165bfc8609df",
+    "school_review_id": "school:6f66165bfc8609df",
+    "source_path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+    "previous_result": {
+      "alternatives": [],
+      "assertion_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "aph_id": "250156",
+            "attended_status": "attended_unspecified",
+            "display_name": "STEELE-JOHN, Jordon Alexander",
+            "education_id": "edu-250156-6f66165bfc8609df",
+            "recorded_school_name": "Home educated"
+          },
+          "evidence_id": "evidence:ff7977582568b7b7739ae67c75fbaf3692141d1faca3fe5dd4b6b4688a99b795",
+          "excerpt_or_note": "The frozen APH Handbook attendance row records the education description “Home educated”; it gives no attendance dates or institution.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "review_id": "education:250156:6f66165bfc8609df",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "APH Handbook API — frozen attendance snapshot",
+          "source_type": "local_aph_snapshot",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "assertion_proposals": [],
+      "attempts": [
+        {
+          "gaps": [],
+          "model": "gpt-6-luna",
+          "searches": 0,
+          "source_opens": 0,
+          "status": "unresolved",
+          "token_usage": null
+        }
+      ],
+      "coordinator_curation": [
+        "Recorded unresolved institution mapping separately from confirmed home-education finding; no retry needed.",
+        "Replaced corrupted punctuation in paraphrased source labels with readable ASCII.",
+        "Preserved mixed/person identity context separately from importer institutional identity evidence."
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [],
+      "identity": {
+        "evidence_refs": {}
+      },
+      "manual_institutions": [],
+      "outcome": "unresolved",
+      "payload": {
+        "finding": "The APH record describes home education, not an educational institution.",
+        "finding_type": "non_institutional_education",
+        "recorded_name": "Home educated",
+        "requires_individual_resolution": true,
+        "research_approval_scope": "individual",
+        "resolution_reason": "no_suitable_candidate"
+      },
+      "proposal_id": "proposal:b6a78f1983f6c46a33ba647104ce78778e4bd3652cb376a4fdea1d3946fab047",
+      "reasoning": "The frozen APH attendance row explicitly records “Home educated.” This is a non-institutional education description, not a school or institution to map; no institution, coordinates, attendance dates, or graduation claim are inferred. Institutional mapping is therefore unresolved with a confirmed no-suitable-candidate finding, rather than missing research. No external searches or opens were needed.",
+      "resolution_status": "non_institutional_education_confirmed",
+      "retry_not_needed": true,
+      "review_caveats": [],
+      "review_id": "school:6f66165bfc8609df",
+      "scoped_identity_context": {
+        "education_review_id": "education:250156:6f66165bfc8609df",
+        "evidence_refs": {
+          "finding_type": [
+            "evidence:ff7977582568b7b7739ae67c75fbaf3692141d1faca3fe5dd4b6b4688a99b795"
+          ],
+          "recorded_school_name": [
+            "evidence:ff7977582568b7b7739ae67c75fbaf3692141d1faca3fe5dd4b6b4688a99b795"
+          ]
+        },
+        "finding_type": "non_institutional_education",
+        "recorded_school_name": "Home educated"
+      },
+      "value": null
+    }
+  },
+  {
+    "review_id": "education:280304:4db911ac8d31077e",
+    "school_review_id": "school:4db911ac8d31077e",
+    "source_path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+    "previous_result": {
+      "alternatives": [
+        {
+          "caveat": "current school reopened in 2004 after the original Fitzroy High/Fitzroy Secondary College closed in 1992",
+          "institution_ref": "acara:45517",
+          "location": "Fitzroy North, VIC",
+          "school_name": "Fitzroy High School"
+        },
+        {
+          "caveat": "current school is separate from Fitzroy High School; exact historical attendance identity/continuity not resolved",
+          "institution_ref": "acara:45296",
+          "location": "Collingwood, VIC",
+          "school_name": "Collingwood College"
+        }
+      ],
+      "assertion_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "aph_id": "280304",
+            "display_name": "THORPE, Lidia Alma",
+            "education_id": "edu-280304-4db911ac8d31077e",
+            "recorded_school_name": "Fitzroy and Collingwood Secondary Schools"
+          },
+          "evidence_id": "evidence:0b3043824f0e587954db363dc2fdd44ee7a8db66f3fa20c245409c54c9451152",
+          "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The APH Handbook record for Lidia Thorpe gives the combined attended-school text “Fitzroy and Collingwood Secondary Schools”; it provides no individual school names, locality, or dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "review_id": "education:280304:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "APH Handbook API individual record",
+          "source_type": "local_aph_snapshot",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '280304'",
+          "stance": "supports",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "aph_id": "280304",
+            "reported_sequence": [
+              {
+                "school_name": "Fitzroy High School",
+                "year_level": 7
+              },
+              {
+                "school_name": "Collingwood High",
+                "year_level": 8
+              },
+              {
+                "school_name": "Fitzroy High",
+                "year_level": 9
+              }
+            ],
+            "requires_primary_corroboration": true
+          },
+          "evidence_id": "evidence:bd08e1ab2f0d42f82ea7f0d2b5cd26c32fd96d022a2fd65a5738686e08631d37",
+          "excerpt_or_note": "Opened secondary biography reports Year 7 at Fitzroy High School, Year 8 at Collingwood High, then return to Fitzroy High for Year 9 before leaving school at 14. This is a lead for distinct historical attended schools, not a verified mapping to current ACARA targets. The newspaper interview link cited in the surrounding text could not be resolved by the browser tool. No calendar attendance dates are inferred.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-14T00:08:10.299040Z",
+          "review_id": "education:280304:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Lidia Thorpe - Wikipedia",
+          "source_type": "opened_secondary_biography",
+          "source_url": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "aph_id": "280304",
+            "left_school_age": 14,
+            "secondary_school_names_stated": false
+          },
+          "evidence_id": "evidence:892801166de016798b39dc331563a37203d1eacd9c0b106ae9da1d429c7c15fc",
+          "excerpt_or_note": "Opened official autobiographical page states that Thorpe left school at 14. It discusses childhood in Collingwood, Fitzroy, Clifton Hill and Northcote, but does not name attended secondary schools. It corroborates the school-leaving age only, not the secondary biography school identities, year levels, or continuity to current institutions.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-14T00:08:10.299040Z",
+          "review_id": "education:280304:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "About - Senator Lidia Thorpe",
+          "source_type": "official_member_autobiography",
+          "source_url": "https://www.lidiathorpe.com/about_me",
+          "stance": "supports",
+          "temporal_relevance": null
+        }
+      ],
+      "assertion_proposals": [],
+      "attempts": [
+        {
+          "gaps": [
+            "APH uses a combined plural label and supplies no dates or separate school identities.",
+            "Official histories show Fitzroy school closure/reopening and a current partnership; they do not establish that current ACARA targets represent Thorpe’s historical schools.",
+            "No individual split assertion can be safely proposed without exact attendance identity and historical continuity evidence."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 4,
+          "status": "unresolved",
+          "token_usage": null
+        },
+        {
+          "gaps": [
+            "Secondary biography reports a Fitzroy Year 7 / Collingwood Year 8 / Fitzroy Year 9 sequence; primary corroboration for exact school identities and levels was not obtained.",
+            "Official autobiography corroborates leaving school at 14, but gives no attended secondary school names.",
+            "The newspaper link could not be resolved; the official Collingwood history fetch timed out.",
+            "The prior institutional date conflict, 1915 versus 1957, remains unreconciled and must not be converted into attendance dates.",
+            "Historical identity/continuity to current Fitzroy High School and Collingwood College remains unverified. The combined assertion cannot be truthfully represented by a forced single target."
+          ],
+          "model": "gpt-6.1-sol",
+          "opened_sources": [
+            {
+              "status": "opened",
+              "url": "https://www.lidiathorpe.com/about_me"
+            },
+            {
+              "status": "opened",
+              "url": "https://en.wikipedia.org/wiki/Lidia_Thorpe"
+            },
+            {
+              "error": "Unable to resolve click call due to invalid arguments; destination URL not returned.",
+              "intended_source_title": "Shouty, uninformed, ineffective: How Senator Lidia Thorpe annoys the establishment",
+              "link_id": 345,
+              "source_page": "https://en.wikipedia.org/wiki/Lidia_Thorpe",
+              "status": "failed",
+              "url": null
+            },
+            {
+              "error": "TimeoutError",
+              "status": "failed",
+              "url": "https://www.collingwood.vic.edu.au/our-school/our-history/"
+            }
+          ],
+          "search_queries": [
+            "\"Lidia Thorpe\" \"Fitzroy\" \"school\"",
+            "\"Lidia Thorpe\" \"school\" site:vic.gov.au OR site:vic.edu.au"
+          ],
+          "searches": 2,
+          "source_opens": 4,
+          "status": "unresolved",
+          "token_usage": null
+        }
+      ],
+      "coordinator_curation": [
+        "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+        "Used the existing reusable operating_dates claim type for institution closure facts.",
+        "Preserved mixed/person identity context separately from importer institutional identity evidence."
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "operating_dates",
+          "claim_value": {
+            "closed": "1992-12-31",
+            "former_name": "Fitzroy High School",
+            "opened": "1957-01-31",
+            "school_name": "Fitzroy Secondary College",
+            "school_number": "7830",
+            "status": "closed"
+          },
+          "evidence_id": "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+          "excerpt_or_note": "The Victorian Government directory says Fitzroy High School changed its name to Fitzroy Secondary College in 1991 and that school No. 7830 closed at the end of 1992.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-13T23:32:44Z",
+          "review_id": "school:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Victorian Government Schools Directory — Fitzroy Secondary College No. 7830",
+          "source_type": "government-school-register",
+          "source_url": "https://www.vic.gov.au/fitzroy-secondary-college-number-7830",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:45517",
+          "claim_type": "historical_context",
+          "claim_value": {
+            "closed": 1992,
+            "collingwood_partnership": "VCE classes began in 2007 in partnership with Collingwood College",
+            "first_opened": 1915,
+            "reopened": 2004,
+            "school_name": "Fitzroy High School"
+          },
+          "evidence_id": "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183",
+          "excerpt_or_note": "The current school history distinguishes the original Fitzroy High School (closed 1992) from the later re-opening in 2004, and describes a VCE partnership with Collingwood College from 2007.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-13T23:32:44Z",
+          "review_id": "school:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Fitzroy High School — Our History",
+          "source_type": "official-school-history",
+          "source_url": "https://fitzroyhs.vic.edu.au/our-school/our-history/",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:45296",
+          "claim_type": "institution_identity",
+          "claim_value": {
+            "established": 1882,
+            "location": "Collingwood, Victoria",
+            "school_name": "Collingwood College",
+            "school_type": "government P-12"
+          },
+          "evidence_id": "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1",
+          "excerpt_or_note": "The school describes Collingwood College as a government Prep-to-Year-12 school established in 1882, located in Collingwood; its secondary students currently work in a cooperative arrangement with Fitzroy High School.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-13T23:32:44Z",
+          "review_id": "school:4db911ac8d31077e",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Collingwood College — Our History",
+          "source_type": "official-school-history",
+          "source_url": "https://www.collingwood.vic.edu.au/our-school/our-history/",
+          "stance": "contextual",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {
+        "evidence_refs": {
+          "Collingwood_identity": [
+            "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1"
+          ],
+          "Fitzroy_history": [
+            "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+            "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183"
+          ]
+        }
+      },
+      "manual_institutions": [],
+      "outcome": "unresolved",
+      "payload": {
+        "recorded_name": "Fitzroy and Collingwood Secondary Schools",
+        "requires_individual_resolution": true,
+        "resolution_reason": "ambiguous_name"
+      },
+      "proposal_id": "proposal:977b627ff42d97e366e078445525a325ed0eba5e93e71fb0c4fc9891e8500886",
+      "reasoning": "APH records the combined phrase “Fitzroy and Collingwood Secondary Schools” for Lidia Thorpe. Official Victorian sources establish that Fitzroy High School changed its name to Fitzroy Secondary College and that the 1957–1992 school closed; the current Fitzroy High School opened in 2004, so the pinned current ACARA row cannot be presumed to represent the earlier school. Collingwood College is a separate institution with its own history, and its current partnership/shared senior campus with Fitzroy High School is not evidence that the combined historical record maps to one current target. The evidence supports treating the string as potentially multiple schools but does not establish exact individual attended-school identities or any historical continuity to the pinned targets; therefore no combined mapping or split assertion proposals are made. Individual human review is required. The Sol retry added a secondary-source attendance lead describing Fitzroy High School at Year 7, Collingwood High at Year 8, and return to Fitzroy High at Year 9. The official autobiographical page corroborates leaving school at 14 only; it does not name schools. Newspaper and official-school corroboration attempts failed. Neither historical continuity nor a source-supported split mapping was established. Keep the original assertion unresolved and preserve both the earlier institutional evidence and its unreconciled 1915/1957 date conflict.",
+      "review_caveats": [
+        "The supplied sources give unreconciled Fitzroy opening/founding dates of 1915 and 1957. Preserve this conflict; do not use either as an attendance date."
+      ],
+      "review_id": "school:4db911ac8d31077e",
+      "scoped_identity_context": {
+        "education:280304:4db911ac8d31077e": {
+          "aph_id": "280304",
+          "evidence_refs": [
+            "evidence:bd08e1ab2f0d42f82ea7f0d2b5cd26c32fd96d022a2fd65a5738686e08631d37",
+            "evidence:892801166de016798b39dc331563a37203d1eacd9c0b106ae9da1d429c7c15fc"
+          ],
+          "left_school_age": 14,
+          "recorded_school_name": "Fitzroy and Collingwood Secondary Schools",
+          "reported_attendance_sequence": [
+            {
+              "school_name": "Fitzroy High School",
+              "year_level": 7
+            },
+            {
+              "school_name": "Collingwood High",
+              "year_level": 8
+            },
+            {
+              "school_name": "Fitzroy High",
+              "year_level": 9
+            }
+          ],
+          "requires_primary_school_identity_corroboration": true,
+          "status": "unresolved"
+        },
+        "evidence_refs": {
+          "Collingwood_identity": [
+            "evidence:1cbca8eb790bdf64d5a541a98913f9e0f4a9c677d6de89a811f43b84b53af1e1"
+          ],
+          "Fitzroy_history": [
+            "evidence:94533e2a47c88772fb73d2541cc4fe603989d0c94ea2b13955b3ff9de6529129",
+            "evidence:c0405cc7c4fb3e145f24bb7a110855152e5b8e390a8f6b8a2cea269bfda5b183"
+          ],
+          "recorded_name": [
+            "evidence:0b3043824f0e587954db363dc2fdd44ee7a8db66f3fa20c245409c54c9451152"
+          ]
+        },
+        "recorded_name": "Fitzroy and Collingwood Secondary Schools"
+      },
+      "split_assertion_proposals": [],
+      "value": null
+    }
+  },
+  {
+    "review_id": "education:297964:0477b661fc755dd3",
+    "school_review_id": "school:0477b661fc755dd3",
+    "source_path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+    "previous_result": {
+      "alternatives": [
+        {
+          "basis": "local pinned registry; official VRQA source confirms institution; no evidence ties member to it",
+          "institution_ref": "acara:45994",
+          "school_name": "John Paul College",
+          "state": "VIC",
+          "suburb": "Frankston"
+        },
+        {
+          "basis": "local pinned registry; official school annual report confirms institution; no evidence ties member to it",
+          "institution_ref": "acara:48060",
+          "school_name": "John Paul College",
+          "state": "QLD",
+          "suburb": "Daisy Hill"
+        },
+        {
+          "basis": "local pinned registry only; not individually researched",
+          "institution_ref": "acara:48982",
+          "school_name": "John Paul College",
+          "state": "WA",
+          "suburb": "Kalgoorlie"
+        },
+        {
+          "basis": "local pinned registry only; similar name is not sufficient to establish identity",
+          "institution_ref": "acara:43545",
+          "school_name": "St John Paul College",
+          "state": "NSW",
+          "suburb": "Coffs Harbour"
+        }
+      ],
+      "assertion_evidence": [
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "member": "COLLINS, Dr Jessica",
+            "recorded_school_name": "John Paul College"
+          },
+          "evidence_id": "evidence:fba4d1796ba07b15347f9456cf1932f7057d7d19e7ed987de88d8e4a14150eb5",
+          "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The supplied local APH-derived case record attributes the recorded school name 'John Paul College' to Jessica Collins; it provides no campus, location, or attendance dates.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "review_id": "education:297964:0477b661fc755dd3",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Australian Parliament House Handbook API record (case context)",
+          "source_type": "local_aph_snapshot",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '297964'",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": null,
+          "claim_type": "attendance",
+          "claim_value": {
+            "campus_identified": false,
+            "member": "COLLINS, Dr Jessica",
+            "recorded_school_name": "John Paul College"
+          },
+          "evidence_id": "evidence:603c71ce7cd8d2ceb76bae3c8670eb7eb28a504e8ccdb75e6a673082c875e845",
+          "excerpt_or_note": "Opened official party landing page. It identifies Jess Collins as the Liberal Senator for New South Wales and mentions a prior policy career, but gives no school attendance, campus, location, or dates. This is contextual negative search evidence, not support for attendance at any candidate institution. The linked meet-Jessica page failed to fetch.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-14T00:03:04.276888Z",
+          "review_id": "education:297964:0477b661fc755dd3",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Jess Collins - Liberal Party NSW",
+          "source_type": "official_party_profile",
+          "source_url": "https://nswliberal.org.au/jess-collins",
+          "stance": "contextual",
+          "temporal_relevance": null
+        }
+      ],
+      "assertion_proposals": [],
+      "attempts": [
+        {
+          "gaps": [
+            "No source tied specifically to Jessica Collins identifies the John Paul College campus or jurisdiction.",
+            "Similar-name institutions remain in the local pinned registry; do not use name-only matching.",
+            "No assertion mapping proposal is justified from available individual evidence."
+          ],
+          "model": "gpt-6-luna",
+          "searches": 3,
+          "source_opens": 4,
+          "status": "unresolved",
+          "token_usage": null
+        },
+        {
+          "gaps": [
+            "No retrieved person-specific source identifies which John Paul College Jessica Collins attended.",
+            "The official party meet-Jessica page failed to fetch; its opened landing page contains no schooling details.",
+            "SBS Document-1.pdf only lists Collins among participating senators; the opened Wikipedia biography does not state school attendance.",
+            "Search results predominantly concerned unrelated people or institutions. The retry budget is exhausted; no name-only or seat-based mapping is justified."
+          ],
+          "model": "gpt-6.1-sol",
+          "opened_sources": [
+            {
+              "status": "opened",
+              "url": "https://www.sbs.com.au/aboutus/wp-content/uploads/2026/05/Document-1.pdf"
+            },
+            {
+              "status": "opened",
+              "url": "https://en.wikipedia.org/wiki/Jessica_Collins_(politician)"
+            },
+            {
+              "error": "400 Timeout fetching",
+              "status": "failed",
+              "url": "https://nswliberal.org.au/jessica-collins/meet-jessica"
+            },
+            {
+              "status": "opened",
+              "url": "https://nswliberal.org.au/jess-collins"
+            }
+          ],
+          "search_queries": [
+            "Jessica Collins senator \"John Paul\" school",
+            "\"Jessica Collins\" \"college\" senator education"
+          ],
+          "searches": 2,
+          "source_opens": 4,
+          "status": "unresolved",
+          "token_usage": null
+        }
+      ],
+      "coordinator_curation": [
+        "Aligned top-level school case identity with frozen task.",
+        "Scoped reused APH attendance to exact member education and restored source retrieval date."
+      ],
+      "eligibility_reasons": [
+        "School evidence requires individual review"
+      ],
+      "evidence": [
+        {
+          "candidate_institution_ref": "acara:45994",
+          "claim_type": "institution_identity",
+          "claim_value": {
+            "address": "165 Mc Mahons Road, Frankston VIC 3199",
+            "provider": "Melbourne Archdiocese Catholic Schools Ltd",
+            "school_name": "John Paul College",
+            "state": "VIC",
+            "suburb": "Frankston"
+          },
+          "evidence_id": "evidence:16bd09b408aba35f42e09bed65162eea81f10f0c2416ea5bdbbb8616ca6201ec",
+          "excerpt_or_note": "The Victorian government register lists a secondary Catholic provider trading as John Paul College at Frankston. This establishes one institution with the recorded name, but does not establish Jessica Collins attended it.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-13T23:19:55Z",
+          "review_id": "school:0477b661fc755dd3",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "Victorian Registration and Qualifications Authority provider register: John Paul College",
+          "source_type": "government_school_register",
+          "source_url": "https://vrqa.vic.gov.au/StateRegister/Provider.aspx/DetailsProvider?AccountID=8d4c0e48-0179-e711-80e0-005056825391",
+          "stance": "contextual",
+          "temporal_relevance": null
+        },
+        {
+          "candidate_institution_ref": "acara:48060",
+          "claim_type": "institution_identity",
+          "claim_value": {
+            "school_name": "John Paul College",
+            "sector": "independent",
+            "state": "QLD",
+            "suburb": "Daisy Hill"
+          },
+          "evidence_id": "evidence:834053acfff520b8332448e8b4006a56cb25167bb3486c8f0bcf5647d1ad152a",
+          "excerpt_or_note": "The College annual report identifies John Paul College as an independent Queensland school on a campus in Daisy Hill. It does not identify this as the member’s school.",
+          "generated_by": "agent-search",
+          "geographic_relevance": null,
+          "match_strength": null,
+          "retrieved_at": "2026-10-13T23:19:55Z",
+          "review_id": "school:0477b661fc755dd3",
+          "schema_version": 1,
+          "source_quality": null,
+          "source_title": "John Paul College 2025 Annual Report",
+          "source_type": "school_official_publication",
+          "source_url": "https://www.jpc.qld.edu.au/publications/PageFlip/Annual-Report-2025/index.html",
+          "stance": "contextual",
+          "temporal_relevance": null
+        }
+      ],
+      "identity": {},
+      "manual_institutions": [],
+      "outcome": "unresolved",
+      "payload": {
+        "recorded_name": "John Paul College",
+        "requires_individual_resolution": true,
+        "resolution_reason": "ambiguous_name"
+      },
+      "proposal_id": "proposal:483321cab513c56e01b61d1c7e1577dc10d055ebd1a0fa7734d6530c7e5e77ce",
+      "reasoning": "The APH-derived case record gives only the unqualified name John Paul College. The local pinned institution register contains several distinct schools with this exact name (including Frankston VIC, Daisy Hill QLD, and Kalgoorlie WA) and a similarly named St John Paul College in Coffs Harbour NSW. Official Victorian and Queensland sources confirm distinct institutions; no person-specific source located in the allowed search budget identifies which one Jessica Collins attended. A school-wide mapping would therefore be unsafe. Leave the school policy at ambiguous_name and resolve this member assertion separately when individual evidence is available. The Sol retry researched only education:297964:0477b661fc755dd3. Two queries and four source opens, including one failed official-page fetch, supplied no campus-specific attendance evidence. The scoped assertion remains unresolved, and the ambiguous-name school policy remains necessary.",
+      "review_caveats": [],
+      "review_id": "school:0477b661fc755dd3",
+      "scoped_identity_context": {
+        "education:297964:0477b661fc755dd3": {
+          "aph_id": "297964",
+          "evidence_refs": [
+            "evidence:fba4d1796ba07b15347f9456cf1932f7057d7d19e7ed987de88d8e4a14150eb5",
+            "evidence:603c71ce7cd8d2ceb76bae3c8670eb7eb28a504e8ccdb75e6a673082c875e845"
+          ],
+          "recorded_school_name": "John Paul College",
+          "status": "unresolved"
+        }
+      },
+      "value": null
+    }
+  },
+  {
+    "review_id": "education:e0f:2f7f6b0f23bf99d3",
+    "school_review_id": "school:2f7f6b0f23bf99d3",
+    "source_path": "data/reference/review/research/p48-unmapped-schools-20261014/budget-exceptions.json",
+    "previous_result": {
+      "index": 5,
+      "reason": "Actual query count exceeds the prescribed Luna budget; retained as advisory research and excluded from standard approval batch.",
+      "result": {
+        "alternatives": [],
+        "assertion_evidence": [
+          {
+            "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+            "claim_type": "attendance",
+            "claim_value": {
+              "aph_id": "E0F",
+              "education_id": "edu-e0f-2f7f6b0f23bf99d3",
+              "recorded_school_name": "Ferntree Gully Technical School"
+            },
+            "evidence_id": "evidence:70646dd300b72351309d54bd2265e8817fd7782a35ce09b62a13bea4f6ce40ca",
+            "excerpt_or_note": "Reused frozen APH snapshot; source retrieval date preserved. The APH Handbook record for Jason Wood lists Ferntree Gully Technical School as an attended school.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "review_id": "education:e0f:2f7f6b0f23bf99d3",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "APH Handbook API individual record",
+            "source_type": "local_aph_snapshot",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+            "stance": "supports",
+            "temporal_relevance": null
+          }
+        ],
+        "assertion_proposals": [
+          {
+            "evidence_refs": [
+              "evidence:70646dd300b72351309d54bd2265e8817fd7782a35ce09b62a13bea4f6ce40ca",
+              "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8",
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485"
+            ],
+            "payload": {
+              "aph_id": "E0F",
+              "institution_ref": "manual:ferntree-gully-technical-school",
+              "recorded_school_name": "Ferntree Gully Technical School",
+              "relationship_type": "direct"
+            },
+            "reasoning": "The APH record names this school for Jason Wood, and in his House speech Wood directly recalls attending Ferntree Gully Technical School. The Victorian directory establishes this exact institution’s later rename and merger chain. Propose a direct assertion mapping to the manual historical identity, not to the separately numbered Ferntree Gully College formed by merger.",
+            "review_id": "education:e0f:2f7f6b0f23bf99d3",
+            "source_url": "https://www.openaustralia.org.au/debate/?id=2008-11-24.75.1"
+          }
+        ],
+        "attempts": [
+          {
+            "budget_exceeded": true,
+            "gaps": [
+              "Search-query limit exceeded: 5 queries were issued; no further external research was conducted.",
+              "The period address gives no street number or coordinates.",
+              "Ferntree Gully College No. 7827 has a separately listed address; it is not assigned to the old technical school campus."
+            ],
+            "model": "gpt-6-luna",
+            "searches": 5,
+            "source_opens": 4,
+            "status": "resolved",
+            "token_usage": null
+          }
+        ],
+        "coordinator_curation": [
+          "Scoped reused APH attendance to exact member education and restored source retrieval date.",
+          "Preserved mixed/person identity context separately from importer institutional identity evidence."
+        ],
+        "evidence": [
+          {
+            "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+            "claim_type": "school_identity",
+            "claim_value": {
+              "campus_status": "demolished",
+              "member": "Jason Wood",
+              "school_name": "Ferntree Gully Technical School",
+              "subsequent_site_use": "real estate"
+            },
+            "evidence_id": "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8",
+            "excerpt_or_note": "In a House speech, Wood referred to his own days at Ferntree Gully Technical School and said it had been demolished and replaced by real estate. The transcript does not give a street address.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:26:35Z",
+            "review_id": "school:2f7f6b0f23bf99d3",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "House of Representatives Hansard — Jason Wood, 24 November 2008",
+            "source_type": "parliamentary-transcript",
+            "source_url": "https://www.openaustralia.org.au/debate/?id=2008-11-24.75.1",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+            "claim_type": "relationship",
+            "claim_value": {
+              "merge_year": 1997,
+              "merged_school_address": "Corner Dorset Road and Alma Avenue, Ferntree Gully",
+              "merged_school_closed": "2006",
+              "rename_year": 1990,
+              "school_numbers": {
+                "Ferntree Gully College": 7827,
+                "Ferntree Gully Secondary College": 7827,
+                "Ferntree Gully Technical School": 7145,
+                "Glenfern Secondary College": 7145
+              }
+            },
+            "evidence_id": "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485",
+            "excerpt_or_note": "The Victorian directory says school No. 7145 was renamed from Ferntree Gully Technical School to Glenfern Secondary College in 1990; in 1997 Glenfern merged with Ferntree Gully Secondary College No. 7827 to form Ferntree Gully College No. 7827, which closed in 2006. The displayed address belongs to the No. 7827 college entry and is not evidence of the technical school’s original campus.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:26:35Z",
+            "review_id": "school:2f7f6b0f23bf99d3",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Victorian Schools Directory — Ferntree Gully College No. 7827",
+            "source_type": "government-school-register",
+            "source_url": "https://www.vic.gov.au/ferntree-gully-college-number-7827",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+            "claim_type": "location",
+            "claim_value": {
+              "period_address": "Main Road, Upper Ferntree Gully",
+              "school_name": "Ferntree Gully Technical School"
+            },
+            "evidence_id": "evidence:cdb8129beb1df21564f40dea695de642399db89e1584d55f3e144e83749eedfa",
+            "excerpt_or_note": "The 1972 Victorian Government Gazette school directory lists Ferntree Gully Technical School at Main Road, Upper Ferntree Gully. It does not provide coordinates or a street number.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:26:35Z",
+            "review_id": "school:2f7f6b0f23bf99d3",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Victoria Government Gazette, 1972, no. 39",
+            "source_type": "government-gazette",
+            "source_url": "https://gazette.slv.vic.gov.au/images/1972/V/general/39.pdf",
+            "stance": "supports",
+            "temporal_relevance": null
+          },
+          {
+            "candidate_institution_ref": "manual:ferntree-gully-technical-school",
+            "claim_type": "rename",
+            "claim_value": {
+              "effective_year": 1990,
+              "from": "Ferntree Gully Technical School",
+              "school_number": 7145,
+              "to": "Glenfern Secondary College"
+            },
+            "evidence_id": "evidence:131e4eceeba7fb219370317478826114439d610c10ad8d5164ae572849e3d717",
+            "excerpt_or_note": "The 1989 Government Gazette table lists Ferntree Gully Technical School and Glenfern Secondary College as the present and proposed names for the same school number.",
+            "generated_by": "agent-search",
+            "geographic_relevance": null,
+            "match_strength": null,
+            "retrieved_at": "2026-10-13T23:26:35Z",
+            "review_id": "school:2f7f6b0f23bf99d3",
+            "schema_version": 1,
+            "source_quality": null,
+            "source_title": "Victoria Government Gazette, 1989, no. 50",
+            "source_type": "government-gazette",
+            "source_url": "https://gazette.slv.vic.gov.au/images/1989/V/general/50.pdf",
+            "stance": "supports",
+            "temporal_relevance": null
+          }
+        ],
+        "identity": {
+          "evidence_refs": {
+            "institution_status": [
+              "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8",
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485"
+            ],
+            "merger": [
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485"
+            ],
+            "name": [
+              "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8"
+            ],
+            "original_campus_address": [
+              "evidence:cdb8129beb1df21564f40dea695de642399db89e1584d55f3e144e83749eedfa"
+            ],
+            "rename": [
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485",
+              "evidence:131e4eceeba7fb219370317478826114439d610c10ad8d5164ae572849e3d717"
+            ]
+          }
+        },
+        "manual_institutions": [
+          {
+            "country": "Australia",
+            "institution_ref": "manual:ferntree-gully-technical-school",
+            "institution_status": "merged",
+            "school_name": "Ferntree Gully Technical School",
+            "sector": "Government"
+          }
+        ],
+        "outcome": "merger",
+        "payload": null,
+        "reasoning": "Jason Wood’s own House speech identifies Ferntree Gully Technical School as a school he attended and says its site was later demolished and replaced by real estate. Victorian government records identify the historical school as No. 7145, renamed Glenfern Secondary College in 1990; in 1997 that school merged with the separate Ferntree Gully Secondary College (No. 7827) to form Ferntree Gully College (No. 7827), which closed in 2006. The 1972 Government Gazette lists the technical school at Main Road, Upper Ferntree Gully. The later No. 7827 college address at Dorset Road and Alma Avenue is not assigned to the former technical school’s campus. The exact recorded historical school is suitable as an individual manual institution; the assertion proposal maps Wood directly to that historical identity and does not map him to the later merged college.",
+        "review_caveats": [],
+        "review_id": "school:2f7f6b0f23bf99d3",
+        "scoped_identity_context": {
+          "evidence_refs": {
+            "institution_status": [
+              "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8",
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485"
+            ],
+            "merger": [
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485"
+            ],
+            "name": [
+              "evidence:70646dd300b72351309d54bd2265e8817fd7782a35ce09b62a13bea4f6ce40ca",
+              "evidence:fccc9446df370745e3b3e72f85f4bd9b807665731664775079bddf96935050a8"
+            ],
+            "original_campus_address": [
+              "evidence:cdb8129beb1df21564f40dea695de642399db89e1584d55f3e144e83749eedfa"
+            ],
+            "rename": [
+              "evidence:dc772a65d4a322aa1a8055956bb849d09fda80416c5b393dc0b5cab53de80485",
+              "evidence:131e4eceeba7fb219370317478826114439d610c10ad8d5164ae572849e3d717"
+            ]
+          },
+          "institution_status": "merged",
+          "merger": {
+            "school_number": 7827,
+            "successor": "Ferntree Gully College",
+            "with": "Ferntree Gully Secondary College",
+            "year": 1997
+          },
+          "name": "Ferntree Gully Technical School",
+          "original_campus_address": "Main Road, Upper Ferntree Gully",
+          "rename": {
+            "to": "Glenfern Secondary College",
+            "year": 1990
+          },
+          "school_number": 7145
+        },
+        "value": null
+      },
+      "task": {
+        "context": {
+          "assertion": {
+            "effective_institution_ref": null,
+            "recorded_school_name": "Ferntree Gully Technical School"
+          },
+          "attendance_context": [
+            {
+              "attendance": {
+                "attended_identity_source_url": null,
+                "attended_institution_id": null,
+                "attended_status": "attended_unspecified",
+                "campus_continuity": null,
+                "campus_continuity_source_url": null,
+                "confidence": "unconfirmed",
+                "education_id": "edu-e0f-2f7f6b0f23bf99d3",
+                "evidence_origin": "aph",
+                "graduation_year": null,
+                "historical_broad_sector": null,
+                "historical_broad_sector_source_url": null,
+                "historical_context_scope": null,
+                "historical_detailed_sector": null,
+                "historical_detailed_sector_source_url": null,
+                "historical_latitude": null,
+                "historical_location_source_url": null,
+                "historical_longitude": null,
+                "historical_scope_confirmed": null,
+                "institution_id": "inst-unmatched-ferntree-gully-technical-school",
+                "institution_resolution": "unresolved",
+                "level": "secondary",
+                "member_id": "aph-e0f",
+                "recorded_school_id": "school:2f7f6b0f23bf99d3",
+                "resolution_source_url": null,
+                "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                "reviewer_notes": "Parsed from APH Handbook text 'Ferntree Gully Technical School'; matched status: unconfirmed",
+                "school_name_as_recorded": "Ferntree Gully Technical School",
+                "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                "years_attended": null
+              },
+              "member": {
+                "aph_id": "E0F",
+                "date_of_birth": "1968-05-24",
+                "display_name": "WOOD, the Hon. Jason Peter"
+              },
+              "parliamentary_services": [
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 44,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2016-05-09",
+                  "service_id": "srv-e0f-44-df8a8601b4674412",
+                  "service_start": "2013-11-12",
+                  "source_service_end": "2016-07-02",
+                  "source_service_start": "2013-09-07",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                },
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 46,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2022-04-11",
+                  "service_id": "srv-e0f-46-704454f48029effc",
+                  "service_start": "2019-07-02",
+                  "source_service_end": "2022-05-21",
+                  "source_service_start": "2019-05-18",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                },
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 45,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2019-04-11",
+                  "service_id": "srv-e0f-45-cb54feef80205a80",
+                  "service_start": "2016-08-30",
+                  "source_service_end": "2019-05-18",
+                  "source_service_start": "2016-07-02",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                },
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 47,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2025-03-28",
+                  "service_id": "srv-e0f-47-1859f9793037d496",
+                  "service_start": "2022-07-26",
+                  "source_service_end": "2025-05-03",
+                  "source_service_start": "2022-05-21",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                },
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": true,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 48,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": null,
+                  "service_id": "srv-e0f-48-f7e9baedf4517286",
+                  "service_start": "2025-07-22",
+                  "source_service_end": "2026-09-21",
+                  "source_service_start": "2025-05-03",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                },
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": false,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 42,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": "2010-07-19",
+                  "service_id": "srv-e0f-42-6a99bffe381d0fe3",
+                  "service_start": "2008-02-12",
+                  "source_service_end": "2010-08-21",
+                  "source_service_start": "2007-11-24",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                }
+              ]
+            }
+          ],
+          "candidates": [
+            {
+              "accepted_candidate": false,
+              "candidate_id": "candidate:c02110f5f484f007e4cde9fc1f9d545b2db0c08ad1a011624e4b3fe00279d07c",
+              "conflicts": [],
+              "decision_id": null,
+              "entity_type": "school",
+              "evidence": {
+                "acara_id": null,
+                "campus_type": null,
+                "country": null,
+                "institution_id": "inst-unmatched-ferntree-gully-technical-school",
+                "institution_status": "unknown",
+                "latitude": null,
+                "longitude": null,
+                "postcode": null,
+                "school_name": "Ferntree Gully Technical School",
+                "school_type": "Secondary",
+                "sector": "Other",
+                "state": null,
+                "suburb": null
+              },
+              "parliaments": [
+                42,
+                44,
+                45,
+                46,
+                47,
+                48
+              ],
+              "payload": {
+                "recorded_name": "Ferntree Gully Technical School"
+              },
+              "review_id": "school:2f7f6b0f23bf99d3",
+              "status": "pending"
+            }
+          ],
+          "conflicts": [],
+          "individual_resolution_required": false,
+          "p48_unmapped_assertions": [
+            {
+              "attendance": {
+                "attended_identity_source_url": null,
+                "attended_institution_id": null,
+                "attended_status": "attended_unspecified",
+                "campus_continuity": null,
+                "campus_continuity_source_url": null,
+                "confidence": "unconfirmed",
+                "education_id": "edu-e0f-2f7f6b0f23bf99d3",
+                "evidence_origin": "aph",
+                "graduation_year": null,
+                "historical_broad_sector": null,
+                "historical_broad_sector_source_url": null,
+                "historical_context_scope": null,
+                "historical_detailed_sector": null,
+                "historical_detailed_sector_source_url": null,
+                "historical_latitude": null,
+                "historical_location_source_url": null,
+                "historical_longitude": null,
+                "historical_scope_confirmed": null,
+                "institution_id": "inst-unmatched-ferntree-gully-technical-school",
+                "institution_resolution": "unresolved",
+                "level": "secondary",
+                "member_id": "aph-e0f",
+                "recorded_school_id": "school:2f7f6b0f23bf99d3",
+                "resolution_source_url": null,
+                "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                "reviewer_notes": "Parsed from APH Handbook text 'Ferntree Gully Technical School'; matched status: unconfirmed",
+                "school_name_as_recorded": "Ferntree Gully Technical School",
+                "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                "years_attended": null
+              },
+              "member": {
+                "aph_id": "E0F",
+                "date_of_birth": "1968-05-24",
+                "display_name": "WOOD, the Hon. Jason Peter",
+                "family_name": "Wood",
+                "gender": "Male",
+                "given_name": "Jason",
+                "member_id": "aph-e0f",
+                "wikidata_id": null
+              },
+              "parliamentary_services": [
+                {
+                  "chamber": "representatives",
+                  "electorate": "La Trobe",
+                  "is_current_member": true,
+                  "is_opening_day_member": true,
+                  "member_id": "aph-e0f",
+                  "parliament_number": 48,
+                  "party": "Liberal Party of Australia",
+                  "party_abbrev": "LP",
+                  "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+                  "service_end": null,
+                  "service_id": "srv-e0f-48-f7e9baedf4517286",
+                  "service_start": "2025-07-22",
+                  "source_service_end": "2026-09-21",
+                  "source_service_start": "2025-05-03",
+                  "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'E0F'",
+                  "state_or_territory": "VIC"
+                }
+              ],
+              "review_id": "education:e0f:2f7f6b0f23bf99d3"
+            }
+          ],
+          "retained_evidence": [],
+          "review_id": "school:2f7f6b0f23bf99d3",
+          "selected_candidate": null
+        },
+        "decision_heads": [],
+        "review_id": "school:2f7f6b0f23bf99d3"
+      }
+    }
+  }
+]

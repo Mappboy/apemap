@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS institutions (
     acara_id VARCHAR,
     school_name VARCHAR NOT NULL,
     school_type VARCHAR,
-    sector VARCHAR NOT NULL CHECK (sector IN ('Government', 'Catholic', 'Independent', 'Tertiary', 'Other')),
+    sector VARCHAR CHECK (sector IN ('Government', 'Catholic', 'Independent', 'Tertiary', 'Other')),
     campus_type VARCHAR,
     state VARCHAR,
     suburb VARCHAR,

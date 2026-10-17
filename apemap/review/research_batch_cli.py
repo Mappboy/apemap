@@ -27,10 +27,36 @@ def prepare_cmd(
     batch_id: str,
     kind: Annotated[str, typer.Option()],
     limit: int = 10,
+    review_id: Annotated[
+        list[str] | None, typer.Option(help="Prepare these exact review cases.")
+    ] = None,
 ) -> None:
     from apemap.review.cli import _run
 
-    _run(lambda: _batches(ctx).prepare(batch_id, kind, limit))
+    _run(lambda: _batches(ctx).prepare(batch_id, kind, limit, review_ids=review_id))
+
+
+@batch_app.command("propose-manual")
+def propose_manual_cmd(
+    ctx: typer.Context,
+    batch_id: str,
+    review_id: str,
+    facts: Path,
+    evidence: Annotated[
+        Path, typer.Option(help="JSON list of immutable cited evidence records.")
+    ],
+) -> None:
+    """Save sourced institution facts for individual review, without ledger changes."""
+    from apemap.review.cli import _run
+
+    _run(
+        lambda: _batches(ctx).prepare_manual_proposal(
+            batch_id,
+            review_id,
+            json.loads(facts.read_bytes()),
+            json.loads(evidence.read_bytes()),
+        )
+    )
 
 
 @batch_app.command("import")
@@ -79,6 +105,10 @@ def review_cmd(
     notes: str = "",
     identity_error: bool = False,
     supersedes: Annotated[list[str] | None, typer.Option()] = None,
+    institution_action: Annotated[
+        str | None,
+        typer.Option(help="create_map or create_only for sourced manual candidates."),
+    ] = None,
 ) -> None:
     from apemap.review.cli import _run
 
@@ -92,6 +122,7 @@ def review_cmd(
             notes=notes,
             identity_error=identity_error,
             supersedes=supersedes,
+            institution_action=institution_action,
         )
     )
 

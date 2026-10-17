@@ -22,6 +22,8 @@ from apemap.review.model import (
     entity_for_review_id,
     evidence_url,
     institution_reference,
+    school_key,
+    school_review_id,
 )
 from apemap.review.store import StaleReviewError, _decision_lock
 
@@ -61,6 +63,110 @@ SCHOOL_CONTEXT_CLAIM_TYPES = frozenset(
         "finance_proxy",
     }
 )
+MEMBER_SCHOOL_CLAIM_TYPES = frozenset(
+    {"attendance", "member_attendance", "attendance_context", "parliamentary_context"}
+)
+
+
+def member_claim_aph_id(record: EvidenceRecord) -> str | None:
+    """Read optional member attribution without changing schema-1 record bytes."""
+    value = record.claim_value
+    aph_id = value.get("aph_id") if isinstance(value, Mapping) else None
+    return str(aph_id).lower() if isinstance(aph_id, str) and aph_id else None
+
+
+def validate_school_evidence_claim(
+    context: Mapping[str, Any],
+    claim_type: str,
+    claim_value: Any,
+    candidate_ref: str | None,
+) -> None:
+    """Keep attendance attributed and same-name identity explicitly distinguished."""
+    members = list(context.get("members", []))
+    if isinstance(context.get("member"), Mapping):
+        members.append(context["member"])
+    supplied = {
+        str(member.get("aph_id", "")).lower()
+        for member in members
+        if isinstance(member, Mapping) and member.get("aph_id")
+    }
+    aph_id = claim_value.get("aph_id") if isinstance(claim_value, Mapping) else None
+    member_claim = claim_type in MEMBER_SCHOOL_CLAIM_TYPES
+    if member_claim and not aph_id:
+        raise ValueError(
+            "Member attendance/context evidence requires a supplied aph_id"
+        )
+    if aph_id is not None:
+        if not isinstance(aph_id, str) or aph_id.lower() not in supplied:
+            raise ValueError("Evidence member aph_id was not supplied for this case")
+        recorded = claim_value.get("recorded_school_name")
+        name = context.get("assertion", {}).get("recorded_school_name")
+        if (
+            not isinstance(recorded, str)
+            or not recorded
+            or (name and school_key(recorded) != school_key(name))
+        ):
+            raise ValueError("Member evidence must identify this recorded school")
+    if member_claim and candidate_ref is not None:
+        raise ValueError(
+            "Generic member attendance/context cannot identify a candidate"
+        )
+    if candidate_ref is None or claim_type not in SCHOOL_CONTEXT_CLAIM_TYPES:
+        return
+    candidates = [
+        row for row in context.get("candidates", []) if isinstance(row, Mapping)
+    ]
+    target = next(
+        (row for row in candidates if row.get("institution_ref") == candidate_ref),
+        None,
+    )
+    if target is None:
+        return
+    name = school_key(target.get("school_name") or target.get("institution_name") or "")
+    peers = [
+        row
+        for row in candidates
+        if row.get("institution_ref") != candidate_ref
+        and school_key(row.get("school_name") or row.get("institution_name") or "")
+        == name
+    ]
+    if not peers and aph_id is None:
+        return
+    detail = (
+        claim_value.get("identity_detail") if isinstance(claim_value, Mapping) else None
+    )
+    if not isinstance(detail, Mapping) or set(detail) != {"field", "value"}:
+        raise ValueError(
+            "Candidate evidence must contain structured distinguishing identity detail"
+        )
+    field_name, value = detail.get("field"), detail.get("value")
+    if (
+        field_name
+        not in {
+            "institution_ref",
+            "acara_id",
+            "myschool_id",
+            "school_name",
+            "suburb",
+            "state",
+            "country",
+        }
+        or not isinstance(value, str)
+        or not value.strip()
+    ):
+        raise ValueError("Invalid distinguishing identity detail")
+
+    def fact(row: Mapping[str, Any]) -> str:
+        found = row.get(field_name)
+        if field_name == "acara_id" and not found:
+            ref = str(row.get("institution_ref", ""))
+            found = ref.split(":", 1)[1] if ref.startswith("acara:") else None
+        return school_key(str(found or ""))
+
+    if fact(target) != school_key(value) or any(
+        not fact(row) or fact(row) == school_key(value) for row in peers
+    ):
+        raise ValueError("Identity detail does not distinguish the selected candidate")
 
 
 def evidence_path(ledger_path: Path | str = DEFAULT_LOG_PATH) -> Path:
@@ -347,6 +453,17 @@ def evidence_applies(record: EvidenceRecord, review_id: str) -> bool:
     """Allow the same case and explicitly reusable same-name school facts."""
     if record.review_id == review_id:
         return True
+    aph_id = member_claim_aph_id(record)
+    if aph_id is not None:
+        return (
+            review_id.startswith("education:")
+            and review_id.split(":", 2)[1] == aph_id
+            and record.review_id == "school:" + review_id.rsplit(":", 1)[-1]
+            and school_review_id(
+                str(record.claim_value.get("recorded_school_name", ""))
+            )
+            == record.review_id
+        )
     return (
         review_id.startswith("education:")
         and record.review_id == "school:" + review_id.rsplit(":", 1)[-1]
@@ -365,6 +482,19 @@ def validate_evidence_references(
         by_id[record.evidence_id] = record
     for event in events:
         from apemap.review.context_evidence import context_references, resolve_context
+        from apemap.review.manual_institutions import (
+            validate_institution_fact_references,
+        )
+
+        institution_refs = (
+            validate_institution_fact_references(event.payload, records)
+            if event.entity_type == "manual_institution"
+            else set()
+        )
+        if event.entity_type == "manual_institution":
+            from apemap.review.institution_drafts import validate_draft_provenance
+
+            institution_refs |= validate_draft_provenance(event.payload, records)
 
         refs = event.payload.get("evidence_refs", [])
         if not isinstance(refs, list) or any(
@@ -373,12 +503,14 @@ def validate_evidence_references(
             raise ValueError("evidence_refs must be a list of evidence IDs")
         if len(set(refs)) != len(refs):
             raise ValueError("Duplicate evidence_refs")
-        refs = sorted(set(refs + context_references(event.payload)))
+        refs = sorted(set(refs + context_references(event.payload)) | institution_refs)
         for ref in refs:
             record = by_id.get(ref)
             if record is None:
                 raise ValueError(f"Unknown evidence reference: {ref}")
-            if not evidence_applies(record, event.review_id):
+            if ref not in institution_refs and not evidence_applies(
+                record, event.review_id
+            ):
                 raise ValueError(
                     f"Evidence reference belongs to a different case: {ref}"
                 )
@@ -389,6 +521,14 @@ def validate_evidence_references(
                 raise ValueError("Member evidence cannot reference an institution")
             target = event.payload.get("institution_ref")
             accepted = event.effective_action in {"accept", "map"}
+            if (
+                accepted
+                and event.entity_type == "school"
+                and member_claim_aph_id(record)
+            ):
+                raise ValueError(
+                    "Member-specific evidence cannot establish a school-wide default"
+                )
             if (
                 accepted
                 and event.entity_type == "member_education"

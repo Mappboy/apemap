@@ -438,6 +438,116 @@ def test_school_default_without_assertion_effects_has_no_save_and_rejects_token(
 
 
 @pytest.mark.integration
+@pytest.mark.parametrize("payload_mode", ["guided", "json"])
+def test_new_target_excludes_other_candidate_refs_only_in_guided_preview(
+    review_service: ReviewService, payload_mode: str
+) -> None:
+    service = review_service
+    review_id = education_review_id("TEST", "Test High School")
+    records = [
+        service.save_evidence(service.prepare_evidence(review_id, payload))
+        for payload in (
+            research_payload(
+                candidate_institution_ref=None,
+                claim_type="attendance",
+                claim_value={
+                    "aph_id": "TEST",
+                    "recorded_school_name": "Test High School",
+                    "attended_status": "attended_unspecified",
+                },
+            ),
+            research_payload(candidate_institution_ref="acara:1", stance="contradicts"),
+            research_payload(candidate_institution_ref="acara:2"),
+            research_payload(candidate_institution_ref="acara:2", stance="contradicts"),
+        )
+    ]
+    prior_payload = {
+        "aph_id": "TEST",
+        "recorded_school_name": "Test High School",
+        "resolution_only": True,
+        "resolution_reason": "ambiguous_name",
+        "evidence_refs": [record.evidence_id for record in records],
+    }
+    prior = service.save(
+        service.prepare(
+            review_id, "research", prior_payload, notes="Unresolved competing schools"
+        )
+    )
+    retained_before = service.evidence_path.read_bytes()
+    client = create_app(service).test_client()
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action="supersede",
+            replacement_action="map",
+            supersedes=prior.decision_id,
+            payload_mode=payload_mode,
+            payload=json.dumps(
+                {
+                    "aph_id": "TEST",
+                    "recorded_school_name": "Test High School",
+                    "evidence_refs": prior_payload["evidence_refs"],
+                    "institution_ref": "acara:2",
+                    "relationship_type": "direct",
+                }
+            ),
+            field_aph_id="TEST",
+            field_recorded_school_name="Test High School",
+            field_institution_ref="acara:2",
+            field_relationship_type="direct",
+            evidence_selection="1",
+            evidence_refs=[record.evidence_id for record in records],
+        ),
+    )
+    html = response.get_data(as_text=True)
+    if payload_mode == "json":
+        assert response.status_code == 400
+        assert "Evidence reference belongs to a different candidate" in html
+    else:
+        assert response.status_code == 200, html
+        assert "Evidence for other candidates was excluded" in html
+        saved = client.post(f"/items/{review_id}/save", data=save_form(response))
+        assert saved.status_code == 303, saved.get_data(as_text=True)
+        event = service.events()[-1]
+        assert event.payload["institution_ref"] == "acara:2"
+        assert event.payload["evidence_refs"] == sorted(
+            record.evidence_id for record in (records[0], *records[2:])
+        )
+        assert event.supersedes == [prior.decision_id]
+    assert service.evidence_path.read_bytes() == retained_before
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("refs", [None, [{}]])
+def test_guided_mapping_reports_malformed_evidence_refs(
+    review_service: ReviewService, refs: Any
+) -> None:
+    review_id = education_review_id("TEST", "Test High School")
+    client = create_app(review_service).test_client()
+    response = client.post(
+        f"/items/{review_id}/preview",
+        data=form(
+            client,
+            review_id,
+            action="map",
+            payload_mode="guided",
+            payload=json.dumps({"evidence_refs": refs}),
+            field_aph_id="TEST",
+            field_recorded_school_name="Test High School",
+            field_institution_ref="acara:2",
+            field_relationship_type="direct",
+        ),
+    )
+    assert response.status_code == 400
+    assert (
+        "evidence_refs must contain unique nonempty evidence IDs"
+        in response.get_data(as_text=True)
+    )
+
+
+@pytest.mark.integration
 def test_real_service_signed_research_retention_and_referenced_resolution(
     review_service: ReviewService, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

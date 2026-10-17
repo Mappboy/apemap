@@ -1,0 +1,63 @@
+{
+  "source_commit": "c5348343d7f231d650d2950ae6b28b23cc46d58e",
+  "branch": "feat/manual-institution-evidence-drafts",
+  "prepared_at": "2026-10-15T04:30:31.292451+00:00",
+  "package_version": "0.12.0",
+  "files": [
+    {
+      "path": "data/aped-p48-research.duckdb",
+      "sha256": "3e9a0793260c762822279ed8de5b83d3c0c9ac55d008944c02d853c1d2137d64",
+      "size_bytes": 116142080
+    },
+    {
+      "path": "data/reference/review/decisions.jsonl",
+      "sha256": "54b33aed31ef3deeb9a3b76f0711281e689619a1a96651eaa9894f036669faed",
+      "size_bytes": 370127
+    },
+    {
+      "path": "data/reference/review/evidence.jsonl",
+      "sha256": "47d18fa3f8d1265188450f7b04c63aead48eef026025b1f59fd2cd13edfa3845",
+      "size_bytes": 112419
+    },
+    {
+      "path": "data/raw/aph/individuals.json",
+      "sha256": "aad9e3798b32d94f6dd849cac20a40b25967664e1f845ce2a070e16f87873093",
+      "size_bytes": 10741777
+    },
+    {
+      "path": "data/raw/historical/acara/school-location-2025.csv",
+      "sha256": "00e5a14922a856252d478a1e689d9286fdefc70113246b64fba094d1d69827d1",
+      "size_bytes": 3348391
+    },
+    {
+      "path": "data/raw/historical/acara/school-profile-2008-2025.csv",
+      "sha256": "4315d9e19eccaf45719d5e475d9a1c9c3d713d87c849d800c7cddd88a0813934",
+      "size_bytes": 52328060
+    },
+    {
+      "path": "data/raw/historical/acara/acara_school_results.json",
+      "sha256": "e03ca1f81d5fea60d102774f48d99c9f96d4e6069b41229d3219a43f60cdfc6a",
+      "size_bytes": 11195583
+    },
+    {
+      "path": "data/reference/review/research/p48-unmapped-schools-20261014-ready/proposals-0001.json",
+      "sha256": "62ff698d321cdfc7c04f868ce403f600125fdb4bfad6be18d1e1c0fc65f28169",
+      "size_bytes": 335926
+    },
+    {
+      "path": "data/reference/review/research/p48-unmapped-schools-20261014/budget-exceptions.json",
+      "sha256": "060d68ab4839e4791885eac60a1380f6679330e4200f1305596531e8ac210a67",
+      "size_bytes": 46130
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "10697d34e2e0e1a3f15472058f3d38e18a0a99d579dea52074989dfe6dede976",
+      "size_bytes": 1895
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "ba99aa0e3f898c9ce8e90d0be1d0b822892551efa46b057d32492977cbd15091",
+      "size_bytes": 691138
+    }
+  ]
+}

@@ -104,7 +104,7 @@
   document.querySelectorAll("form[data-decision-draft], #school-draft, #member-batch-form, [data-assertion-draft]").forEach((form) => {
     form.addEventListener("submit", (event) => {
       const submitter = event.submitter;
-      if (submitter?.matches?.("[data-research-start]") || submitter?.dataset?.researchReviewId) return;
+      if (submitter?.matches?.("[data-research-start], [data-institution-generate]") || submitter?.dataset?.researchReviewId) return;
       queueMicrotask(() => {
       if (!event.defaultPrevented) {
         dirty = false;
@@ -113,6 +113,7 @@
       });
     });
   });
+  window.addEventListener("apemap:institution-navigation", () => { dirty = false; });
   window.addEventListener("beforeunload", (event) => {
     if (dirty) { event.preventDefault(); event.returnValue = ""; }
   });

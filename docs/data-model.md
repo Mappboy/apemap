@@ -190,7 +190,7 @@ Educational institutions (schools, colleges, academies).
 - `acara_id` (`VARCHAR`): ACARA School Location SML ID.
 - `school_name` (`VARCHAR NOT NULL`): Official or normalized school name.
 - `school_type` (`VARCHAR`): Type of school (`Primary`, `Secondary`, `Combined`, `Special`).
-- `sector` (`VARCHAR NOT NULL CHECK (sector IN ('Government', 'Catholic', 'Independent', 'Tertiary', 'Other'))`): Educational sector.
+- `sector` (`VARCHAR CHECK (sector IN ('Government', 'Catholic', 'Independent', 'Tertiary', 'Other'))`): Educational sector; null when a manual institution has no supported sector. Historical `Other` values are preserved.
 - `campus_type` (`VARCHAR`): `Main Campus` or `Branch`.
 - `state`, `suburb`, `postcode` (`VARCHAR`): Geographic address details.
 - `longitude`, `latitude` (`DOUBLE`): GDA2020 / WGS84 geographic coordinates.

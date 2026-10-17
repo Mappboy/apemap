@@ -939,7 +939,7 @@ def test_prompt_states_incomplete_research_must_return_json() -> None:
     context = {"review_id": CASE, "candidates": [{"institution_ref": "acara:1"}]}
     prompt = _prompt(context)
     assert "You MUST return JSON even if research is incomplete" in prompt
-    assert '{"suggestions":[]}' in prompt
+    assert '{"suggestions":[],"institution_candidate":null}' in prompt
     assert "empty valid result is always preferable to unfinished analysis" in prompt
 
 

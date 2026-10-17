@@ -39,7 +39,9 @@ periods. State and electorate remain parliamentary context. It does not send the
 whole comparison group, API credentials as prompt text, or an entire research log.
 
 Results are temporary in-memory jobs. Restarting the reviewer or waiting 30 minutes
-discards them. Only cited HTTP(S) sources and candidates supplied for the case can
+after completion discards them; running requests remain available. School research
+uses one bounded request per associated member/assertion and reports any failed
+requests alongside successful suggestions. Only cited HTTP(S) sources and candidates supplied for the case can
 be suggested. Model quality scores are discarded; unknown dimensions stay unknown.
 Jobs are bounded, have request timeouts and do not run in offline mode
 (`APEMAP_OFFLINE=1`). A manual reviewer works without configured providers.

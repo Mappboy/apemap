@@ -12,6 +12,7 @@ from uuid import uuid4
 from flask import Flask, abort, redirect, render_template, request, url_for
 
 from apemap.review.research_batches import ResearchBatches, _digest
+from apemap.review.research_packets import load_research_packet
 from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError
 
@@ -45,12 +46,18 @@ def _rows(state: dict[str, Any]) -> list[dict[str, Any]]:
                     context["member"]["display_name"]
                     if state["manifest"]["kind"] == "members"
                     else context["assertion"]["recorded_school_name"]
+                    + (
+                        " · " + context["member"]["display_name"]
+                        if proposal["review_id"].startswith("education:")
+                        else ""
+                    )
                 ),
                 "review": review,
                 "status": status,
                 "status_label": FILTERS[status],
                 "sample": proposal["proposal_id"] in state["sample"],
                 "applied": applied,
+                "mapping_problems": ResearchBatches._mapping_problems(state, proposal),
                 "eligibility_reasons": state.get("current_eligibility", {}).get(
                     proposal["proposal_id"], proposal["eligibility_reasons"]
                 ),
@@ -127,9 +134,16 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 )
             except (OSError, ValueError, KeyError) as exc:
                 saved.append({"manifest": manifest, "error": str(exc)})
+        packets = []
+        for path in sorted(batches.root.glob("*/packet.json")):
+            try:
+                packets.append(load_research_packet(path.parent))
+            except (OSError, ValueError, KeyError) as exc:
+                packets.append({"batch_id": path.parent.name, "error": str(exc)})
         return render_template(
             "research-batches.html",
             batches=saved,
+            packets=packets,
             operation_error=error,
             draft=request.form,
         )
@@ -257,6 +271,16 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
     def research_batch_list() -> str:
         return listing()
 
+    @app.get("/research-packets/<batch_id>")
+    def research_packet_detail(batch_id: str) -> Any:
+        try:
+            packet = load_research_packet(batches.path(batch_id))
+            return render_template("research-packet.html", packet=packet)
+        except FileNotFoundError:
+            abort(404)
+        except (OSError, ValueError, KeyError) as exc:
+            return render_template("error.html", message=str(exc)), 400
+
     @app.post("/research-batches/prepare")
     def research_batch_prepare() -> Any:
         try:
@@ -307,7 +331,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             for evidence in proposal["evidence"]
             if request.form.get("inspected_" + evidence["evidence_id"]) == "yes"
         }
-        draft = {
+        draft: dict[str, Any] = {
             "proposal_id": proposal_id,
             "action": request.form.get("action", ""),
             "inspected": inspected,
@@ -321,6 +345,10 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             "identity_error": request.form.get("identity_error") == "yes",
             "supersedes": request.form.getlist("supersedes"),
         }
+        if proposal.get("manual_candidate"):
+            draft["institution_action"] = request.form.get(
+                "institution_action", "create_map"
+            )
         try:
             if not request.form.get("binding"):
                 raise ValueError("Reload the batch before reviewing")
@@ -332,6 +360,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 notes=draft["notes"],
                 identity_error=draft["identity_error"],
                 supersedes=draft["supersedes"],
+                institution_action=draft.get("institution_action"),
                 expected_revision=request.form["binding"],
             )
         except (OSError, ValueError, KeyError) as exc:

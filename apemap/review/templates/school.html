@@ -21,6 +21,12 @@
 {% if additional_rows %}<details data-additional-comparison><summary data-additional-comparison-summary>More comparison facts · {{ additional_rows | length }} more · {{ unknown_additional }} unknown</summary><div>{{ comparison_table(additional_rows) }}</div></details>{% endif %}
 {{ evidence_summary(workspace_evidence | default([]), workspace_unknown_gaps | default([]), inline=True) }}
 <h2>Candidate schools <small>Advisory only · review ties and conflicts</small></h2>
+{% if research_batches_enabled %}
+<section aria-label="Manual institution shortcuts">
+{% for institution in manual_matches %}<article class="candidate-card"><strong>{{ institution.school_name }}</strong><p>{{ institution.institution_ref }} · {{ institution.get('country') or 'Country unknown' }} · {{ institution.get('institution_status') or 'Status unknown' }}</p><button type="submit" form="school-draft" name="manual_reference" value="{{ institution.institution_ref }}" formaction="{{ url_for('use_manual_institution', review_id=item.review_id) }}" formnovalidate data-institution-use>Use this institution</button></article>{% endfor %}
+{% if research_providers %}<label>Institution interpretation provider<select name="institution_provider_id" form="school-draft">{% for id, provider in research_providers.items() %}<option value="{{ id }}">{{ id }} · {{ provider.model }}</option>{% endfor %}</select></label><button type="submit" form="school-draft" formaction="{{ url_for('generate_institution_draft', review_id=item.review_id) }}" formnovalidate data-institution-generate>Generate institution from evidence</button><p data-institution-status role="status" aria-live="polite">Generate an editable draft from retained evidence; inspect its citations before saving.</p>{% else %}<p>Configure an assisted research provider to generate an institution draft from retained evidence.</p>{% endif %}
+</section>
+{% endif %}
 {% set ranked_candidates = item.get('ranked_candidates', []) %}
 <ol class="candidate-cards" aria-label="School candidates">{% for candidate in ranked_candidates[:3] %}{{ candidate_option(candidate) }}{% else %}{% for target in school.targets[:3] %}<li class="candidate-card"><strong>{{ target.name }}</strong><p>{{ target.reference }} · {{ target.metadata.get('suburb') or 'Locality unknown' }} · {{ target.metadata.get('state') or 'State unknown' }} · {{ target.metadata.get('sector') or 'Sector unknown' }} · {{ target.metadata.get('school_type') or 'Type unknown' }}</p><button type="submit" name="choose_ref" value="{{ target.reference }}" data-choose-school="{{ target.reference }}" data-school-name="{{ target.name }}" data-use-candidate form="school-draft" formnovalidate>Select candidate</button></li>{% else %}<li>No confirmed candidate. Search the local register in the detailed tools below.</li>{% endfor %}{% endfor %}</ol>
 {% if ranked_candidates | length > 3 %}<details><summary>More candidate alternatives ({{ ranked_candidates | length - 3 }})</summary><ol class="candidate-cards">{% for candidate in ranked_candidates[3:] %}{{ candidate_option(candidate) }}{% endfor %}</ol></details>{% endif %}
@@ -118,4 +124,4 @@
 <p data-preview-status role="status" aria-live="polite">The preview expires after 15 minutes. Changed evidence, this school's decisions or mapping effects require another preview.</p>
 </section>{% endif %}
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='school-mapping.js') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='school-mapping.js') }}" defer></script><script src="{{ url_for('static', filename='institution-draft.js') }}" defer></script>{% endblock %}

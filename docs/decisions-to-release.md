@@ -39,6 +39,14 @@ evidence and the [full review checklist](review-update-publish.md) for research.
 
 ## 2. Commit the reviewed state and choose fresh output paths
 
+Package 0.11.0 allows a manual institution with no supported sector to store null.
+Older databases retain their non-null sector constraint. Rebuild from pinned inputs
+into a fresh database with the workflow below before replaying an unknown-sector
+definition; schema initialization does not migrate the old constraint in place.
+Preserve the previous database and compare the fresh build before promoting it.
+Canonical CSV/Parquet exports retain null; current analysis keeps the existing
+"Sector unavailable" presentation category. Do not rewrite historical `Other` data.
+
 Create a focused branch if you have not already done so. Stage only reviewed
 changes, then commit so the release's `source_commit` identifies the actual ledger.
 

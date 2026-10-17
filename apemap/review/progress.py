@@ -22,12 +22,33 @@ from apemap.review.resolution import (
 
 
 def individual_school_ids(events: list[ReviewEvent]) -> set[str]:
-    """Include conflicting policy heads so they cannot appear completed."""
-    return {
+    """Include active assertion resolutions and conflicting school policies."""
+    heads = active_heads(events)
+    selected = {
         review_id
-        for review_id, alternatives in active_heads(events).items()
+        for review_id, alternatives in heads.items()
         if any(requires_individual_resolution(event) for event in alternatives)
     }
+    for alternatives in heads.values():
+        for event in alternatives:
+            if event.entity_type != "member_education" or not event.payload.get(
+                "recorded_school_name"
+            ):
+                continue
+            if not (
+                event.effective_action in {"map", "reject"}
+                or event.effective_action == "accept"
+                and event.payload.get("institution_ref")
+                or event.effective_action == "research"
+                and event.payload.get("resolution_only") is True
+            ):
+                continue
+            school_id = school_review_id(event.payload["recorded_school_name"])
+            defaults = heads.get(school_id, [])
+            if len(defaults) == 1 and defaults[0].effective_action in {"accept", "map"}:
+                continue
+            selected.add(school_id)
+    return selected
 
 
 def _attendance_inventory(
@@ -180,7 +201,8 @@ def school_resolution_progress(
     retained manual claims happen to have explicit targets. Source duplicates
     count once and removed attendance remains visible as a separate count.
     """
-    selected = individual_school_ids(events) if school_ids is None else school_ids
+    decision_school_ids = individual_school_ids(events)
+    selected = decision_school_ids if school_ids is None else school_ids
     if not selected:
         return {}
     heads = active_heads(events)
@@ -215,7 +237,9 @@ def school_resolution_progress(
         status = default.status if default else "pending"
         if len(alternatives) > 1:
             status = "conflict"
-        elif requires_individual_resolution(default):
+        elif school_id in decision_school_ids and (
+            default is None or default.effective_action == "research"
+        ):
             status = (
                 "resolved_individually"
                 if available and assertions and not counts["unresolved"]

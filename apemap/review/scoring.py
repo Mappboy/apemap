@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
 
-from apemap.review.evidence import EvidenceRecord, evidence_applies
+from apemap.review.evidence import EvidenceRecord, evidence_applies, member_claim_aph_id
 from apemap.review.model import school_key
 
 SCORING_VERSION = 1
@@ -102,6 +102,10 @@ def score_candidates(
                         for record in source_records
                         if record.stance == "supports"
                         and record.candidate_institution_ref == reference
+                        and not (
+                            review_id.startswith("school:")
+                            and member_claim_aph_id(record)
+                        )
                     ),
                     default=0.0,
                 )
@@ -111,6 +115,10 @@ def score_candidates(
                         for record in source_records
                         if record.stance == "contradicts"
                         and record.candidate_institution_ref == reference
+                        and not (
+                            review_id.startswith("school:")
+                            and member_claim_aph_id(record)
+                        )
                     ),
                     default=0.0,
                 )
@@ -145,7 +153,9 @@ def score_candidates(
                         component: getattr(record, field)
                         for component, field in EVIDENCE_DIMENSIONS.items()
                     },
-                    "note": "Context only; no candidate-specific directional points"
+                    "note": "Member-specific evidence; resolve this member's assertion separately"
+                    if review_id.startswith("school:") and member_claim_aph_id(record)
+                    else "Context only; no candidate-specific directional points"
                     if record.stance == "contextual"
                     or record.candidate_institution_ref is None
                     else "Explicit evidence dimensions; counted once per source URL",

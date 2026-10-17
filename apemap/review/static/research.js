@@ -30,6 +30,24 @@ const showError = (error) => { if (feedback) feedback.textContent = error.messag
 const renderSuggestions = (result, jobId) => {
   results.replaceChildren();
   if (result.status === "failed") { results.append(node("p", result.error, "error")); return; }
+  for (const request of result.request_results || []) {
+    if (request.status === "failed") results.append(node("p", `Research failed${request.aph_id ? ` for ${request.aph_id}` : ""}. No evidence was returned for this request.`, "error"));
+  }
+  if (panel.dataset.reviewId.startsWith("school:")) (result.institution_candidates || []).forEach((finding, index) => {
+    const article = node("article", undefined, "candidate-card"); article.dataset.manualProposal = "";
+    article.append(node("h3", "Proposed manual institution"), node("p", "Save these researched facts for source inspection and an exact decision preview."));
+    const facts = node("dl", undefined, "research-facts");
+    for (const [field, label] of [["name", "Name"], ["country", "Country"], ["status", "Status"], ["sector", "Sector"], ["suburb", "Locality"], ["state", "State"]]) {
+      const row = node("div"); row.append(node("dt", label), node("dd", finding.facts?.[field] || "Not established")); facts.append(row);
+    }
+    article.append(facts);
+    if (result.status === "complete") {
+      const form = node("form"); form.method = "post"; form.action = `/items/${encodeURIComponent(panel.dataset.reviewId)}/research/${encodeURIComponent(jobId)}/manual-proposals/${index}`; form.dataset.manualProposalSave = "";
+      for (const [name, value] of [["csrf_token", csrf], ["workspace_draft_token", workspaceDraft]]) { const input = node("input"); input.type = "hidden"; input.name = name; input.value = value; form.append(input); }
+      form.append(node("button", "Save manual institution proposal")); article.append(form);
+    } else article.append(node("p", "Some research requests failed. Complete the research before saving this proposal."));
+    results.append(article);
+  });
   const suggestions = Array.isArray(result.suggestions) ? result.suggestions : [];
   if (!suggestions.length) { results.append(node("p", "No cited suggestions were returned.")); return; }
   suggestions.forEach((suggestion, index) => {
@@ -138,7 +156,7 @@ const renderEditor = (data, inspectUrl) => {
           if (panel.dataset.reviewId.startsWith("member:") && saved.record.stance === "supports" && saved.record.claim_type === "member_value" && claim?.field === panel.dataset.reviewId.split(":").at(-1)) {
             const copyButton = node("button", "Copy retained value to member draft"); copyButton.type = "button"; copyButton.dataset.copyEvidence = saved.record.evidence_id; editor.append(copyButton);
           }
-          if (!panel.dataset.reviewId.startsWith("member:") && saved.record.stance === "supports" && saved.record.claim_type === "identity" && saved.record.candidate_institution_ref) {
+          if (!panel.dataset.reviewId.startsWith("member:") && saved.record.stance === "supports" && saved.record.claim_type === "identity" && saved.record.candidate_institution_ref && !claim?.aph_id) {
             const copyButton = node("button", "Copy retained institution to draft"); copyButton.type = "button"; copyButton.dataset.copyEvidence = saved.record.evidence_id; editor.append(copyButton);
           }
         } catch (error) { showError(error); }
@@ -168,12 +186,16 @@ document.addEventListener("submit", async (event) => {
         try {
           const response = await fetch(job.status_url, { credentials: "same-origin", headers: { Accept: "application/json" } });
           const current = await response.json(); if (!response.ok) throw new Error(current.error || "Research status is unavailable.");
-          if (current.status === "running") { window.setTimeout(poll, 1500); return; }
-          renderSuggestions(current, job.job_id); statusNode.textContent = current.status === "complete" ? "Research finished. Inspect each source before retaining evidence." : "Research finished without a result.";
+          if (current.status === "running") { statusNode.textContent = current.total_requests ? `Searching cited public sources: ${current.completed_requests || 0} of ${current.total_requests} requests completed.` : "Searching cited public sources…"; window.setTimeout(poll, 1500); return; }
+          renderSuggestions(current, job.job_id); statusNode.textContent = current.status === "complete" ? "Research finished. Inspect each source before retaining evidence." : current.status === "partial" ? "Research finished with failed requests. Review the reported gaps." : "Research finished without a result.";
         } catch (error) { showError(error); }
       };
       window.setTimeout(poll, 500);
     } catch (error) { showError(error); }
+  } else if (panel.contains(form) && form.matches("[data-manual-proposal-save]")) {
+    event.preventDefault();
+    try { const saved = await postJSON(form.action, form); window.location.assign(saved.review_url); }
+    catch (error) { showError(error); }
   } else if (panel.contains(form) && form.matches("[data-research-inspect]")) {
     event.preventDefault();
     if (!form.querySelector('[name="source_inspected"]')?.checked) { showError(new Error("Inspect the cited source before reviewing it.")); return; }

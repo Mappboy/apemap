@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ packet.manifest.title }}{% endblock %}
+{% block content %}
+<div class="research-batches">
+<p><a href="{{ url_for('research_batch_list') }}">Back to research batches</a></p>
+<h1>{{ packet.manifest.title }}</h1>
+<p>{{ packet.manifest.batch_id }} · {{ packet.manifest.created_at[:10] }} · {{ packet.manifest.case_count }} findings</p>
+<p class="notice">Inspect the sources, then open the member's education review to retain evidence and preview a decision. Approval and application happen in that individual review.</p>
+<nav aria-label="Find a member"><ul>{% for result in packet.results %}<li><a href="#finding-{{ loop.index }}">{{ result.member }} · {{ result.recorded_school_name }}</a></li>{% endfor %}</ul></nav>
+{% for result in packet.results %}<section class="research-source" id="finding-{{ loop.index }}">
+<h2>{{ result.member }}</h2><h3>{{ result.recorded_school_name }}</h3>
+<p><strong>{{ packet.outcome_labels[result.outcome] }}</strong>{% if result.mapping %} · <code>{{ result.mapping.payload.institution_ref }}</code>{% endif %}</p>
+<p>{{ result.reasoning }}</p>
+{% if result.gaps %}<ul>{% for gap in result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}
+<p><a href="{{ url_for('detail', review_id=result.review_id) }}">Open this member's education review</a></p>
+<details><summary>Sources ({{ result.evidence|length }})</summary>
+{% for evidence in result.evidence %}<section class="research-source" data-evidence-id="{{ evidence.evidence_id }}">
+<h4><a href="{{ evidence.source_url|source_link }}" target="_blank" rel="noopener noreferrer">{{ evidence.source_title }}</a></h4>
+<small>{{ evidence.source_url|source_host }} · {{ evidence.stance|capitalize }} · Retrieved {{ evidence.retrieved_at[:10] }}</small>
+<p>{{ evidence.excerpt_or_note }}</p><pre>{{ evidence.claim_value|json_text }}</pre>
+</section>{% endfor %}</details>
+{% if result.mapping or result.manual_institutions %}<details><summary>Proposed mapping and institution definition</summary>
+{% if result.mapping %}<pre>{{ result.mapping|json_text }}</pre>{% endif %}
+{% for definition in result.manual_institutions %}<pre>{{ definition|json_text }}</pre>{% endfor %}</details>{% endif %}
+<details><summary>Research history and access log</summary>
+<pre>{{ packet.case_logs[result.review_id]|json_text }}</pre>
+<pre>{{ packet.prior_research[result.review_id]|json_text }}</pre></details>
+</section>{% endfor %}
+<details><summary>Research provenance</summary><p>{{ packet.research_log.model_note }}</p><p>{{ packet.research_log.method }}</p></details>
+</div>
+{% endblock %}

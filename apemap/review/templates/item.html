@@ -43,12 +43,15 @@
 {% if item.entity_type == 'member_education' %}</details>{% endif %}
 </div>
 <section><h2>Review decision</h2>
-<form id="review-decision" {% if named_education %}data-resolution-outcomes data-assertion-draft data-comparison-url="{{ url_for('school_comparison_json', review_id=item.review_id) }}"{% endif %} method="post" action="{% if new_entity_type %}{{ url_for('preview_new', entity_type=new_entity_type) }}{% else %}{{ url_for('preview_item', review_id=item.review_id) }}{% endif %}">
+{% if institution_draft %}<section aria-label="Institution draft research gaps"><p>AI suggestions require source inspection. Saving this definition returns to your school draft.</p>{% for note in institution_draft.result.gaps %}<p>{{ note }}</p>{% endfor %}{% for note in institution_draft.result.conflicts %}<p class="error">Conflicting evidence: {{ note }}</p>{% endfor %}</section>{% for institution in institution_draft.manual_matches %}<article class="candidate-card"><strong>{{ institution.school_name }}</strong><p>{{ institution.institution_ref }} · {{ institution.get('country') or 'Country unknown' }} · {{ institution.get('institution_status') or 'Status unknown' }}</p><form method="post" action="{{ url_for('use_manual_institution', review_id=institution_draft.review_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="institution_return_token" value="{{ institution_draft.return_token }}"><button type="submit" name="manual_reference" value="{{ institution.institution_ref }}">Use this institution</button></form></article>{% endfor %}{% endif %}
+<form id="review-decision" {% if named_education %}data-resolution-outcomes data-assertion-draft data-comparison-url="{{ url_for('school_comparison_json', review_id=item.review_id) }}"{% endif %} method="post" action="{% if institution_draft %}{{ url_for('preview_institution_draft', review_id=institution_draft.review_id) }}{% elif new_entity_type %}{{ url_for('preview_new', entity_type=new_entity_type) }}{% else %}{{ url_for('preview_item', review_id=item.review_id) }}{% endif %}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% if institution_draft %}<input type="hidden" name="institution_generation_token" value="{{ institution_draft.token }}">{% endif %}
+  {% if institution_draft %}<input type="hidden" name="action" value="accept">{% endif %}
   {% if workspace_draft_token %}<input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token }}">{% endif %}
   {% if navigation_token %}<input type="hidden" name="navigation_token" value="{{ navigation_token }}">{% endif %}
   {% if evidence_enabled and item.entity_type == 'member_education' and item.review_id %}<input type="hidden" name="evidence_selection" value="1">{% endif %}
-  {% if item.entity_type != 'member_education' %}<label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type in ['school', 'member_education'] %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>{% endif %}
+  {% if item.entity_type != 'member_education' and not institution_draft %}<label>Action<select name="action">{% for action in actions %}{% if action != 'map' or item.entity_type in ['school', 'member_education'] %}<option value="{{ action }}" {% if form_values.get('action', 'accept') == action %}selected{% endif %}>{{ action_labels[action] }}</option>{% endif %}{% endfor %}</select></label>{% endif %}
   {% if item.entity_type == 'member_education' %}<p>Map this assertion resolves the institution for this member and recorded school name, preserving attendance and its provenance. It requires a target, relationship and HTTP(S) evidence source. Accept adds or corrects attendance evidence. Needs research retains attendance and leaves its institution unresolved, overriding a school-wide default. Reject attendance claim removes the attendance claim.</p>{% if named_education %}<p>Ambiguous name and no suitable candidate record why this member's institution remains unresolved. They preserve attendance and require review notes. Resolve other members using the same name independently.</p>{% endif %}<p>For successor mappings, use the complete JSON payload for original institution and historical evidence fields. Their evidence applies only to this assertion.</p>{% endif %}
   {% if item.entity_type == 'member_education' %}<details class="advanced-field-details"><summary>Advanced assertion payload and supersession fields</summary>{% endif %}
   {% if fields %}
@@ -57,6 +60,7 @@
     {% if kind == 'select' %}<select name="field_{{ name }}" {% if named_education and name in resolution_fields %}data-resolution-field {% if resolution_fields_disabled %}disabled{% endif %}{% endif %}><option value="">Choose a value</option>{% for choice in choices %}<option value="{{ choice }}" {% if (payload.get(name) if resolution_fields_disabled and name in resolution_fields else form_values.get('field_' + name, payload.get(name)) if error else payload.get(name)) == choice %}selected{% endif %}>{{ choice | replace('_', ' ') }}</option>{% endfor %}</select>
     {% else %}<input name="field_{{ name }}" type="{{ kind }}" {% if named_education and name in resolution_fields %}data-resolution-field {% if resolution_fields_disabled %}disabled{% endif %}{% endif %} {% if kind == 'number' %}step="any"{% endif %} value="{{ payload.get(name, '') if resolution_fields_disabled and name in resolution_fields else form_values.get('field_' + name, payload.get(name, '')) if error else payload.get(name, '') }}">{% endif %}
   </label>{% endif %}
+  {% if institution_draft %}{% include "institution-field-sources.html" %}{% endif %}
   {% if name == 'institution_ref' and item.entity_type in ['school', 'member_education'] %}
   <fieldset class="institution-lookup" data-institution-lookup data-lookup-url="{{ url_for('lookup_institutions') }}">
     <legend>Find a local ACARA school</legend>
@@ -77,9 +81,10 @@
   <label>Reviewer (uses your Git identity if blank)<input name="reviewer" value="{{ form_values.get('reviewer', '') }}"></label>
   <label>Review notes<textarea name="notes" rows="4">{{ form_values.get('notes', '') }}</textarea></label>{% else %}<label>Reviewer (uses your Git identity if blank)<input name="reviewer" form="review-decision" value="{{ form_values.get('reviewer', '') }}"></label>{% endif %}
   {% if item.entity_type == 'member_education' %}<p>Accepted education notes are published with the assertion's evidence. Use public provenance explanations.</p>{% endif %}
-  <label>Superseded event identifiers (comma separated)<input name="supersedes" value="{{ form_values.get('supersedes', '') }}"></label>
+  {% if not institution_draft %}<label>Superseded event identifiers (comma separated)<input name="supersedes" value="{{ form_values.get('supersedes', '') }}"></label>
   <label>Replacement action (when superseding)<select name="replacement_action">{% for action in actions %}{% if action != 'supersede' and (action != 'map' or item.entity_type in ['school', 'member_education']) %}<option value="{{ action }}" {% if form_values.get('replacement_action', 'accept') == action %}selected{% endif %}>{{ 'Resolve this member’s school' if action == 'map' and item.entity_type == 'member_education' else 'Reject attendance claim' if action == 'reject' and item.entity_type == 'member_education' else action_labels[action] }}</option>{% endif %}{% endfor %}{% if named_education %}{% for reason, label in resolution_reasons.items() %}<option value="{{ reason }}" {% if form_values.get('replacement_action') == reason %}selected{% endif %}>{{ label }}</option>{% endfor %}{% endif %}</select></label>
-  {% if item.entity_type == 'member_education' %}</details>{% endif %}
+  {% endif %}{% if item.entity_type == 'member_education' %}</details>{% endif %}
+  {% if institution_draft %}<label class="choice"><input type="checkbox" name="institution_sources_confirmed" value="yes" required {% if form_values.get('institution_sources_confirmed') == 'yes' %}checked{% endif %}>I inspected the citations and confirm they support the edited institution facts.</label>{% endif %}
   <button type="submit" data-workspace-action="preview" {% if item.entity_type == 'member_education' %}formnovalidate{% endif %}>Validate and preview</button>
 </form>
 {% if item.entity_type == 'member_education' and item.review_id %}
@@ -90,6 +95,7 @@
 </div>
 {% if preview %}
 <section id="preview"><h2>Validated semantic preview</h2><p>Review the affected values before saving. This preview has not changed any file.</p>
+  {% if preview.get('excluded_evidence_refs') %}<p class="notice" role="status">Evidence for other candidates was excluded from this mapping. The sources remain in retained research and earlier decisions.</p><ul>{% for ref in preview.excluded_evidence_refs %}<li><code>{{ ref }}</code></li>{% endfor %}</ul>{% endif %}
   {% include "relationship-preview.html" %}
   <p>{{ preview.changes|length }} change group(s) passed validation. Review the affected values above before saving.</p>
   <details class="technical-details"><summary>Technical details: full changes, validation, and decision record</summary>
@@ -97,9 +103,10 @@
   <h3>Validation</h3><pre>{{ preview.validation | json_text }}</pre>
   <h3>Recorded decision</h3><pre>{{ preview.event | json_text }}</pre>
   </details>
-  <form method="post" action="{{ url_for('save_item', review_id=item.review_id) }}">
+  <form method="post" action="{% if institution_draft %}{{ url_for('save_institution_draft', review_id=institution_draft.review_id) }}{% else %}{{ url_for('save_item', review_id=item.review_id) }}{% endif %}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <input type="hidden" name="preview_token" value="{{ preview_token }}">
+    {% if institution_draft %}<input type="hidden" name="institution_generation_token" value="{{ institution_draft.token }}">{% endif %}
     {% if workspace_draft_token %}<input type="hidden" name="workspace_draft_token" value="{{ workspace_draft_token }}">{% endif %}
     {% if navigation_token %}<input type="hidden" name="navigation_token" value="{{ navigation_token }}">{% endif %}
     <button type="submit" data-workspace-action="save">Save this decision</button>

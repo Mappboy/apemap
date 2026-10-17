@@ -1,0 +1,45 @@
+{
+  "review_id": "education:56430:c2181e71db56a3f8",
+  "decision": {
+    "decision_id": "027640da-dbac-4249-85d7-359cff67628e",
+    "review_id": "education:56430:c2181e71db56a3f8",
+    "entity_type": "member_education",
+    "action": "supersede",
+    "payload": {
+      "aph_id": "56430",
+      "evidence_refs": [
+        "evidence:14d9d0bd2a0eea4d46dcb472bab965b6530f37bc9430472e01e76ce82db768be",
+        "evidence:bcb400b623167bebad5221689d47c99f3ba22b30dbcc1c83c17f9884f6adcf4d",
+        "evidence:c0fa2c5a02b4f1dfd6d88145e0c5f7b05e3d8783645cfe4a8ef15e0c653e9ac5",
+        "evidence:cb7bd99bd7cb435eb8b993d736c0fb6699036d40dbdd133c3cdbebe49f6df5ef",
+        "evidence:d0f4958d1b8905e649367af8bcf2b07ad7fb02829f94f9c712182dabbaad0121",
+        "evidence:df6c8cdc768103f57411fbfba6338b75cab661042538e016875fefc69bf4fffe"
+      ],
+      "institution_ref": "acara:45715",
+      "recorded_school_name": "St Colman's School",
+      "relationship_type": "successor"
+    },
+    "schema_version": 1,
+    "source_url": "https://www.notredame.vic.edu.au/our-college/our-history",
+    "reviewed_at": "2026-10-17",
+    "reviewer": "Cam",
+    "notes": "User-directed correction to Notre Dame College, Shepparton. Official college history confirms St Colman’s and Sacred Heart amalgamated into Notre Dame in 1984, so this is a successor mapping. Original recorded school and attendance remain unchanged. The Mortlake primary-school contradiction remains retained but is excluded from this target’s selected evidence.",
+    "supersedes": [
+      "1683e91e-9b02-4a18-90ac-971b429def26"
+    ],
+    "replacement_action": "map",
+    "recorded_at": "2026-10-17T01:20:32.690534+00:00",
+    "legacy": null
+  },
+  "selected_evidence_count": 6,
+  "excluded_candidate_evidence": "evidence:d7a995a885fbbf5a2cd54f8276fe74189651e50b12a6b4e1a3a39e2e91a6ce50",
+  "new_events": 1,
+  "new_evidence_records": 4,
+  "original_authority_preserved_as_exact_prefix": true,
+  "original_batch_application_and_reviews_unchanged": true,
+  "database_unchanged": true,
+  "all_ledger_evidence_references_valid": true,
+  "live_save_confirmed": true,
+  "package_version": "0.14.2",
+  "dataset_release": null
+}
