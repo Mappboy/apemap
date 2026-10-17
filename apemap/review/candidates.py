@@ -14,6 +14,7 @@ from urllib.parse import quote
 import duckdb
 
 from apemap.constants import RAW_WIKIMEDIA_DIR
+from apemap.ingest.matching import is_home_educated
 from apemap.review.model import (
     ReviewEvent,
     accepted_education_ancestor,
@@ -227,6 +228,13 @@ def school_member_context(
                 or ("direct" if reference else "unresolved"),
             },
         )
+        if is_home_educated(name):
+            summary.update(
+                institution_ref=None,
+                relationship_type="home_educated",
+                resolution_scope="source",
+                status="accepted",
+            )
         if assertion_id and len(heads.get(assertion_id, [])) > 1:
             summary.update(
                 status="conflict",
@@ -396,6 +404,10 @@ def build_candidates(
                 by_member.get(row["member_id"], []),
             )
             result[item["candidate_id"]] = item
+        if row.get("institution_resolution") == "home_educated" or is_home_educated(
+            name
+        ):
+            continue
         school_id = school_review_id(name)
         if review_id is not None and review_id != school_id:
             continue
@@ -482,6 +494,8 @@ def build_candidates(
         for path in sorted(cache_institutions.glob("*.json")):
             cached = _cache_object(path)
             name = cached.get("raw_school_text", "")
+            if is_home_educated(name):
+                continue
             case_id = school_review_id(name) if name else ""
             if review_id is not None and case_id != review_id:
                 continue
@@ -509,6 +523,10 @@ def annotate_candidates(
     known = {item["review_id"] for item in result}
     for review_id, alternatives in heads.items():
         event = alternatives[0]
+        if event.entity_type == "school" and is_home_educated(
+            event.payload.get("recorded_name", "")
+        ):
+            continue
         if review_id not in known and (
             event.entity_type != "member" or len(alternatives) > 1
         ):
@@ -542,6 +560,12 @@ def annotate_candidates(
             if reviewed and decision
             else "pending"
         )
+        if (
+            item["entity_type"] == "member_education"
+            and is_home_educated(item["payload"].get("recorded_school_name", ""))
+            and item["status"] not in {"conflict", "rejected"}
+        ):
+            item["status"] = "accepted"
         item["conflicts"] = (
             [event.decision_id for event in alternatives]
             if len(alternatives) > 1

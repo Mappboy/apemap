@@ -40,6 +40,7 @@ from apemap.ingest.history import (
 from apemap.ingest.matching import (
     SchoolMatcher,
     extract_schools_from_bio_text,
+    is_home_educated,
     split_school_string,
     normalize_school_key,
 )
@@ -242,6 +243,40 @@ def run_aph_ingestion(
 
         # Match schools
         for cand in school_candidates:
+            digest = hashlib.sha256(normalize_school_key(cand).encode()).hexdigest()[
+                :16
+            ]
+            edu_id = f"edu-{mem.aph_id.lower()}-{digest}"
+            manual = manual_by_name.get(cand)
+            if is_home_educated(cand):
+                education_records.append(
+                    {
+                        "education_id": edu_id,
+                        "member_id": mem.member_id,
+                        "institution_id": None,
+                        "level": "secondary",
+                        "years_attended": None,
+                        "graduation_year": None,
+                        "attended_status": manual["attended_status"]
+                        if manual
+                        else "attended_unspecified",
+                        "source_url": manual["source_url"]
+                        if manual
+                        else parsed.source_url,
+                        "retrieved_at": manual["retrieved_at"]
+                        if manual
+                        else retrieval_time,
+                        "confidence": manual["confidence"] if manual else "unconfirmed",
+                        "school_name_as_recorded": cand,
+                        "institution_resolution": "home_educated",
+                        "resolution_source_url": None,
+                        "evidence_origin": "manual" if manual else "aph",
+                        "reviewer_notes": manual["reviewer_notes"]
+                        if manual
+                        else f"Parsed from APH Handbook text '{cand}'",
+                    }
+                )
+                continue
             matched = matcher.match(cand)
             inst_id = matched.institution_id
 
@@ -266,11 +301,6 @@ def run_aph_ingestion(
                 }
 
             # Create member education link
-            digest = hashlib.sha256(normalize_school_key(cand).encode()).hexdigest()[
-                :16
-            ]
-            edu_id = f"edu-{mem.aph_id.lower()}-{digest}"
-            manual = manual_by_name.get(cand)
             alias = (
                 matcher.aliases.get(cand.lower())
                 or matcher.aliases.get(normalize_school_key(cand))

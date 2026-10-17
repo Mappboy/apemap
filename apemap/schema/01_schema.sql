@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS institutions (
 CREATE TABLE IF NOT EXISTS member_education (
     education_id VARCHAR PRIMARY KEY,
     member_id VARCHAR NOT NULL REFERENCES members(member_id),
-    institution_id VARCHAR NOT NULL REFERENCES institutions(institution_id),
+    institution_id VARCHAR REFERENCES institutions(institution_id),
     level VARCHAR NOT NULL CHECK (level IN ('secondary', 'tertiary')),
     years_attended VARCHAR,
     graduation_year INTEGER,

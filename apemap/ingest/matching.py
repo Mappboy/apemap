@@ -122,6 +122,11 @@ def normalize_text(text: str) -> str:
     return text.strip()
 
 
+def is_home_educated(text: str) -> bool:
+    """Recognize the explicit APH home-education description only."""
+    return normalize_text(text).casefold() == "home educated"
+
+
 def normalize_school_key(name: str) -> str:
     """Produce a canonical lookup key for school names."""
     norm = normalize_text(name).lower()

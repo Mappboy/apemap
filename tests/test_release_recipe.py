@@ -405,6 +405,22 @@ def test_local_and_cli_recipe_replay_match_offline(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     root, recipe = recipe_fixture
+    # Exercise the nullable education contract through both strict release builds.
+    source = root / "data/raw/aph/individuals.json"
+    records = json.loads(source.read_bytes())
+    records[0]["SecondarySchool"] = "Home educated"
+    home_member_id = "aph-" + records[0]["PHID"].lower()
+    source.write_text(json.dumps(records), encoding="utf-8")
+    template = json.loads(recipe.read_bytes())
+    manifest_path = root / template["input_manifest"]
+    inventory = json.loads(manifest_path.read_bytes())
+    inventory["files"]["data/raw/aph/individuals.json"].update(
+        sha256=compute_sha256(source), size_bytes=source.stat().st_size
+    )
+    manifest_path.write_text(json.dumps(inventory), encoding="utf-8")
+    home_recipe = root / "home-recipe.json"
+    pin_recipe(recipe, home_recipe, root=root)
+    recipe = home_recipe
 
     def fixture_boundaries(*, conn: duckdb.DuckDBPyConnection, **kwargs: Any) -> None:
         # Source-native boundary readers have separate fixture coverage. Seed one
@@ -473,6 +489,17 @@ def test_local_and_cli_recipe_replay_match_offline(
     assert effective["data_release_version"] == "0.4.0-rc.1"
     assert effective["package_version"] == package_version("apemap")
     assert verify_release(ci, strict_assertions=True)["valid"]
+    with duckdb.connect() as conn:
+        assert conn.execute(
+            "SELECT institution_id, institution_resolution, recorded_school_id FROM read_parquet(?) WHERE member_id=?",
+            [str(ci / "data/member_education.parquet"), home_member_id],
+        ).fetchone() == (None, "home_educated", None)
+    assert "Home educated" in (ci / "data/member_education.csv").read_text(
+        encoding="utf-8"
+    )
+    assert "Home educated" not in (ci / "web/schools.geojson").read_text(
+        encoding="utf-8"
+    )
     for path in ci.rglob("*.json"):
         assert b"\r\n" not in path.read_bytes()
     for path in (ci / "data").glob("*.csv"):

@@ -68,6 +68,7 @@ WITH identities AS (
         r.sector AS resolved_sector,
         COALESCE(e.institution_resolution = 'successor', FALSE) AS is_successor,
         CASE
+            WHEN e.institution_resolution = 'home_educated' THEN NULL
             WHEN e.institution_resolution = 'successor' THEN
                 COALESCE(e.attended_institution_id,
                     CASE WHEN e.historical_context_scope = 'assertion'
@@ -78,6 +79,7 @@ WITH identities AS (
             ELSE e.institution_id
         END AS attended_school_id,
         CASE
+            WHEN e.institution_resolution = 'home_educated' THEN e.school_name_as_recorded
             WHEN e.institution_resolution = 'successor' THEN
                 COALESCE(a.school_name, NULLIF(TRIM(e.school_name_as_recorded), ''))
             WHEN e.institution_resolution = 'unresolved' THEN
@@ -85,6 +87,7 @@ WITH identities AS (
             ELSE r.school_name
         END AS attended_school_name,
         CASE
+            WHEN e.institution_resolution = 'home_educated' THEN 'non_institution'
             WHEN e.institution_resolution = 'successor' AND e.attended_institution_id IS NOT NULL
                 THEN 'original_verified'
             WHEN e.institution_resolution IN ('successor', 'unresolved') AND e.recorded_school_id IS NOT NULL
@@ -93,7 +96,7 @@ WITH identities AS (
             ELSE 'original_reference'
         END AS identity_basis
     FROM member_education e
-    JOIN institutions r ON e.institution_id = r.institution_id
+    LEFT JOIN institutions r ON e.institution_id = r.institution_id
     LEFT JOIN institutions a ON e.attended_institution_id = a.institution_id
 ), context_groups AS (
     SELECT *, CASE WHEN historical_context_scope = 'assertion'
@@ -311,7 +314,7 @@ SELECT
 FROM member_education me
 JOIN members m ON me.member_id = m.member_id
 JOIN parliament_service ps ON m.member_id = ps.member_id
-JOIN institutions i ON me.institution_id = i.institution_id
+LEFT JOIN institutions i ON me.institution_id = i.institution_id
 JOIN v_education_attendance_context c ON me.education_id = c.education_id
 LEFT JOIN school_snapshots ss ON i.institution_id = ss.institution_id
 LEFT JOIN school_finances_2021 sf ON i.institution_id = sf.institution_id
@@ -350,10 +353,12 @@ SELECT
     COUNT(DISTINCT ps.member_id) AS total_parliamentarians,
     COUNT(DISTINCT CASE WHEN ps.is_opening_day_member THEN ps.member_id END) AS opening_day_parliamentarians,
     COUNT(DISTINCT CASE WHEN ps.is_current_member THEN ps.member_id END) AS current_parliamentarians,
-    COUNT(DISTINCT CASE WHEN me.confidence IN ('verified', 'provisional')
+    COUNT(DISTINCT CASE WHEN me.institution_resolution = 'home_educated'
+        OR me.confidence IN ('verified', 'provisional')
         AND me.institution_resolution IS DISTINCT FROM 'unresolved' THEN me.education_id END) AS matched_education_records,
-    COUNT(DISTINCT CASE WHEN me.confidence = 'unconfirmed'
-        OR me.institution_resolution = 'unresolved' THEN me.education_id END) AS unmatched_education_records,
+    COUNT(DISTINCT CASE WHEN me.institution_resolution IS DISTINCT FROM 'home_educated'
+        AND (me.confidence = 'unconfirmed'
+        OR me.institution_resolution = 'unresolved') THEN me.education_id END) AS unmatched_education_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Government' THEN me.education_id END) AS government_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Catholic' THEN me.education_id END) AS catholic_records,
     COUNT(DISTINCT CASE WHEN c.detailed_sector = 'Independent' THEN me.education_id END) AS independent_records,
