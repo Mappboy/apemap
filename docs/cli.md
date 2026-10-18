@@ -577,6 +577,35 @@ with a JSON file or the guided school form; preview the school-wide scope before
 saving. See [Original schools and reviewed successors](successor-context.md)
 for fields, verification rules and the effect on exports and analysis.
 
+### Prepare missing-secondary-education research
+
+`research-batch prepare-missing-education` freezes an audit from the exact
+published dataset 0.7.0 and creates ordinary research-batch tasks without running
+research or changing the database, decision log or evidence store. Use the real
+populated database, historical ACARA register and an extracted published release
+containing `manifest.json` and `data/*.csv`:
+
+```powershell
+uv run apemap review --db-path data/aped-historical-v0.7.0.duckdb --external-dir data/raw/historical/acara research-batch prepare-missing-education NEW_BATCH_ID --release-dir data/processed/candidates/0.7.0-published-verify/extracted --parliament 48 --expected-count 49
+```
+
+`BATCH_ID` is required and must not already exist; replace `NEW_BATCH_ID` with a
+fresh ID. `--release-dir` is required; `--parliament` defaults to `48` and
+`--expected-count` to `49`. Preparation checks pinned manifest and CSV hashes,
+the expected audit size and agreement with the current projected missing-school
+cohort. It refuses drift rather than silently selecting a different cohort.
+For Parliament 48 the 49 audited members produce 48 research tasks and one
+reviewed home-education skip. Named but unmapped schools are outside this scope.
+
+The existing delivery is `issue-102-p48-missing-schools-audited`; open it with
+`research-batch show issue-102-p48-missing-schools-audited` or `serve`, keeping the same
+`review --db-path` and `--external-dir` options, instead of preparing it again.
+Inspect and review every proposal individually in **Research batches** before
+retention and exact-preview application. Database rebuilds and dataset
+publication remain separate. See
+[Missing secondary education in Parliament 48](guided-research-batches.md#missing-secondary-education-in-parliament-48)
+for the frozen baseline, source distinctions and review safeguards.
+
 
 ## Pinned historical release recipes
 

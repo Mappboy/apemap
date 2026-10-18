@@ -37,6 +37,63 @@ attempts are inferred. The existing guided-model attempt rules remain unchanged.
 Unresolved findings include non-institutional education and source entries that
 describe employment rather than attendance; they do not create school mappings.
 
+## Missing secondary education in Parliament 48
+
+The `issue-102-p48-missing-schools-audited` batch uses the ordinary **Research batches**
+workflow at `/research-batches/issue-102-p48-missing-schools-audited`. Its files live under
+`data/reference/review/research/issue-102-p48-missing-schools-audited/`; it is not a
+read-only saved research packet.
+
+Open the saved batch against its real historical database and register:
+
+```powershell
+uv run apemap review --db-path data/aped-historical-v0.7.0.duckdb --external-dir data/raw/historical/acara serve --port 8777
+```
+
+Keep these database and register options when using the batch CLI too.
+
+The frozen audit reproduces the opening-day cohort in the published
+[dataset 0.7.0](https://github.com/Mappboy/apemap/releases/tag/data-v0.7.0):
+226 members, of whom 177 have a recorded institutional secondary-school name.
+The other 49 are audited individually. This excludes already named but unmapped
+schools. One audited member, Jordon Steele-John, already has reviewed home
+education and is a resolved non-institutional skip, leaving 48 research tasks.
+The audit pins the published manifest and the members, parliamentary service and
+education CSV checksums; a mutable local export is not the baseline.
+
+The saved research contains 17 member proposals with attendance findings and 31
+unresolved cases (12 not-found and 19 uncertain outcomes). All are unreviewed.
+The proposed attendance has no institution targets: a sourced school name is not
+an approved ACARA or manual institution mapping. Unavailable sources and
+incomplete research remain explicit; an unresolved result is not proof that the
+member attended no secondary school.
+
+Inspect the different claims separately:
+
+- **Person identity:** confirm the APH member, exact Wikidata QID and Wikipedia
+  person article. Cached identities are leads, not newly verified evidence.
+- **Attendance:** inspect the cited underlying source for that person's explicit
+  secondary attendance and preserve the school name as recorded. A Wikipedia
+  link, tertiary qualification or electorate alone does not establish attendance.
+- **Institution identity:** independently source any proposed register match,
+  historical institution, campus or successor. Attendance evidence does not
+  establish these facts, and a matching school name is insufficient.
+
+Review each proposal and every attached source individually before retaining any
+evidence. Use **Accept**, **Reject** or **Needs further research** with inspection
+dispositions and notes; sampled member approval does not apply to this batch.
+Then retain only approved evidence, generate a fresh decision preview, inspect
+the exact new secondary assertions and any separately supported institution
+targets, and apply only that preview with its returned SHA-256. The existing
+[reviewer steps](#review-an-existing-batch-in-the-local-reviewer) and
+[CLI workflow](#cli-review-and-application) describe these operations.
+
+Preparation, research and review do not update the published dataset. Applying
+an approved preview appends decisions; rebuilding the database and derived
+exports is a separate step. Package 0.16.0 adds this workflow. A future dataset
+0.7.1 correction is contingent on individual approvals, a verified rebuild and
+the separate publication workflow; dataset 0.7.0 remains unchanged here.
+
 ## Read saved research packets
 
 The **Saved research packets** section on **Research batches** includes completed

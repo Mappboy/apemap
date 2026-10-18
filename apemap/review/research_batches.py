@@ -36,12 +36,19 @@ from apemap.review.evidence import (
 from apemap.review.model import (
     active_heads,
     ReviewEvent,
+    education_review_id,
     institution_review_id,
     school_key,
     member_value_provider,
     validate_event,
 )
 from apemap.review.manual_institutions import build_manual_institution_candidate
+from apemap.review.missing_education_results import (
+    attendance_source,
+    decision_payloads,
+    is_missing_education,
+    validate_missing_education_result,
+)
 from apemap.review.preview import apply_preview, write_preview
 from apemap.review.service import (
     ReviewService,
@@ -717,6 +724,12 @@ class ResearchBatches:
             or manifest["batch_id"] != batch_id
             or _digest(tasks) != manifest["task_sha256"]
             or any(
+                is_missing_education(task) != is_missing_education(manifest)
+                for task in tasks
+            )
+            or is_missing_education(manifest)
+            and _digest(_read(path / "audit.json")) != manifest.get("audit_sha256")
+            or any(
                 task.get("research_origin") is not None
                 and (
                     task["research_origin"] != manifest.get("origin")
@@ -906,6 +919,14 @@ class ResearchBatches:
         *,
         origin: str = "guided",
     ) -> dict[str, Any]:
+        if is_missing_education(task):
+            if kind != "schools" or origin != "agent-session":
+                raise ValueError(
+                    "Missing-school research requires agent-session school provenance"
+                )
+            proposal = validate_missing_education_result(task, raw)
+            proposal["proposal_id"] = "proposal:" + _digest(proposal)
+            return proposal
         proposal = json_value(raw)
         if (
             raw.get("outcome") not in OUTCOMES[kind]
@@ -1373,6 +1394,14 @@ class ResearchBatches:
 
     @staticmethod
     def _decision_evidence_refs(proposal: dict[str, Any]) -> list[str]:
+        if is_missing_education(proposal):
+            return sorted(
+                {
+                    ref
+                    for payload in proposal["education_proposals"]
+                    for ref in payload["evidence_refs"]
+                }
+            )
         if proposal["review_id"].startswith("education:"):
             explicit = (proposal.get("payload") or {}).get("evidence_refs")
             if explicit is not None:
@@ -1391,6 +1420,8 @@ class ResearchBatches:
     def _proposal_payload(
         state: dict[str, Any], proposal: dict[str, Any]
     ) -> dict[str, Any]:
+        if is_missing_education(proposal):
+            return {}
         if state["manifest"]["kind"] == "members":
             return {
                 "aph_id": proposal["review_id"].split(":")[1],
@@ -1497,6 +1528,51 @@ class ResearchBatches:
             if inherited:
                 continue
             proposal = proposals[pid]
+            if is_missing_education(proposal):
+                expected = {
+                    education_review_id(
+                        payload["aph_id"], payload["recorded_school_name"]
+                    ): payload
+                    for payload in decision_payloads(proposal)
+                }
+                selected = expected.get(event.review_id)
+                actual = {
+                    key: value
+                    for key, value in event.payload.items()
+                    if key
+                    not in {
+                        "purpose",
+                        "research_batch_id",
+                        "research_proposal_id",
+                        "research_approval_scope",
+                        "evidence_refs",
+                    }
+                }
+                original = next(
+                    (
+                        payload
+                        for payload in proposal["education_proposals"]
+                        if education_review_id(
+                            payload["aph_id"], payload["recorded_school_name"]
+                        )
+                        == event.review_id
+                    ),
+                    None,
+                )
+                if (
+                    selected is None
+                    or actual != selected
+                    or event.payload.get("purpose") != proposal["purpose"]
+                    or event.effective_action != "accept"
+                    or original is None
+                    or event.payload.get("evidence_refs") != original["evidence_refs"]
+                    or event.source_url != attendance_source(proposal, original)
+                ):
+                    raise ValueError(
+                        "Previously applied attendance differs from its frozen proposal"
+                    )
+                result.setdefault(pid, []).append(event.decision_id)
+                continue
             expected = self._proposal_payload(state, proposal)
             actual = {
                 key: value
@@ -1529,6 +1605,16 @@ class ResearchBatches:
                     "Previously applied research differs from its frozen proposal"
                 )
             result.setdefault(pid, []).append(event.decision_id)
+        for pid, identifiers in result.items():
+            proposal = proposals[pid]
+            if is_missing_education(proposal) and (
+                len(identifiers) != len(proposal["education_proposals"])
+                or len({by_id[identifier].review_id for identifier in identifiers})
+                != len(identifiers)
+            ):
+                raise ValueError(
+                    "Previously applied attendance is incomplete or duplicated"
+                )
         return result
 
     def record_review(
@@ -1573,6 +1659,16 @@ class ResearchBatches:
                 raise ValueError(
                     "Unresolved member proposals require further research, not acceptance"
                 )
+            if (
+                is_missing_education(proposal)
+                and action == "accept"
+                and not proposal["education_proposals"]
+            ):
+                raise ValueError(
+                    "Missing-school negatives require a research review, not attendance acceptance"
+                )
+            if is_missing_education(proposal) and supersedes:
+                raise ValueError("New attendance cannot supersede an existing decision")
             candidate = proposal.get("manual_candidate")
             if candidate:
                 if proposal_id in state["applied_proposals"]:
@@ -1748,6 +1844,25 @@ class ResearchBatches:
             if original_target:
                 refs.add(original_target)
             related = {rid, *(institution_review_id(ref) for ref in refs)}
+            if is_missing_education(proposal):
+                for payload in proposal["education_proposals"]:
+                    related.add(
+                        education_review_id(
+                            payload["aph_id"], payload["recorded_school_name"]
+                        )
+                    )
+                    related.add(
+                        "school:"
+                        + education_review_id(
+                            payload["aph_id"], payload["recorded_school_name"]
+                        ).rsplit(":", 1)[-1]
+                    )
+                    if payload.get("institution_ref"):
+                        related.add(institution_review_id(payload["institution_ref"]))
+                    if payload.get("attended_institution_ref"):
+                        related.add(
+                            institution_review_id(payload["attended_institution_ref"])
+                        )
             if rid.startswith("education:"):
                 related.add("school:" + rid.rsplit(":", 1)[-1])
             for key in original.keys() | current.keys():
@@ -1757,7 +1872,13 @@ class ResearchBatches:
                     and parts[1] in aph_ids
                     and (
                         parts[0] == "service"
-                        or (parts[0] == "member" and parts[-1] == "date_of_birth")
+                        or (
+                            parts[0] == "member"
+                            and (
+                                parts[-1] == "date_of_birth"
+                                or is_missing_education(proposal)
+                            )
+                        )
                     )
                 ):
                     related.add(key)
@@ -1780,6 +1901,47 @@ class ResearchBatches:
                 raise StaleReviewError(
                     "Related decisions changed since research; inspect a new batch"
                 )
+        missing = [
+            proposal for proposal, _ in selected if is_missing_education(proposal)
+        ]
+        if missing:
+            from apemap.review.integration import project_review_records
+
+            if not self.service.db_path.exists():
+                raise StaleReviewError(
+                    "Missing-school research requires its source database"
+                )
+            current_events = self.service.events(allow_conflicts=True)
+            with get_connection(self.service.db_path, read_only=True) as conn:
+                records = project_review_records(
+                    conn,
+                    current_events,
+                    matcher=self.service.matcher(),
+                    evidence_records=self.service.evidence_records(current_events),
+                )
+            members = {
+                str(row.get("aph_id", "")).lower(): row for row in records["members"]
+            }
+            for proposal in missing:
+                aph_id = proposal["review_id"].split(":")[1]
+                member = members.get(aph_id)
+                if member is None or any(
+                    row["member_id"] == member["member_id"]
+                    and row.get("level") == "secondary"
+                    for row in records["member_education"]
+                ):
+                    raise StaleReviewError(
+                        "The member no longer has missing secondary education"
+                    )
+                for payload in proposal["education_proposals"]:
+                    if current.get(
+                        education_review_id(
+                            payload["aph_id"], payload["recorded_school_name"]
+                        )
+                    ):
+                        raise StaleReviewError(
+                            "New attendance already has a retained decision"
+                        )
 
     def _saved_batch_definition(
         self, state: dict[str, Any], definition: dict[str, Any]
@@ -1827,6 +1989,16 @@ class ResearchBatches:
         if not service.db_path.exists():
             raise ValueError("Revalidation requires the original local database")
         with get_connection(service.db_path, read_only=True) as conn:
+            projected = None
+            if any(is_missing_education(task) for task in tasks):
+                from apemap.review.integration import project_review_records
+
+                projected = project_review_records(
+                    conn,
+                    events,
+                    matcher=service.matcher(),
+                    evidence_records=service.evidence_records(events),
+                )
             local = {
                 table: _rows(conn, table)
                 for table in (
@@ -1839,6 +2011,7 @@ class ResearchBatches:
             candidates = [
                 item
                 for task in tasks
+                if not is_missing_education(task)
                 for item in annotate_candidates(
                     build_candidates(
                         conn,
@@ -1856,6 +2029,45 @@ class ResearchBatches:
         contexts = {}
         for task in tasks:
             rid = task["review_id"]
+            if is_missing_education(task):
+                assert projected is not None
+                parliament = int(task["context"]["parliament"])
+                member = next(
+                    (
+                        row
+                        for row in projected["members"]
+                        if str(row.get("aph_id", "")).lower() == rid.split(":")[1]
+                    ),
+                    None,
+                )
+                if member is None:
+                    raise StaleReviewError("The researched member is no longer present")
+                services = [
+                    row
+                    for row in projected["parliament_service"]
+                    if row["member_id"] == member["member_id"]
+                    and int(row["parliament_number"]) == parliament
+                    and str(row.get("is_opening_day_member")).casefold() == "true"
+                ]
+                if not services or any(
+                    row["member_id"] == member["member_id"]
+                    and row.get("level") == "secondary"
+                    for row in projected["member_education"]
+                ):
+                    raise StaleReviewError(
+                        "The researched member no longer has missing secondary education in the opening cohort"
+                    )
+                contexts[rid] = json_value(
+                    {
+                        "review_id": rid,
+                        "member": member,
+                        "services": services,
+                        "assertion": {"recorded_school_name": ""},
+                        "projected_education": [],
+                        "parliament": parliament,
+                    }
+                )
+                continue
             if not grouped.get(rid):
                 raise StaleReviewError(
                     "Research assertion is no longer present in the current queue"
@@ -1897,9 +2109,53 @@ class ResearchBatches:
             ]
 
         result: dict[str, Any] = {}
+        if context.get("review_id", "").endswith(":missing"):
+            member = context.get("member", {})
+            result["member"] = {
+                key: member.get(key)
+                for key in (
+                    "member_id",
+                    "aph_id",
+                    "display_name",
+                    "given_name",
+                    "family_name",
+                    "gender",
+                    "date_of_birth",
+                    "wikidata_id",
+                )
+            }
+            result["member"]["aliases"] = member.get("aliases", [])
+            rows = context.get("services", [])
+            result["services"] = [
+                {
+                    **row,
+                    "parliament_number": int(original["parliament_number"]),
+                    "is_opening_day_member": str(
+                        original.get("is_opening_day_member")
+                    ).casefold()
+                    == "true",
+                    "is_current_member": str(
+                        original.get("is_current_member")
+                    ).casefold()
+                    == "true",
+                    "source_service_start": original.get("source_service_start"),
+                    "source_service_end": original.get("source_service_end"),
+                }
+                for row, original in zip(services(rows), rows, strict=True)
+            ]
+            result["assertion"] = context.get("assertion")
+            result["projected_education"] = context.get("projected_education", [])
+            result["parliament"] = int(context["parliament"])
+            return normalize(result)
         if context.get("review_id", "").startswith("education:"):
             return normalize(
-                {key: context.get(key) for key in ("member", "assertion", "assertions")}
+                {
+                    **{
+                        key: context.get(key)
+                        for key in ("member", "assertion", "assertions")
+                    },
+                    "services": services(context.get("services", [])),
+                }
             )
         if "member" in context:
             member = context["member"]
@@ -1980,8 +2236,13 @@ class ResearchBatches:
         references = {
             reference
             for proposal, _ in selected
+            for payload in (
+                proposal["education_proposals"]
+                if is_missing_education(proposal)
+                else [self._proposal_payload(state, proposal)]
+            )
             for field in ("institution_ref", "attended_institution_ref")
-            if (reference := self._proposal_payload(state, proposal).get(field))
+            if (reference := payload.get(field))
         }
         for reference in sorted(references):
             old, new = (
@@ -2096,7 +2357,9 @@ class ResearchBatches:
             review_id = proposal["review_id"]
             reviewed = state["reviews"].get(proposal["proposal_id"], {})
             parents = reviewed.get("supersedes", [])
-            if set(parents) != {e.decision_id for e in heads.get(review_id, [])}:
+            if not is_missing_education(proposal) and set(parents) != {
+                e.decision_id for e in heads.get(review_id, [])
+            }:
                 raise ValueError(
                     "Prior manual decisions require explicit individual supersession"
                 )
@@ -2154,6 +2417,31 @@ class ResearchBatches:
                     )
                 )
                 pending_definitions.pop(definition["institution_ref"])
+            if is_missing_education(proposal):
+                if parents:
+                    raise ValueError(
+                        "New attendance cannot supersede an existing decision"
+                    )
+                for attendance in proposal["education_proposals"]:
+                    payload = {
+                        **attendance,
+                        **metadata,
+                        "purpose": proposal["purpose"],
+                        "evidence_refs": attendance["evidence_refs"],
+                    }
+                    events.append(
+                        build_review_event(
+                            education_review_id(
+                                attendance["aph_id"], attendance["recorded_school_name"]
+                            ),
+                            "accept",
+                            payload,
+                            source_url=attendance_source(proposal, attendance),
+                            reviewer=reviewer or reviewed.get("reviewer"),
+                            notes=proposal["reasoning"],
+                        )
+                    )
+                continue
             if manifest["kind"] == "members":
                 if proposal["outcome"] != "matched":
                     raise ValueError(
@@ -2456,6 +2744,9 @@ class ResearchBatches:
             raise StaleReviewError(
                 "Original research sources changed; use an explicit revalidation preview"
             )
+        if is_missing_education(state["manifest"]):
+            self._validate_missing_education_preview(state, preview, selected)
+            return
         decisions = [
             e for e in preview["events"] if e["entity_type"] != "manual_institution"
         ]
@@ -2536,3 +2827,83 @@ class ResearchBatches:
                     raise ValueError(
                         "Preview school mapping differs from the reviewed proposal"
                     )
+
+    def _validate_missing_education_preview(
+        self,
+        state: dict[str, Any],
+        preview: dict[str, Any],
+        selected: list[tuple[dict[str, Any], str]],
+    ) -> None:
+        expected: list[dict[str, Any]] = []
+        pending = {
+            definition["institution_ref"]: definition
+            for definition in self._manual_definitions(state, selected)
+        }
+        for proposal, scope in selected:
+            if state["reviews"].get(proposal["proposal_id"], {}).get("supersedes"):
+                raise ValueError("New attendance cannot supersede an existing decision")
+            for definition in proposal["manual_institutions"]:
+                if definition["institution_ref"] not in pending:
+                    continue
+                refs = {
+                    ref
+                    for references in definition[
+                        "institution_fact_evidence_refs"
+                    ].values()
+                    for ref in references
+                }
+                source = next(
+                    record["source_url"]
+                    for record in proposal["evidence"]
+                    if record["evidence_id"] in refs
+                )
+                expected.append(
+                    {
+                        "entity_type": "manual_institution",
+                        "review_id": institution_review_id(
+                            definition["institution_ref"]
+                        ),
+                        "action": "accept",
+                        "payload": definition,
+                        "source_url": source,
+                        "supersedes": [],
+                    }
+                )
+                pending.pop(definition["institution_ref"])
+            for attendance in proposal["education_proposals"]:
+                expected.append(
+                    {
+                        "entity_type": "member_education",
+                        "review_id": education_review_id(
+                            attendance["aph_id"], attendance["recorded_school_name"]
+                        ),
+                        "action": "accept",
+                        "payload": {
+                            **attendance,
+                            "purpose": proposal["purpose"],
+                            "research_batch_id": state["manifest"]["batch_id"],
+                            "research_proposal_id": proposal["proposal_id"],
+                            "research_approval_scope": scope,
+                        },
+                        "source_url": attendance_source(proposal, attendance),
+                        "supersedes": [],
+                    }
+                )
+        actual = [
+            {
+                key: event.get(key)
+                for key in (
+                    "entity_type",
+                    "review_id",
+                    "action",
+                    "payload",
+                    "source_url",
+                    "supersedes",
+                )
+            }
+            for event in preview["events"]
+        ]
+        if actual != expected:
+            raise ValueError(
+                "Preview does not contain exactly the approved attendance proposals"
+            )
