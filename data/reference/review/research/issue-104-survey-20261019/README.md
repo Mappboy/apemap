@@ -16,17 +16,21 @@ retention, with an explicit inspector, while hiding decision controls.
 
 ## Approval status
 
-All 29 proposed source records (27 survey claims and two contextual histories)
-have been inspected, but remain **unretained pending the user's explicit
-approval**. There are zero recorded source approvals and no evidence append.
-Auto-review blocked the retention attempt because the earlier review boundary
-requires user acceptance; agent source inspection is not that acceptance.
+The user explicitly approved the exact source-only preview on **19 October
+2026**. All **29 records are retained**: 27 survey claims approved individually
+through the normal batch review API, plus two separately previewed contextual
+histories. Source inspection is attributed to `Codex source inspection (issue
+104)`; the user's approval is recorded separately, without impersonating them.
 
-`evidence-preview.json` records the exact proposed append, with SHA-256
+`evidence-preview.json` records the exact approved append, with SHA-256
 `05905d917892a93dead2a6d4bb3ce251fdc235503c5a857cfd1e01ddb16766c3`.
-Approval of these source records would not approve attendance or mappings.
-Issue 104's retained-evidence acceptance criterion remains pending until the
-approved records are retained and the receipt and ledger checks pass.
+`retention.json` records the explicit approval, retained IDs, before/after ledger
+hashes and separate history-source inspections. The original ledger is an exact
+byte prefix; exactly 29 records were appended. The earlier blocked attempt made
+no changes and was retried only after the user's approval.
+
+There are **zero attendance or mapping decisions applied**. Source approval does
+not approve attendance, aliases, mappings, dates, sectors or geographic claims.
 
 ## Results
 
@@ -100,18 +104,18 @@ source access failures/successes, and delegated access-accounting limits. Exact
 model/token provenance is unavailable and remains null. `baseline.json` pins the
 preparation inputs and unchanged database/decision ledger. `verify.py` checks
 regeneration, native proposal equality, immutable IDs, source dates, primary and
-tertiary exclusions, prior-research overlaps and zero canonical changes. If
-retention is performed, its separate receipt must prove append-only evidence,
-explicit per-source inspection and the retained IDs; it does not authorize a
+tertiary exclusions, prior-research overlaps and zero canonical changes. The
+retention receipt proves explicit user approval, append-only evidence,
+per-source inspection and the exact 29 retained IDs; it does not authorize a
 decision preview.
 
 ## Evidence versus decisions
 
 Inspect each source and claim before recording a source review and retaining
 approved evidence. Approving a source in this batch is **not** approval of a new
-attendance, name alias or mapping. The additional two history sources require
-their own source inspection and normal evidence previews/retention. No reviewer
-is inferred from Git identity or impersonated.
+attendance, name alias or mapping. The additional two history sources were
+separately inspected, previewed and retained through the normal evidence APIs.
+No reviewer is inferred from Git identity or impersonated.
 
 New attendance/mapping work requires a separate reviewed decision workflow and
 an inspectable exact preview. In particular, a generic no-target education accept

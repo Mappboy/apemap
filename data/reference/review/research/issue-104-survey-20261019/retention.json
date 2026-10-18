@@ -1,0 +1,71 @@
+{
+  "after_sha256": "50e7e9f5f8b9c13de7306fba1e4509750ed62defe24c64e0b62cfbcb26ecc1c7",
+  "approval_sha256": "05905d917892a93dead2a6d4bb3ce251fdc235503c5a857cfd1e01ddb16766c3",
+  "attendance_decisions_applied": 0,
+  "batch_id": "issue-104-survey-20261019",
+  "before_bytes": 262952,
+  "before_sha256": "d69d74407e4157eef48b9981c143937f4d928d964f8527bae92e536e55bb7d60",
+  "db_sha256": "9568bbc44e929ce836784efd5fa220f3e4beac64fdec03b7c5073a827be91f82",
+  "decision_revision": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+  "mapping_decisions_applied": 0,
+  "new_evidence_records": 29,
+  "retained_at": "2026-10-18T22:27:16.725410+00:00",
+  "retained_evidence_ids": [
+    "evidence:6baac34943104c4e6a214bbbff7465e4ed3dc037f2c9295a454e3b0208165471",
+    "evidence:7b570a0c668ebf9e7d12c50ea7a3ba6732e4791179a745fa87b9efc3a69eb5bc",
+    "evidence:bc8255aa27f55259bbb57b133fc38a2e0ebaa020e65aaf08f1d46cefa0594ea6",
+    "evidence:c97b3176af2599aa8a78146db5d09e31224fcee2710d6e091496cd6faa72c398",
+    "evidence:0fc259007504cadbe0072a657a3876e7ed02fcd58c692db390af6a56a2b2bf8b",
+    "evidence:9ae3d9b503a5a9df2dfb8743d0b6928faa4a6f57a58bfee897d219c510f23172",
+    "evidence:cb00d68e118b48a1a19bf8e831b7d99bf3f9c7b273ff43d02059981984b48a60",
+    "evidence:c9e0ed28fad5ee3c3569ed2415f24bf9210bf08f868b5ce7b62c9ed4226af56d",
+    "evidence:c08859937709117ddcbfe777393fd3ce8eacf758b108a1cd1f4a5258a42d25ef",
+    "evidence:e29ff959a5abdcc132946dadb5c4b85e29aa9f4083e121599cdbdce6147aba46",
+    "evidence:a90e8343669cc3e0e9c1fa6ab9721459ab3a2f9af7858dc7107a8db3fea84031",
+    "evidence:05103fa3f87760941af666908cbaaa83ab6b4d80dc5591c4e6e729908457bfbe",
+    "evidence:dc4453f3e204af16d39204103ffc4eec748f207b04e9ad8275786b3b5935aaf9",
+    "evidence:e73a2717a37e6efbcc8433e96dd59618755542e6f7153609a722b25f6ae8d8d2",
+    "evidence:945cd1d0d94d34a004cd72ee9539174f1def9166cc75f433eedc8b1ec9ef4c2f",
+    "evidence:4fdb92355a115a3289aa604b92141ddd8b9bad1045ee9c68907ed03cfa3dc049",
+    "evidence:948dd13e52267287d3f28a84dd20595ae5e6bbb0b35d57081eb765377561c27f",
+    "evidence:7631d15c6230f2ffdc71d64c49ebf01503e23ab4b1f48d7af05944ead7e39809",
+    "evidence:437dc3d03510a633b83f3bae8d3f37aafc5c97600c8f0c3aec4be18f639f8d38",
+    "evidence:81ae4d8ecc3f3fcb85c3130833df1a3e9344f5590980f92ec36829b70a6121f4",
+    "evidence:70c37a8137f59ed0392c10edb8bc981f834138b43083004a0b88d4fe0e11deea",
+    "evidence:ea1e8098a6ded054ac05b1f37e5497de2d27e3d278f41f9cd7feba8737fa19b5",
+    "evidence:90114cca9d765dbaf7876985e082729546bd91998dc5c60ce58bc6708dacbb39",
+    "evidence:f0c0a68b76c751b90c5932d312f132da1b47794e9f70afc322b95003bea481da",
+    "evidence:cd9c765e14d7d1f4e53db4dbfb76ad6289f213346348d032867e0bc0da2718b1",
+    "evidence:519122ab124ed117eb37bbc6eb63d8d9a41b37bf9d8c5693018fd84581c18549",
+    "evidence:d44023ce495498e1c3fbebb219af54289f41b4ed42d3271aaf561122bb99ede8",
+    "evidence:96d061fd6e9e6256f19e00a1e83df244267f698c7546e00d0dfe25f307768dfd",
+    "evidence:f0165abb9b8f88e0e057c1de706fecbb6cf6f19f8d780c95804f3a46225d55c6"
+  ],
+  "reviewer": "Codex source inspection (issue 104)",
+  "separate_history_source_inspections": [
+    {
+      "disposition": "contextual",
+      "evidence_id": "evidence:96d061fd6e9e6256f19e00a1e83df244267f698c7546e00d0dfe25f307768dfd",
+      "note": "School-owned relocation history inspected; no member attendance dates, current-campus attendance or institution mapping inferred.",
+      "reviewed_at": "2026-10-18T22:27:10.143106+00:00",
+      "reviewer": "Codex source inspection (issue 104)",
+      "source_url": "https://www.sacredheart.wa.edu.au/about-us/our-history"
+    },
+    {
+      "disposition": "contextual",
+      "evidence_id": "evidence:f0165abb9b8f88e0e057c1de706fecbb6cf6f19f8d780c95804f3a46225d55c6",
+      "note": "School-owned relocation history inspected; no member attendance dates, current-campus attendance or institution mapping inferred.",
+      "reviewed_at": "2026-10-18T22:27:16.410944+00:00",
+      "reviewer": "Codex source inspection (issue 104)",
+      "source_url": "https://shpsh.wa.edu.au/school-profile/"
+    }
+  ],
+  "survey_source_reviews": 27,
+  "user_approval": {
+    "approved_preview_sha256": "05905d917892a93dead2a6d4bb3ce251fdc235503c5a857cfd1e01ddb16766c3",
+    "recorded_at": "2026-10-18T22:27:16.725410+00:00",
+    "response": "Approve these 29 evidence records",
+    "scope": "Retain inspected evidence only; no attendance or mapping decisions",
+    "source": "Explicit user reply in the Codex conversation"
+  }
+}

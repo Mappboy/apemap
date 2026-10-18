@@ -125,8 +125,19 @@ def verify(service: ReviewService) -> dict[str, Any]:
             hashlib.sha256((ROOT / "evidence-preview.json").read_bytes()).hexdigest()
             == receipt["approval_sha256"]
         )
+        approval = receipt["user_approval"]
+        assert approval["approved_preview_sha256"] == receipt["approval_sha256"]
+        assert approval["response"] == "Approve these 29 evidence records"
+        assert approval["scope"] == (
+            "Retain inspected evidence only; no attendance or mapping decisions"
+        )
         expected_ids = {record.evidence_id for record in records + history_records}
         assert len(expected_ids) == 29
+        appended = [
+            json.loads(line) for line in raw[receipt["before_bytes"] :].splitlines()
+        ]
+        assert len(appended) == 29
+        assert {record["evidence_id"] for record in appended} == expected_ids
         assert set(receipt["retained_evidence_ids"]) == expected_ids
         assert {record["evidence_id"] for record in approved["records"]} == expected_ids
         assert receipt["new_evidence_records"] == 29
