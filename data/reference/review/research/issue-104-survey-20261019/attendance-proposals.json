@@ -1,0 +1,57 @@
+[
+  {
+    "aph_id": "312823",
+    "attended_status": "attended_unspecified",
+    "confidence": "verified",
+    "evidence_refs": [
+      "evidence:dc4453f3e204af16d39204103ffc4eec748f207b04e9ad8275786b3b5935aaf9"
+    ],
+    "level": "secondary",
+    "recorded_school_name": "Brisbane State High School",
+    "retrieved_at": "2026-10-18T21:19:23Z"
+  },
+  {
+    "aph_id": "270198",
+    "attended_status": "attended_unspecified",
+    "confidence": "verified",
+    "evidence_refs": [
+      "evidence:0fc259007504cadbe0072a657a3876e7ed02fcd58c692db390af6a56a2b2bf8b"
+    ],
+    "level": "secondary",
+    "recorded_school_name": "Benowa State High",
+    "retrieved_at": "2026-10-18T21:19:23Z"
+  },
+  {
+    "aph_id": "270198",
+    "attended_status": "attended_unspecified",
+    "confidence": "verified",
+    "evidence_refs": [
+      "evidence:9ae3d9b503a5a9df2dfb8743d0b6928faa4a6f57a58bfee897d219c510f23172"
+    ],
+    "level": "secondary",
+    "recorded_school_name": "St Michael’s College",
+    "retrieved_at": "2026-10-18T21:19:23Z"
+  },
+  {
+    "aph_id": "315154",
+    "attended_status": "attended_unspecified",
+    "confidence": "verified",
+    "evidence_refs": [
+      "evidence:945cd1d0d94d34a004cd72ee9539174f1def9166cc75f433eedc8b1ec9ef4c2f"
+    ],
+    "level": "secondary",
+    "recorded_school_name": "Mount Waverley Secondary College",
+    "retrieved_at": "2026-10-18T21:19:23Z"
+  },
+  {
+    "aph_id": "88411",
+    "attended_status": "attended_unspecified",
+    "confidence": "verified",
+    "evidence_refs": [
+      "evidence:d44023ce495498e1c3fbebb219af54289f41b4ed42d3271aaf561122bb99ede8"
+    ],
+    "level": "secondary",
+    "recorded_school_name": "Willyama High School",
+    "retrieved_at": "2026-10-18T21:19:23Z"
+  }
+]

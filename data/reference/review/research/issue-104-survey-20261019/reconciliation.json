@@ -1,0 +1,1572 @@
+{
+  "respondents": [
+    {
+      "claims": [
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "name": "Hurstville Public School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "possible_name_variant_identity_review",
+          "current_assertions": [],
+          "level": "unspecified",
+          "name": "Danebank Anglican School for Girls",
+          "possible_existing_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-315618-0735c06bd9833c4d",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-43914",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-315618",
+              "recorded_school_id": "school:0735c06bd9833c4d",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Danebank Anglican Girls School'; matched status: provisional; Fuzzy token-match score 100.0 against 'Danebank - An Anglican School for Girls'",
+              "school_name_as_recorded": "Danebank Anglican Girls School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '315618'",
+              "years_attended": null
+            }
+          ],
+          "possible_existing_name": "Danebank Anglican Girls School",
+          "proposed_institution_ref": null,
+          "research": "Verify the reported and recorded name variants independently; do not create a duplicate attendance or silently add an alias."
+        }
+      ],
+      "member": {
+        "aph_id": "315618",
+        "display_name": "AMBIHAIPAHAR, Ashvini (Ash)",
+        "member_id": "aph-315618",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Barton",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-315618",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-315618-48-508aaa75d1b8d40d",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '315618'",
+            "state_or_territory": "NSW"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "315618",
+        "electorate_as_reported": "Barton",
+        "institution_names_as_reported": [
+          "Hurstville Public School",
+          "Danebank Anglican School for Girls"
+        ],
+        "locator": "Ash Ambihaipahar profile / School field",
+        "name": "Ash Ambihaipahar",
+        "response_kind": "named",
+        "school_response_sha256": "778e493c4a197a66ce414634c574fb4735cca52c10eb8d11281b53e2e1ab8c41"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "locality": "Strathfield, NSW",
+          "name": "Santa Sabina College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Named attendance is self-reported; secondary stage remains unverified."
+        }
+      ],
+      "member": {
+        "aph_id": "290544",
+        "display_name": "ANANDA-RAJAH, Dr Michelle",
+        "member_id": "aph-290544",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-290544",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-290544-48-7939b7cc5a834928",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-07-01",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '290544'",
+            "state_or_territory": "VIC"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "290544",
+        "electorate_as_reported": "Senator for Victoria",
+        "institution_names_as_reported": [
+          "Santa Sabina College"
+        ],
+        "locator": "Michelle Ananda-Rajah profile / School field",
+        "name": "Michelle Ananda-Rajah",
+        "response_kind": "named",
+        "school_response_sha256": "dde11a3c5be7bc24ec3a3dfb1c2b417f1cb5e5b356d42d23bc5f16786b36b209"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "locality": "Brisbane",
+          "name": "All Hallows’ School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Named attendance is self-reported; secondary stage remains unverified."
+        }
+      ],
+      "member": {
+        "aph_id": "263427",
+        "display_name": "BRISKEY, Jo",
+        "member_id": "aph-263427",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Maribyrnong",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-263427",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-263427-48-779df85ba874d9bb",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '263427'",
+            "state_or_territory": "VIC"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "263427",
+        "electorate_as_reported": "Maribyrnong",
+        "institution_names_as_reported": [
+          "All Hallows’ School"
+        ],
+        "locator": "Jo Briskey profile / School field",
+        "name": "Jo Briskey",
+        "response_kind": "named",
+        "school_response_sha256": "b07535387d757b5c0918530bf2821fba0a8478dcc8362047a1c03c8ac21002c0"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "missing_secondary_attendance_proposed",
+          "current_assertions": [],
+          "level": "secondary",
+          "name": "Brisbane State High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "312823",
+        "display_name": "CAMPBELL, Julie-Ann",
+        "member_id": "aph-312823",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Moreton",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-312823",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-312823-48-634e769c67a6b199",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '312823'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "312823",
+        "electorate_as_reported": "Moreton",
+        "institution_names_as_reported": [
+          "Brisbane State High School"
+        ],
+        "locator": "Julie-Ann Campbell profile / School field",
+        "name": "Julie-Ann Campbell",
+        "response_kind": "named",
+        "school_response_sha256": "7ad51fdc124012d17c7bbf6c4d386aa1e84a92113906d679ccb231e64ea74abe"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "completion_as_reported": "finished Year 12; no certificate or graduation year supplied",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316101-a988d27d80d6c9c4",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-49487",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-316101",
+              "recorded_school_id": "school:a988d27d80d6c9c4",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Henley High School'; matched status: verified",
+              "school_name_as_recorded": "Henley High School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316101'",
+              "years_attended": null
+            }
+          ],
+          "grade_levels": [
+            12
+          ],
+          "level": "secondary",
+          "name": "Henley High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "316101",
+        "display_name": "CLUTTERHAM, Claire Louise",
+        "member_id": "aph-316101",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Sturt",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-316101",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-316101-48-729861cd8af8e5e6",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316101'",
+            "state_or_territory": "SA"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [
+        {
+          "attended_identity_source_url": null,
+          "attended_institution_id": null,
+          "attended_status": "attended_unspecified",
+          "campus_continuity": null,
+          "campus_continuity_source_url": null,
+          "confidence": "verified",
+          "education_id": "edu-316101-25c5a9844fb7ce07",
+          "evidence_origin": "aph",
+          "graduation_year": null,
+          "historical_broad_sector": null,
+          "historical_broad_sector_source_url": null,
+          "historical_context_scope": "school",
+          "historical_detailed_sector": null,
+          "historical_detailed_sector_source_url": null,
+          "historical_latitude": null,
+          "historical_location_source_url": null,
+          "historical_longitude": null,
+          "historical_scope_confirmed": null,
+          "institution_id": "acara-49477",
+          "institution_resolution": "direct",
+          "level": "secondary",
+          "member_id": "aph-316101",
+          "recorded_school_id": "school:25c5a9844fb7ce07",
+          "resolution_source_url": "",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "reviewer_notes": "Parsed from APH Handbook text 'Renmark High School'; matched status: verified",
+          "school_name_as_recorded": "Renmark High School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316101'",
+          "years_attended": null
+        },
+        {
+          "attended_identity_source_url": null,
+          "attended_institution_id": null,
+          "attended_status": "attended_unspecified",
+          "campus_continuity": null,
+          "campus_continuity_source_url": null,
+          "confidence": "unconfirmed",
+          "education_id": "edu-316101-ad25b4e891c34c53",
+          "evidence_origin": "aph",
+          "graduation_year": null,
+          "historical_broad_sector": null,
+          "historical_broad_sector_source_url": null,
+          "historical_context_scope": "assertion",
+          "historical_detailed_sector": null,
+          "historical_detailed_sector_source_url": null,
+          "historical_latitude": null,
+          "historical_location_source_url": null,
+          "historical_longitude": null,
+          "historical_scope_confirmed": null,
+          "institution_id": "acara-49716",
+          "institution_resolution": "direct",
+          "level": "secondary",
+          "member_id": "aph-316101",
+          "recorded_school_id": "school:ad25b4e891c34c53",
+          "resolution_source_url": "https://en.wikipedia.org/wiki/St_Mary%27s_College,_Adelaide",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "reviewer_notes": "Parsed from APH Handbook text 'St Mary's College'; matched status: unconfirmed; Historical name maps to several ACARA identifiers; manual review required",
+          "school_name_as_recorded": "St Mary's College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316101'",
+          "years_attended": null
+        }
+      ],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "316101",
+        "electorate_as_reported": "Sturt",
+        "institution_names_as_reported": [
+          "Henley High School"
+        ],
+        "locator": "Claire Clutterham profile / School field",
+        "name": "Claire Clutterham",
+        "response_kind": "named",
+        "school_response_sha256": "278aa5e2a3f97577a59fe527ad2289448f4edb2f239e7531ac2e93c2504750b0"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "possible_name_variant_identity_review",
+          "current_assertions": [],
+          "level": "unspecified",
+          "locality": "Yeppoon, Queensland",
+          "name": "St Ursula’s College",
+          "possible_existing_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316537-40ad58d802098d20",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-47906",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-316537",
+              "recorded_school_id": "school:40ad58d802098d20",
+              "resolution_source_url": "https://schoolsdirectory.eq.edu.au/Details/5419",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'St Ursula's College, Yeppoon'; matched status: unconfirmed",
+              "school_name_as_recorded": "St Ursula's College, Yeppoon",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316537'",
+              "years_attended": null
+            }
+          ],
+          "possible_existing_name": "St Ursula's College, Yeppoon",
+          "proposed_institution_ref": null,
+          "research": "Compare locality-qualified recorded text with the survey name; no automatic alias or mapping."
+        }
+      ],
+      "member": {
+        "aph_id": "316537",
+        "display_name": "COOK, Kara",
+        "member_id": "aph-316537",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Bonner",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-316537",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-316537-48-ac3f8e05d484002c",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316537'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "316537",
+        "electorate_as_reported": "Bonner",
+        "institution_names_as_reported": [
+          "St Ursula’s College"
+        ],
+        "locator": "Kara Cook profile / School field",
+        "name": "Kara Cook",
+        "response_kind": "named",
+        "school_response_sha256": "6f9b84e19a8034c3caad38c92edcf53e54f271c4aa5df9bc67703d23d2a9f0a1"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "existing_attendance_mapping_history_review",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-312871-815a742d88971128",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-48917",
+              "institution_resolution": "rename",
+              "level": "secondary",
+              "member_id": "aph-312871",
+              "recorded_school_id": "school:815a742d88971128",
+              "resolution_source_url": "https://en.wikipedia.org/wiki/Sacred_Heart_College,_Sorrento",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Sacred Heart High School'; matched status: unconfirmed",
+              "school_name_as_recorded": "Sacred Heart High School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '312871'",
+              "years_attended": null
+            }
+          ],
+          "level": "secondary",
+          "locality": "Highgate, WA",
+          "mapping_history_review": true,
+          "name": "Sacred Heart High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Existing rename mapping points to Sorrento. Independent school histories describe relocation from Highgate, not evidence that Trish attended the Sorrento campus. Preserve the current decision and investigate attendance-era geography/relationship separately."
+        },
+        {
+          "classification": "tertiary_not_school",
+          "current_assertions": [],
+          "level": "tertiary",
+          "name": "Edith Cowan University",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "tertiary_not_school",
+          "current_assertions": [],
+          "level": "tertiary",
+          "name": "Curtin University",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "312871",
+        "display_name": "COOK, Dr Patricia (Trish)",
+        "member_id": "aph-312871",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Bullwinkel",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-312871",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-312871-48-f6b529831f3ceeb0",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '312871'",
+            "state_or_territory": "WA"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "312871",
+        "electorate_as_reported": "Bullwinkel",
+        "institution_names_as_reported": [
+          "Sacred Heart High School",
+          "Edith Cowan University",
+          "Curtin University"
+        ],
+        "locator": "Trish Cook profile / School field",
+        "name": "Trish Cook",
+        "response_kind": "named",
+        "school_response_sha256": "cc6d887a8c7be4be07e47de3f17286c904e9da355d9bbe758af0c44941c3b4fe"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-55842-2cf16f761b9398ff",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-40445",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-55842",
+              "recorded_school_id": "school:2cf16f761b9398ff",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Rosny College'; matched status: verified",
+              "school_name_as_recorded": "Rosny College",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '55842'",
+              "years_attended": null
+            }
+          ],
+          "level": "unspecified",
+          "name": "Rosny College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "unconfirmed",
+              "education_id": "edu-55842-0cd5c91f4fa92a27",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "manual:geilston-bay-high-school",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-55842",
+              "recorded_school_id": "school:0cd5c91f4fa92a27",
+              "resolution_source_url": "https://en.wikipedia.org/w/api.php?action=query&titles=Geilston+Bay+High+School&prop=pageprops%7Ccoordinates&ppprop=wikibase_item&redirects=1&format=json",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Geilston Bay High School'; matched status: unconfirmed",
+              "school_name_as_recorded": "Geilston Bay High School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '55842'",
+              "years_attended": null
+            }
+          ],
+          "level": "secondary",
+          "name": "Geilston Bay High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "primary_evidence_only_contract_limit",
+          "current_assertions": [],
+          "level": "primary",
+          "name": "Lindisfarne North Primary School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "55842",
+        "display_name": "DOWLING, Richard",
+        "member_id": "aph-55842",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-55842",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-55842-48-8ef7ac9c93a504bd",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-07-01",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '55842'",
+            "state_or_territory": "TAS"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "55842",
+        "electorate_as_reported": "Tasmania (Senate)",
+        "institution_names_as_reported": [
+          "Rosny College",
+          "Geilston Bay High School",
+          "Lindisfarne North Primary School"
+        ],
+        "locator": "Richard Dowling profile / School field",
+        "name": "Richard Dowling",
+        "response_kind": "named",
+        "school_response_sha256": "68da3d818556822827733a3db58f26c6f3cbe60a81026c8ceb87f4a7ee694b54"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "primary_evidence_only_contract_limit",
+          "current_assertions": [],
+          "level": "primary",
+          "name": "St Kevin’s Primary School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "missing_secondary_attendance_proposed",
+          "current_assertions": [],
+          "grade_levels": [
+            8,
+            9,
+            10
+          ],
+          "level": "secondary",
+          "name": "Benowa State High",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Retain the abbreviated source name. Grade levels are not calendar attendance years or an approved canonical name/ACARA identity."
+        },
+        {
+          "classification": "missing_secondary_attendance_proposed",
+          "current_assertions": [],
+          "grade_levels": [
+            11,
+            12
+          ],
+          "level": "secondary",
+          "locality": "Gold Coast",
+          "name": "St Michael’s College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Disambiguate the exact historical institution using the reported Gold Coast context; do not infer graduation or attendance dates."
+        }
+      ],
+      "member": {
+        "aph_id": "270198",
+        "display_name": "FRANCE, Ali",
+        "member_id": "aph-270198",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Dickson",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-270198",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-270198-48-2269699a94f40f64",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '270198'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "270198",
+        "electorate_as_reported": "Dickson",
+        "institution_names_as_reported": [
+          "St Kevin’s Primary School",
+          "Benowa State High",
+          "St Michael’s College"
+        ],
+        "locator": "Ali France profile / School field",
+        "name": "Ali France",
+        "response_kind": "named",
+        "school_response_sha256": "d5cffe448f0a60f61a96df3b4174cd6ad01a174f3991d446b917b345c57290db"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "missing_secondary_attendance_proposed",
+          "current_assertions": [],
+          "level": "secondary",
+          "name": "Mount Waverley Secondary College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "315154",
+        "display_name": "GREGG, Matt",
+        "member_id": "aph-315154",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Deakin",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-315154",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-315154-48-a09848dc70a04934",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '315154'",
+            "state_or_territory": "VIC"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "315154",
+        "electorate_as_reported": "Deakin",
+        "institution_names_as_reported": [
+          "Mount Waverley Secondary College"
+        ],
+        "locator": "Matt Gregg profile / School field",
+        "name": "Matt Gregg",
+        "response_kind": "named",
+        "school_response_sha256": "b1fb7d2378ff7d11c4a83571adacff5b1935553d9a07f2d383ea31ea7781b614"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "missing_secondary_attendance_proposed",
+          "current_assertions": [],
+          "level": "secondary",
+          "locality": "Broken Hill",
+          "name": "Willyama High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "88411",
+        "display_name": "HOLZBERGER, Rowan",
+        "member_id": "aph-88411",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Forde",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-88411",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-88411-48-9151ec8160c80cd4",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '88411'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "88411",
+        "electorate_as_reported": "Forde",
+        "institution_names_as_reported": [
+          "Willyama High School"
+        ],
+        "locator": "Rowan Holzberger profile / School field",
+        "name": "Rowan Holzberger",
+        "response_kind": "named",
+        "school_response_sha256": "340d53f991320615e61d4474d74c5b6f19b3d65b2bc5afb285fd4c1b7f4fbdd2"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "possible_name_variant_identity_review",
+          "current_assertions": [],
+          "level": "unspecified",
+          "locality": "Ashgrove, Brisbane",
+          "name": "Mt St Michael’s",
+          "possible_existing_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-298574-ab74d9e3b3847653",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-47873",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-298574",
+              "recorded_school_id": "school:ab74d9e3b3847653",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Mount Saint Michael's College Ashgrove'; matched status: provisional; Fuzzy token-match score 100.0 against 'Mt St Michael's College'",
+              "school_name_as_recorded": "Mount Saint Michael's College Ashgrove",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '298574'",
+              "years_attended": null
+            }
+          ],
+          "possible_existing_name": "Mount Saint Michael's College Ashgrove",
+          "proposed_institution_ref": null,
+          "research": "Reported abbreviated and current expanded names are a possible match, not a sourced alias determination."
+        }
+      ],
+      "member": {
+        "aph_id": "298574",
+        "display_name": "JARRETT, Madonna",
+        "member_id": "aph-298574",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Brisbane",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-298574",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-298574-48-3166b6726debede3",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '298574'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "298574",
+        "electorate_as_reported": "Brisbane",
+        "institution_names_as_reported": [
+          "Mt St Michael’s"
+        ],
+        "locator": "Madonna Jarrett profile / School field",
+        "name": "Madonna Jarrett",
+        "response_kind": "named",
+        "school_response_sha256": "fe8bb6b29b6dc90cc9bd30e5c20d9c99f57f40f8d6ee5a488140e241c204e0ad"
+      }
+    },
+    {
+      "claims": [],
+      "member": {
+        "aph_id": "316021",
+        "display_name": "JORDAN-BAIRD, Alice",
+        "member_id": "aph-316021",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Gorton",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-316021",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-316021-48-c501ea61eed5ac31",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316021'",
+            "state_or_territory": "VIC"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [
+        {
+          "attended_identity_source_url": null,
+          "attended_institution_id": null,
+          "attended_status": "attended_unspecified",
+          "campus_continuity": null,
+          "campus_continuity_source_url": null,
+          "confidence": "verified",
+          "education_id": "edu-316021-06fb67f2fb419966",
+          "evidence_origin": "aph",
+          "graduation_year": null,
+          "historical_broad_sector": null,
+          "historical_broad_sector_source_url": null,
+          "historical_context_scope": "school",
+          "historical_detailed_sector": null,
+          "historical_detailed_sector_source_url": null,
+          "historical_latitude": null,
+          "historical_location_source_url": null,
+          "historical_longitude": null,
+          "historical_scope_confirmed": null,
+          "institution_id": "acara-46150",
+          "institution_resolution": "direct",
+          "level": "secondary",
+          "member_id": "aph-316021",
+          "recorded_school_id": "school:06fb67f2fb419966",
+          "resolution_source_url": "",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "reviewer_notes": "Parsed from APH Handbook text 'Lauriston Girls School'; matched status: verified",
+          "school_name_as_recorded": "Lauriston Girls School",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316021'",
+          "years_attended": null
+        }
+      ],
+      "response_kind": "sectors_only",
+      "source_field": {
+        "aph_id": "316021",
+        "electorate_as_reported": "Gorton",
+        "institution_names_as_reported": [],
+        "locator": "Alice Jordan-Baird profile / School field",
+        "name": "Alice Jordan-Baird",
+        "response_kind": "sectors_only",
+        "school_response_sha256": "425e58d47cf492511490ea833a69becaa4db40f4fabb274eb4baa0bc9b1c4c42"
+      }
+    },
+    {
+      "claims": [],
+      "member": {
+        "aph_id": "312393",
+        "display_name": "SMITH, Matt",
+        "member_id": "aph-312393",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Leichhardt",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-312393",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-312393-48-2b6bd6acb9d2b2df",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '312393'",
+            "state_or_territory": "QLD"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "no_answer",
+      "source_field": {
+        "aph_id": "312393",
+        "electorate_as_reported": "Leichhardt",
+        "institution_names_as_reported": [],
+        "locator": "Matt Smith profile / School field",
+        "name": "Matt Smith",
+        "response_kind": "no_answer",
+        "school_response_sha256": "8359f3f42b389b2ae0cffb8874d4db1e5916ea933a09a668c3dd6c1f41173cf3"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "locality": "NSW",
+          "name": "Revesby Public School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "name": "Picnic Point Public School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-298618-941aaf081d117861",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-41554",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-298618",
+              "recorded_school_id": "school:941aaf081d117861",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Hurlstone Agricultural High School'; matched status: verified",
+              "school_name_as_recorded": "Hurlstone Agricultural High School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '298618'",
+              "years_attended": null
+            }
+          ],
+          "level": "secondary",
+          "name": "Hurlstone Agricultural High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "tertiary_not_school",
+          "current_assertions": [],
+          "level": "tertiary",
+          "name": "Australian National University",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "298618",
+        "display_name": "SOON, Zhi",
+        "member_id": "aph-298618",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Banks",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-298618",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-298618-48-884a33a11a077b03",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '298618'",
+            "state_or_territory": "NSW"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "298618",
+        "electorate_as_reported": "Banks",
+        "institution_names_as_reported": [
+          "Revesby Public School",
+          "Picnic Point Public School",
+          "Hurlstone Agricultural High School",
+          "Australian National University"
+        ],
+        "locator": "Zhi Soon profile / School field",
+        "name": "Zhi Soon",
+        "response_kind": "named",
+        "school_response_sha256": "1e97164101267ddb3bb5bc964c118d7a868af79f6f692b30d44eec9b8cc3709b"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "primary_evidence_only_contract_limit",
+          "current_assertions": [],
+          "level": "primary",
+          "name": "East Ulverstone Primary School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-231199-3ad7069c261aa75e",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-40052",
+              "institution_resolution": "rename",
+              "level": "secondary",
+              "member_id": "aph-231199",
+              "recorded_school_id": "school:3ad7069c261aa75e",
+              "resolution_source_url": "https://en.wikipedia.org/wiki/Ulverstone_Secondary_College",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Ulverstone High School'; matched status: unconfirmed",
+              "school_name_as_recorded": "Ulverstone High School",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '231199'",
+              "years_attended": null
+            }
+          ],
+          "level": "secondary",
+          "name": "Ulverstone High School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "named_attendance_stage_unverified",
+          "current_assertions": [],
+          "level": "unspecified",
+          "name": "Devonport Technical College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null,
+          "research": "Technical-college attendance does not independently establish secondary stage; investigate historical provision and the member's course before any school assertion."
+        }
+      ],
+      "member": {
+        "aph_id": "231199",
+        "display_name": "URQUHART, Anne Elizabeth",
+        "member_id": "aph-231199",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Braddon",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-231199",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-231199-48-6723cd9abe88d322",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '231199'",
+            "state_or_territory": "TAS"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "231199",
+        "electorate_as_reported": "Braddon",
+        "institution_names_as_reported": [
+          "East Ulverstone Primary School",
+          "Ulverstone High School",
+          "Devonport Technical College"
+        ],
+        "locator": "Anne Urquhart profile / School field",
+        "name": "Anne Urquhart",
+        "response_kind": "named",
+        "school_response_sha256": "f8e77303d1accbd084b5f0c389b93748d31d019ae473db99f2476bc658aa9ea0"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "primary_evidence_only_contract_limit",
+          "current_assertions": [],
+          "grade_levels": [
+            5
+          ],
+          "level": "primary",
+          "name": "Endeavour Primary School",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316555-47109aa894ef7217",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-48255",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-316555",
+              "recorded_school_id": "school:47109aa894ef7217",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Comet Bay College'; matched status: verified",
+              "school_name_as_recorded": "Comet Bay College",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316555'",
+              "years_attended": null
+            }
+          ],
+          "level": "secondary",
+          "name": "Comet Bay College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "316555",
+        "display_name": "WHITEAKER, Ellie",
+        "member_id": "aph-316555",
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-316555",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-316555-48-0f413a30c40b77b0",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-07-01",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316555'",
+            "state_or_territory": "WA"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "316555",
+        "electorate_as_reported": "Western Australia (Senate)",
+        "institution_names_as_reported": [
+          "Endeavour Primary School",
+          "Comet Bay College"
+        ],
+        "locator": "Ellie Whiteaker profile / School field",
+        "name": "Ellie Whiteaker",
+        "response_kind": "named",
+        "school_response_sha256": "89ee915797b2344543c814540357930d490b164444a8ba62f8bef555a668a8ff"
+      }
+    },
+    {
+      "claims": [
+        {
+          "classification": "primary_evidence_only_contract_limit",
+          "current_assertions": [],
+          "level": "primary",
+          "locality": "Scoresby",
+          "name": "St Jude’s Primary",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "existing_attendance_additional_evidence",
+          "current_assertions": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316660-40f3c74626f68385",
+              "evidence_origin": "aph",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "school",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "acara-45970",
+              "institution_resolution": "direct",
+              "level": "secondary",
+              "member_id": "aph-316660",
+              "recorded_school_id": "school:40f3c74626f68385",
+              "resolution_source_url": "",
+              "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+              "reviewer_notes": "Parsed from APH Handbook text 'Mater Christi College'; matched status: verified",
+              "school_name_as_recorded": "Mater Christi College",
+              "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316660'",
+              "years_attended": null
+            }
+          ],
+          "level": "unspecified",
+          "locality": "Belgrave",
+          "name": "Mater Christi College",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        },
+        {
+          "classification": "tertiary_not_school",
+          "current_assertions": [],
+          "level": "tertiary",
+          "name": "Box Hill TAFE",
+          "possible_existing_assertions": [],
+          "proposed_institution_ref": null
+        }
+      ],
+      "member": {
+        "aph_id": "316660",
+        "display_name": "WITTY, Sarah",
+        "member_id": "aph-316660",
+        "services": [
+          {
+            "chamber": "representatives",
+            "electorate": "Melbourne",
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-316660",
+            "parliament_number": 48,
+            "party": "Australian Labor Party",
+            "party_abbrev": "ALP",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-316660-48-2bbc16a35050d854",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-05-03",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316660'",
+            "state_or_territory": "VIC"
+          }
+        ]
+      },
+      "other_current_assertions_preserved": [
+        {
+          "attended_identity_source_url": null,
+          "attended_institution_id": null,
+          "attended_status": "attended_unspecified",
+          "campus_continuity": null,
+          "campus_continuity_source_url": null,
+          "confidence": "verified",
+          "education_id": "edu-316660-92f51738222e412e",
+          "evidence_origin": "aph",
+          "graduation_year": null,
+          "historical_broad_sector": null,
+          "historical_broad_sector_source_url": null,
+          "historical_context_scope": "school",
+          "historical_detailed_sector": null,
+          "historical_detailed_sector_source_url": null,
+          "historical_latitude": null,
+          "historical_location_source_url": null,
+          "historical_longitude": null,
+          "historical_scope_confirmed": null,
+          "institution_id": "acara-45463",
+          "institution_resolution": "direct",
+          "level": "secondary",
+          "member_id": "aph-316660",
+          "recorded_school_id": "school:92f51738222e412e",
+          "resolution_source_url": "",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "reviewer_notes": "Parsed from APH Handbook text 'Scoresby Secondary College'; matched status: verified",
+          "school_name_as_recorded": "Scoresby Secondary College",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316660'",
+          "years_attended": null
+        }
+      ],
+      "response_kind": "named",
+      "source_field": {
+        "aph_id": "316660",
+        "electorate_as_reported": "Melbourne",
+        "institution_names_as_reported": [
+          "St Jude’s Primary",
+          "Mater Christi College",
+          "Box Hill TAFE"
+        ],
+        "locator": "Sarah Witty profile / School field",
+        "name": "Sarah Witty",
+        "response_kind": "named",
+        "school_response_sha256": "505fee859ca081a5d2c98f3948cc5211e7eab94ef657c4501bdebfb9370dbfdf"
+      }
+    }
+  ],
+  "source": {
+    "html_sha256": "7e43b6677c62cbb1085ceb3637a12ee1096db32ee36168320a482a57f126fce7",
+    "retrieved_at": "2026-10-18T21:19:23Z",
+    "source_publication_date": "2025-06-28",
+    "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"
+  },
+  "summary": {
+    "attendance_contradictions": 0,
+    "canonical_attendance_changes": 0,
+    "classification_counts": {
+      "existing_attendance_additional_evidence": 7,
+      "existing_attendance_mapping_history_review": 1,
+      "missing_secondary_attendance_proposed": 5,
+      "named": 16,
+      "named_attendance_stage_unverified": 6,
+      "no_answer": 1,
+      "possible_name_variant_identity_review": 3,
+      "primary_evidence_only_contract_limit": 5,
+      "sectors_only": 1,
+      "tertiary_not_school": 4
+    },
+    "current_exact_assertions_to_strengthen": 8,
+    "mapping_decisions": 0,
+    "mapping_history_discrepancies": 1,
+    "named_school_claims": 27,
+    "new_members": 0,
+    "new_secondary_attendance_proposals": 5,
+    "projection_counts": {
+      "institutions": 11896,
+      "member_education": 352,
+      "members": 580,
+      "parliament_service": 1754
+    },
+    "projection_sha256": "d4ce65d272ce057b91621add7fa7ca96f39812abd05071d5a2161d0beb7d855e",
+    "reported_names_without_exact_current_assertion": 19,
+    "respondents": 18
+  }
+}

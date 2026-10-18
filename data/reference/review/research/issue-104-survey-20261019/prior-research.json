@@ -1,0 +1,136 @@
+{
+  "members": [
+    {
+      "aph_id": "263427",
+      "education_proposals": [],
+      "outcome": "unresolved",
+      "review_id": "education:263427:missing"
+    },
+    {
+      "aph_id": "270198",
+      "education_proposals": [],
+      "outcome": "unresolved",
+      "review_id": "education:270198:missing"
+    },
+    {
+      "aph_id": "290544",
+      "education_proposals": [],
+      "outcome": "unresolved",
+      "review_id": "education:290544:missing"
+    },
+    {
+      "aph_id": "312393",
+      "education_proposals": [],
+      "outcome": "unresolved",
+      "review_id": "education:312393:missing"
+    },
+    {
+      "aph_id": "312823",
+      "education_proposals": [
+        {
+          "aph_id": "312823",
+          "attended_status": "attended_unspecified",
+          "confidence": "verified",
+          "evidence_refs": [
+            "evidence:2ee0dd3cb94563678a0154974300470de64672dbb89e5779d31cc6c59023b6c7"
+          ],
+          "level": "secondary",
+          "recorded_school_name": "Brisbane State High School",
+          "retrieved_at": "2026-10-18T11:26:44+00:00"
+        }
+      ],
+      "outcome": "attendance",
+      "review_id": "education:312823:missing"
+    },
+    {
+      "aph_id": "315154",
+      "education_proposals": [
+        {
+          "aph_id": "315154",
+          "attended_status": "attended_unspecified",
+          "confidence": "verified",
+          "evidence_refs": [
+            "evidence:4a03f78513ff782ccbc19218fb7f07559abe29a8b987238ef3140f9ebf40f571"
+          ],
+          "level": "secondary",
+          "recorded_school_name": "Mount Waverley Secondary College",
+          "retrieved_at": "2026-10-18T11:26:44+00:00"
+        }
+      ],
+      "outcome": "attendance",
+      "review_id": "education:315154:missing"
+    },
+    {
+      "aph_id": "88411",
+      "education_proposals": [
+        {
+          "aph_id": "88411",
+          "attended_status": "attended_unspecified",
+          "confidence": "verified",
+          "evidence_refs": [
+            "evidence:8092fee0b51c2c25025eee83b1ccd94ea51c4841cad629009877f6556fe2f7d9"
+          ],
+          "level": "secondary",
+          "recorded_school_name": "Willyama High School, Broken Hill",
+          "retrieved_at": "2026-10-18T11:23:16Z"
+        }
+      ],
+      "outcome": "attendance",
+      "review_id": "education:88411:missing"
+    }
+  ],
+  "overlap_note": "Prior research is unreviewed and is not current canonical attendance. Shared proposals are corroboration, not additive attendance records; reconcile them before any later acceptance.",
+  "overlapping_attendance_proposals": [
+    {
+      "aph_id": "312823",
+      "attended_status": "attended_unspecified",
+      "confidence": "verified",
+      "evidence_refs": [
+        "evidence:dc4453f3e204af16d39204103ffc4eec748f207b04e9ad8275786b3b5935aaf9"
+      ],
+      "level": "secondary",
+      "recorded_school_name": "Brisbane State High School",
+      "retrieved_at": "2026-10-18T21:19:23Z"
+    },
+    {
+      "aph_id": "315154",
+      "attended_status": "attended_unspecified",
+      "confidence": "verified",
+      "evidence_refs": [
+        "evidence:945cd1d0d94d34a004cd72ee9539174f1def9166cc75f433eedc8b1ec9ef4c2f"
+      ],
+      "level": "secondary",
+      "recorded_school_name": "Mount Waverley Secondary College",
+      "retrieved_at": "2026-10-18T21:19:23Z"
+    }
+  ],
+  "possible_overlapping_attendance_proposals": [
+    {
+      "previous": {
+        "aph_id": "88411",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:8092fee0b51c2c25025eee83b1ccd94ea51c4841cad629009877f6556fe2f7d9"
+        ],
+        "level": "secondary",
+        "recorded_school_name": "Willyama High School, Broken Hill",
+        "retrieved_at": "2026-10-18T11:23:16Z"
+      },
+      "proposed": {
+        "aph_id": "88411",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:d44023ce495498e1c3fbebb219af54289f41b4ed42d3271aaf561122bb99ede8"
+        ],
+        "level": "secondary",
+        "recorded_school_name": "Willyama High School",
+        "retrieved_at": "2026-10-18T21:19:23Z"
+      },
+      "reason": "Same member and a locality-qualified prior name. This is a possible overlap, not an approved alias; reconcile before any attendance decision."
+    }
+  ],
+  "source_path": "data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/results.json",
+  "source_sha256": "63c5fa214d7b8ebace5e44a9efa4a11e009b4c4ac30f05fcfb24f203b080721c"
+}

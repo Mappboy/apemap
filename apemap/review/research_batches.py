@@ -255,6 +255,13 @@ class ResearchBatches:
     def list_batches(self) -> list[dict[str, Any]]:
         return [_read(path) for path in sorted(self.root.glob("*/manifest.json"))]
 
+    @staticmethod
+    def _require_decision_batch(state: dict[str, Any]) -> None:
+        if state["manifest"].get("purpose") == "survey-evidence-reconciliation":
+            raise ValueError(
+                "Evidence-only survey batches cannot preview or apply decisions"
+            )
+
     def prepare(
         self,
         batch_id: str,
@@ -1638,6 +1645,14 @@ class ResearchBatches:
                 raise ValueError(
                     "Import a result for every batch case before freezing reviews"
                 )
+            if state["manifest"].get(
+                "purpose"
+            ) == "survey-evidence-reconciliation" and not (
+                reviewer and reviewer.strip()
+            ):
+                raise ValueError(
+                    "Enter an explicit reviewer for survey source inspection"
+                )
             if expected_revision and expected_revision != _digest(
                 [state["content_sha256"], state["review_revision"]]
             ):
@@ -2332,6 +2347,7 @@ class ResearchBatches:
     ) -> dict[str, Any]:
         state = self.show(batch_id)
         manifest = state["manifest"]
+        self._require_decision_batch(state)
         if _original_external_dir is None and (
             self.service.source_revision(include_evidence=False)
             != manifest["source_revision"]
@@ -2597,6 +2613,7 @@ class ResearchBatches:
         path = self.path(batch_id)
         with _decision_lock(path / "batch.lock"):
             state = self.show(batch_id)
+            self._require_decision_batch(state)
             if hashlib.sha256(preview_path.read_bytes()).hexdigest() != approval:
                 raise ValueError("Approval SHA-256 does not match the reviewed preview")
             preview = _read(preview_path)
@@ -2704,6 +2721,7 @@ class ResearchBatches:
         binding = preview.get("research_batch", {})
         batch_id = binding.get("batch_id", "")
         state = self.show(batch_id)
+        self._require_decision_batch(state)
         if (
             binding.get("content_sha256") != state["content_sha256"]
             or binding.get("review_revision") != state["review_revision"]
