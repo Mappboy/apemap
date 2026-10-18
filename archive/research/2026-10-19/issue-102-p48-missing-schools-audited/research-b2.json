@@ -1,0 +1,989 @@
+{
+  "schema_version": 1,
+  "generated_by": "codex-session",
+  "model": null,
+  "token_usage": null,
+  "availability_note": "Exact model identity and token usage are unavailable for this Codex research worker.",
+  "researched_on": "2026-10-18",
+  "timezone": "Australia/Hobart",
+  "scope": "Eight explicitly assigned final Parliament 48 missing-secondary-school cases; research only, no human reviews or authority changes.",
+  "retrieval_windows": {
+    "secondary_stage_audit_1151": {
+      "started_at": null,
+      "completed_at": "2026-10-18T11:51:58Z",
+      "note": "Saved Sophie Scamps school-owned newsletter reopened and inspected before this observed completion bound; exact first-access time was not measured. No new query in this inspection group."
+    },
+    "secondary_stage_final_pass": {
+      "started_at": "2026-10-18T11:51:58Z",
+      "completed_at": "2026-10-18T11:55:31Z",
+      "note": "First genuine broad pass for Sophie Scamps after the source audit withdrew the unsupported secondary-stage inference. All six actual queries count; no stronger explicit-stage source was established. Original identity collection bounds are unchanged."
+    }
+  },
+  "cases": [
+    {
+      "aph_id": "299623",
+      "person": "Sophie Scamps",
+      "identity": {
+        "wikidata_id": "Q112110660",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q112110660",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Sophie_Scamps",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "unresolved",
+      "reasoning": "The original school-owned newsletter establishes Abbotsleigh alumni identity, not explicit personal secondary stage. The original positive inference is withdrawn. A first genuine six-query final broad pass did not establish the missing stage; preserve the original school object verbatim as an unverified lead, not a secondary attendance proposal.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "uncertain",
+          "notes": "The person article names Abbotsleigh and its cited newsletter confirms Scamps as an Old Girl with a 1988 label. It does not establish her personal school stage. Abbotsleigh offers both primary and secondary provision, so institution type and an alumni year cannot supply that missing fact."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "uncertain",
+          "notes": "Six actual queries covered high school, school captain, Year 12, secondary, HSC and school education. Results repeated Wikipedia and the same alumni newsletter or concerned visits to other schools. No retrieved source explicitly established Scamps's personal secondary stage. This is not evidence of non-attendance."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 5,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"Abbotsleigh\" \"high school\"",
+            "retrieval_window": "secondary_stage_final_pass"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"Abbotsleigh\" \"school captain\"",
+            "retrieval_window": "secondary_stage_final_pass"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"Abbotsleigh\" \"Year 12\"",
+            "retrieval_window": "secondary_stage_final_pass"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"Abbotsleigh\" secondary",
+            "retrieval_window": "secondary_stage_final_pass"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"school\" \"HSC\"",
+            "retrieval_window": "secondary_stage_final_pass"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Sophie Scamps\" \"Abbotsleigh\" school education",
+            "retrieval_window": "secondary_stage_final_pass"
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Sophie_Scamps",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q112110660",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.abbotsleigh.nsw.edu.au/wp-content/uploads/2023/04/TheLoomDecember2022.pdf",
+            "status": "opened",
+            "note": "Wikipedia's school-attendance citation. December 2022 Old Girls newsletter, printed page 6, explicitly identifies Dr Sophie Scamps as an Abbotsleigh alumna elected for Mackellar."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.abbotsleigh.nsw.edu.au/",
+            "status": "opened",
+            "note": "Official institution website identifies Abbotsleigh at Wahroonga on Sydney's North Shore, with middle and senior schooling through Year 12."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.abbotsleigh.nsw.edu.au/wp-content/uploads/2023/04/TheLoomDecember2022.pdf",
+            "status": "opened",
+            "note": "Reopened the original saved newsletter and inspected printed page 6. Scamps is an Old Girl (1988) and the Mackellar MP, but there is no statement of her secondary grade or stage. The earlier personal-stage inference is withdrawn.",
+            "retrieval_window": "secondary_stage_audit_1151"
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Abbotsleigh",
+          "country": "Australia",
+          "state": "NSW",
+          "locality": "Wahroonga",
+          "attendance_url": "https://www.abbotsleigh.nsw.edu.au/wp-content/uploads/2023/04/TheLoomDecember2022.pdf",
+          "attendance_note": "The school-owned December 2022 Old Girls newsletter identifies Sophie Scamps, the Mackellar federal member, as an alumna. The parenthetical class label is not converted into an attendance date or graduation claim.",
+          "institution_url": "https://www.abbotsleigh.nsw.edu.au/",
+          "institution_note": "Official school homepage identifies the Wahroonga institution and Years 7-12 provision; no personal campus dates inferred.",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "retrieved_at": "2026-10-18T11:26:44+00:00",
+          "retrieval_time_precision": "Research collection completion bound, not a measured per-request timestamp."
+        }
+      ],
+      "limitations": [
+        "Original school object is retained verbatim as a lead. Its personal secondary-stage inference is unsupported and withdrawn. Neither alumni status at a P–12 institution nor the parenthetical 1988 label establishes a grade; the final broad pass did not remedy that gap."
+      ],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "300134",
+      "person": "Ross Cadell",
+      "identity": {
+        "wikidata_id": "Q111830257",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q111830257",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Ross_Cadell",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "unresolved",
+      "reasoning": "The completed six-query final pass found an unsourced Newcastle Grammar School alumni-list lead, but no retrieved original establishes the senator's attendance. Preserve the lead without proposing verified attendance; this is not a non-attendance assertion.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The article names tertiary education only. Checked the exact APH identity destination; it did not expose readable biographical content."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "uncertain",
+          "notes": "Six actual queries covered school, educated, education, college and Newcastle variants. An unsourced school alumni-list entry names the senator; own biographies and inaugural speech supply no school name, and official school access failed. The lead remains unverified."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 8,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" school educated attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" \"high school\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" educated"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" \"secondary education\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" college"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ross Cadell\" school Newcastle"
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ross_Cadell",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q111830257",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://handbook.aph.gov.au/Parliamentarian/300134",
+            "status": "unavailable",
+            "note": "Exact APH identity link from Wikidata returned a client-only one-line page without substantive biography text."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.nationals.org.au/team/ross-cadell",
+            "status": "opened",
+            "note": "Official party biography confirms political identity and regional upbringing; no school is named."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.nswnationals.org.au/senator-ross-cadell-inaugural-speech/",
+            "status": "opened",
+            "note": "Own inaugural speech recalls high-school plans and air cadets but names no attended secondary institution."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://en.wikipedia.org/wiki/Newcastle_Grammar_School,_New_South_Wales",
+            "status": "opened",
+            "note": "School article names Ross Cadell as an alumnus without a source supporting his individual entry. Preserve as an unverified lead."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://senatorcadell.com.au/about-ross/",
+            "status": "opened",
+            "note": "Own biography checked. It describes work and regional upbringing without naming secondary attendance."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.ngs.nsw.edu.au",
+            "status": "failed",
+            "note": "Attempt to inspect the official school website returned Internal Error; no original alumnus evidence obtained."
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Burnaby South Secondary School",
+          "disposition": "excluded",
+          "reason": "Search result concerns a Canadian namesake with class year 1974, inconsistent with the Australian senator born in 1969."
+        },
+        {
+          "name": "Newcastle High School",
+          "disposition": "excluded",
+          "reason": "Search result belongs to parliamentary staff member Adrian Roach, not Ross Cadell."
+        },
+        {
+          "name": "Newcastle Grammar School",
+          "state": "NSW",
+          "locality": "Newcastle",
+          "source_url": "https://en.wikipedia.org/wiki/Newcastle_Grammar_School,_New_South_Wales",
+          "disposition": "unverified_attendance_lead",
+          "reason": "School article's individual alumni entry is unsourced; original school website could not be retrieved."
+        }
+      ],
+      "limitations": [],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "300706",
+      "person": "Ralph Babet",
+      "identity": {
+        "wikidata_id": "Q112642694",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q112642694",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Ralph_Babet",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "unresolved",
+      "reasoning": "Retain St John's Regional College, Dandenong as an explicit Wikipedia lead requiring verification. The cited original video was inaccessible and the final pass produced no independent person-specific support; propose no verified attendance yet.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "uncertain",
+          "notes": "Wikipedia explicitly distinguishes Holy Family Catholic Primary School from later St John's Regional College in Dandenong. The relevant primary citation could not be accessed."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "uncertain",
+          "notes": "Six actual broad queries, including the school's official domain and a final exact-school variant excluding Wikipedia, yielded only Wikipedia and derivatives as attendance support. Official school identity cannot fill the person-specific source gap."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 4,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Ralph Babet\" \"St John\" school"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ralph Babet\" \"Regional College\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Babet\" site:sjrc.vic.edu.au"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ralph Babet\" school Dandenong"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ralph Babet\" \"St Johns\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Ralph Babet\" \"St John's Regional College\" -site:wikipedia.org"
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Ralph_Babet",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q112642694",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.instagram.com/senatorbabet/p/CVuNYEkr-vz/",
+            "status": "failed",
+            "note": "Article's attendance citation is the person's 1 November 2021 candidate-application video; fetch was throttled, so its contents were not verified."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.sjrc.vic.edu.au/",
+            "status": "opened",
+            "note": "Official college identity page retrieved; it does not by itself prove the senator's attendance."
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "St John's Regional College",
+          "state": "VIC",
+          "locality": "Dandenong",
+          "source_url": "https://en.wikipedia.org/wiki/Ralph_Babet",
+          "disposition": "unverified_attendance_lead"
+        },
+        {
+          "name": "Holy Family Catholic Primary School",
+          "disposition": "excluded_primary",
+          "reason": "The article explicitly identifies primary education; this pass concerns secondary institutions."
+        }
+      ],
+      "limitations": [
+        "The original Instagram video is unverified; do not manufacture a transcript or treat a Wikipedia mirror as independent support."
+      ],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "301128",
+      "person": "Lisa Darmanin",
+      "identity": {
+        "wikidata_id": null,
+        "wikidata_status": "unavailable",
+        "cached_qid_hint": "Q125854047",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Lisa_Darmanin_(politician)",
+        "wikipedia_status": "confirmed",
+        "reasoning": "Wikipedia identifies the Victorian Labor senator appointed in May 2024, distinct from the sailor Lisa Darmanin. Exact cached QID page failed twice; QID remains unavailable rather than confirmed."
+      },
+      "outcome": "unresolved",
+      "reasoning": "Completed both passes without a supported secondary-school name. The politician must be distinguished from the Olympic sailor of the same name; no sailor's school is transferred.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The politician's article contains career qualifications rather than secondary attendance. A cited prior board profile now redirects; exact QID could not be retrieved."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "Six actual queries across school, educated, education and college variants, plus own first speech/about page, yielded no named secondary attendance. APH and honour-roll accesses failed. Results about the Olympic sailor, spouse employment and political school visits were excluded."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 8,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" school attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" senator \"secondary school\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" politician education"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" senator educated"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" senator college"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Lisa Darmanin\" \"high school\" -sailor -sailing"
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Lisa_Darmanin_(politician)",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q125854047",
+            "status": "failed",
+            "note": "Web fetch returned Internal Error; cached QID remains an unverified hint."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.visionsuper.com.au/about/directors-and-executives/",
+            "status": "redirected",
+            "note": "Wikipedia's career/qualification citation redirects to a current board page without Lisa Darmanin's former profile."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.wikidata.org/wiki/Q125854047",
+            "status": "failed",
+            "note": "Second exact-QID fetch also returned Internal Error; no confirmed QID evidence created."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://lisadarmanin.com.au/media/senator-lisa-darmanins-first-speech/",
+            "status": "opened",
+            "note": "Own first speech discusses childhood and relatives' primary schooling without naming an attended secondary school."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://lisadarmanin.client.trfg.au/about/",
+            "status": "opened",
+            "note": "Own biography names RMIT and Victoria University study, and a secondary-school-teacher spouse, but no personal secondary school."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=301128",
+            "status": "failed",
+            "note": "Actual APH biography fetch failed; search excerpt identified political service and qualifications without a secondary-school name."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://herplacemuseum.com/wp-content/uploads/2018/12/2016-Victorian_Honour_Roll_of_Women_2016_Booklet.pdf-2.pdf",
+            "status": "blocked",
+            "note": "The booklet citation returned a challenge page rather than accessible PDF contents. No secondary attendance claim taken from search excerpts."
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Manly Selective Campus",
+          "disposition": "wrong_person",
+          "reason": "Education belongs to the Olympic sailor born in 1991, not the Victorian senator."
+        },
+        {
+          "name": "Emerald Secondary College",
+          "disposition": "excluded_visit",
+          "reason": "Result describes a political visit, not childhood attendance."
+        }
+      ],
+      "limitations": [
+        "Q125854047 is retained only as a cached hint; exact page was not successfully inspected."
+      ],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "310860",
+      "person": "Steph Hodgins-May",
+      "identity": {
+        "wikidata_id": "Q110084949",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q110084949",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Steph_Hodgins-May",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "unresolved",
+      "reasoning": "Completed both passes without identifying a sourced secondary school. The mother's public-school employment is contextual and does not establish the senator's own school.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The article names tertiary study but no secondary institution; its cited former Greenpeace profile now redirects."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "Six actual queries across school, educated, education, college and high-school variants, plus the original first speech, yielded no named secondary attendance. APH access was forbidden. School portfolios, venues, family employment and another candidate's education were excluded."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 5,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Steph Hodgins-May\" \"school\" attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Steph Hodgins-May\" educated secondary"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Steph Hodgins-May\" education"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Steph Hodgins-May\" school college"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Stephanie Hodgins-May\" educated"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Steph Hodgins-May\" \"high school\""
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Steph_Hodgins-May",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q110084949",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.greenpeace.org.au/meet-our-campaigners/",
+            "status": "redirected_profile_unavailable",
+            "note": "Cited campaigner biography redirected to the present team page; the historic person profile was unavailable."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://greens.org.au/news/speech/first-speech-senator-steph-hodgins-may",
+            "status": "opened",
+            "note": "Own first speech describes rural upbringing, mother teaching in public schools, and law study but does not identify the senator's secondary institution."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=310860",
+            "status": "failed",
+            "note": "Official biography access returned 403 Forbidden; no extra secondary-school evidence obtained."
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Presentation College Windsor",
+          "disposition": "wrong_person",
+          "reason": "The candidate comparison search result attributes this secondary schooling to Colleen Harkin, not Steph Hodgins-May."
+        }
+      ],
+      "limitations": [],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "312393",
+      "person": "Matt Smith",
+      "identity": {
+        "wikidata_id": null,
+        "wikidata_status": "unavailable",
+        "cached_qid_hint": "Q134386290",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Matt_Smith_(Queensland_politician)",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The person article identifies the Labor member for Leichhardt and former NBL player born in Sale in November 1979, distinct from the actor and Tasmanian politician. Exact QID page failed twice and remains unconfirmed."
+      },
+      "outcome": "unresolved",
+      "reasoning": "Completed both passes without an identified secondary-school name. The original 2025 parliamentary newcomer survey records no school answer; unnamed high-school recollections and US universities do not identify a secondary institution.",
+      "schools": [],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The article distinguishes the Leichhardt MP/former basketball player from the actor and Tasmanian politician. Its education leads are US universities; the cited Lander profile did not establish secondary identity."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "Six actual queries across school, educated, education, college and secondary-school variants yielded namesakes, voluntary school clinics and unnamed high-school recollections. Own/party profiles name no attended secondary institution. The original survey's no-answer entry remains contextual absence only."
+        }
+      },
+      "research_log": {
+        "searches": 6,
+        "source_opens": 7,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Smith\" Leichhardt \"school\" attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Smith\" Leichhardt basketball \"high school\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Smith\" \"Sale\" \"school\" Leichhardt"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Smith\" Leichhardt educated"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Smith\" Leichhardt education college"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matthew Smith\" Leichhardt \"secondary school\""
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Matt_Smith_(Queensland_politician)",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q134386290",
+            "status": "failed",
+            "note": "Web fetch returned Internal Error; cached QID remains an unverified hint."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://landerbearcats.com/sports/mens-basketball/roster/matt-smith/1226",
+            "status": "opened",
+            "note": "Wikipedia-cited Lander University basketball profile retrieved; no named secondary institution established."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.wikidata.org/wiki/Q134386290",
+            "status": "failed",
+            "note": "Second exact-QID access returned Internal Error; not promoted from cached identity hint."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://aussiehoopla.com/matt-smith/",
+            "status": "failed",
+            "note": "Fetch timed out. Search result mentions high school/Year 12 without naming a school; no attendance claim taken from a snippet."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.mattsmithmp.com/about/",
+            "status": "opened",
+            "note": "Own biographical page identifies Sale upbringing and basketball/community career without naming a secondary institution."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.alp.org.au/our-people/our-people/matt-smith/",
+            "status": "opened",
+            "note": "Official party profile checked. School references describe voluntary clinics, not the member's own attendance."
+          }
+        ],
+        "reused_sources": [
+          {
+            "stage": "final_broad",
+            "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+            "original_fetch_case": "312823",
+            "note": "Original survey's Matt Smith/Leichhardt entry gives no school answer; this is contextual absence only."
+          }
+        ],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Northampton School for Boys",
+          "disposition": "wrong_person",
+          "reason": "Belongs to actor Matt Smith."
+        },
+        {
+          "name": "Bishop Gorman High School",
+          "disposition": "wrong_person",
+          "reason": "Belongs to baseball player Matt Smith."
+        },
+        {
+          "name": "Fairfield University and Lander University",
+          "disposition": "excluded_tertiary",
+          "reason": "US college/university basketball education is not secondary-school attendance."
+        }
+      ],
+      "limitations": [
+        "Q134386290 remains a cached hint because exact Wikidata retrieval failed."
+      ],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "312823",
+      "person": "Julie-Ann Campbell",
+      "identity": {
+        "wikidata_id": "Q56715711",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q56715711",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Julie-Ann_Campbell",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "attendance",
+      "reasoning": "Propose sourced secondary attendance at Brisbane State High School. Use the original published self-report, omit dates/graduation and exclude unrelated school-event appearances.",
+      "schools": [
+        {
+          "name": "Brisbane State High School",
+          "country": "Australia",
+          "state": "QLD",
+          "locality": "South Brisbane",
+          "attendance_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "attendance_note": "The original Karen Barlow survey identifies the Moreton MP and directly records Brisbane State High School in her own school response. The unsourced 2003 alumni-list class label is not converted into a graduation claim.",
+          "institution_url": "https://brisbaneshs.eq.edu.au/",
+          "institution_note": "Official Queensland Government state-high-school site identifies the Brisbane institution and its junior/senior secondary schooling.",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "retrieved_at": "2026-10-18T11:26:44+00:00",
+          "retrieval_time_precision": "Research collection completion bound, not a measured per-request timestamp."
+        }
+      ],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The person article names tertiary study, and the historical party biography citation was inaccessible; no secondary attendance established in stage one."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "found",
+          "notes": "Four broad queries followed a school-alumni lead to a successful fetch of the original newspaper survey. That survey explicitly supplies the school's name; official institution identity was also inspected."
+        }
+      },
+      "research_log": {
+        "searches": 4,
+        "source_opens": 8,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Julie-Ann Campbell\" school attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Julie-Ann Campbell\" Moreton \"high school\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Julie-Ann Campbell\" \"Brisbane State High\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Julie-Ann Campbell\" \"Brisbane State High School\" site:brisbaneshs.eq.edu.au"
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Julie-Ann_Campbell",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q56715711",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Julie-Ann_Campbell",
+            "status": "failed",
+            "source_link_label": "Julie-Ann Campbell / ALP Qld State Secretary — Queensland Labor",
+            "destination_url": null,
+            "note": "Attempt to follow the article's historical state-secretary biography citation returned Internal Error. The failed tool response did not expose the destination URL; the recorded URL identifies the article containing the attempted source link. No text was verified."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://news.uq.edu.au/2006-12-22-uq-elects-new-union-president",
+            "status": "opened",
+            "note": "Original university article confirms tertiary identity and study only."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://en.wikipedia.org/wiki/List_of_alumni_of_Brisbane_State_High_School",
+            "status": "opened",
+            "note": "Alumni-list lead names the Moreton MP; unreferenced class year is not used."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.adogs.info/press/where-did-our-politicians-go-school-and-where-do-they-send-their-children",
+            "status": "opened",
+            "note": "Secondary republication led to the original Saturday Paper survey. Original source supersedes this discovery lead."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+            "status": "opened",
+            "note": "Original journalist survey identifies the Moreton MP and records Brisbane State High School as her school answer."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://brisbaneshs.eq.edu.au/",
+            "status": "opened",
+            "note": "Official Queensland state-school website establishes the exact institution and secondary-school provision."
+          }
+        ],
+        "reused_sources": [],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [],
+      "limitations": [],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    },
+    {
+      "aph_id": "315154",
+      "person": "Matt Gregg",
+      "identity": {
+        "wikidata_id": "Q134349879",
+        "wikidata_status": "confirmed",
+        "cached_qid_hint": "Q134349879",
+        "wikipedia_url": "https://en.wikipedia.org/wiki/Matt_Gregg_(politician)",
+        "wikipedia_status": "confirmed",
+        "reasoning": "The article identifies this parliamentarian's party and federal seat or Senate service; the exact Wikidata entity identifies the same person and parliamentary ID."
+      },
+      "outcome": "attendance",
+      "reasoning": "Propose sourced secondary attendance at Mount Waverley Secondary College. An initial aggregator lead was not used as evidence; the actual original newspaper survey supplies the person's school.",
+      "schools": [
+        {
+          "name": "Mount Waverley Secondary College",
+          "country": "Australia",
+          "state": "VIC",
+          "locality": "Mount Waverley",
+          "attendance_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "attendance_note": "The actual original survey's Matt Gregg/Deakin entry directly lists Mount Waverley Secondary College in the school response. It identifies his teacher/lawyer career, avoiding the footballer namesake.",
+          "institution_url": "https://www.mwsc.vic.edu.au/",
+          "institution_note": "Official college homepage identifies Mount Waverley Secondary College and secondary education for Years 7-12.",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "retrieved_at": "2026-10-18T11:26:44+00:00",
+          "retrieval_time_precision": "Research collection completion bound, not a measured per-request timestamp."
+        }
+      ],
+      "stages": {
+        "wikipedia": {
+          "status": "completed",
+          "outcome": "not_found",
+          "notes": "The article and its ABC source cover qualifications and employment rather than naming attended secondary education."
+        },
+        "final_broad": {
+          "status": "completed",
+          "outcome": "found",
+          "notes": "Four broad queries led to a republication, then a successfully retrieved original survey shared with the Campbell case. That direct published response establishes the school; the official school site establishes institution identity."
+        }
+      },
+      "research_log": {
+        "searches": 4,
+        "source_opens": 6,
+        "search_queries": [
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Gregg\" school attended"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matthew Gregg\" Deakin educated secondary school"
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Gregg\" \"Mount Waverley\""
+          },
+          {
+            "stage": "final_broad",
+            "query": "\"Matt Gregg\" \"Mount Waverley Secondary College\""
+          }
+        ],
+        "opened_sources": [
+          {
+            "stage": "wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Matt_Gregg_(politician)",
+            "status": "opened",
+            "note": "Inspected the person article, education/early-life material and cited sources."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.wikidata.org/wiki/Q134349879",
+            "status": "opened",
+            "note": "Confirmed the exact entity's parliamentary identity and its English Wikipedia sitelink."
+          },
+          {
+            "stage": "wikipedia",
+            "url": "https://www.abc.net.au/news/elections/federal/2022/guide/deak",
+            "status": "opened",
+            "note": "Wikipedia-cited ABC candidate profile describes teaching/law qualifications and employment, not school attendance."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.signalhire.com/profiles/matthew-gregg%27s-email/118105090",
+            "status": "failed",
+            "note": "Aggregator fetch timed out; no unsupported identity, contact or attendance data imported."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.mirrorweekly.com/441759/",
+            "status": "opened",
+            "note": "Republication revealed the original survey lead; attendance uses the subsequently fetched original, not this mirror."
+          },
+          {
+            "stage": "final_broad",
+            "url": "https://www.mwsc.vic.edu.au/",
+            "status": "opened",
+            "note": "Official Mount Waverley Secondary College site identifies Years 7-12 provision and the Victorian institution."
+          }
+        ],
+        "reused_sources": [
+          {
+            "stage": "final_broad",
+            "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+            "original_fetch_case": "312823",
+            "note": "Same original fetch also inspected for the exact Matt Gregg/Deakin school response."
+          }
+        ],
+        "accounting_note": "Searches count every actual query, including zero-result and wrong-person results. Finds, document rereads and same-document citation-anchor clicks are not additional source opens. Sources reused from another B2 case are listed separately, with their original fetch attributed there."
+      },
+      "alternatives": [
+        {
+          "name": "Schools where Matt Gregg worked",
+          "disposition": "excluded_employment",
+          "reason": "Teaching employment is not attendance."
+        }
+      ],
+      "limitations": [],
+      "collection_completed_at": "2026-10-18T11:26:44+00:00",
+      "time_precision": "Observed collection completion bound; exact per-request retrieval time unavailable."
+    }
+  ],
+  "retrieval_window": {
+    "started_at": null,
+    "completed_at": "2026-10-18T11:26:44+00:00"
+  },
+  "time_precision": "No per-request clock readings or start timestamp were captured. completed_at is the observed UTC completion bound for this research collection, not an invented timestamp for each web request; all source records explicitly use this collection completion bound."
+}

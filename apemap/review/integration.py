@@ -6,7 +6,7 @@ uses the same projection as ingestion without changing either the log or databas
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from datetime import date, datetime
 import hashlib
@@ -839,9 +839,11 @@ def _project(
     matcher: SchoolMatcher,
     source_cohorts: set[int],
     inventory: RawInventory,
+    sourced_attendance: set[str] | None = None,
 ) -> Records:
     # Copy every row so preview cannot mutate records read from the source baseline.
     result = _add_known_service_people(base, events, matcher, source_cohorts, inventory)
+    sourced_attendance = sourced_attendance or set()
     effective = list(resolve_events(events).values())
     accepted = [
         event for event in effective if event.effective_action in {"accept", "map"}
@@ -968,7 +970,11 @@ def _project(
                     else matcher.match(recorded).confidence
                 )
                 claim = _education_claim(
-                    ancestor, str(member["member_id"]), match_confidence
+                    ancestor,
+                    str(member["member_id"]),
+                    str(ancestor.payload["confidence"])
+                    if ancestor.decision_id in sourced_attendance
+                    else match_confidence,
                 )
                 result["member_education"] = [
                     row for row in result["member_education"] if row not in rows
@@ -1044,7 +1050,10 @@ def _project(
         if event.entity_type == "member_education":
             assert member is not None
             recorded = str(payload["recorded_school_name"])
-            school = schools.get(school_key(recorded))
+            pending_identity = payload.get(
+                "purpose"
+            ) == "missing-secondary-education" and not payload.get("institution_ref")
+            school = None if pending_identity else schools.get(school_key(recorded))
             reference = payload.get("institution_ref") or (
                 school.payload["institution_ref"] if school else None
             )
@@ -1053,7 +1062,7 @@ def _project(
                 and (school is None or reference != school.payload["institution_ref"])
             )
             resolution = event if own_resolution else school
-            if is_home_educated(recorded):
+            if is_home_educated(recorded) or pending_identity:
                 identifier, match_confidence = None, str(payload["confidence"])
             elif reference:
                 identifier, match_confidence = _institution(
@@ -1066,7 +1075,13 @@ def _project(
                     institutions[identifier] = _matched_institution(match)
                 if school_key(recorded) in attendance_confidence_keys:
                     match_confidence = "verified"
-            claim = _education_claim(event, str(member["member_id"]), match_confidence)
+            claim = _education_claim(
+                event,
+                str(member["member_id"]),
+                str(payload["confidence"])
+                if event.decision_id in sourced_attendance
+                else match_confidence,
+            )
             result["member_education"] = [
                 row
                 for row in result["member_education"]
@@ -1097,7 +1112,7 @@ def _project(
                     else None,
                 }
             )
-            if is_home_educated(recorded):
+            if is_home_educated(recorded) or pending_identity:
                 _unresolve_education(
                     result["member_education"][-1],
                     recorded,
@@ -1218,6 +1233,28 @@ def project_review_records(
         )
     validate_evidence_references(events, records)
     expanded = expand_context_events(events, records)
+    by_id = {record.evidence_id: record for record in records}
+    sourced_attendance = {
+        event.decision_id
+        for event in expanded
+        if event.entity_type == "member_education"
+        and event.effective_action == "accept"
+        and event.payload.get("purpose") == "missing-secondary-education"
+        and any(
+            record.review_id == event.review_id
+            and record.claim_type in {"attendance", "member_attendance"}
+            and record.stance == "supports"
+            and record.candidate_institution_ref is None
+            and isinstance(record.claim_value, Mapping)
+            and str(record.claim_value.get("aph_id", "")).lower()
+            == str(event.payload["aph_id"]).lower()
+            and record.claim_value.get("recorded_school_name")
+            == event.payload["recorded_school_name"]
+            and record.claim_value.get("level") == "secondary"
+            for reference in event.payload.get("evidence_refs", [])
+            if (record := by_id.get(reference)) is not None
+        )
+    }
     active_matcher = matcher or SchoolMatcher()
     configure_review_matcher(active_matcher, expanded)
     validate_events(expanded)
@@ -1227,6 +1264,7 @@ def project_review_records(
         active_matcher,
         _source_cohorts(conn),
         _raw_inventory(conn),
+        sourced_attendance,
     )
 
 

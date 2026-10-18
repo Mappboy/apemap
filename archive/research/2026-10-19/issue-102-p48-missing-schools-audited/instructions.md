@@ -1,0 +1,3 @@
+# Missing secondary-school research
+
+The published audit includes resolved non-institutional skips; research only tasks.json. No research has run during preparation. Establish member identity, then inspect and cite actual secondary attendance evidence. Cached QIDs and Wikipedia links are unreviewed hints. Preserve exact school names and source retrieval dates; do not infer a school from party, electorate, tertiary education or geography. Record contradictory evidence and unresolved cases. Save proposals for individual human source inspection in the ordinary Research batches workflow. Never edit decision or evidence ledgers during research.

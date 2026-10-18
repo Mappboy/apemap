@@ -59,6 +59,27 @@ def propose_manual_cmd(
     )
 
 
+@batch_app.command("prepare-missing-education")
+def prepare_missing_education_cmd(
+    ctx: typer.Context,
+    batch_id: str,
+    release_dir: Annotated[
+        Path, typer.Option(help="Extracted pinned published release.")
+    ],
+    parliament: int = 48,
+    expected_count: int = 49,
+) -> None:
+    """Audit published missing-school members and freeze unresolved review tasks."""
+    from apemap.review.cli import _run
+    from apemap.review.missing_education import prepare_missing_education_batch
+
+    _run(
+        lambda: prepare_missing_education_batch(
+            _batches(ctx), batch_id, release_dir, parliament, expected_count
+        )
+    )
+
+
 @batch_app.command("import")
 def import_cmd(ctx: typer.Context, batch_id: str, results: Path) -> None:
     from apemap.review.cli import _run

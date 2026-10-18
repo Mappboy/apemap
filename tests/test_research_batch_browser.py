@@ -54,6 +54,7 @@ dispositions[0].value = "contradicts"; action.value = "accept"; form.emit("chang
 dispositions[0].value = "supports"; identity.checked = true; form.emit("change"); assert.equal(save.disabled,true);
 identity.checked = false; form.emit("change"); assert.equal(save.disabled,false); assert.equal(notes.required,false);
 form.dataset.acceptReady = "false"; form.emit("change"); assert.equal(save.disabled,true); assert.match(warning.textContent,/identity remains unresolved/);
+form.one['[data-accept-message]'] = new Element("No verified secondary attendance is proposed."); form.emit("change"); assert.match(warning.textContent,/No verified secondary attendance/);
 action.value = "research"; form.emit("change"); assert.equal(save.disabled,false);
 form.dataset.acceptReady = "true"; action.value = "accept"; form.emit("change");
 assert.equal(form.emit("submit").defaultPrevented,false);
