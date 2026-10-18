@@ -1,0 +1,40 @@
+{
+  "attempt_budgets": [],
+  "audit_count": 49,
+  "audit_sha256": "f2c5abe34d0308dc66785fca71dddd1e7fd2088708b5cdb4ec30ad2d0ae8305c",
+  "audit_summary": {
+    "audit_count": 49,
+    "research_count": 48,
+    "skipped": [
+      {
+        "aph_id": "250156",
+        "display_name": "STEELE-JOHN, Jordon Alexander",
+        "member_id": "aph-250156",
+        "reason": "Reviewed home education has no institutional school identity."
+      }
+    ]
+  },
+  "batch_id": "issue-102-p48-missing-schools-audited",
+  "case_count": 48,
+  "cases_per_task": 1,
+  "created_at": "2026-10-18T12:00:42.987680+00:00",
+  "decision_revision": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+  "evidence_revision": "d69d74407e4157eef48b9981c143937f4d928d964f8527bae92e536e55bb7d60",
+  "kind": "schools",
+  "max_workers": 2,
+  "models": [],
+  "origin": "agent-session",
+  "parliament": 48,
+  "provenance": {
+    "availability_note": "Preparation runs no research model. Model identity and token usage for subsequent session research must be reported honestly when available.",
+    "generated_by": "codex-session",
+    "model": null,
+    "token_usage": null
+  },
+  "purpose": "missing-secondary-education",
+  "reasoning_effort": null,
+  "schema_version": 1,
+  "skipped_count": 1,
+  "source_revision": "36b097e3e7822df107dd89186c5f6f8ee8c3f1067a5b58f4e00bcd982dcc1d25",
+  "task_sha256": "b8ce935bd5a36467d53afbd8474c9f5def0e7a0b120261a891a1b09c07cea4eb"
+}

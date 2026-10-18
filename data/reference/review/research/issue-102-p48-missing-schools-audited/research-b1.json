@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "batch_id": "issue-102-p48-missing-schools",
+  "research_group": "b1",
+  "purpose": "missing-secondary-education",
+  "generated_by": "codex-session",
+  "model": null,
+  "token_usage": null,
+  "availability_note": "Exact runtime model and token usage are unavailable. No provider attempts or usage are invented.",
+  "retrieval_window": {
+    "start": "2026-10-18T11:14:12Z",
+    "end": "2026-10-18T11:19:29Z",
+    "note": "UTC clock readings surrounding the live source-inspection groups. Per-source retrieval_date is the observed calendar date; observed_at records the final group clock reading, not a claimed server retrieval timestamp."
+  },
+  "members": [
+    {
+      "aph_id": "267506",
+      "member_name": "Simon Kennedy",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Simon_Kennedy",
+      "identity": {
+        "status": "verified",
+        "aph_id": "267506",
+        "wikidata_id": "Q125465629",
+        "source_url": "https://www.wikidata.org/wiki/Q125465629",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Simon Kennedy contains Parliament of Australia MP ID 267506.",
+        "evidence_role": "identity_only",
+        "conflicts": [
+          {
+            "field": "date_of_birth",
+            "note": "The opened Wikidata page displays 6 April 1982 while Wikipedia displays 4 June 1982; pinned DOB is absent. Exact APH ID establishes identity, but no DOB correction is proposed."
+          }
+        ]
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [
+          "Epping Boys High School"
+        ],
+        "underlying_source_status": "verified",
+        "notes": "Opened the article and followed its reference 6 to the original first-person candidate questionnaire."
+      },
+      "external_search": {
+        "status": "not_needed",
+        "queries": [],
+        "searches": 0,
+        "notes": "Secondary attendance was verified through the underlying Wikipedia citation."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Simon_Kennedy",
+          "source_title": "Simon Kennedy — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "Article identifies the Cook MP and names Epping Boys High School with reference 6."
+        },
+        {
+          "source_url": "https://rydedistrictmums.com.au/simon-kennedy-liberal/",
+          "source_title": "Simon Kennedy | Liberal — Ryde District Mums",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "first-person-candidate-interview",
+          "access_status": "opened",
+          "note": "Candidate answers in first person identify his Liberal Bennelong candidacy and school captaincy."
+        }
+      ],
+      "access_failures": [],
+      "schools": [
+        {
+          "recorded_school_name": "Epping Boys High School",
+          "level": "secondary",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "institution_ref": null,
+          "mapping_status": "needs_mapping",
+          "source_url": "https://rydedistrictmums.com.au/simon-kennedy-liberal/",
+          "source_title": "Simon Kennedy | Liberal — Ryde District Mums",
+          "retrieval_date": "2026-10-18",
+          "confidence": "verified",
+          "brief_quote": "I was school captain at Epping Boys High School",
+          "note": "First-person candidate answer explicitly establishes attendance. No dates, graduation, or ACARA mapping inferred."
+        }
+      ],
+      "unverified_leads": [],
+      "outcome": "needs_mapping"
+    },
+    {
+      "aph_id": "270198",
+      "member_name": "Ali France",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Ali_France",
+      "identity": {
+        "status": "verified",
+        "aph_id": "270198",
+        "wikidata_id": "Q134309102",
+        "source_url": "https://www.wikidata.org/wiki/Q134309102",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Ali France contains Parliament of Australia MP ID 270198.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [],
+        "underlying_source_status": "unavailable",
+        "notes": "Article describes education on the Gold Coast, in Toowoomba and in Canberra, without naming a secondary school. Its 2011 WAtoday citation could not be opened."
+      },
+      "external_search": {
+        "status": "completed_unresolved",
+        "queries": [
+          "\"Ali France\" school educated secondary",
+          "\"Ali France\" school Lawlor",
+          "\"Ali France\" \"high school\"",
+          "\"Allison Lawlor\" school",
+          "\"Ali France\" education biography school",
+          "\"Ali France\" maiden speech school"
+        ],
+        "searches": 6,
+        "notes": "No opened or search-returned source established a named secondary institution. Excluded unrelated Allison Lawlor Canadian journalist results and school-visit/grant references."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Ali_France",
+          "source_title": "Ali France — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "Dickson MP identity is consistent with the pinned service; education locations do not name a secondary school."
+        },
+        {
+          "source_url": "https://handbook.aph.gov.au/Parliamentarian/270198",
+          "source_title": "Parliamentary Handbook",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "official",
+          "access_status": "insufficient_text",
+          "note": "Official page opened through the Wikidata MP ID link but exposed only one line of app-shell text."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": null,
+          "source_title": "'She's his world': MP spends daughter's birthday at hospital bedside — WAtoday, 13 May 2011",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Wikipedia reference 2, external link 105. Click returned an internal error without revealing the target URL; no content is claimed."
+        }
+      ],
+      "schools": [],
+      "unverified_leads": [],
+      "outcome": "unresolved",
+      "gaps": [
+        "Named secondary-school attendance remains unsupported after the bounded final search pass."
+      ]
+    },
+    {
+      "aph_id": "281558",
+      "member_name": "Wendy Askew",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Wendy_Askew",
+      "identity": {
+        "status": "verified",
+        "aph_id": "281558",
+        "wikidata_id": "Q61983633",
+        "source_url": "https://www.wikidata.org/wiki/Q61983633",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Wendy Askew contains Parliament of Australia MP ID 281558.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [],
+        "underlying_source_status": "unavailable",
+        "notes": "The article contains no named secondary school. Followed its official biography reference, which failed to fetch."
+      },
+      "external_search": {
+        "status": "completed_unresolved",
+        "queries": [
+          "\"Wendy Askew\" school attended",
+          "\"Wendy Askew\" education school Senate",
+          "\"Wendy Askew\" school \"first speech\"",
+          "\"Wendy Summers\" school Bushby",
+          "\"Wendy Bushby\" school",
+          "\"Wendy Askew\" matriculation school"
+        ],
+        "searches": 6,
+        "notes": "An opened first-speech mirror states that she left school following matriculation but names no institution. Excluded unrelated overseas Wendy Askew/Wendy Bushby records and later tertiary qualifications."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Wendy_Askew",
+          "source_title": "Wendy Askew — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "No secondary school named. Later resignation does not alter the pinned opening-day scope."
+        },
+        {
+          "source_url": "https://www.openaustralia.org.au/senate/?id=2019-04-03.186.3",
+          "source_title": "Wendy Askew first speech, 3 April 2019 — OpenAustralia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "parliamentary-transcript-mirror",
+          "access_status": "opened",
+          "note": "Transcript reports leaving school following matriculation without naming a school; mirror is contextual only."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=281558",
+          "source_title": "Former Senator Wendy Askew — Parliament of Australia",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Direct open returned an internal fetch error; search index showed tertiary qualifications only."
+        },
+        {
+          "source_url": null,
+          "source_title": "Official Hansard source for Wendy Askew's first speech",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Clicked the Hansard source link on the opened OpenAustralia transcript; the tool returned an internal error and did not disclose the destination URL."
+        }
+      ],
+      "schools": [],
+      "unverified_leads": [],
+      "outcome": "unresolved",
+      "gaps": [
+        "Matriculation is documented but the secondary institution is not identified."
+      ]
+    },
+    {
+      "aph_id": "281826",
+      "member_name": "Phillip Thompson",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Phillip_Thompson",
+      "identity": {
+        "status": "verified",
+        "aph_id": "281826",
+        "wikidata_id": "Q64009045",
+        "source_url": "https://www.wikidata.org/wiki/Q64009045",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Phillip Thompson contains Parliament of Australia MP ID 281826.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [],
+        "underlying_source_status": "unavailable",
+        "notes": "Article covers military training but names no secondary institution. Its first-speech link failed."
+      },
+      "external_search": {
+        "status": "completed_unresolved",
+        "queries": [
+          "\"Phillip Thompson\" \"high school\"",
+          "\"Phillip Thompson\" Herbert school education",
+          "\"Phillip Thompson\" school Armidale",
+          "\"Phil Thompson\" \"night school\"",
+          "\"Phillip Thompson\" education school MP",
+          "\"Phil Thompson\" school Townsville"
+        ],
+        "searches": 6,
+        "notes": "Opened an interview transcript and news profile confirming early school departure and later night school, without institution names. Excluded US athlete/administrator namesakes, electorate school reports and schools he visited."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Phillip_Thompson",
+          "source_title": "Phillip Thompson — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "The Herbert MP, DOB 7 May 1988, is the intended person; Kapooka and Singleton are military training, not secondary attendance evidence."
+        },
+        {
+          "source_url": "https://9now.nine.com.au/a-current-affair/mp-phillip-thompson-claims-hes-been-told-he-cannot-show-his-tattoos-in-parliament-as-they-intimidate-people/5da92081-2092-47ad-b0e0-69b003f55794",
+          "source_title": "MP Phillip Thompson claims he's been told he cannot show his tattoos in parliament — A Current Affair",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "news",
+          "access_status": "opened",
+          "note": "Article says he put himself through night school to join the army, but does not identify the school."
+        },
+        {
+          "source_url": "https://podscan.fm/podcasts/zero-limits-podcast/episodes/ep-252-phil-thompson-oam-mp-australian-army-1rar-federal-member-for-herbert-part-1",
+          "source_title": "Zero Limits Podcast episode 252 — Phil Thompson OAM MP, part 1",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "interview-transcript",
+          "access_status": "opened",
+          "note": "Opened transcript reports leaving school early, then choosing night school before enlistment. No institution is named; transcript is contextual and not an attendance-name assertion."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=281826&lang=en",
+          "source_title": "Mr Phillip Thompson OAM, MP — Parliament of Australia",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Direct open returned an internal error; no page content is claimed."
+        },
+        {
+          "source_url": null,
+          "source_title": "Phillip Thompson first speech — Parliament of Australia",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Wikipedia reference 14 external link returned an internal error without revealing the destination URL."
+        }
+      ],
+      "schools": [],
+      "unverified_leads": [],
+      "outcome": "unresolved",
+      "gaps": [
+        "The names of his early secondary school and subsequent night-school provider remain unsupported."
+      ]
+    },
+    {
+      "aph_id": "282335",
+      "member_name": "Helen Haines",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Helen_Haines",
+      "identity": {
+        "status": "verified",
+        "aph_id": "282335",
+        "wikidata_id": "Q41662205",
+        "source_url": "https://www.wikidata.org/wiki/Q41662205",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Helen Haines contains Parliament of Australia MP ID 282335.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [
+          "Trinity College, Colac"
+        ],
+        "underlying_source_status": "unavailable",
+        "notes": "Article names Trinity College in Colac; its About Helen citation failed to open."
+      },
+      "external_search": {
+        "status": "completed_verified",
+        "queries": [
+          "\"Helen Haines\" \"Trinity College\"",
+          "\"Helen Haines\" \"Trinity College\""
+        ],
+        "searches": 2,
+        "notes": "The same query was issued twice; both actual queries count. Opened the returned original campaign media-release PDF naming Trinity College Colac and Haines's former school captaincy."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Helen_Haines",
+          "source_title": "Helen Haines — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "Identifies the independent Indi MP and names Trinity College in Colac."
+        },
+        {
+          "source_url": "https://assets.nationbuilder.com/voicesofwannon/pages/1926/attachments/original/1743077112/2025-03-21_MR_-_Helen_Haines_successful_visit_-_Google_Docs.pdf?1743077112=",
+          "source_title": "Alex Dyson Independent for Wannon media release, 21 March 2025",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "campaign-media-release",
+          "access_status": "opened",
+          "note": "PDF page 1 identifies the visiting Indi MP and describes her as a former school captain of Trinity College Colac."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": null,
+          "source_title": "About Helen — Helen Haines official website",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Wikipedia reference 4 link 138 was attempted twice and returned internal errors; the tool did not disclose the destination URL."
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Trinity College Colac",
+          "level": "secondary",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "institution_ref": null,
+          "mapping_status": "needs_mapping",
+          "source_url": "https://assets.nationbuilder.com/voicesofwannon/pages/1926/attachments/original/1743077112/2025-03-21_MR_-_Helen_Haines_successful_visit_-_Google_Docs.pdf?1743077112=",
+          "source_title": "Alex Dyson Independent for Wannon media release, 21 March 2025",
+          "retrieval_date": "2026-10-18",
+          "confidence": "verified",
+          "brief_quote": "Dr Haines is a former school captain of the college",
+          "note": "PDF page 1 names Trinity College Colac immediately before the school-captain statement. No dates, graduation, or ACARA mapping inferred."
+        }
+      ],
+      "unverified_leads": [],
+      "outcome": "needs_mapping"
+    },
+    {
+      "aph_id": "290544",
+      "member_name": "Michelle Ananda-Rajah",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Michelle_Ananda-Rajah",
+      "identity": {
+        "status": "verified",
+        "aph_id": "290544",
+        "wikidata_id": "Q90398588",
+        "source_url": "https://www.wikidata.org/wiki/Q90398588",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Michelle Ananda-Rajah contains Parliament of Australia MP ID 290544.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [],
+        "underlying_source_status": "opened_no_secondary_name",
+        "notes": "Article and the opened cited SBS interview describe migration and tertiary study without a secondary institution."
+      },
+      "external_search": {
+        "status": "completed_unresolved",
+        "queries": [
+          "\"Michelle Ananda-Rajah\" school attended",
+          "\"Michelle Ananda-Rajah\" \"high school\"",
+          "\"Michelle Ananda-Rajah\" school Sydney",
+          "\"Michelle Ananda-Rajah\" Zambia school",
+          "\"Michelle Ananda-Rajah\" \"educated\"",
+          "\"Michelle Ananda-Rajah\" \"first speech\" school"
+        ],
+        "searches": 6,
+        "notes": "Opened her official About page; it confirms UK/Zambia background and political/medical identity but no secondary school. Excluded school visits and campus-launch references as non-attendance."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Michelle_Ananda-Rajah",
+          "source_title": "Michelle Ananda-Rajah — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "Names no secondary school; identity is the Victorian senator and former Higgins MP."
+        },
+        {
+          "source_url": "https://www.sbs.com.au/language/tamil/en/podcast-episode/i-represent-australias-migrant-story-tamil-origin-mp-says-diverse-parliament-benefits-all/rkcdio8wj",
+          "source_title": "'I represent Australia's migrant story': Tamil-origin MP says diverse parliament benefits all — SBS Tamil",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "interview",
+          "access_status": "opened",
+          "note": "Opened original Wikipedia-cited interview page; no secondary institution named in the retrieved text."
+        },
+        {
+          "source_url": "https://www.michelleanandarajah.com.au/about/",
+          "source_title": "About — Michelle Ananda-Rajah",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "official",
+          "access_status": "opened",
+          "note": "Opened official About page; no secondary-school attendance name in retrieved text."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": "https://www.aph.gov.au/Senators_and_Members/Parliamentarian?MPID=290544",
+          "source_title": "Senator Michelle Ananda-Rajah — Parliament of Australia",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Direct open returned an internal fetch error; no page content is claimed."
+        }
+      ],
+      "schools": [],
+      "unverified_leads": [],
+      "outcome": "unresolved",
+      "gaps": [
+        "No reliable named secondary-school attendance established after six actual final-pass queries."
+      ]
+    },
+    {
+      "aph_id": "295676",
+      "member_name": "Dai Le",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Dai_Le",
+      "identity": {
+        "status": "needs_verification",
+        "aph_id": "295676",
+        "wikidata_id": "Q111909058",
+        "source_url": "https://www.wikidata.org/wiki/Q111909058",
+        "retrieval_date": "2026-10-18",
+        "claim": "The exact Wikidata page was attempted twice and returned an internal fetch error; the local cached QID remains an unreviewed hint.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [
+          "St Mary Star of the Sea College, Wollongong",
+          "Cerdon College, Merrylands"
+        ],
+        "underlying_source_status": "partially_verified",
+        "notes": "Opened original cited Allora interview. It verifies Cerdon College in first person; it does not substantiate the additional St Mary Star of the Sea claim. The Catholic Weekly citation click returned an invalid-arguments error."
+      },
+      "external_search": {
+        "status": "not_needed",
+        "queries": [],
+        "searches": 0,
+        "notes": "At least one secondary school was established through the underlying Wikipedia citation; the extra Wikipedia-only school is retained as an unverified lead."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Dai_Le",
+          "source_title": "Dai Le — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "Identifies the Fowler MP, DOB 1 April 1968; names two schools but the inspected underlying article supports only Cerdon."
+        },
+        {
+          "source_url": "https://alloranews.com/community/chi-e-dai-le/",
+          "source_title": "Chi è Dai Le? — Allora! Italian Australian News, 9 May 2022",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "first-person-interview",
+          "access_status": "opened",
+          "note": "First-person Italian interview explicitly says she went to Cerdon College and locates the all-girls Catholic school in Merrylands."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": "https://www.wikidata.org/wiki/Q111909058",
+          "source_title": "Dai Le — Wikidata",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Exact entity page attempted twice; both returned internal errors. Cached QID is not promoted to verified canonical identity."
+        },
+        {
+          "source_url": null,
+          "source_title": "A new voice in the west — The Catholic Weekly, 23 September 2022",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Wikipedia external citation link 295 click returned an invalid-arguments error; no article content or destination URL is claimed."
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Cerdon College",
+          "level": "secondary",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "institution_ref": null,
+          "mapping_status": "needs_mapping",
+          "source_url": "https://alloranews.com/community/chi-e-dai-le/",
+          "source_title": "Chi è Dai Le? — Allora! Italian Australian News, 9 May 2022",
+          "retrieval_date": "2026-10-18",
+          "confidence": "verified",
+          "brief_quote": "Sono cresciuta e sono andata a scuola al Cerdon College",
+          "note": "English paraphrase: she grew up and went to Cerdon College; the next clause identifies the school in Merrylands. No attendance dates, graduation year, or ACARA mapping inferred."
+        }
+      ],
+      "unverified_leads": [
+        {
+          "recorded_school_name": "St Mary Star of the Sea College",
+          "location_as_claimed": "Wollongong",
+          "source_url": "https://en.wikipedia.org/wiki/Dai_Le",
+          "status": "needs_source",
+          "reason": "Named on Wikipedia but absent from the inspected original citation; not proposed as verified attendance."
+        }
+      ],
+      "outcome": "needs_identity_review"
+    },
+    {
+      "aph_id": "298839",
+      "member_name": "Penny Allman-Payne",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Penny_Allman-Payne",
+      "identity": {
+        "status": "verified",
+        "aph_id": "298839",
+        "wikidata_id": "Q112149315",
+        "source_url": "https://www.wikidata.org/wiki/Q112149315",
+        "retrieval_date": "2026-10-18",
+        "claim": "The live Wikidata entity for Penny Allman-Payne contains Parliament of Australia MP ID 298839.",
+        "evidence_role": "identity_only",
+        "conflicts": []
+      },
+      "wikipedia": {
+        "status": "completed",
+        "claims": [],
+        "underlying_source_status": "opened_no_secondary_name",
+        "notes": "Article describes teaching, not a secondary school she attended. Opened its cited ABC profile; it names no attended secondary institution."
+      },
+      "external_search": {
+        "status": "completed_verified",
+        "queries": [
+          "\"Penny Allman-Payne\" school attended education"
+        ],
+        "searches": 1,
+        "notes": "Search returned her first speech on the Greens site. The opened full transcript explicitly places her in year 9 at Tully State High School. Do not confuse schools she later taught at with attendance."
+      },
+      "sources": [
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Penny_Allman-Payne",
+          "source_title": "Penny Allman-Payne — Wikipedia",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "wikipedia",
+          "access_status": "opened",
+          "note": "The Queensland Greens senator is the intended person; teaching references are not attendance."
+        },
+        {
+          "source_url": "https://www.abc.net.au/news/2022-06-01/greens-senator-penny-allman-payne-to-be-based-in-gladstone/101099220",
+          "source_title": "Greens senator-elect Penny Allman-Payne sets up in Matt Canavan's Central Queensland region — ABC News",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "news",
+          "access_status": "opened",
+          "note": "Opened original Wikipedia-cited ABC profile; contextual teaching and legal career only."
+        },
+        {
+          "source_url": "https://greens.org.au/news/speech/first-speech-penny-allman-payne",
+          "source_title": "First Speech - Penny Allman-Payne — Australian Greens, 1 August 2022",
+          "retrieval_date": "2026-10-18",
+          "observed_at": "2026-10-18T11:19:29Z",
+          "timestamp_basis": "UTC clock read after the source-inspection group; see the recorded retrieval window.",
+          "source_type": "first-person-parliamentary-speech",
+          "access_status": "opened",
+          "note": "First-person transcript explicitly identifies year 9 at Tully State High School; later schools mentioned are places of employment."
+        }
+      ],
+      "access_failures": [
+        {
+          "source_url": "https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;db=CHAMBER;id=chamber%2Fhansards%2F25937%2F0149;query=Id%3A%22chamber%2Fhansards%2F25937%2F0146%22",
+          "source_title": "Penny Allman-Payne first speech — official Hansard",
+          "retrieval_date": "2026-10-18",
+          "access_status": "unavailable",
+          "note": "Direct open returned 403 Forbidden. Use the successfully opened Greens-published transcript as the supporting source, not the inaccessible Hansard URL."
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Tully State High School",
+          "level": "secondary",
+          "attended_status": "attended_unspecified",
+          "years_attended": null,
+          "graduation_year": null,
+          "institution_ref": null,
+          "mapping_status": "needs_mapping",
+          "source_url": "https://greens.org.au/news/speech/first-speech-penny-allman-payne",
+          "source_title": "First Speech - Penny Allman-Payne — Australian Greens, 1 August 2022",
+          "retrieval_date": "2026-10-18",
+          "confidence": "verified",
+          "brief_quote": "My first act of civil disobedience took place in year 9 at Tully State High School.",
+          "note": "Direct first-person account of her attendance in year 9. No calendar dates or graduation inferred; later teacher-employment schools excluded."
+        }
+      ],
+      "unverified_leads": [],
+      "outcome": "needs_mapping"
+    }
+  ]
+}

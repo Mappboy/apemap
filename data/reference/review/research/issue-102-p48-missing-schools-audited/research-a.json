@@ -1,0 +1,1595 @@
+{
+  "schema_version": 1,
+  "issue_url": "https://github.com/Mappboy/apemap/issues/102",
+  "parliament": 48,
+  "researcher": "Codex delegated research A",
+  "review_status": "unreviewed",
+  "method": "Wikipedia-first live browser-tool research; existing P10020 caches are identity hints. Exact Wikidata pages were separately opened and matched to APH MP IDs and English Wikipedia sitelinks where accessible. A single final broad pass used at most six queries per case, counting every query, including batched queries. No attendance decision has been applied.",
+  "time_precision": "Access logs use observed UTC completion bounds from clock.curr_time, not fabricated per-request seconds. Each access occurred within the stated retrieval window; retrieved_at on proposals is the corresponding observed completion bound. web.run may return cached crawls; these timestamps describe tool retrieval, not publisher updates.",
+  "retrieval_windows": {
+    "group_1": {
+      "started_at": "2026-10-18T11:09:53Z",
+      "completed_at": "2026-10-18T11:11:18Z"
+    },
+    "group_2": {
+      "started_at": "2026-10-18T11:11:18Z",
+      "completed_at": "2026-10-18T11:13:30Z"
+    },
+    "group_3": {
+      "started_at": "2026-10-18T11:13:30Z",
+      "completed_at": "2026-10-18T11:15:25Z"
+    },
+    "qid_verification": {
+      "started_at": "2026-10-18T11:15:16Z",
+      "completed_at": "2026-10-18T11:16:08Z"
+    },
+    "late_source_checks": {
+      "started_at": "2026-10-18T11:15:25Z",
+      "completed_at": "2026-10-18T11:16:08Z"
+    },
+    "late_original_check": {
+      "started_at": "2026-10-18T11:21:58Z",
+      "completed_at": "2026-10-18T11:22:27Z"
+    },
+    "secondary_stage_audit_1151": {
+      "started_at": null,
+      "completed_at": "2026-10-18T11:51:58Z",
+      "note": "Previously saved supporting URLs reopened and inspected before this observed completion bound; exact first-access time was not measured. No new queries in this inspection group."
+    },
+    "secondary_stage_final_continuation": {
+      "started_at": "2026-10-18T11:51:58Z",
+      "completed_at": "2026-10-18T11:55:31Z",
+      "note": "Four additional Peter Whish-Wilson queries finish his existing six-query final pass. Varun Ghosh's first genuine final pass stops at two queries after direct original-PDF retrieval and visual confirmation of explicit Year 11 attendance."
+    }
+  },
+  "records": [
+    {
+      "aph_id": "101351",
+      "name": "Peter Khalil",
+      "qid": "Q25756187",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Peter_Khalil",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/101351.json",
+        "cache_retrieved_at": "2026-09-23T22:35:44.242298+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"101351\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q25756187",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata explicitly identifies APH MP 101351 and Peter Khalil English article; article corroborates birth 23 March 1973 and Labor member for Wills elected 2016."
+      },
+      "wikipedia": {
+        "outcome": "Article describes tertiary study and tennis after school; no secondary institution is named. Opened its cited first speech but access was restricted.",
+        "citation_urls": [
+          "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Peter_Khalil"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found tertiary biographies, unrelated people and official school visits. The first-speech search excerpt names his aunt Giselle's Preston East High School, not his own school; excluded. No attributable named secondary school found."
+      },
+      "search_log": [
+        {
+          "query": "\"Peter Khalil\" \"school\" attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Peter Khalil\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Peter Khalil\" \"secondary school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Peter Khalil\" \"educated at\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Peter Khalil\" school childhood education biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Peter Khalil\" \"school\" \"Sestito\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Peter_Khalil",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early life, education and references.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Peter_Khalil",
+          "stage": "wikipedia",
+          "outcome": "Failed: restricted URL. Search excerpts were available but not a successful full-page retrieval.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q25756187",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "The cited first speech could not be opened; do not record a completed negative as though this source was fully read."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "140651",
+      "name": "Deborah O'Neill",
+      "qid": "Q5248341",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Deborah_O%27Neill",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/140651.json",
+        "cache_retrieved_at": "2026-09-23T22:37:44.248259+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"140651\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q5248341",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH MP 140651 and English sitelink match Deborah O'Neill; article corroborates 4 June 1961 birth, NSW senator since 2013 and prior Robertson service."
+      },
+      "wikipedia": {
+        "outcome": "Explicit high-school attendance at St Patrick's College, Campbelltown, citing Debra Vermeer's December 2013 Good Samaritan profile; underlying profile opened successfully.",
+        "citation_urls": [
+          "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/"
+        ]
+      },
+      "final_search": {
+        "status": "not_required",
+        "query_count": 0,
+        "outcome": "Not required: the Wikipedia-linked original source explicitly establishes high-school attendance."
+      },
+      "search_log": [
+        {
+          "query": "\"Politics a way of giving action to faith\" Deborah",
+          "stage": "wikipedia",
+          "retrieval_window": "group_1"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Deborah_O%27Neill",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early life and attendance citation.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/",
+          "stage": "wikipedia",
+          "outcome": "Successful full profile. It explicitly distinguishes St Patrick's high-school education from earlier primary schools and later teaching employment.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q5248341",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "St Patrick's College, Campbelltown",
+          "source_url": "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/",
+          "paraphrase": "The December 2013 profile says Deborah attended St Patrick's in Campbelltown for her high-school education after earlier primary schools.",
+          "retrieved_at": "2026-10-18T11:11:18Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 1
+    },
+    {
+      "aph_id": "157125",
+      "name": "Tracey Roberts",
+      "qid": "Q109850050",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tracey_Roberts_(politician)",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/157125.json",
+        "cache_retrieved_at": "2026-09-23T22:38:42.890624+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"157125\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q109850050",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH MP 157125 and exact disambiguated English sitelink match; article and official biography corroborate Pearce member elected 2022, former Wanneroo mayor and Manchester birth."
+      },
+      "wikipedia": {
+        "outcome": "Article gives migration, council and parliamentary career; no school or education institution is named. Official About Tracey page also inspected.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries exhausted the final pass. Results concerned school visits/awards or namesakes including an American lawyer, artist and Canadian publishing employee. None identifies this MP's secondary school."
+      },
+      "search_log": [
+        {
+          "query": "\"Tracey Roberts\" \"school\" attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Tracey Roberts\" politician education Manchester school",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Tracey Roberts\" MP \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Tracey Roberts\" \"secondary\" education",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Tracey Roberts\" \"educated\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"Tracey Roberts\" Pearce childhood school England",
+          "stage": "final_broad",
+          "retrieval_window": "group_1"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tracey_Roberts_(politician)",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early life, personal life and references; no education institution.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://traceyforpearce.com.au/",
+          "stage": "wikipedia",
+          "outcome": "Successful official homepage corroborates Pearce service and former Wanneroo mayor.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://traceyforpearce.com.au/about/about-tracey/",
+          "stage": "final_broad",
+          "outcome": "Successful official biography; no named secondary-school attendance found.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q109850050",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "completed_no_evidence",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "168275",
+      "name": "Tony Sheldon",
+      "qid": "Q7823395",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tony_Sheldon_(politician)",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/168275.json",
+        "cache_retrieved_at": "2026-09-23T22:38:54.417997+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"168275\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q7823395",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH MP 168275 and exact Tony Sheldon (politician) sitelink; article corroborates 26 August 1961 birth, NSW senator since 2019 and TWU national secretary."
+      },
+      "wikipedia": {
+        "outcome": "Article explicitly says Sheldon attended De La Salle College, Cronulla and cites the ALP biography, successfully opened.",
+        "citation_urls": [
+          "https://www.alp.org.au/our-people/our-people/tony-sheldon/"
+        ]
+      },
+      "final_search": {
+        "status": "not_required",
+        "query_count": 0,
+        "outcome": "Not required: underlying cited political-party biography explicitly identifies the school."
+      },
+      "search_log": [],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tony_Sheldon_(politician)",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early life and attendance reference.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.alp.org.au/our-people/our-people/tony-sheldon/",
+          "stage": "wikipedia",
+          "outcome": "Successful biography explicitly states Tony attended De La Salle College Cronulla and corroborates TWU career.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q7823395",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "De La Salle College, Cronulla",
+          "source_url": "https://www.alp.org.au/our-people/our-people/tony-sheldon/",
+          "paraphrase": "The ALP biography identifies Tony's Caringbah upbringing and attendance at De La Salle College Cronulla before his university and union career.",
+          "retrieved_at": "2026-10-18T11:11:18Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 0
+    },
+    {
+      "aph_id": "169119",
+      "name": "David Shoebridge",
+      "qid": "Q5239754",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/David_Shoebridge",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/169119.json",
+        "cache_retrieved_at": "2026-09-23T22:38:55.011811+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"169119\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q5239754",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH MP 169119 and David Shoebridge English sitelink; article corroborates birth 17 September 1971, NSW senator from 2022 and former NSW Legislative Council service."
+      },
+      "wikipedia": {
+        "outcome": "Explicit secondary attendance at James Ruse Agricultural High School; cited NSW Hansard link redirects to an empty result page. A cited SMH early-life profile was also inaccessible.",
+        "citation_urls": [
+          "https://www.parliament.nsw.gov.au/Hansard/Pages/HansardResult.aspx",
+          "https://www.smh.com.au/politics/federal/david-shoebridge-is-finally-ready-to-tell-his-untold-story-20220310-p5a3oo.html"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 5,
+        "outcome": "Five final queries plus one earlier citation lookup (six actual queries total). Accessible syndication agrees with Wikipedia but underlying cited primary source and original news source remain inaccessible."
+      },
+      "search_log": [
+        {
+          "query": "\"David Shoebridge\" \"James Ruse\"",
+          "stage": "wikipedia",
+          "retrieval_window": "group_1"
+        },
+        {
+          "query": "\"David Shoebridge\" \"my\" \"James Ruse\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"David Shoebridge\" school education biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"David Shoebridge\" \"James Ruse\" site:parliament.nsw.gov.au",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"David Shoebridge\" \"James Ruse\" school 2016 mulesing",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Shoebridge\" \"James Ruse\" \"attended\" -site:wikipedia.org -site:everything.explained.today -site:biyografya.com",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Shoebridge",
+          "stage": "wikipedia",
+          "outcome": "Opened article and inspected attendance citation.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.parliament.nsw.gov.au/Hansard/Pages/HansardResult.aspx",
+          "stage": "wikipedia",
+          "outcome": "Citation follow returned zero text lines after redirect.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://www.smh.com.au/politics/federal/david-shoebridge-is-finally-ready-to-tell-his-untold-story-20220310-p5a3oo.html",
+          "stage": "wikipedia",
+          "outcome": "Failed non-retryable fetch.",
+          "retrieval_window": "group_1"
+        },
+        {
+          "url": "https://pressnewsagency.org/david-shoebridge-is-one-of-parliaments-best-operators-his-new-task-as-greens-leader-is-far-broader/",
+          "stage": "final_broad",
+          "outcome": "Accessible syndicated SMH article states James Ruse graduation. Original source-link attempts failed; syndication provenance requires verification.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q5239754",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "James Ruse Agricultural High School",
+          "source_url": "https://en.wikipedia.org/wiki/David_Shoebridge",
+          "paraphrase": "Wikipedia explicitly identifies secondary education at James Ruse; underlying source was not successfully inspected.",
+          "reason_not_proposed": "Underlying citation and original news attribution could not be verified; preserve as a research lead."
+        }
+      ],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "No reviewed attendance proposal: source attribution remains incomplete.",
+        "The syndicated article reports graduation; no graduation status is adopted without underlying-source verification."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "181810",
+      "name": "Susan Templeman",
+      "qid": "Q25753992",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Susan_Templeman",
+      "identity": {
+        "status": "person_confirmed_qid_unavailable",
+        "cache_path": "data/raw/wikimedia/members/181810.json",
+        "cache_retrieved_at": "2026-09-24T07:36:47.468457+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"181810\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q25753992",
+        "live_qid_status": "unavailable",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Cached P10020 query maps APH 181810 to Q25753992 and Susan Templeman. Live English article corroborates Labor member for Macquarie elected2016, journalist and Special Envoy for Arts. Exact QID page unavailable on two live attempts; QID identity not freshly verified."
+      },
+      "wikipedia": {
+        "outcome": "Names Killara High School, Strathfield Girls High School and six months secondary exchange at Colegio Mochis, Mexico. Its HDI attendance citation returned404; APH first-speech page failed.",
+        "citation_urls": [
+          "https://hdinews.com.au/meet-new-member-macquarie-susan-templeman/",
+          "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Susan_Templeman"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found Wikipedia mirrors and first-speech snippets; no accessible underlying attendance source. Neither children's Winmalee schools nor mother's teaching employer are treated as her schooling."
+      },
+      "search_log": [
+        {
+          "query": "\"Susan Templeman\" \"Killara\" \"Strathfield\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Susan Templeman\" \"Colegio Mochis\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Susan Templeman\" \"schools\" \"Killara\" -site:wikipedia.org -site:kiwix.presumenothing.net",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Susan Templeman\" school \"first speech\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Susan Templeman\" \"Strathfield Girls\" biography education -site:wikipedia.org",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Susan Templeman\" \"school\" \"Greg Martin\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Susan_Templeman",
+          "stage": "wikipedia",
+          "outcome": "Opened education and source list; explicit three-school leads.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://hdinews.com.au/meet-new-member-macquarie-susan-templeman/",
+          "stage": "wikipedia",
+          "outcome": "Failed404.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Susan_Templeman",
+          "stage": "final_broad",
+          "outcome": "Failed retrieval on repeated direct opens; search excerpt available but no fully accessed page.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q25753992",
+          "stage": "wikipedia_identity",
+          "outcome": "Two live direct opens failed; exact QID contents unavailable. Cache mapping retained as hint only.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Killara High School",
+          "source_url": "https://en.wikipedia.org/wiki/Susan_Templeman",
+          "paraphrase": "Named in the live Wikipedia early-life education paragraph.",
+          "reason_not_proposed": "Attendance citation unavailable and exact live QID access unavailable."
+        },
+        {
+          "recorded_school_name": "Strathfield Girls High School",
+          "source_url": "https://en.wikipedia.org/wiki/Susan_Templeman",
+          "paraphrase": "Named in the live Wikipedia early-life education paragraph.",
+          "reason_not_proposed": "Attendance citation unavailable and exact live QID access unavailable."
+        },
+        {
+          "recorded_school_name": "Colegio Mochis",
+          "source_url": "https://en.wikipedia.org/wiki/Susan_Templeman",
+          "paraphrase": "Named in the live Wikipedia early-life education paragraph.",
+          "reason_not_proposed": "Attendance citation unavailable and exact live QID access unavailable."
+        }
+      ],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Exact QID page failed twice; retain cached QID as a hint only.",
+        "Attendance source returned404; do not treat the final pass as a complete evidence-negative finding."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "195565",
+      "name": "Peter Whish-Wilson",
+      "qid": "Q7177677",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Peter_Whish-Wilson",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/195565.json",
+        "cache_retrieved_at": "2026-09-25T11:17:55.230025+10:00",
+        "cache_query": "SELECT ?item ?dob ?gender ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"195565\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL { ?item wdt:P21 ?gender . }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q7177677",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 195565 and Peter Whish-Wilson English sitelink; birth24February1968, Tasmanian Greens Senate career and economics/finance background corroborate exact person, distinct from namesake tubist."
+      },
+      "wikipedia": {
+        "outcome": "Names tertiary/military institutions only; education citations and early life inspected. A cited New Matilda profile opened; no named secondary school there.",
+        "citation_urls": [
+          "https://newmatilda.com/2012/05/04/who-peter-whish-wilson/"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Uncertain after six total final-pass queries. Saved school publication establishes the exact senator's Old Guildfordian identity and Henn's House years, but does not explicitly state his secondary stage. Additional senior, secondary, Year 12 and HSC queries found no stronger source; class-year or birth-year arithmetic is not used to assert secondary attendance."
+      },
+      "search_log": [
+        {
+          "query": "\"Peter Whish-Wilson\" school education",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Peter Whish-Wilson\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Peter Whish-Wilson\" \"Guildford\" \"senior\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "query": "\"Peter Whish-Wilson\" \"Guildford Grammar\" \"secondary\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "query": "\"Peter Whish-Wilson\" \"Guildford\" \"Year 12\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "query": "\"Peter Whish-Wilson\" \"school\" \"HSC\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Peter_Whish-Wilson",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early life/education and citations.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://newmatilda.com/2012/05/04/who-peter-whish-wilson/",
+          "stage": "wikipedia",
+          "outcome": "Successful cited biographical profile; no named secondary-school finding.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.ggs.wa.edu.au/wp-content/uploads/2025/03/Forward-2021-December-Mk14-WEB.pdf",
+          "stage": "final_broad",
+          "outcome": "Successful school-published Forward December 2021 PDF. Page47 names Peter Whish-Wilson, Henn's House 1983–1985, and identifies Tasmanian Greens senator, UTas lecturer and Merrill Lynch vice-president.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q7177677",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        },
+        {
+          "url": "https://www.ggs.wa.edu.au/wp-content/uploads/2025/03/Forward-2021-December-Mk14-WEB.pdf",
+          "stage": "final_broad",
+          "outcome": "Reopened saved original PDF and reinspected printed page 47. Peter Whish-Wilson is identified with Henn's House 1983–1985 and his Senate career, but there is no personal secondary-stage statement. The original birth-year inference is withdrawn.",
+          "retrieval_window": "secondary_stage_audit_1151"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Guildford Grammar School",
+          "source_url": "https://www.ggs.wa.edu.au/wp-content/uploads/2025/03/Forward-2021-December-Mk14-WEB.pdf",
+          "paraphrase": "School-published Forward December 2021 page 47 lists Tasmanian Greens senator Peter Whish-Wilson in Henn's House 1983–1985 among accomplished Old Guildfordians.",
+          "retrieved_at": "2026-10-18T11:12:48Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "source_locator": "Printed page 47; PDF page 46 (zero-based).",
+          "attendance_year_text": "Henn's House 1983–1985. Secondary-stage inference uses these attendance years and independently recorded birth in 1968; no graduation inferred."
+        }
+      ],
+      "result_status": "uncertain",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Original school object is retained verbatim as a lead. Its secondary-stage inference from school-house attendance years and birth year is unsupported and withdrawn; the six-query final pass did not establish an explicit secondary stage. This is not a non-attendance assertion."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "243609",
+      "name": "Andrew Giles",
+      "qid": "Q16214422",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Andrew_Giles",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/243609.json",
+        "cache_retrieved_at": "2026-09-23T22:33:40.849178+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"243609\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q16214422",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 243609 and Andrew Giles English sitelink; article corroborates31 July 1973 birth, Labor member for Scullin since 2013 and Slater&Gordon lawyer."
+      },
+      "wikipedia": {
+        "outcome": "States high-school attendance at Scotch College Melbourne, but the school sentence itself has no direct citation. Nearby APH/citizenship references concern other facts.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found mirrors, alumni lists and unrelated Giles/Scotch matches; no independently attributable attendance source was located."
+      },
+      "search_log": [
+        {
+          "query": "\"Andrew Giles\" \"Scotch\" school",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Andrew Giles\" \"Scotch\" site:scotch.vic.edu.au",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Andrew Giles\" \"Scotch\" -site:en.wikipedia.org -site:library.squarepolka.com -site:facebook.com",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Andrew Giles\" \"Scotch College\" school biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Giles\" \"Scotch\" \"1991\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Andrew Giles\" attended school Scotch Melbourne politician -site:wikipedia.org -site:wiki.knf7.com -site:library.squarepolka.com",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Andrew_Giles",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected school assertion and surrounding citations.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q16214422",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Scotch College, Melbourne",
+          "source_url": "https://en.wikipedia.org/wiki/Andrew_Giles",
+          "paraphrase": "Wikipedia asserts high-school attendance but its sentence has no directly supporting citation.",
+          "reason_not_proposed": "Unverified underlying attendance evidence; Wikipedia mirrors add no independent support."
+        }
+      ],
+      "result_status": "incomplete_underlying_evidence",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "250362",
+      "name": "Mehreen Faruqi",
+      "qid": "Q16728926",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Mehreen_Faruqi",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/250362.json",
+        "cache_retrieved_at": "2026-09-23T22:33:08.284973+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"250362\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q16728926",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 250362 and Mehreen Faruqi English sitelink; article corroborates8 July 1963 Lahore birth, NSW Greens senator since 2018, engineer and UNSW doctorate."
+      },
+      "wikipedia": {
+        "outcome": "Person article supplies tertiary education and unspecified overseas high-school completion. No secondary institution named. Final-pass lead Convent ofJesusandMaryLahore has only an uncited alumni entry.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found a plausible CJM Lahore lead and a general institutions paper, but no explicit secondary attendance at a specific campus; no secondary-school assertion is proposed."
+      },
+      "search_log": [
+        {
+          "query": "\"Mehreen Faruqi\" school Lahore education",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Mehreen Faruqi\" \"Convent\" school",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Mehreen Faruqi\" \"school\" \"nuns\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Mehreen Faruqi\" \"school\" \"Jesus and Mary\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Mehreen Faruqi\" \"Convent of Jesus and Mary\" education Lahore -site:wikipedia.org -site:everything.explained.today -site:wiki.bitter.house",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Mehreen Faruqi\" childhood schooling Lahore convent",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Mehreen_Faruqi",
+          "stage": "wikipedia",
+          "outcome": "Opened early-life/education, personal life and sources.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Convent_of_Jesus_and_Mary,_Lahore",
+          "stage": "final_broad",
+          "outcome": "Successful school page lists her among alumni without citation. School covers both primary and secondary levels.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://nuqtahjts.com/index.php/njts/article/download/226/179",
+          "stage": "final_broad",
+          "outcome": "Successful16-page article PDF mentions formative CJM education, but no explicit secondary stage or named campus forFaruqi. Not used as sufficient attendance evidence.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q16728926",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Convent of Jesus and Mary, Lahore",
+          "source_url": "https://en.wikipedia.org/wiki/Convent_of_Jesus_and_Mary,_Lahore",
+          "paraphrase": "Uncited alumni list names Mehreen Faruqi. A separate paper mentions formative CJM education but does not resolve her campus or secondary stage.",
+          "reason_not_proposed": "Cannot distinguish primary from secondary attendance or independently verify school/campus."
+        }
+      ],
+      "result_status": "incomplete_underlying_evidence",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "252157",
+      "name": "Jess Walsh",
+      "qid": "Q64711059",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jess_Walsh",
+      "identity": {
+        "status": "person_confirmed_qid_unavailable",
+        "cache_path": "data/raw/wikimedia/members/252157.json",
+        "cache_retrieved_at": "2026-09-24T07:40:22.453575+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"252157\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q64711059",
+        "live_qid_status": "unavailable",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Cached P10020 query mapsAPH 252157 to Q64711059 and Jess Walsh. Live article andALP biography corroborate Victorian Labor senator since 2019, United Voice leadership and University of Melbourne PhD. Exact QID page unavailable twice; cached hint not freshly verified."
+      },
+      "wikipedia": {
+        "outcome": "Article describes North Balwyn upbringing and tertiary qualifications, with no named secondary school. Relevant first-speech citation could not be fetched.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found namesakes, ministerial school work and tertiary biographies. No named secondary institution attributable to this senator."
+      },
+      "search_log": [
+        {
+          "query": "\"Jess Walsh\" school attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Jess Walsh\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Jess Walsh\" \"secondary school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Jess Walsh\" \"educated\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Jess Walsh\" senator school North Balwyn",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        },
+        {
+          "query": "\"Jessica Cecille Walsh\" school education",
+          "stage": "final_broad",
+          "retrieval_window": "group_2"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Jess_Walsh",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected early-life education and sources; first-speech follow failed.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://alp.org.au/our-people/our-people/jess-walsh/",
+          "stage": "final_broad",
+          "outcome": "Successful official-party biography names tertiary degrees only.",
+          "retrieval_window": "group_2"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q64711059",
+          "stage": "wikipedia_identity",
+          "outcome": "Two live direct opens failed; exact QID contents unavailable. Cache mapping retained as hint only.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Two exact QID page opens failed; cached QID remains a hint.",
+        "Wikipedia first-speech citation follow failed; tool did not expose a usable targetURL, so no URL is invented here."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "256063",
+      "name": "Andrew Bragg",
+      "qid": "Q64152252",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Andrew_Bragg",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/256063.json",
+        "cache_retrieved_at": "2026-09-23T22:29:47.759514+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"256063\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q64152252",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata explicitly links APH 256063 and Andrew Bragg English article; 11 July 1984 birth, NSW Liberal senator since 2019 and accounting background match."
+      },
+      "wikipedia": {
+        "outcome": "Person article says unnamed local Catholic schools; no exact institution. Final pass found uncited Notre Dame College, Shepparton alumni entry; no attributable underlying school source.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries exhausted. Notre Dame College, Shepparton is an unverified lead; namesakes and youth speech quoted by Bragg are excluded."
+      },
+      "search_log": [
+        {
+          "query": "\"Andrew Bragg\" \"school\" attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Andrew Bragg\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Andrew Bragg\" \"secondary\" school",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Andrew Bragg\" \"school\" \"Shepparton\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Andrew Bragg\" \"Notre Dame\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Andrew Bragg\" \"Notre Dame College\" -site:wikipedia.org",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Andrew_Bragg",
+          "stage": "wikipedia",
+          "outcome": "Opened early-life education and sources.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.andrewbragg.com/about",
+          "stage": "final_broad",
+          "outcome": "Successful official biography says after high school he attended ANU, but does not name school.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Notre_Dame_College,_Shepparton",
+          "stage": "final_broad",
+          "outcome": "Successful school article lists Andrew Bragg among alumni without a source attached to his entry.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q64152252",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Notre Dame College, Shepparton",
+          "source_url": "https://en.wikipedia.org/wiki/Notre_Dame_College,_Shepparton",
+          "paraphrase": "School Wikipedia page lists the NSW senator among alumni without an individual supporting citation.",
+          "reason_not_proposed": "No independently attributable attendance source found."
+        }
+      ],
+      "result_status": "incomplete_underlying_evidence",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "257613",
+      "name": "Varun Ghosh",
+      "qid": "Q124172491",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Varun_Ghosh",
+      "identity": {
+        "status": "person_confirmed_qid_unavailable",
+        "cache_path": "data/raw/wikimedia/members/257613.json",
+        "cache_retrieved_at": "2026-09-23T22:33:38.857502+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"257613\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q124172491",
+        "live_qid_status": "unavailable",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Cached P10020 query maps APH 257613 to Q124172491. Live article corroborates30 August 1985 birth, WA Labor senator replacingPat Dodson and Francis Burt barrister. School publication identifies lawyerVarun Ghosh and King & Wood Mallesons career, consistent with article. Exact QID page failed twice; no live QID claim."
+      },
+      "wikipedia": {
+        "outcome": "Christ Church Grammar School's cited 25 May 2016 article and newsletter establish old-boy identity and a visiting Senior Assembly address, not his own secondary grade. The original class-year/birth-year stage inference is withdrawn; a genuine final broad pass was required.",
+        "citation_urls": [
+          "https://www.ccgs.wa.edu.au/news/whole-school/centre-for-ethics/the-centre-for-ethics-brings-varun-ghosh-and-reverend-dr-robin-meyers-to-ccgs"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 2,
+        "outcome": "Stopped after two final queries: the original school-published Chronicle 29, June 2001, printed page 18 explicitly identifies Varun Ghosh as Year 11. Browser opens failed size limits, but direct HTTP retrieval of the complete original PDF succeeded; its page was text-extracted, rendered and visually inspected. No graduation or attendance range is inferred."
+      },
+      "search_log": [
+        {
+          "query": "\"Varun Ghosh\" \"Christ Church\" \"2002\"",
+          "stage": "wikipedia",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Varun Ghosh\" \"Christ Church\" \"Year 12\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "query": "\"Varun Ghosh\" \"Christ Church\" \"Year 11\"",
+          "stage": "final_broad",
+          "retrieval_window": "secondary_stage_final_continuation"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Varun_Ghosh",
+          "stage": "wikipedia",
+          "outcome": "Opened early-life and attendance citation.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.ccgs.wa.edu.au/news/whole-school/centre-for-ethics/the-centre-for-ethics-brings-varun-ghosh-and-reverend-dr-robin-meyers-to-ccgs",
+          "stage": "wikipedia",
+          "outcome": "Successful25 May 2016 school article callsVarun Ghosh an old boy and describes addressing theSenior School Assembly.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.ccgs.wa.edu.au/wp-content/uploads/2014/01/CCGS_CCGS_QueensleaTerm3_2016.pdf",
+          "stage": "wikipedia",
+          "outcome": "Successful Queenslea Quarterly Term 3 / 2016 PDF page  4 identifies old boyVarun Ghosh(2002), King & Wood Mallesons senior associate, returning forYear 12 careers andSenior Assembly.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-32-december-2002.pdf",
+          "stage": "wikipedia",
+          "outcome": "Failed fetch; search excerpt mentions him captainingChristChurch team.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-33-july-2003.pdf",
+          "stage": "wikipedia",
+          "outcome": "Failed fetch; search excerpt mentions2002 leavers.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q124172491",
+          "stage": "wikipedia_identity",
+          "outcome": "Two live direct opens failed; exact QID contents unavailable. Cache mapping retained as hint only.",
+          "retrieval_window": "qid_verification"
+        },
+        {
+          "url": "https://www.ccgs.wa.edu.au/news/whole-school/centre-for-ethics/the-centre-for-ethics-brings-varun-ghosh-and-reverend-dr-robin-meyers-to-ccgs",
+          "stage": "final_broad",
+          "outcome": "Reopened saved school article: old boy (2002) and guest at Senior Assembly do not explicitly establish his own secondary attendance.",
+          "retrieval_window": "secondary_stage_audit_1151"
+        },
+        {
+          "url": "https://www.ccgs.wa.edu.au/wp-content/uploads/2014/01/CCGS_CCGS_QueensleaTerm3_2016.pdf",
+          "stage": "final_broad",
+          "outcome": "Reopened saved PDF: old boy (2002) returning to speak to Year 12 students establishes identity, not that he himself attended Year 12.",
+          "retrieval_window": "secondary_stage_audit_1151"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-32-december-2002.pdf",
+          "stage": "final_broad",
+          "outcome": "Reopened saved URL; browser refused oversized content, 42,343,059 bytes. No body claimed.",
+          "retrieval_window": "secondary_stage_audit_1151"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-33-july-2003.pdf",
+          "stage": "final_broad",
+          "outcome": "Reopened saved URL; browser refused oversized content, 46,465,627 bytes. No body claimed.",
+          "retrieval_window": "secondary_stage_audit_1151"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+          "stage": "final_broad",
+          "outcome": "Browser direct open refused oversized content, 36,516,016 bytes; indexed Year 11 text remained a lead until subsequent complete original retrieval.",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-30-november-2001.pdf",
+          "stage": "final_broad",
+          "outcome": "Browser direct open timed out. Indexed debating text was not promoted to verified evidence.",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+          "stage": "final_broad",
+          "outcome": "Direct urllib HTTP retrieval succeeded with status 200 and 36,516,016 bytes. pypdf extracted PDF page index 17, printed page 18, explicitly identifying Varun Ghosh as Year 11 under United Nations Youth Conference. No repository dependency or authority changed.",
+          "retrieval_window": "secondary_stage_final_continuation"
+        },
+        {
+          "url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+          "stage": "final_broad",
+          "outcome": "Second direct original retrieval succeeded HTTP 200, 36,516,016 bytes, SHA256 b5f12be3b5211028659cf2ee84df26e594840267be31a3684d4c9812593f7be0. Rendered printed page 18 with pdftoppm and visually confirmed the exact Varun Ghosh (Year 11) statement.",
+          "retrieval_window": "secondary_stage_final_continuation"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Christ Church Grammar School",
+          "source_url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+          "source_title": "Christ Church Grammar School Chronicle 29, June 2001",
+          "source_sha256": "b5f12be3b5211028659cf2ee84df26e594840267be31a3684d4c9812593f7be0",
+          "source_size_bytes": 36516016,
+          "source_locator": "Printed page 18; PDF page 18 (one-based), index 17 (zero-based), United Nations Youth Conference section.",
+          "brief_quote": "Varun Ghosh (Year 11)",
+          "paraphrase": "The school's contemporaneous Chronicle 29, June 2001, printed page 18 explicitly identifies Varun Ghosh as Year 11 when describing his UN youth delegation and State Debating Team selection. The later school article establishes the same old-boy/lawyer identity. This directly supports secondary attendance without class-year or birth-year arithmetic; no graduation is inferred.",
+          "retrieved_at": "2026-10-18T11:55:31Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [
+        {
+          "recorded_school_name": "Christ Church Grammar School",
+          "source_url": "https://www.ccgs.wa.edu.au/wp-content/uploads/2014/01/CCGS_CCGS_QueensleaTerm3_2016.pdf",
+          "paraphrase": "Queenslea Quarterly Term 3 / 2016 page 4 identifies Varun Ghosh as an old boy(2002) and King & Wood Mallesons senior associate returning to address seniorboys.",
+          "retrieved_at": "2026-10-18T11:14:54Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "source_locator": "PDF page  4 (zero-based3).",
+          "attendance_year_text": "Old boy (2002). Secondary-stage inference uses the class year and independently recorded birth in 1985; graduation not inferred."
+        }
+      ],
+      "result_status": "school_found_identity_access_incomplete",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Strong underlying school evidence exists but exact QID page unavailable twice; user must review identity evidence before any use.",
+        "Original school object is preserved verbatim as a lead. Its class-year/birth-year secondary-stage inference is withdrawn and replaced by directly retrieved, visually verified contemporaneous Year 11 evidence."
+      ],
+      "total_search_query_count": 3
+    },
+    {
+      "aph_id": "263427",
+      "name": "Jo Briskey",
+      "qid": "Q134312684",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jo_Briskey",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/263427.json",
+        "cache_retrieved_at": "2026-09-23T22:29:48.888132+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"263427\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134312684",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 263427 and Jo Briskey English sitelink; article corroborates2025 election for Maribyrnong, psychologist and United Workers Union coordinator, consistent with cited profile."
+      },
+      "wikipedia": {
+        "outcome": "Says All Hallows' School, Brisbane, citing the 28 June 2025 Saturday Paper profile. Original link follow initially failed; the exact original publisher URL was later discovered while researching Rowan Holzberger and successfully opened.",
+        "citation_urls": [
+          "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries completed. Exact original publisher subsequently verified the named school, resolving the earlier original-source access failure. Secondary attendance stage remains unproven because this school also offers primary years."
+      },
+      "search_log": [
+        {
+          "query": "\"Jo Briskey\" \"All Hallows\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jo Briskey\" \"All Hallows\" school attended -site:wikipedia.org -site:newikis.com",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jo Briskey\" school education biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jo Briskey\" \"school\" alumnae",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jo Briskey\" \"All Hallows\" \"2002\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jo Briskey\" \"All Hallows\" biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Jo_Briskey",
+          "stage": "wikipedia",
+          "outcome": "Opened early life and reference list; original Saturday Paper attendance citation failed.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://au.linkedin.com/in/jo-briskey",
+          "stage": "final_broad",
+          "outcome": "Failed999status; no education extracted.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.mirrorweekly.com/441759/",
+          "stage": "final_broad",
+          "outcome": "Successful public reprint of Exclusive:Labor has first Left-majority caucus. Profile namesJo Briskey, Maribyrnong, psychologist/UWU and School: All Hallows' School, Brisbane; original publisher attribution not verified.",
+          "retrieval_window": "late_source_checks"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134312684",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        },
+        {
+          "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "stage": "wikipedia",
+          "outcome": "Later successful original publisher retrieval. Jo Briskey section identifies Maribyrnong, psychologist / UWU background and School: All Hallows' School, Brisbane.",
+          "retrieval_window": "late_original_check"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "All Hallows' School, Brisbane",
+          "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "paraphrase": "The original Saturday Paper profile identifies Jo Briskey, Maribyrnong, and lists All Hallows' School, Brisbane as her school.",
+          "reason_not_proposed": "The profile does not explicitly distinguish secondary from primary attendance at this institution."
+        }
+      ],
+      "result_status": "incomplete_underlying_evidence",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Original citation is now accessible; earlier tool-link failures remain in the audit log.",
+        "No secondary-school attendance proposed without evidence of stage."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "263528",
+      "name": "Jacinta Nampijinpa Price",
+      "qid": "Q106869875",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jacinta_Nampijinpa_Price",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/263528.json",
+        "cache_retrieved_at": "2026-09-23T22:37:37.15159+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"263528\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q106869875",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 263528 and Jacinta Nampijinpa Price English sitelink; article corroboratesNorthern Territory senator and formerAlice Springs deputy mayor, plus Bess Price family. Cached DOB January 1 differs from live article May 12; no canonical field edits made."
+      },
+      "wikipedia": {
+        "outcome": "Describes school-age events and Year 12motherhood but names no secondary institution. Parents' Yuendumu school employment is not her attendance.",
+        "citation_urls": [
+          "https://www.abc.net.au/news/2025-02-11/outspoken-jacinta-price/104922454"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries completed with no attributed named secondary school. Official visits, parents' workplace, unsupported namesake qualifications and unsourced comments were excluded."
+      },
+      "search_log": [
+        {
+          "query": "\"Jacinta Nampijinpa Price\" school attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jacinta Price\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jacinta Price\" \"educated\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jacinta Nampijinpa Price\" \"secondary school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jacinta Price\" school Alice Springs attended biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Jacinta Price\" school childhood education biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Jacinta_Nampijinpa_Price",
+          "stage": "wikipedia",
+          "outcome": "Opened early life and source list.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.abc.net.au/news/2025-02-11/outspoken-jacinta-price/104922454",
+          "stage": "wikipedia",
+          "outcome": "Successfully opened ABC AustralianStory transcript; school references concern parents' employment or unnamed schooling. No named secondary attendance found.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q106869875",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "completed_no_evidence",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Cached date of birth differs from live article; identity established through exact APH MP ID/sitelink and career, no DOB correction proposed."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "265990",
+      "name": "Anne Stanley",
+      "qid": "Q25768264",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Anne_Stanley_(politician)",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/265990.json",
+        "cache_retrieved_at": "2026-09-24T07:26:38.696992+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"265990\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q25768264",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 265990 and Anne Stanley(politician) sitelink; article corroborates6 October 1961 birth, Werriwa member since 2016, Liverpoolcouncillor and bankingcareer. Official About page identifies Werriwa member and husbandLarry."
+      },
+      "wikipedia": {
+        "outcome": "Article contains no school name. Officialfirst-personAbout biography found in finalquery explicitly names Lurnea High School separately fromLurnea Public School.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 1,
+        "outcome": "Stopped after 1 query: official first-person  biography explicitly namesLurnea High School."
+      },
+      "search_log": [
+        {
+          "query": "\"Anne Stanley\" school attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Anne_Stanley_(politician)",
+          "stage": "wikipedia",
+          "outcome": "Opened early life and reference list.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://annestanley.com.au/about/",
+          "stage": "final_broad",
+          "outcome": "Successful first-person official About biography states she andsister attendedLurnea Public School andLurnea High School.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q25768264",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q25768264",
+          "stage": "wikipedia_identity",
+          "outcome": "Initial open failed; subsequent direct open and MPID/sitelink reads succeeded.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Lurnea High School",
+          "source_url": "https://annestanley.com.au/about/",
+          "paraphrase": "Anne's official biography states she and her sister attended Lurnea Public School and Lurnea High School.",
+          "retrieved_at": "2026-10-18T11:14:37Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 1
+    },
+    {
+      "aph_id": "265991",
+      "name": "Llew O'Brien",
+      "qid": "Q25756234",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Llew_O%27Brien",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/265991.json",
+        "cache_retrieved_at": "2026-09-23T22:37:40.581271+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"265991\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q25756234",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:16:08Z",
+        "corroboration": "Live Wikidata APH 265991 and Llew O'Brien English sitelink; article corroborates26 June 1972 birth, WideBayMPsince 2016 and Queensland police career. Official biography and maiden-speech copy independently identify sameMP."
+      },
+      "wikipedia": {
+        "outcome": "Says he left school at 15 to care for mother; does not name school. APH first-speech source blocked 403, but official member website copy opened and explicitly says high school ended after Year 9 without naminginstitution.",
+        "citation_urls": [
+          "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Llew_OBrien"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries completed. Full official speech copy states Year 9 school leaving but no institution; search found no attributable named secondary school. Gympie State HighP&C connection excluded."
+      },
+      "search_log": [
+        {
+          "query": "\"Llew O'Brien\" \"school\" attended",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Llew O'Brien\" \"high school\" school",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Llew O'Brien\" \"secondary school\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Llew O'Brien\" \"school\" \"Mona Vale\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Llew O'Brien\" \"educated\"",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        },
+        {
+          "query": "\"Llew O'Brien\" school education biography",
+          "stage": "final_broad",
+          "retrieval_window": "group_3"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Llew_O%27Brien",
+          "stage": "wikipedia",
+          "outcome": "Opened early life and references.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.aph.gov.au/Senators_and_Members/Members/FirstSpeeches/45th_Parliament/Llew_OBrien",
+          "stage": "wikipedia",
+          "outcome": "Failed403Forbidden.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://llewobrien.com.au/about-llew-o-brien/",
+          "stage": "final_broad",
+          "outcome": "Successful official biography; Gympie State High School is a patronage / P&C link, not attendance.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://llewobrien.com.au/mr-llew-o-brien-wide-bay-17-10/",
+          "stage": "final_broad",
+          "outcome": "Successful official copy of maiden speech. Says left schoolafterYear 9, aged15; no institution name.",
+          "retrieval_window": "group_3"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q25756234",
+          "stage": "wikipedia_identity",
+          "outcome": "Successful live page: exact APH MP ID and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "qid_verification"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "completed_no_evidence",
+      "review_status": "unreviewed",
+      "limitations": [
+        "APH original 403, but successful official republication covers relevant first-speech content. No school-leaving-status event proposed."
+      ],
+      "total_search_query_count": 6
+    }
+  ],
+  "completed_negative_aph_ids": [
+    "157125",
+    "263528",
+    "265991"
+  ],
+  "incomplete_research_aph_ids": [
+    "101351",
+    "169119",
+    "181810",
+    "243609",
+    "250362",
+    "252157",
+    "256063",
+    "257613",
+    "263427"
+  ]
+}

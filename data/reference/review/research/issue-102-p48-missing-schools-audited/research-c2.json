@@ -1,0 +1,705 @@
+{
+  "schema_version": 1,
+  "issue_url": "https://github.com/Mappboy/apemap/issues/102",
+  "parliament": 48,
+  "researcher": "Codex delegated research A, additional C2 cases",
+  "review_status": "unreviewed",
+  "method": "Wikipedia-first live research with exact Wikidata QID, APH MP identifier and English sitelink verification. Relevant cited sources were followed before a single final broad pass of at most six actual queries. No ledger or database changed.",
+  "time_precision": "UTC access windows use observed clock readings. Proposal retrieved_at is the observed completion bound; web.run may return cached crawls. No per-request second or publisher-update timestamp is invented.",
+  "retrieval_windows": {
+    "wikipedia_identity": {
+      "started_at": "2026-10-18T11:20:25Z",
+      "completed_at": "2026-10-18T11:21:09Z"
+    },
+    "final_broad": {
+      "started_at": "2026-10-18T11:21:09Z",
+      "completed_at": "2026-10-18T11:23:16Z"
+    },
+    "secondary_stage_reinspection": {
+      "started_at": "2026-10-18T11:47:19Z",
+      "completed_at": "2026-10-18T11:48:41Z",
+      "note": "Previously saved supporting URLs reopened by 11:47:22Z; subsequent text inspection completed before the observed completion bound. No new search queries."
+    },
+    "final_broad_continuation": {
+      "started_at": "2026-10-18T11:49:59Z",
+      "completed_at": "2026-10-18T11:50:35Z",
+      "note": "Five additional queries complete Milton Dick's original one-query final broad pass within its six-query budget. The final access was a full EducationHQ interview retrieval."
+    },
+    "tim_secondary_stage_audit_1151": {
+      "started_at": null,
+      "completed_at": "2026-10-18T11:51:58Z",
+      "note": "Saved Tim Wilson alumni and local-reporting URLs were reopened before this observed completion bound. Exact first-access time was not measured; no new query in this inspection group."
+    },
+    "tim_final_broad_continuation": {
+      "started_at": "2026-10-18T11:51:58Z",
+      "completed_at": "2026-10-18T11:55:31Z",
+      "note": "One additional actual query completes Tim Wilson's existing six-query final broad pass. No source explicitly establishing personal secondary stage was found."
+    }
+  },
+  "records": [
+    {
+      "aph_id": "53517",
+      "name": "Milton Dick",
+      "qid": "Q20983429",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Milton_Dick",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/53517.json",
+        "cache_retrieved_at": "2026-09-23T22:32:44.459845+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"53517\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q20983429",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Exact live QID shows APH MP 53517 and Milton Dick English sitelink. Wikipedia corroborates 21 July 1972 birth, Oxley member since 2016 and Speaker since 2022; school OBA post independently identifies the Speaker and Oxley service."
+      },
+      "wikipedia": {
+        "outcome": "Explicit Anglican Church Grammar School attendance, citing the APH handbook. The handbook citation opened as a one-line application shell without usable education detail.",
+        "citation_urls": [
+          "https://handbook.aph.gov.au/Parliamentarian/53517"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Uncertain: six total queries in the final broad pass, including five additional queries after the saved-source audit, did not establish explicit secondary stage. OBA and school alumni evidence identifies the politician but does not define 1989 as a class or leaving year. Other results describe official school visits or unrelated people; the fully opened EducationHQ interview concerns his civics outreach, not his own schooling."
+      },
+      "search_log": [
+        {
+          "query": "\"Milton Dick\" \"school\" Churchie",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Milton Dick\" \"Churchie\" \"graduated\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad_continuation"
+        },
+        {
+          "query": "\"Milton Dick\" \"secondary\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad_continuation"
+        },
+        {
+          "query": "\"Milton Dick\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad_continuation"
+        },
+        {
+          "query": "\"Milton Dick\" \"Churchie\" \"Year 12\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad_continuation"
+        },
+        {
+          "query": "\"Milton Dick\" \"school\" \"prefect\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad_continuation"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Milton_Dick",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://handbook.aph.gov.au/Parliamentarian/53517",
+          "stage": "wikipedia",
+          "outcome": "Opened citation; page supplied no usable biographical body text.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.linkedin.com/posts/churchieoba_congratulations-to-anglican-church-grammar-activity-6965203144557428736-ALDC",
+          "stage": "final_broad",
+          "outcome": "Successful Churchie Old Boys Association post explicitly identifies Milton Dick MP (1989), Speaker and Oxley member.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.churchie.com.au/newsletters/year-2025/term-4-week-9/",
+          "stage": "final_broad",
+          "outcome": "Successful school newsletter corroborates Speaker Milton Dick as a Churchie Old Boy.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q20983429",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.linkedin.com/posts/churchieoba_congratulations-to-anglican-church-grammar-activity-6965203144557428736-ALDC",
+          "stage": "final_broad",
+          "outcome": "Reopened saved OBA source successfully. It identifies the politician as a Churchie Old Boy with the label 1989, but does not define that label as a leaving year or state secondary attendance. Original birth-year arithmetic is not attendance-stage evidence.",
+          "retrieval_window": "secondary_stage_reinspection"
+        },
+        {
+          "url": "https://www.churchie.com.au/newsletters/year-2025/term-4-week-9/",
+          "stage": "final_broad",
+          "outcome": "Reopened saved school newsletter successfully. The Prep School section identifies the Speaker as a Churchie Old Boy visiting Year 6 pupils; it does not establish his own secondary attendance.",
+          "retrieval_window": "secondary_stage_reinspection"
+        },
+        {
+          "url": "https://educationhq.com/news/quite-the-speaker-school-visits-bringing-parliament-to-the-people-172017/",
+          "stage": "final_broad",
+          "outcome": "Opened the full original EducationHQ interview successfully. It identifies the Speaker and Oxley member, describes his Parliament in Schools visits and quotes his civics-education views; it supplies no statement about his own secondary attendance.",
+          "retrieval_window": "final_broad_continuation"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Anglican Church Grammar School",
+          "source_url": "https://www.linkedin.com/posts/churchieoba_congratulations-to-anglican-church-grammar-activity-6965203144557428736-ALDC",
+          "paraphrase": "Churchie OBA congratulates former pupil Milton Dick MP (1989), identifying his appointment as Speaker and Oxley parliamentary service.",
+          "retrieved_at": "2026-10-18T11:23:16Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "attendance_year_text": "OBA class year 1989; secondary stage follows from this year and independently established 1972 birth. Graduation status not inferred."
+        }
+      ],
+      "result_status": "uncertain",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Original finding is retained verbatim as a lead, not an attendance proposal. Its secondary-stage inference from the OBA year label and birth year is unsupported and withdrawn; the saved sources establish alumni identity but not explicit secondary stage."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "88411",
+      "name": "Rowan Holzberger",
+      "qid": "Q134310433",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Rowan_Holzberger",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/88411.json",
+        "cache_retrieved_at": "2026-09-23T22:34:58.019262+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"88411\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134310433",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID explicitly shows APH MP 88411 and Rowan Holzberger English sitelink. Wikipedia corroborates 8 January 1973 birth, Forde election in 2025, farming and fitter/machinist history; original Saturday Paper profile identifies Forde and fitter/machinist work."
+      },
+      "wikipedia": {
+        "outcome": "No school named in the article. Early life mentions moving to Broken Hill at 11 and later university in Adelaide; these locations are not used to infer school attendance.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 2,
+        "outcome": "Stopped after two queries: original publisher profile explicitly identifies Willyama High School, Broken Hill."
+      },
+      "search_log": [
+        {
+          "query": "\"Rowan Holzberger\" school attended",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Rowan Holzberger\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Rowan_Holzberger",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.adogs.info/sites/default/files/press_releases/pr%201046.pdf",
+          "stage": "final_broad",
+          "outcome": "Accessible ten-page PDF reprints part of the parliamentary newcomer survey, including Rowan Holzberger and Willyama High School; used as a lead to original publisher.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "stage": "final_broad",
+          "outcome": "Original publisher opened successfully. Rowan Holzberger section identifies Forde, previous fitter/machinist work, and School: Willyama High School, Broken Hill.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134310433",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Willyama High School, Broken Hill",
+          "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+          "paraphrase": "The original Saturday Paper newcomer profile identifies Forde MP Rowan Holzberger and lists Willyama High School, Broken Hill as his school.",
+          "retrieved_at": "2026-10-18T11:23:16Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "source_locator": "Rowan Holzberger section, beneath Forde / previous job / faction."
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 2
+    },
+    {
+      "aph_id": "DYW",
+      "name": "Tony Burke",
+      "qid": "Q1449483",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tony_Burke",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/DYW.json",
+        "cache_retrieved_at": "2026-09-23T22:29:59.715811+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"DYW\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q1449483",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID explicitly shows APH MP DYW and Tony Burke English sitelink. Wikipedia corroborates 4 November 1969 birth, Watson member since 2004 and former NSW Legislative Council service; independent NSW Hansard search excerpt identifies the same politician."
+      },
+      "wikipedia": {
+        "outcome": "Names Regina Coeli and St Patrick's College, Strathfield, and calls Burke a vice-captain. Relevant cited SMH 'St Pat's old boys making their mark' link could not be resolved by the browser tool.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 5,
+        "outcome": "Five final queries plus one source-title lookup total six actual queries. NSW Hansard indexed excerpt independently supports vice-captain attendance, but its live page is now a generic template; preserve a source-access limitation."
+      },
+      "search_log": [
+        {
+          "query": "\"St Pat's old boys making their mark\" Tony Burke",
+          "stage": "wikipedia",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "query": "\"Tony Burke\" \"St Patrick's\" school site:spc.nsw.edu.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tony Burke\" \"St Patrick\" \"school\" biography",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tony Burke\" \"St Patrick’s College\" \"vice\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tony Burke\" \"St Patrick\" site:tonyburke.com.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tony Burke\" \"St Patrick's College\" school captain",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tony_Burke",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.parliament.nsw.gov.au/members/formermembers/Pages/former-member-details.aspx?pk=2114",
+          "stage": "wikipedia",
+          "outcome": "Successful request redirected to generic former-member template; no individual biography or school text.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.parliament.nsw.gov.au/parliamentary-business/hansard/hansard-full-details?id=HANSARD-1323879322-29294&section=HANSARD-1323879322-98277",
+          "stage": "final_broad",
+          "outcome": "Search result explicitly mentions Tony Burke as another St Pat's vice-captain. Direct page retrieval supplies generic template without speech text; underlying full-page content could not be inspected.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q1449483",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "St Patrick's College, Strathfield",
+          "source_url": "https://www.parliament.nsw.gov.au/parliamentary-business/hansard/hansard-full-details?id=HANSARD-1323879322-29294&section=HANSARD-1323879322-98277",
+          "paraphrase": "The indexed NSW Hansard speech identifies Tony Burke as another St Pat's vice-captain; the live page did not expose the speech body.",
+          "reason_not_proposed": "Full underlying attendance citation inaccessible. Regina Coeli is not proposed as secondary."
+        }
+      ],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Original SMH attendance citation follow failed with tool-link resolution errors; no target URL invented.",
+        "NSW member and Hansard pages returned generic site templates, so browser success status is not treated as source-text access."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "HVO",
+      "name": "Shayne Neumann",
+      "qid": "Q7491712",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Shayne_Neumann",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/HVO.json",
+        "cache_retrieved_at": "2026-09-23T22:37:37.861774+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"HVO\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q7491712",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID explicitly shows APH MP HVO and Shayne Neumann English sitelink. Wikipedia and official site corroborate Blair member elected 2007, Ipswich upbringing and legal career."
+      },
+      "wikipedia": {
+        "outcome": "Names Bundamba State Secondary College. School sentence has no direct citation; adjacent APH biography/maiden-speech references were inspected as context, not assumed to prove it.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 1,
+        "outcome": "Stopped after one query: first-person official biography and his own Hansard speech establish named high-school attendance."
+      },
+      "search_log": [
+        {
+          "query": "\"Shayne Neumann\" \"Bundamba\" school",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Shayne_Neumann",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://shayneneumann.com.au/",
+          "stage": "final_broad",
+          "outcome": "Initial direct open failed.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.shayneneumann.com.au/",
+          "stage": "final_broad",
+          "outcome": "Successful official homepage explicitly states he attended East Ipswich State School and Bundamba State High School; corroborates Blair service.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.openaustralia.org.au/debate/?id=2011-02-28.60.1",
+          "stage": "final_broad",
+          "outcome": "Successful Hansard republication attributes a 28 February 2011 speech to Shayne Neumann, calling Bundamba State Secondary College his old high school.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q7491712",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Bundamba State High School",
+          "source_url": "https://www.shayneneumann.com.au/",
+          "paraphrase": "His official biography explicitly states attendance at Bundamba State High School, separately from East Ipswich State School.",
+          "retrieved_at": "2026-10-18T11:23:16Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 1
+    },
+    {
+      "aph_id": "HX4",
+      "name": "Bob Katter",
+      "qid": "Q4932983",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Bob_Katter",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/HX4.json",
+        "cache_retrieved_at": "2026-09-23T22:35:21.501283+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"HX4\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q4932983",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID shows APH MP HX 4 and Bob Katter English sitelink. Wikipedia and Queensland official biography search text match 22 May 1945 birth, Flinders state service and Kennedy federal career; 1918-born father is explicitly excluded."
+      },
+      "wikipedia": {
+        "outcome": "Names Mount Carmel College in Charters Towers, citing a 2023 Courier-Mail school profile. Citation follow produced tool-link errors. Another early-life citation concerns Year 12 without naming a separate institution.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 4,
+        "outcome": "Stopped after four queries on explicit official-biography indexed text for the correct 1945-born person. Direct access remains 403; this is an evidence lead, not a completed negative or applied assertion."
+      },
+      "search_log": [
+        {
+          "query": "\"Bob Katter\" \"Mount Carmel\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Bob Katter\" \"Mount Carmel\" site:parliament.qld.gov.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Bob Katter\" \"Mount Carmel\" \"1945\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Bob Katter\" \"Mount Carmel\" school biography -site:wikipedia.org",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Bob_Katter",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.parliament.qld.gov.au/Members/Former-Members/Former-Members-Register/Former-Member-Details?id=578967569",
+          "stage": "final_broad",
+          "outcome": "Official search results return correct 22 May 1945 biography and education including Mount Carmel Christian Brothers' College, Charters Towers. Three direct opens failed, final response 403 Forbidden.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q4932983",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Mount Carmel Christian Brothers' College, Charters Towers",
+          "source_url": "https://www.parliament.qld.gov.au/Members/Former-Members/Former-Members-Register/Former-Member-Details?id=578967569",
+          "paraphrase": "Indexed Queensland Parliament biography for Robert Carl Katter, born 22 May 1945, lists this college between primary school and University of Queensland.",
+          "reason_not_proposed": "Official biography text retrieved through search, but direct page failed 403 on three opens; retain access limitation for human inspection."
+        }
+      ],
+      "result_status": "incomplete_source_access",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Australian Dictionary of Biography and 1990 condolence Hansard matches concern his father born 1918; excluded.",
+        "No second school is inferred from the Year 12 statement, and no graduation status is proposed."
+      ],
+      "total_search_query_count": 4
+    },
+    {
+      "aph_id": "IMW",
+      "name": "Tim Wilson",
+      "qid": "Q16205919",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tim_Wilson_(Australian_politician)",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/IMW.json",
+        "cache_retrieved_at": "2026-09-24T07:52:08.196033+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"IMW\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q16205919",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID explicitly shows APH MP IMW and exact disambiguated Tim Wilson English sitelink. Article corroborates 12 March 1980 birth, Goldstein MP and former Human Rights Commissioner; MPNEWS identifies CommissionerTim Wilson and family, matching exact person."
+      },
+      "wikipedia": {
+        "outcome": "Explicitly names The Peninsula School, Mount Eliza, separately from Mount Martha Primary School. Cited Tim Elliott 2014 SMH profile follow failed with tool-link resolution error.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Uncertain after six total final queries. Saved alumni and local-reporting sources establish the exact person's school association but do not explicitly identify his secondary stage. The final Year 12 query produced no stronger source; the original alumni-year/birth-year inference is withdrawn."
+      },
+      "search_log": [
+        {
+          "query": "\"Tim Wilson\" \"Peninsula\" school",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tim Wilson\" \"Peninsula\" site:peninsulagrammar.vic.edu.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tim Wilson\" \"Peninsula School\" \"1997\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tim Wilson\" \"school\" site:topsa.com.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tim Wilson\" \"Peninsula\" \"Hall of Fame\"",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Tim Wilson\" \"Peninsula\" \"Year 12\"",
+          "stage": "final_broad",
+          "retrieval_window": "tim_final_broad_continuation"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tim_Wilson_(Australian_politician)",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.mpnews.com.au/2015/11/16/old-boys-and-girls-first-hall-of-famers/",
+          "stage": "final_broad",
+          "outcome": "Successful original local reporting identifies Australian Human Rights Commissioner Tim Wilson among former Peninsula pupils inducted into the school alumni Hall of Fame.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.opga.com.au/alumni/hall-of-fame-u-z",
+          "stage": "final_broad",
+          "outcome": "Successful official school alumni page names Tim Wilson 1997 in Hall of Fame, consistent with secondary age; page links Peninsula Grammar.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q16205919",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.mpnews.com.au/2015/11/16/old-boys-and-girls-first-hall-of-famers/",
+          "stage": "final_broad",
+          "outcome": "Reopened saved original local article. It identifies Human Rights Commissioner Tim Wilson among school alumni, but gives no personal grade or secondary-stage statement.",
+          "retrieval_window": "tim_secondary_stage_audit_1151"
+        },
+        {
+          "url": "https://www.opga.com.au/alumni/hall-of-fame-u-z",
+          "stage": "final_broad",
+          "outcome": "Reopened saved official alumni page. Tim Wilson is listed beside 1997, but no personal grade or secondary-stage statement is supplied. Generic completed-education nomination criteria are not a personal school-stage assertion.",
+          "retrieval_window": "tim_secondary_stage_audit_1151"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "The Peninsula School, Mount Eliza",
+          "source_url": "https://www.opga.com.au/alumni/hall-of-fame-u-z",
+          "paraphrase": "Official Old Peninsula Grammarians' Association Hall of Fame lists Tim Wilson with class year 1997; original local news identifies the Human Rights Commissioner as a former pupil.",
+          "retrieved_at": "2026-10-18T11:23:16Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "attendance_year_text": "Alumni page class 1997 aligns with secondary stage and independently recorded 1980 birth; graduation not inferred."
+        }
+      ],
+      "result_status": "uncertain",
+      "review_status": "unreviewed",
+      "limitations": [
+        "Original school object is retained verbatim as a lead. Its secondary-stage inference from the alumni year 1997 and birth year is unsupported and withdrawn; no explicit secondary-stage source was established within the final six-query budget. This is not a non-attendance assertion."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "R36",
+      "name": "Anthony Albanese",
+      "qid": "Q335697",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Anthony_Albanese",
+      "identity": {
+        "status": "confirmed",
+        "cache_path": "data/raw/wikimedia/members/R36.json",
+        "cache_retrieved_at": "2026-09-23T22:28:31.503702+10:00",
+        "cache_query": "SELECT ?item ?itemLabel ?dob ?genderLabel ?article WHERE {\n          ?item wdt:P10020 \"R36\" .\n          OPTIONAL { ?item wdt:P569 ?dob . }\n          OPTIONAL {\n            ?item wdt:P21 ?gender .\n            ?gender rdfs:label ?genderLabel FILTER(LANG(?genderLabel) = \"en\")\n          }\n          OPTIONAL {\n            ?article schema:about ?item ;\n                     schema:isPartOf <https://en.wikipedia.org/> .\n          }\n        }",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q335697",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "confirmed_at": "2026-10-18T11:22:27Z",
+        "corroboration": "Live QID explicitly shows APH MP R 36 and Anthony Albanese English sitelink. Article corroborates 2 March 1963 birth, Grayndler MP since 1996 and prime minister since 2022. Government interview and school-opening transcript identify the prime minister directly."
+      },
+      "wikipedia": {
+        "outcome": "Explicit St Mary's Cathedral College attendance, with archived ALP biography and biographical book citations. Archived ALP link follow failed before final pass.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 2,
+        "outcome": "Stopped after two queries: two original government transcripts directly establish the school, with explicit years 5–12 school context."
+      },
+      "search_log": [
+        {
+          "query": "\"Anthony Albanese\" \"St Mary's\" school site:pm.gov.au",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "query": "\"Opening of St Mary's Cathedral College Parliament\" Albanese",
+          "stage": "final_broad",
+          "retrieval_window": "final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Anthony_Albanese",
+          "stage": "wikipedia",
+          "outcome": "Canonical article opened; early life, education, parliamentary identity and references inspected.",
+          "retrieval_window": "wikipedia_identity"
+        },
+        {
+          "url": "https://www.pm.gov.au/media/podcast-interview-straight-talk-mark-bouris",
+          "stage": "final_broad",
+          "outcome": "Successful government transcript has Albanese name St Mary's Cathedral, explain enrolling and attendance, and distinguish his earlier primary school. Describes St Mary's as years 5–12.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://pmtranscripts.pmc.gov.au/release/transcript-45707",
+          "stage": "final_broad",
+          "outcome": "Successful 21 February 2024 government school-opening speech directly calls St Mary's Cathedral College his old school.",
+          "retrieval_window": "final_broad"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q335697",
+          "stage": "wikipedia_identity",
+          "outcome": "Live page opened; exact APH MP identifier and matching English Wikipedia sitelink inspected.",
+          "retrieval_window": "wikipedia_identity"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "St Mary's Cathedral College",
+          "source_url": "https://pmtranscripts.pmc.gov.au/release/transcript-45707",
+          "paraphrase": "In his 21 February 2024 speech opening St Mary's Cathedral College Parliament, Albanese calls the college his old school; government interview independently describes his enrollment there.",
+          "retrieved_at": "2026-10-18T11:23:16Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping",
+          "secondary_context_source_url": "https://www.pm.gov.au/media/podcast-interview-straight-talk-mark-bouris"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "school_found",
+      "review_status": "unreviewed",
+      "limitations": [],
+      "total_search_query_count": 2
+    }
+  ],
+  "completed_negative_aph_ids": [],
+  "incomplete_research_aph_ids": [
+    "DYW",
+    "HX4"
+  ]
+}
