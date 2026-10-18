@@ -1,0 +1,24 @@
+{
+  "attempt_budgets": [],
+  "batch_id": "issue-104-survey-20261019",
+  "case_count": 27,
+  "cases_per_task": 1,
+  "created_at": "2026-10-18T21:22:37.400957+00:00",
+  "decision_revision": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+  "evidence_revision": "d69d74407e4157eef48b9981c143937f4d928d964f8527bae92e536e55bb7d60",
+  "kind": "schools",
+  "max_workers": 1,
+  "models": [],
+  "origin": "agent-session",
+  "provenance": {
+    "availability_note": "Issue 104 reconciles 18 survey respondents with current projected records. This evidence-only batch proposes no mappings or attendance decisions. Exact session model/token usage are unavailable; no model attempts are inferred.",
+    "generated_by": "codex-session",
+    "model": null,
+    "token_usage": null
+  },
+  "purpose": "survey-evidence-reconciliation",
+  "reasoning_effort": null,
+  "schema_version": 1,
+  "source_revision": "36b097e3e7822df107dd89186c5f6f8ee8c3f1067a5b58f4e00bcd982dcc1d25",
+  "task_sha256": "8a95ee35bd6b68679c8ac03e6d6fe05bfc30a558204a4f62620e2125ffbf18ca"
+}

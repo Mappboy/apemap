@@ -99,6 +99,23 @@ exports is a separate step. Package 0.16.0 adds this workflow. A future dataset
 0.7.1 correction is contingent on individual approvals, a verified rebuild and
 the separate publication workflow; dataset 0.7.0 remains unchanged here.
 
+## Saturday Paper survey reconciliation
+
+The `issue-104-survey-20261019` batch reconciles all 18 respondents in the
+28 June 2025 education survey with current projected member/assertion evidence.
+Its 27 named school/unclear-stage cases use the ordinary source-inspection and
+retention workflow. Four tertiary institutions, one sector-only answer and one
+missing answer are accounted for separately. Primary and unspecified-stage claims
+never become secondary assertions merely because they occur in a School field.
+
+Package 0.17.0 makes this batch purpose **evidence-only**: source approval and
+retention remain available, with an explicit reviewer, but preview, revalidation,
+generic preview validation and application cannot generate resolution decisions.
+Five proposed secondary additions remain separate, non-executable research.
+Inspect the [comparison and provenance](../data/reference/review/research/issue-104-survey-20261019/README.md)
+before any later attendance or institution decision. Survey omissions do not
+withdraw other current schools, and locality/name variants do not approve aliases.
+
 ## Read saved research packets
 
 The **Saved research packets** section on **Research batches** includes completed

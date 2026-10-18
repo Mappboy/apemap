@@ -363,7 +363,8 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             if not request.form.get("binding"):
                 raise ValueError("Reload the batch before reviewing")
             if (
-                state["manifest"].get("purpose") == "missing-secondary-education"
+                state["manifest"].get("purpose")
+                in {"missing-secondary-education", "survey-evidence-reconciliation"}
                 and not draft["reviewer"]
             ):
                 raise ValueError("Enter the reviewer for this individual review")

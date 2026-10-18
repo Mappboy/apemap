@@ -1,0 +1,211 @@
+[
+  {
+    "aph_id": "315618",
+    "electorate_as_reported": "Barton",
+    "institution_names_as_reported": [
+      "Hurstville Public School",
+      "Danebank Anglican School for Girls"
+    ],
+    "locator": "Ash Ambihaipahar profile / School field",
+    "name": "Ash Ambihaipahar",
+    "response_kind": "named",
+    "school_response_sha256": "778e493c4a197a66ce414634c574fb4735cca52c10eb8d11281b53e2e1ab8c41"
+  },
+  {
+    "aph_id": "290544",
+    "electorate_as_reported": "Senator for Victoria",
+    "institution_names_as_reported": [
+      "Santa Sabina College"
+    ],
+    "locator": "Michelle Ananda-Rajah profile / School field",
+    "name": "Michelle Ananda-Rajah",
+    "response_kind": "named",
+    "school_response_sha256": "dde11a3c5be7bc24ec3a3dfb1c2b417f1cb5e5b356d42d23bc5f16786b36b209"
+  },
+  {
+    "aph_id": "263427",
+    "electorate_as_reported": "Maribyrnong",
+    "institution_names_as_reported": [
+      "All Hallows’ School"
+    ],
+    "locator": "Jo Briskey profile / School field",
+    "name": "Jo Briskey",
+    "response_kind": "named",
+    "school_response_sha256": "b07535387d757b5c0918530bf2821fba0a8478dcc8362047a1c03c8ac21002c0"
+  },
+  {
+    "aph_id": "312823",
+    "electorate_as_reported": "Moreton",
+    "institution_names_as_reported": [
+      "Brisbane State High School"
+    ],
+    "locator": "Julie-Ann Campbell profile / School field",
+    "name": "Julie-Ann Campbell",
+    "response_kind": "named",
+    "school_response_sha256": "7ad51fdc124012d17c7bbf6c4d386aa1e84a92113906d679ccb231e64ea74abe"
+  },
+  {
+    "aph_id": "316101",
+    "electorate_as_reported": "Sturt",
+    "institution_names_as_reported": [
+      "Henley High School"
+    ],
+    "locator": "Claire Clutterham profile / School field",
+    "name": "Claire Clutterham",
+    "response_kind": "named",
+    "school_response_sha256": "278aa5e2a3f97577a59fe527ad2289448f4edb2f239e7531ac2e93c2504750b0"
+  },
+  {
+    "aph_id": "316537",
+    "electorate_as_reported": "Bonner",
+    "institution_names_as_reported": [
+      "St Ursula’s College"
+    ],
+    "locator": "Kara Cook profile / School field",
+    "name": "Kara Cook",
+    "response_kind": "named",
+    "school_response_sha256": "6f9b84e19a8034c3caad38c92edcf53e54f271c4aa5df9bc67703d23d2a9f0a1"
+  },
+  {
+    "aph_id": "312871",
+    "electorate_as_reported": "Bullwinkel",
+    "institution_names_as_reported": [
+      "Sacred Heart High School",
+      "Edith Cowan University",
+      "Curtin University"
+    ],
+    "locator": "Trish Cook profile / School field",
+    "name": "Trish Cook",
+    "response_kind": "named",
+    "school_response_sha256": "cc6d887a8c7be4be07e47de3f17286c904e9da355d9bbe758af0c44941c3b4fe"
+  },
+  {
+    "aph_id": "55842",
+    "electorate_as_reported": "Tasmania (Senate)",
+    "institution_names_as_reported": [
+      "Rosny College",
+      "Geilston Bay High School",
+      "Lindisfarne North Primary School"
+    ],
+    "locator": "Richard Dowling profile / School field",
+    "name": "Richard Dowling",
+    "response_kind": "named",
+    "school_response_sha256": "68da3d818556822827733a3db58f26c6f3cbe60a81026c8ceb87f4a7ee694b54"
+  },
+  {
+    "aph_id": "270198",
+    "electorate_as_reported": "Dickson",
+    "institution_names_as_reported": [
+      "St Kevin’s Primary School",
+      "Benowa State High",
+      "St Michael’s College"
+    ],
+    "locator": "Ali France profile / School field",
+    "name": "Ali France",
+    "response_kind": "named",
+    "school_response_sha256": "d5cffe448f0a60f61a96df3b4174cd6ad01a174f3991d446b917b345c57290db"
+  },
+  {
+    "aph_id": "315154",
+    "electorate_as_reported": "Deakin",
+    "institution_names_as_reported": [
+      "Mount Waverley Secondary College"
+    ],
+    "locator": "Matt Gregg profile / School field",
+    "name": "Matt Gregg",
+    "response_kind": "named",
+    "school_response_sha256": "b1fb7d2378ff7d11c4a83571adacff5b1935553d9a07f2d383ea31ea7781b614"
+  },
+  {
+    "aph_id": "88411",
+    "electorate_as_reported": "Forde",
+    "institution_names_as_reported": [
+      "Willyama High School"
+    ],
+    "locator": "Rowan Holzberger profile / School field",
+    "name": "Rowan Holzberger",
+    "response_kind": "named",
+    "school_response_sha256": "340d53f991320615e61d4474d74c5b6f19b3d65b2bc5afb285fd4c1b7f4fbdd2"
+  },
+  {
+    "aph_id": "298574",
+    "electorate_as_reported": "Brisbane",
+    "institution_names_as_reported": [
+      "Mt St Michael’s"
+    ],
+    "locator": "Madonna Jarrett profile / School field",
+    "name": "Madonna Jarrett",
+    "response_kind": "named",
+    "school_response_sha256": "fe8bb6b29b6dc90cc9bd30e5c20d9c99f57f40f8d6ee5a488140e241c204e0ad"
+  },
+  {
+    "aph_id": "316021",
+    "electorate_as_reported": "Gorton",
+    "institution_names_as_reported": [],
+    "locator": "Alice Jordan-Baird profile / School field",
+    "name": "Alice Jordan-Baird",
+    "response_kind": "sectors_only",
+    "school_response_sha256": "425e58d47cf492511490ea833a69becaa4db40f4fabb274eb4baa0bc9b1c4c42"
+  },
+  {
+    "aph_id": "312393",
+    "electorate_as_reported": "Leichhardt",
+    "institution_names_as_reported": [],
+    "locator": "Matt Smith profile / School field",
+    "name": "Matt Smith",
+    "response_kind": "no_answer",
+    "school_response_sha256": "8359f3f42b389b2ae0cffb8874d4db1e5916ea933a09a668c3dd6c1f41173cf3"
+  },
+  {
+    "aph_id": "298618",
+    "electorate_as_reported": "Banks",
+    "institution_names_as_reported": [
+      "Revesby Public School",
+      "Picnic Point Public School",
+      "Hurlstone Agricultural High School",
+      "Australian National University"
+    ],
+    "locator": "Zhi Soon profile / School field",
+    "name": "Zhi Soon",
+    "response_kind": "named",
+    "school_response_sha256": "1e97164101267ddb3bb5bc964c118d7a868af79f6f692b30d44eec9b8cc3709b"
+  },
+  {
+    "aph_id": "231199",
+    "electorate_as_reported": "Braddon",
+    "institution_names_as_reported": [
+      "East Ulverstone Primary School",
+      "Ulverstone High School",
+      "Devonport Technical College"
+    ],
+    "locator": "Anne Urquhart profile / School field",
+    "name": "Anne Urquhart",
+    "response_kind": "named",
+    "school_response_sha256": "f8e77303d1accbd084b5f0c389b93748d31d019ae473db99f2476bc658aa9ea0"
+  },
+  {
+    "aph_id": "316555",
+    "electorate_as_reported": "Western Australia (Senate)",
+    "institution_names_as_reported": [
+      "Endeavour Primary School",
+      "Comet Bay College"
+    ],
+    "locator": "Ellie Whiteaker profile / School field",
+    "name": "Ellie Whiteaker",
+    "response_kind": "named",
+    "school_response_sha256": "89ee915797b2344543c814540357930d490b164444a8ba62f8bef555a668a8ff"
+  },
+  {
+    "aph_id": "316660",
+    "electorate_as_reported": "Melbourne",
+    "institution_names_as_reported": [
+      "St Jude’s Primary",
+      "Mater Christi College",
+      "Box Hill TAFE"
+    ],
+    "locator": "Sarah Witty profile / School field",
+    "name": "Sarah Witty",
+    "response_kind": "named",
+    "school_response_sha256": "505fee859ca081a5d2c98f3948cc5211e7eab94ef657c4501bdebfb9370dbfdf"
+  }
+]

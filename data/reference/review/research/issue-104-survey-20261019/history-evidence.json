@@ -1,0 +1,28 @@
+[
+  {
+    "review_id": "education:312871:815a742d88971128",
+    "candidate_institution_ref": null,
+    "source_title": "Sacred Heart College WA — Our History",
+    "source_type": "school-history",
+    "source_url": "https://www.sacredheart.wa.edu.au/about-us/our-history",
+    "retrieved_at": "2026-10-18T21:19:23Z",
+    "claim_type": "attendance_context",
+    "claim_value": {"aph_id": "312871", "recorded_school_name": "Sacred Heart High School", "historical_localities": ["Highgate", "Sorrento"], "relocation_period_as_reported": "1980s", "member_attendance_dates_established": false},
+    "stance": "contextual",
+    "excerpt_or_note": "The college's own history distinguishes the Highgate and Sorrento sites and describes Highgate high-school relocation in the 1980s. This supports reviewing the legacy rename/geography treatment, not an assertion that Trish Cook attended Sorrento or that both campuses were the same location. No mapping or member dates are proposed.",
+    "generated_by": "agent-search"
+  },
+  {
+    "review_id": "education:312871:815a742d88971128",
+    "candidate_institution_ref": null,
+    "source_title": "Sacred Heart Primary School Highgate — School Profile / History",
+    "source_type": "school-history",
+    "source_url": "https://shpsh.wa.edu.au/school-profile/",
+    "retrieved_at": "2026-10-18T21:19:23Z",
+    "claim_type": "attendance_context",
+    "claim_value": {"aph_id": "312871", "recorded_school_name": "Sacred Heart High School", "historical_localities": ["Highgate", "Sorrento"], "institution_relocation_year_as_reported": 1980, "member_attendance_dates_established": false},
+    "stance": "contextual",
+    "excerpt_or_note": "The Highgate school's own history describes primary and high-school provision at Highgate and the high-school move to Sorrento in 1980. That is an institution-history date, not Trish Cook's attendance or graduation year. It does not identify her exact attendance period or independently approve a successor/rename mapping.",
+    "generated_by": "agent-search"
+  }
+]

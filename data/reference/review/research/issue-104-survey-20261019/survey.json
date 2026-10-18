@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "issue_url": "https://github.com/Mappboy/apemap/issues/104",
+  "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+  "source_title": "Karen Barlow — Exclusive: Labor has first Left-majority caucus",
+  "source_publication_date": "2025-06-28",
+  "retrieved_at": "2026-10-18T21:19:23Z",
+  "retrieval_note": "Observed completion bound after the successful direct HTTP retrieval and source checks. The ignored local HTML is not redistributed. Preserve factual institution names, grade/context facts and per-response hashes; longer expressive answers are paraphrased rather than copied. Copyright remains with The Saturday Paper/Schwartz Media and respondents; no reuse licence is asserted.",
+  "html_sha256": "7e43b6677c62cbb1085ceb3637a12ee1096db32ee36168320a482a57f126fce7",
+  "response_hash_normalization": "School-field text only: collapse whitespace, replace non-breaking spaces, normalize curly apostrophes to straight apostrophes. These are normalized response hashes, not hashes of original HTML fragments.",
+  "nonrespondents": ["Basem Abdo", "Carol Berry", "Renee Coffey", "Emma Comer", "Dorinda Cox", "Josh Dolega", "Tom French", "David Moncrieff", "Corinne Mulholland", "Gabriel Ng", "Jess Teesdale", "Rebecca White", "Charlotte Walker"],
+  "respondents": [
+    {"name": "Ash Ambihaipahar", "aph_id": "315618", "chamber": "representatives", "electorate": "Barton", "response_kind": "named", "claims": [
+      {"name": "Hurstville Public School", "level": "unspecified"},
+      {"name": "Danebank Anglican School for Girls", "level": "unspecified", "possible_existing_name": "Danebank Anglican Girls School", "research": "Verify the reported and recorded name variants independently; do not create a duplicate attendance or silently add an alias."}
+    ]},
+    {"name": "Michelle Ananda-Rajah", "aph_id": "290544", "chamber": "senate", "state_or_territory": "VIC", "response_kind": "named", "claims": [
+      {"name": "Santa Sabina College", "locality": "Strathfield, NSW", "level": "unspecified", "research": "Named attendance is self-reported; secondary stage remains unverified."}
+    ]},
+    {"name": "Jo Briskey", "aph_id": "263427", "chamber": "representatives", "electorate": "Maribyrnong", "response_kind": "named", "claims": [
+      {"name": "All Hallows’ School", "locality": "Brisbane", "level": "unspecified", "research": "Named attendance is self-reported; secondary stage remains unverified."}
+    ]},
+    {"name": "Julie-Ann Campbell", "aph_id": "312823", "chamber": "representatives", "electorate": "Moreton", "response_kind": "named", "claims": [
+      {"name": "Brisbane State High School", "level": "secondary"}
+    ]},
+    {"name": "Claire Clutterham", "aph_id": "316101", "chamber": "representatives", "electorate": "Sturt", "response_kind": "named", "response_paraphrase": "Attended several unnamed country/city schools and completed Year 12 at the named school. Other current assertions are not contradicted by omission.", "claims": [
+      {"name": "Henley High School", "level": "secondary", "grade_levels": [12], "completion_as_reported": "finished Year 12; no certificate or graduation year supplied"}
+    ]},
+    {"name": "Kara Cook", "aph_id": "316537", "chamber": "representatives", "electorate": "Bonner", "response_kind": "named", "claims": [
+      {"name": "St Ursula’s College", "locality": "Yeppoon, Queensland", "level": "unspecified", "possible_existing_name": "St Ursula's College, Yeppoon", "research": "Compare locality-qualified recorded text with the survey name; no automatic alias or mapping."}
+    ]},
+    {"name": "Trish Cook", "aph_id": "312871", "chamber": "representatives", "electorate": "Bullwinkel", "response_kind": "named", "claims": [
+      {"name": "Sacred Heart High School", "locality": "Highgate, WA", "level": "secondary", "research": "Existing rename mapping points to Sorrento. Independent school histories describe relocation from Highgate, not evidence that Trish attended the Sorrento campus. Preserve the current decision and investigate attendance-era geography/relationship separately.", "mapping_history_review": true},
+      {"name": "Edith Cowan University", "level": "tertiary"},
+      {"name": "Curtin University", "level": "tertiary"}
+    ]},
+    {"name": "Richard Dowling", "aph_id": "55842", "chamber": "senate", "state_or_territory": "TAS", "response_kind": "named", "claims": [
+      {"name": "Rosny College", "level": "unspecified"},
+      {"name": "Geilston Bay High School", "level": "secondary"},
+      {"name": "Lindisfarne North Primary School", "level": "primary"}
+    ]},
+    {"name": "Ali France", "aph_id": "270198", "chamber": "representatives", "electorate": "Dickson", "response_kind": "named", "claims": [
+      {"name": "St Kevin’s Primary School", "level": "primary"},
+      {"name": "Benowa State High", "level": "secondary", "grade_levels": [8, 9, 10], "research": "Retain the abbreviated source name. Grade levels are not calendar attendance years or an approved canonical name/ACARA identity."},
+      {"name": "St Michael’s College", "locality": "Gold Coast", "level": "secondary", "grade_levels": [11, 12], "research": "Disambiguate the exact historical institution using the reported Gold Coast context; do not infer graduation or attendance dates."}
+    ]},
+    {"name": "Matt Gregg", "aph_id": "315154", "chamber": "representatives", "electorate": "Deakin", "response_kind": "named", "claims": [
+      {"name": "Mount Waverley Secondary College", "level": "secondary"}
+    ]},
+    {"name": "Rowan Holzberger", "aph_id": "88411", "chamber": "representatives", "electorate": "Forde", "response_kind": "named", "claims": [
+      {"name": "Willyama High School", "locality": "Broken Hill", "level": "secondary"}
+    ]},
+    {"name": "Madonna Jarrett", "aph_id": "298574", "chamber": "representatives", "electorate": "Brisbane", "response_kind": "named", "claims": [
+      {"name": "Mt St Michael’s", "locality": "Ashgrove, Brisbane", "level": "unspecified", "possible_existing_name": "Mount Saint Michael's College Ashgrove", "research": "Reported abbreviated and current expanded names are a possible match, not a sourced alias determination."}
+    ]},
+    {"name": "Alice Jordan-Baird", "aph_id": "316021", "chamber": "representatives", "electorate": "Gorton", "response_kind": "sectors_only", "response_excerpt": "Public and independent schools", "claims": []},
+    {"name": "Matt Smith", "aph_id": "312393", "chamber": "representatives", "electorate": "Leichhardt", "response_kind": "no_answer", "response_excerpt": "[No answer]", "claims": []},
+    {"name": "Zhi Soon", "aph_id": "298618", "chamber": "representatives", "electorate": "Banks", "response_kind": "named", "claims": [
+      {"name": "Revesby Public School", "locality": "NSW", "level": "unspecified"},
+      {"name": "Picnic Point Public School", "level": "unspecified"},
+      {"name": "Hurlstone Agricultural High School", "level": "secondary"},
+      {"name": "Australian National University", "level": "tertiary"}
+    ]},
+    {"name": "Anne Urquhart", "aph_id": "231199", "chamber": "representatives", "electorate": "Braddon", "response_kind": "named", "claims": [
+      {"name": "East Ulverstone Primary School", "level": "primary"},
+      {"name": "Ulverstone High School", "level": "secondary"},
+      {"name": "Devonport Technical College", "level": "unspecified", "research": "Technical-college attendance does not independently establish secondary stage; investigate historical provision and the member's course before any school assertion."}
+    ]},
+    {"name": "Ellie Whiteaker", "aph_id": "316555", "chamber": "senate", "state_or_territory": "WA", "response_kind": "named", "response_paraphrase": "Several unnamed Kalgoorlie primary schools, then Endeavour Primary School in Year 5; explicitly identifies Comet Bay College as her high school and mentions its first intake. No calendar attendance dates supplied.", "claims": [
+      {"name": "Endeavour Primary School", "level": "primary", "grade_levels": [5]},
+      {"name": "Comet Bay College", "level": "secondary"}
+    ]},
+    {"name": "Sarah Witty", "aph_id": "316660", "chamber": "representatives", "electorate": "Melbourne", "response_kind": "named", "claims": [
+      {"name": "St Jude’s Primary", "locality": "Scoresby", "level": "primary"},
+      {"name": "Mater Christi College", "locality": "Belgrave", "level": "unspecified"},
+      {"name": "Box Hill TAFE", "level": "tertiary"}
+    ]}
+  ]
+}
