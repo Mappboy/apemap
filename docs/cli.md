@@ -597,8 +597,8 @@ cohort. It refuses drift rather than silently selecting a different cohort.
 For Parliament 48 the 49 audited members produce 48 research tasks and one
 reviewed home-education skip. Named but unmapped schools are outside this scope.
 
-The existing delivery is `issue-102-p48-missing-schools-audited`; open it with
-`research-batch show issue-102-p48-missing-schools-audited` or `serve`, keeping the same
+The existing delivery is `issue-102-p48-missing-schools-followup-20261019`; open it with
+`research-batch show issue-102-p48-missing-schools-followup-20261019` or `serve`, keeping the same
 `review --db-path` and `--external-dir` options, instead of preparing it again.
 Inspect and review every proposal individually in **Research batches** before
 retention and exact-preview application. Database rebuilds and dataset

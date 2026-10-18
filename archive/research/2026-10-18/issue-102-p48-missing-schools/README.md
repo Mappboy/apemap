@@ -12,4 +12,4 @@ no evidence or decisions were retained/applied from this snapshot. Do not import
 or approve it. Current raw research preserves the withdrawn claims as leads,
 the source rechecks and every actual additional query.
 
-See the [audited delivery](../../../../data/reference/review/research/issue-102-p48-missing-schools-audited/README.md).
+See the [current follow-up delivery](../../../../data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/README.md).

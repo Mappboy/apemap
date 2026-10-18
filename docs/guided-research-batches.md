@@ -39,9 +39,9 @@ describe employment rather than attendance; they do not create school mappings.
 
 ## Missing secondary education in Parliament 48
 
-The `issue-102-p48-missing-schools-audited` batch uses the ordinary **Research batches**
-workflow at `/research-batches/issue-102-p48-missing-schools-audited`. Its files live under
-`data/reference/review/research/issue-102-p48-missing-schools-audited/`; it is not a
+The `issue-102-p48-missing-schools-followup-20261019` batch uses the ordinary **Research batches**
+workflow at `/research-batches/issue-102-p48-missing-schools-followup-20261019`. Its files live under
+`data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/`; it is not a
 read-only saved research packet.
 
 Open the saved batch against its real historical database and register:
@@ -61,8 +61,13 @@ education and is a resolved non-institutional skip, leaving 48 research tasks.
 The audit pins the published manifest and the members, parliamentary service and
 education CSV checksums; a mutable local export is not the baseline.
 
-The saved research contains 17 member proposals with attendance findings and 31
-unresolved cases (12 not-found and 19 uncertain outcomes). All are unreviewed.
+The saved research contains 18 member proposals with attendance findings and 30
+unresolved cases (9 not-found and 21 uncertain outcomes). All are unreviewed.
+Four user-led follow-ups preserve Santa Sabina and Scotch Oakburn leads, the Lisa
+Darmanin namesake exclusion, and a new Centralian Senior College attendance proposal
+for Jacinta Nampijinpa Price. The previous audited import is archived unchanged
+under `archive/research/2026-10-19/`; the fresh import preserves 44 unchanged cases
+and the original 213-query history, with follow-up accounting recorded separately.
 The proposed attendance has no institution targets: a sourced school name is not
 an approved ACARA or manual institution mapping. Unavailable sources and
 incomplete research remain explicit; an unresolved result is not proof that the
