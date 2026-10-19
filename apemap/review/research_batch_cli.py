@@ -80,6 +80,28 @@ def prepare_missing_education_cmd(
     )
 
 
+@batch_app.command("follow-up-missing-education")
+def follow_up_missing_education_cmd(
+    ctx: typer.Context,
+    batch_id: str,
+    from_batch: Annotated[
+        str, typer.Option(help="Frozen parent missing-school batch.")
+    ],
+    expected_count: Annotated[
+        int, typer.Option(help="Exact number of remaining research cases.")
+    ],
+) -> None:
+    """Freeze a new research round without copying parent approvals."""
+    from apemap.review.cli import _run
+    from apemap.review.missing_education import prepare_missing_education_followup
+
+    _run(
+        lambda: prepare_missing_education_followup(
+            _batches(ctx), batch_id, from_batch, expected_count=expected_count
+        )
+    )
+
+
 @batch_app.command("import")
 def import_cmd(ctx: typer.Context, batch_id: str, results: Path) -> None:
     from apemap.review.cli import _run

@@ -324,6 +324,16 @@ def validate_missing_education_result(
         records[record.evidence_id] = record
     _validate_identity(task, raw.get("identity"), records)
     _validate_stages(proposal)
+    budget = task.get("research_budget")
+    if budget is not None and any(
+        type(budget.get(field)) is not int
+        or budget[field] < 0
+        or proposal["research_log"][field] > budget[field]
+        for field in ("searches", "source_opens")
+    ):
+        raise ValueError(
+            "Missing-school follow-up exceeds its new-round research budget"
+        )
     for payload in proposal["education_proposals"]:
         review_id = education_review_id(aph_id, payload["recorded_school_name"])
         if set(payload) & (METADATA_FIELDS - {"evidence_refs"}):

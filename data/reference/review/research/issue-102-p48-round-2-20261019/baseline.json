@@ -1,0 +1,76 @@
+{
+  "authority_hashes": {
+    "data\\aped-historical-v0.7.0.duckdb": "9568bbc44e929ce836784efd5fa220f3e4beac64fdec03b7c5073a827be91f82",
+    "data\\reference\\review\\decisions.jsonl": "fe61c86be5988b3d2d6f2ede569e14eae2cd54b71fd2943899ffbdb84baf71b4",
+    "data\\reference\\review\\evidence.jsonl": "5da33640c3a68c4b40d53c138f1e9726e84e48aa387195998db9fb1957021365"
+  },
+  "counts": {
+    "institutions": 11914,
+    "member_education": 370,
+    "members": 580,
+    "parliament_service": 1754
+  },
+  "decision_revision": "fe61c86be5988b3d2d6f2ede569e14eae2cd54b71fd2943899ffbdb84baf71b4",
+  "missing_aph_ids": [
+    "101351",
+    "157125",
+    "169119",
+    "181810",
+    "195565",
+    "243609",
+    "250362",
+    "252157",
+    "256063",
+    "263427",
+    "265991",
+    "270198",
+    "281558",
+    "281826",
+    "290544",
+    "299623",
+    "300134",
+    "300706",
+    "301128",
+    "310860",
+    "312393",
+    "316052",
+    "316312",
+    "316550",
+    "316551",
+    "317036",
+    "53517",
+    "DYW",
+    "HX4",
+    "IMW"
+  ],
+  "non_institutional_skips": [
+    "250156"
+  ],
+  "parent": {
+    "applications_sha256": "e660703fb562c0f5c2594b4c5452cb8dbc42548d50f476535de1b620c7a80f86",
+    "batch_id": "issue-102-p48-missing-schools-followup-20261019",
+    "content_sha256": "e0e1c978ec002ea26b2e6cd4c0e191937bc297d6b8b81bf6877aaae4d36a0c71",
+    "manifest_sha256": "64e67bfd05004982f078dc160b5f828708cedeaa22df24bef92134dde55ee384",
+    "review_revision": "d8f99eea40d5372905007dcee17b9ff7fdc6d73ec918bf3c8efa3cff1610d12c"
+  },
+  "parent_files": {
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\README.md": "f2b83f4debc8d4330df63b7084b5213aeb29395d7fbed47eb5a42882cab3e5e0",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\application-9f14b606fea0118e899f0a957078d0cf35a6df24b5d1def01998c895ee27b989.json": "3acb08459227077a1e41368cfef98356cbdf715af4fe1d44e260b5d1db1df94a",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\applied-attendance-audit.json": "e7da7dedaadfe3b59ecf76de0f58a01e10a08e81a1c4e97bc86e12a24f71070d",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\archive-hashes.json": "4f33b666831555d112256270891cf2f96e1948d6a809acdac97a00ca37e4d66b",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\assemble.py": "b1b6563b9a3a2440e1f5a7c6dc9448a421996b62c29ec64d3756aeb976cbcb65",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\audit.json": "f2c5abe34d0308dc66785fca71dddd1e7fd2088708b5cdb4ec30ad2d0ae8305c",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\follow-up.json": "84ae259fb52440432194f738ac3a38526b90c775b5933dd0356aa8aa6693bf3d",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\instructions.md": "f1e1ce8c1f0378eef68d8bb2bdb2c5e158f254bd33c71772958021268c5925c2",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\manifest.json": "64e67bfd05004982f078dc160b5f828708cedeaa22df24bef92134dde55ee384",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\previews\\b96a0698-63ab-4099-a746-88ae39055ceb.json": "9f14b606fea0118e899f0a957078d0cf35a6df24b5d1def01998c895ee27b989",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\proposals-0001.json": "e0252a8e8c4c029f0e58a81118731de2a25eea7b615eeea4e7acbb513edd245e",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\results.json": "63c5fa214d7b8ebace5e44a9efa4a11e009b4c4ac30f05fcfb24f203b080721c",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\reviews.jsonl": "59128d77f5ec036024681e19d18dd42e863ccf9c469f85046a67a5786182e48c",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\tasks.json": "b8ce935bd5a36467d53afbd8474c9f5def0e7a0b120261a891a1b09c07cea4eb",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\verify-application.py": "324cbc9b85949a6eb7909e7436c2fbbb433ad009f0ac533985d4048ad89d185d",
+    "data\\reference\\review\\research\\issue-102-p48-missing-schools-followup-20261019\\verify.py": "51ce4b5e9608168c15e93bceb1bd5a4379dcfaf617566f12f5a79703db619f6e"
+  },
+  "projection_digest": "b235e8afae62de1f64dbbf584d333b97aa992770fede7bb158f3d137dbe510ed",
+  "source_revision": "36b097e3e7822df107dd89186c5f6f8ee8c3f1067a5b58f4e00bcd982dcc1d25"
+}

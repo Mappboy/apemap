@@ -1,0 +1,5 @@
+# Missing-school follow-up research
+
+Research tasks.json only. Prior findings and searches are frozen under prior_research, not new operations or approvals. Reuse retained evidence explicitly. Start with the person's Wikipedia article, repair underlying citations and establish person-specific secondary attendance before independently identifying the exact institution. Never infer stage from alumni years, school type or birth-year arithmetic.
+
+Each case permits three searches and six opens, then one targeted retry of two searches and four opens: five queries and ten opens total, including failed access, identity and institution work. Count each query separately. Save actual operations and access results; do not estimate model or token usage. Preserve unresolved outcomes and namesake exclusions. No outreach, paywall circumvention, evidence retention or decisions during research. Import through the ordinary Research batches workflow; individual source inspection and exact-preview approval remain required.
