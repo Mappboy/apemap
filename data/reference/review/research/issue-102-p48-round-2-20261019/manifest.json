@@ -1,0 +1,198 @@
+{
+  "attempt_budgets": [],
+  "audit_count": 31,
+  "audit_sha256": "233da1539cd50f2d1745096e0dbc4a46b24dd272d3c4eab97f6c46f414ca4339",
+  "audit_summary": {
+    "audit_count": 31,
+    "excluded_parent_cases": [
+      {
+        "proposal_id": "proposal:5c99a375490c868253d3e48da71f3dd4a90f24c0dc9e0d3c2d4c04c43533bf50",
+        "reason": "already_applied",
+        "review_id": "education:140651:missing"
+      },
+      {
+        "proposal_id": "proposal:b8fd9acaba98b908511bc3d64cb2dc387083626f23936ab7d8ed9f7f17db48d6",
+        "reason": "already_applied",
+        "review_id": "education:168275:missing"
+      },
+      {
+        "proposal_id": "proposal:9b82abaf247e56c980fdf1e69034858fdbf70b71898404933a0c7813bf822afd",
+        "reason": "already_applied",
+        "review_id": "education:257613:missing"
+      },
+      {
+        "proposal_id": "proposal:33cda71906a1029586f40e917be5d8fa9e508cabcafcd82842c47eb7e62d308e",
+        "reason": "already_applied",
+        "review_id": "education:263528:missing"
+      },
+      {
+        "proposal_id": "proposal:d60ab6ed1320064013be9e992d136f5c74f0bdca3240cf7f4624bf36dc98a27d",
+        "reason": "already_applied",
+        "review_id": "education:265990:missing"
+      },
+      {
+        "proposal_id": "proposal:d6f7f3763fe5dfdfe0e8a1e6623c1c70ec31591c9b02312e1d2505c7f841c400",
+        "reason": "already_applied",
+        "review_id": "education:267506:missing"
+      },
+      {
+        "proposal_id": "proposal:06ae171e0b4f9aab4c97be8494505e496dc927130cfc3a88a849374e042a92ba",
+        "reason": "already_applied",
+        "review_id": "education:282335:missing"
+      },
+      {
+        "proposal_id": "proposal:799387d21d5c02732bba03c9213c5c5b28b2094b186b8dd8ea0f6f4a5190c36a",
+        "reason": "already_applied",
+        "review_id": "education:295676:missing"
+      },
+      {
+        "proposal_id": "proposal:1308be1137f8fc357ce013b7b2e9e307b7acc755b165a38627c2a52e622f1a5a",
+        "reason": "already_applied",
+        "review_id": "education:298839:missing"
+      },
+      {
+        "proposal_id": "proposal:571c25cb58d41b08e3e7723080189e628aee3e69da2452e2740a208392af6c7a",
+        "reason": "already_applied",
+        "review_id": "education:312823:missing"
+      },
+      {
+        "proposal_id": "proposal:ea12191498e6979c76b0651d8d55a5844a90271411673def894a8052d619534f",
+        "reason": "already_applied",
+        "review_id": "education:315154:missing"
+      },
+      {
+        "proposal_id": "proposal:2ff7247c3d2116694e3af4589d878c9181277d425909200bf71fe1e84dec1e4d",
+        "reason": "already_applied",
+        "review_id": "education:315434:missing"
+      },
+      {
+        "proposal_id": "proposal:d002d871edbe0189854930ea1e258b3df6620b2ecc351d62c02142940156f388",
+        "reason": "already_applied",
+        "review_id": "education:316540:missing"
+      },
+      {
+        "proposal_id": "proposal:a4a083b30df24bae7b595c6b91f2677dd101132b45c51614830121d24051970e",
+        "reason": "already_applied",
+        "review_id": "education:316818:missing"
+      },
+      {
+        "proposal_id": "proposal:9bc131fb8af403f7dc513d248cb04f65f8bd6ec9f32062b33921f1e7eac1b7b8",
+        "reason": "already_applied",
+        "review_id": "education:316915:missing"
+      },
+      {
+        "proposal_id": "proposal:be0b0354b31a83d61a3ec3fb8e5beed684115593e975b8da9979e1ec4059829a",
+        "reason": "already_applied",
+        "review_id": "education:88411:missing"
+      },
+      {
+        "proposal_id": "proposal:31f6ad199399950e063b4aa25e9584836e6fc6f6ff9421adc998ebef5ffb5fdf",
+        "reason": "already_applied",
+        "review_id": "education:hvo:missing"
+      },
+      {
+        "proposal_id": "proposal:92f740d8b5178a90a7b72deb267713ff47ce5b8ceaefee5604e9b26c9596d6b2",
+        "reason": "already_applied",
+        "review_id": "education:r36:missing"
+      }
+    ],
+    "research_count": 30,
+    "skipped": [
+      {
+        "aph_id": "250156",
+        "date_of_birth": "1994-10-14",
+        "display_name": "STEELE-JOHN, Jordon Alexander",
+        "family_name": "Steele-John",
+        "gender": "Male",
+        "given_name": "Jordon",
+        "member_id": "aph-250156",
+        "reason": "Reviewed home education has no institutional school identity.",
+        "secondary_education": [
+          {
+            "attended_identity_source_url": null,
+            "attended_institution_id": null,
+            "attended_status": "attended_unspecified",
+            "campus_continuity": null,
+            "campus_continuity_source_url": null,
+            "confidence": "unconfirmed",
+            "education_id": "edu-250156-6f66165bfc8609df",
+            "evidence_origin": "manual",
+            "graduation_year": null,
+            "historical_broad_sector": null,
+            "historical_broad_sector_source_url": null,
+            "historical_context_scope": null,
+            "historical_detailed_sector": null,
+            "historical_detailed_sector_source_url": null,
+            "historical_latitude": null,
+            "historical_location_source_url": null,
+            "historical_longitude": null,
+            "historical_scope_confirmed": null,
+            "institution_id": null,
+            "institution_resolution": "home_educated",
+            "level": "secondary",
+            "member_id": "aph-250156",
+            "recorded_school_id": null,
+            "resolution_source_url": null,
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "reviewer_notes": "Home education is confirmed by the frozen APH record and the retained State Library of Western Australia oral-history transcript (printed page 5). Accept as home_educated with no institution or school identity, superseding the former no-suitable-candidate research disposition. Retain the recorded wording, attendance status, source URL, retrieval date, attendance confidence and both evidence references.",
+            "school_name_as_recorded": "Home educated",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+            "years_attended": null
+          }
+        ],
+        "services": [
+          {
+            "chamber": "senate",
+            "electorate": null,
+            "is_current_member": true,
+            "is_opening_day_member": true,
+            "member_id": "aph-250156",
+            "parliament_number": 48,
+            "party": "Australian Greens",
+            "party_abbrev": "GRN",
+            "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+            "service_end": null,
+            "service_id": "srv-250156-48-c20c7e0acde56777",
+            "service_start": "2025-07-22",
+            "source_service_end": "2026-09-21",
+            "source_service_start": "2025-07-01",
+            "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+            "state_or_territory": "WA"
+          }
+        ],
+        "status": "resolved_skip",
+        "wikidata_id": null
+      }
+    ]
+  },
+  "batch_id": "issue-102-p48-round-2-20261019",
+  "case_count": 30,
+  "cases_per_task": 1,
+  "created_at": "2026-10-19T08:29:18.418621+00:00",
+  "decision_revision": "fe61c86be5988b3d2d6f2ede569e14eae2cd54b71fd2943899ffbdb84baf71b4",
+  "evidence_revision": "5da33640c3a68c4b40d53c138f1e9726e84e48aa387195998db9fb1957021365",
+  "kind": "schools",
+  "max_workers": 3,
+  "models": [],
+  "origin": "agent-session",
+  "parent": {
+    "applications_sha256": "e660703fb562c0f5c2594b4c5452cb8dbc42548d50f476535de1b620c7a80f86",
+    "batch_id": "issue-102-p48-missing-schools-followup-20261019",
+    "content_sha256": "e0e1c978ec002ea26b2e6cd4c0e191937bc297d6b8b81bf6877aaae4d36a0c71",
+    "manifest_sha256": "64e67bfd05004982f078dc160b5f828708cedeaa22df24bef92134dde55ee384",
+    "review_revision": "d8f99eea40d5372905007dcee17b9ff7fdc6d73ec918bf3c8efa3cff1610d12c"
+  },
+  "parliament": 48,
+  "provenance": {
+    "availability_note": "Preparation runs no research model. Subsequent session research records actual operations; exact model identity and token usage remain null when unavailable.",
+    "generated_by": "codex-session",
+    "model": null,
+    "token_usage": null
+  },
+  "purpose": "missing-secondary-education",
+  "reasoning_effort": null,
+  "schema_version": 1,
+  "skipped_count": 1,
+  "source_revision": "36b097e3e7822df107dd89186c5f6f8ee8c3f1067a5b58f4e00bcd982dcc1d25",
+  "task_sha256": "3ae55758503653280ec27f5b248227b3ab49ab9f08d0d1f421a3a1621d1d12ad"
+}

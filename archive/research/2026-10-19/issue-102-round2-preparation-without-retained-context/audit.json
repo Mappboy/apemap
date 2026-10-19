@@ -1,0 +1,1176 @@
+{
+  "cohort": "opening_day",
+  "excluded_parent_cases": [
+    {
+      "proposal_id": "proposal:5c99a375490c868253d3e48da71f3dd4a90f24c0dc9e0d3c2d4c04c43533bf50",
+      "reason": "already_applied",
+      "review_id": "education:140651:missing"
+    },
+    {
+      "proposal_id": "proposal:b8fd9acaba98b908511bc3d64cb2dc387083626f23936ab7d8ed9f7f17db48d6",
+      "reason": "already_applied",
+      "review_id": "education:168275:missing"
+    },
+    {
+      "proposal_id": "proposal:9b82abaf247e56c980fdf1e69034858fdbf70b71898404933a0c7813bf822afd",
+      "reason": "already_applied",
+      "review_id": "education:257613:missing"
+    },
+    {
+      "proposal_id": "proposal:33cda71906a1029586f40e917be5d8fa9e508cabcafcd82842c47eb7e62d308e",
+      "reason": "already_applied",
+      "review_id": "education:263528:missing"
+    },
+    {
+      "proposal_id": "proposal:d60ab6ed1320064013be9e992d136f5c74f0bdca3240cf7f4624bf36dc98a27d",
+      "reason": "already_applied",
+      "review_id": "education:265990:missing"
+    },
+    {
+      "proposal_id": "proposal:d6f7f3763fe5dfdfe0e8a1e6623c1c70ec31591c9b02312e1d2505c7f841c400",
+      "reason": "already_applied",
+      "review_id": "education:267506:missing"
+    },
+    {
+      "proposal_id": "proposal:06ae171e0b4f9aab4c97be8494505e496dc927130cfc3a88a849374e042a92ba",
+      "reason": "already_applied",
+      "review_id": "education:282335:missing"
+    },
+    {
+      "proposal_id": "proposal:799387d21d5c02732bba03c9213c5c5b28b2094b186b8dd8ea0f6f4a5190c36a",
+      "reason": "already_applied",
+      "review_id": "education:295676:missing"
+    },
+    {
+      "proposal_id": "proposal:1308be1137f8fc357ce013b7b2e9e307b7acc755b165a38627c2a52e622f1a5a",
+      "reason": "already_applied",
+      "review_id": "education:298839:missing"
+    },
+    {
+      "proposal_id": "proposal:571c25cb58d41b08e3e7723080189e628aee3e69da2452e2740a208392af6c7a",
+      "reason": "already_applied",
+      "review_id": "education:312823:missing"
+    },
+    {
+      "proposal_id": "proposal:ea12191498e6979c76b0651d8d55a5844a90271411673def894a8052d619534f",
+      "reason": "already_applied",
+      "review_id": "education:315154:missing"
+    },
+    {
+      "proposal_id": "proposal:2ff7247c3d2116694e3af4589d878c9181277d425909200bf71fe1e84dec1e4d",
+      "reason": "already_applied",
+      "review_id": "education:315434:missing"
+    },
+    {
+      "proposal_id": "proposal:d002d871edbe0189854930ea1e258b3df6620b2ecc351d62c02142940156f388",
+      "reason": "already_applied",
+      "review_id": "education:316540:missing"
+    },
+    {
+      "proposal_id": "proposal:a4a083b30df24bae7b595c6b91f2677dd101132b45c51614830121d24051970e",
+      "reason": "already_applied",
+      "review_id": "education:316818:missing"
+    },
+    {
+      "proposal_id": "proposal:9bc131fb8af403f7dc513d248cb04f65f8bd6ec9f32062b33921f1e7eac1b7b8",
+      "reason": "already_applied",
+      "review_id": "education:316915:missing"
+    },
+    {
+      "proposal_id": "proposal:be0b0354b31a83d61a3ec3fb8e5beed684115593e975b8da9979e1ec4059829a",
+      "reason": "already_applied",
+      "review_id": "education:88411:missing"
+    },
+    {
+      "proposal_id": "proposal:31f6ad199399950e063b4aa25e9584836e6fc6f6ff9421adc998ebef5ffb5fdf",
+      "reason": "already_applied",
+      "review_id": "education:hvo:missing"
+    },
+    {
+      "proposal_id": "proposal:92f740d8b5178a90a7b72deb267713ff47ce5b8ceaefee5604e9b26c9596d6b2",
+      "reason": "already_applied",
+      "review_id": "education:r36:missing"
+    }
+  ],
+  "members": [
+    {
+      "aph_id": "101351",
+      "date_of_birth": "1973-03-23",
+      "display_name": "KHALIL, the Hon. Peter",
+      "family_name": "Khalil",
+      "gender": "Male",
+      "given_name": "Peter",
+      "member_id": "aph-101351",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Wills",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-101351",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-101351-48-7ab5c82854b60c2e",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '101351'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "157125",
+      "date_of_birth": null,
+      "display_name": "ROBERTS, Tracey",
+      "family_name": "Roberts",
+      "gender": "Female",
+      "given_name": "Tracey",
+      "member_id": "aph-157125",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Pearce",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-157125",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-157125-48-11569796f9880ea9",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '157125'",
+          "state_or_territory": "WA"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "169119",
+      "date_of_birth": "1971-09-17",
+      "display_name": "SHOEBRIDGE, David",
+      "family_name": "Shoebridge",
+      "gender": "Male",
+      "given_name": "David",
+      "member_id": "aph-169119",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-169119",
+          "parliament_number": 48,
+          "party": "Australian Greens",
+          "party_abbrev": "GRN",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-169119-48-2454b51a068b8d9a",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2022-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '169119'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "181810",
+      "date_of_birth": "1963-07-30",
+      "display_name": "TEMPLEMAN, Susan Raye",
+      "family_name": "Templeman",
+      "gender": "Female",
+      "given_name": "Susan",
+      "member_id": "aph-181810",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Macquarie",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-181810",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-181810-48-0e264d0703596f65",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '181810'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "195565",
+      "date_of_birth": "1968-02-24",
+      "display_name": "WHISH-WILSON, Peter Stuart",
+      "family_name": "Whish-Wilson",
+      "gender": "Male",
+      "given_name": "Peter",
+      "member_id": "aph-195565",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-195565",
+          "parliament_number": 48,
+          "party": "Australian Greens",
+          "party_abbrev": "GRN",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2026-08-14",
+          "service_id": "srv-195565-48-78386c059d147f69",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-08-14",
+          "source_service_start": "2022-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '195565'",
+          "state_or_territory": "TAS"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "243609",
+      "date_of_birth": "1973-07-31",
+      "display_name": "GILES, the Hon. Andrew James",
+      "family_name": "Giles",
+      "gender": "Male",
+      "given_name": "Andrew",
+      "member_id": "aph-243609",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Scullin",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-243609",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-243609-48-ff47142d91ba8f05",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '243609'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "250156",
+      "date_of_birth": "1994-10-14",
+      "display_name": "STEELE-JOHN, Jordon Alexander",
+      "family_name": "Steele-John",
+      "gender": "Male",
+      "given_name": "Jordon",
+      "member_id": "aph-250156",
+      "reason": "Reviewed home education has no institutional school identity.",
+      "secondary_education": [
+        {
+          "attended_identity_source_url": null,
+          "attended_institution_id": null,
+          "attended_status": "attended_unspecified",
+          "campus_continuity": null,
+          "campus_continuity_source_url": null,
+          "confidence": "unconfirmed",
+          "education_id": "edu-250156-6f66165bfc8609df",
+          "evidence_origin": "manual",
+          "graduation_year": null,
+          "historical_broad_sector": null,
+          "historical_broad_sector_source_url": null,
+          "historical_context_scope": null,
+          "historical_detailed_sector": null,
+          "historical_detailed_sector_source_url": null,
+          "historical_latitude": null,
+          "historical_location_source_url": null,
+          "historical_longitude": null,
+          "historical_scope_confirmed": null,
+          "institution_id": null,
+          "institution_resolution": "home_educated",
+          "level": "secondary",
+          "member_id": "aph-250156",
+          "recorded_school_id": null,
+          "resolution_source_url": null,
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "reviewer_notes": "Home education is confirmed by the frozen APH record and the retained State Library of Western Australia oral-history transcript (printed page 5). Accept as home_educated with no institution or school identity, superseding the former no-suitable-candidate research disposition. Retain the recorded wording, attendance status, source URL, retrieval date, attendance confidence and both evidence references.",
+          "school_name_as_recorded": "Home educated",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+          "years_attended": null
+        }
+      ],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-250156",
+          "parliament_number": 48,
+          "party": "Australian Greens",
+          "party_abbrev": "GRN",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-250156-48-c20c7e0acde56777",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250156'",
+          "state_or_territory": "WA"
+        }
+      ],
+      "status": "resolved_skip",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "250362",
+      "date_of_birth": "1963-07-08",
+      "display_name": "FARUQI, Dr Mehreen Saeed",
+      "family_name": "Faruqi",
+      "gender": "Female",
+      "given_name": "Mehreen",
+      "member_id": "aph-250362",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-250362",
+          "parliament_number": 48,
+          "party": "Australian Greens",
+          "party_abbrev": "GRN",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-250362-48-2454b51a068b8d9a",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '250362'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "252157",
+      "date_of_birth": "1971-05-16",
+      "display_name": "WALSH, the Hon. Dr Jess Cecille",
+      "family_name": "Walsh",
+      "gender": "Female",
+      "given_name": "Jess",
+      "member_id": "aph-252157",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-252157",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-252157-48-7939b7cc5a834928",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '252157'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "256063",
+      "date_of_birth": "1984-07-11",
+      "display_name": "BRAGG, Andrew James",
+      "family_name": "Bragg",
+      "gender": "Male",
+      "given_name": "Andrew",
+      "member_id": "aph-256063",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-256063",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-256063-48-df2b2cf3514d5991",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '256063'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "263427",
+      "date_of_birth": null,
+      "display_name": "BRISKEY, Jo",
+      "family_name": "Briskey",
+      "gender": "Female",
+      "given_name": "Jo",
+      "member_id": "aph-263427",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Maribyrnong",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-263427",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-263427-48-779df85ba874d9bb",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '263427'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "265991",
+      "date_of_birth": "1972-06-26",
+      "display_name": "O'BRIEN, Llewellyn (Llew) Stephen",
+      "family_name": "O'Brien",
+      "gender": "Male",
+      "given_name": "Llewellyn",
+      "member_id": "aph-265991",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Wide Bay",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-265991",
+          "parliament_number": 48,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-265991-48-6517f087ad66f338",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '265991'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "270198",
+      "date_of_birth": null,
+      "display_name": "FRANCE, Ali",
+      "family_name": "France",
+      "gender": "Female",
+      "given_name": "Ali",
+      "member_id": "aph-270198",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Dickson",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-270198",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-270198-48-2269699a94f40f64",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '270198'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "281558",
+      "date_of_birth": "1963-03-16",
+      "display_name": "ASKEW, Wendy",
+      "family_name": "Askew",
+      "gender": "Female",
+      "given_name": "Wendy",
+      "member_id": "aph-281558",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-281558",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2026-08-10",
+          "service_id": "srv-281558-48-2bf21d49824a86c4",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-08-10",
+          "source_service_start": "2022-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '281558'",
+          "state_or_territory": "TAS"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "281826",
+      "date_of_birth": "1988-05-07",
+      "display_name": "THOMPSON, Phillip Bruce, OAM",
+      "family_name": "Thompson",
+      "gender": "Male",
+      "given_name": "Phillip",
+      "member_id": "aph-281826",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Herbert",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-281826",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-281826-48-67be4c28e5151ad1",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '281826'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "290544",
+      "date_of_birth": "1972-12-10",
+      "display_name": "ANANDA-RAJAH, Dr Michelle",
+      "family_name": "Ananda-Rajah",
+      "gender": "Female",
+      "given_name": "Michelle",
+      "member_id": "aph-290544",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-290544",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-290544-48-7939b7cc5a834928",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '290544'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "299623",
+      "date_of_birth": "1971-03-15",
+      "display_name": "SCAMPS, Sophie",
+      "family_name": "Scamps",
+      "gender": "Female",
+      "given_name": "Sophie",
+      "member_id": "aph-299623",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Mackellar",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-299623",
+          "parliament_number": 48,
+          "party": "Independent",
+          "party_abbrev": "IND",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-299623-48-20e819efdca1ca5a",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '299623'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "300134",
+      "date_of_birth": "1969-04-04",
+      "display_name": "CADELL, Ross Philip",
+      "family_name": "Cadell",
+      "gender": "Male",
+      "given_name": "Ross",
+      "member_id": "aph-300134",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-300134",
+          "parliament_number": 48,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-300134-48-b2d6d7ffe872eb30",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2022-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '300134'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "300706",
+      "date_of_birth": "1983-06-29",
+      "display_name": "BABET, Ralph",
+      "family_name": "Babet",
+      "gender": "Male",
+      "given_name": "Ralph",
+      "member_id": "aph-300706",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-300706",
+          "parliament_number": 48,
+          "party": "United Australia Party [2018]",
+          "party_abbrev": "UAP [2018]",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-300706-48-8ed82faae416d3ee",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2022-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '300706'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "301128",
+      "date_of_birth": "1976-08-26",
+      "display_name": "DARMANIN, Lisa",
+      "family_name": "Darmanin",
+      "gender": "Female",
+      "given_name": "Lisa",
+      "member_id": "aph-301128",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-301128",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-301128-48-7939b7cc5a834928",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2024-05-29",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '301128'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "310860",
+      "date_of_birth": "1985-08-23",
+      "display_name": "HODGINS-MAY, Steph",
+      "family_name": "Hodgins-May",
+      "gender": "Female",
+      "given_name": "Steph",
+      "member_id": "aph-310860",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-310860",
+          "parliament_number": 48,
+          "party": "Australian Greens",
+          "party_abbrev": "GRN",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-310860-48-b13c3336a0e71976",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '310860'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "312393",
+      "date_of_birth": null,
+      "display_name": "SMITH, Matt",
+      "family_name": "Smith",
+      "gender": "Male",
+      "given_name": "Matt",
+      "member_id": "aph-312393",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Leichhardt",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-312393",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-312393-48-2b6bd6acb9d2b2df",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '312393'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "316052",
+      "date_of_birth": null,
+      "display_name": "NG, Gabriel",
+      "family_name": "Ng",
+      "gender": "Male",
+      "given_name": "Gabriel",
+      "member_id": "aph-316052",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Menzies",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-316052",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-316052-48-f9839231f36e1edc",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316052'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "316312",
+      "date_of_birth": null,
+      "display_name": "CHAFFEY, Jamie",
+      "family_name": "Chaffey",
+      "gender": "Male",
+      "given_name": "Jamie",
+      "member_id": "aph-316312",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Parkes",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-316312",
+          "parliament_number": 48,
+          "party": "The Nationals",
+          "party_abbrev": "NP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-316312-48-23a1c24cacb4b967",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316312'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "316550",
+      "date_of_birth": null,
+      "display_name": "FRENCH, Tom",
+      "family_name": "French",
+      "gender": "Male",
+      "given_name": "Tom",
+      "member_id": "aph-316550",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Moore",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-316550",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-316550-48-471bd4d0302a20b6",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316550'",
+          "state_or_territory": "WA"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "316551",
+      "date_of_birth": "1994-10-13",
+      "display_name": "COMER, Emma",
+      "family_name": "Comer",
+      "gender": "Female",
+      "given_name": "Emma",
+      "member_id": "aph-316551",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Petrie",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-316551",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-316551-48-567219b59cf79a69",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '316551'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "317036",
+      "date_of_birth": null,
+      "display_name": "STACEY, Warwick",
+      "family_name": "Stacey",
+      "gender": "Male",
+      "given_name": "Warwick",
+      "member_id": "aph-317036",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "senate",
+          "electorate": null,
+          "is_current_member": false,
+          "is_opening_day_member": true,
+          "member_id": "aph-317036",
+          "parliament_number": 48,
+          "party": "Pauline Hanson's One Nation",
+          "party_abbrev": "PHON",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": "2025-08-19",
+          "service_id": "srv-317036-48-73a09f1d9fe1420d",
+          "service_start": "2025-07-22",
+          "source_service_end": "2025-08-19",
+          "source_service_start": "2025-07-01",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '317036'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "53517",
+      "date_of_birth": "1972-07-21",
+      "display_name": "DICK, the Hon. Dugald (Milton) Milton",
+      "family_name": "Dick",
+      "gender": "Male",
+      "given_name": "Dugald",
+      "member_id": "aph-53517",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Oxley",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-53517",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-53517-48-95a66ae3a9814e35",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq '53517'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "DYW",
+      "date_of_birth": "1969-11-04",
+      "display_name": "BURKE, the Hon. Anthony (Tony) Stephen",
+      "family_name": "Burke",
+      "gender": "Male",
+      "given_name": "Anthony",
+      "member_id": "aph-dyw",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Watson",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-dyw",
+          "parliament_number": 48,
+          "party": "Australian Labor Party",
+          "party_abbrev": "ALP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-dyw-48-ea4a5edb03d5d683",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'DYW'",
+          "state_or_territory": "NSW"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "HX4",
+      "date_of_birth": "1945-05-22",
+      "display_name": "KATTER, the Hon. Robert (Bob) Carl",
+      "family_name": "Katter",
+      "gender": "Male",
+      "given_name": "Robert",
+      "member_id": "aph-hx4",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Kennedy",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-hx4",
+          "parliament_number": 48,
+          "party": "Katter's Australian Party",
+          "party_abbrev": "KAP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-hx4-48-bef778445f8cc051",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'HX4'",
+          "state_or_territory": "QLD"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    },
+    {
+      "aph_id": "IMW",
+      "date_of_birth": "1980-03-12",
+      "display_name": "WILSON, the Hon. Timothy (Tim) Robert",
+      "family_name": "Wilson",
+      "gender": "Male",
+      "given_name": "Timothy",
+      "member_id": "aph-imw",
+      "reason": "No institutional secondary-school name is recorded.",
+      "secondary_education": [],
+      "services": [
+        {
+          "chamber": "representatives",
+          "electorate": "Goldstein",
+          "is_current_member": true,
+          "is_opening_day_member": true,
+          "member_id": "aph-imw",
+          "parliament_number": 48,
+          "party": "Liberal Party of Australia",
+          "party_abbrev": "LP",
+          "retrieved_at": "2026-10-02 08:23:59.813516+10:00",
+          "service_end": null,
+          "service_id": "srv-imw-48-458965e29516d294",
+          "service_start": "2025-07-22",
+          "source_service_end": "2026-09-21",
+          "source_service_start": "2025-05-03",
+          "source_url": "https://handbookapi.aph.gov.au/api/individuals?$filter=PHID eq 'IMW'",
+          "state_or_territory": "VIC"
+        }
+      ],
+      "status": "needs_research",
+      "wikidata_id": null
+    }
+  ],
+  "parent": {
+    "applications_sha256": "e660703fb562c0f5c2594b4c5452cb8dbc42548d50f476535de1b620c7a80f86",
+    "batch_id": "issue-102-p48-missing-schools-followup-20261019",
+    "content_sha256": "e0e1c978ec002ea26b2e6cd4c0e191937bc297d6b8b81bf6877aaae4d36a0c71",
+    "manifest_sha256": "64e67bfd05004982f078dc160b5f828708cedeaa22df24bef92134dde55ee384",
+    "review_revision": "d8f99eea40d5372905007dcee17b9ff7fdc6d73ec918bf3c8efa3cff1610d12c"
+  },
+  "parliament": 48,
+  "published_release": {
+    "archive_sha256": "efff402034ba846001c80b230593cea9b12a444ca79847505b15d3ea5c4dace6",
+    "archive_url": "https://github.com/Mappboy/apemap/releases/download/data-v0.7.0/apemap-release-v0.7.0.tar.gz",
+    "manifest_sha256": "1b3eecde69ccfb63a0dc2fc206634079745ab0c2b8056264c567d64075cbed58",
+    "manifest_url": "https://github.com/Mappboy/apemap/releases/download/data-v0.7.0/manifest.json",
+    "payload_sha256": {
+      "member_education": "1482ae3b005b86af78c541479fc859dfb1a7db281ba543ba29f46a0ae011d0ea",
+      "members": "782f12c72a1231cc34f2ed5e228cd127631b43d695123d1badcb9b8083567aff",
+      "parliament_service": "41dd70579215b167a93943c9b00314813ca5f64dbd7ed0b36cd1d8502023e950"
+    },
+    "release_url": "https://github.com/Mappboy/apemap/releases/tag/data-v0.7.0",
+    "version": "0.7.0"
+  },
+  "purpose": "missing-secondary-education",
+  "schema_version": 1,
+  "selection": "Parent proposals explicitly marked for research, not applied, and still missing institutional secondary attendance in the current review projection."
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 import csv
 from copy import deepcopy
 import hashlib
@@ -397,7 +398,7 @@ def prepare_missing_education_followup(
         task["context"]["retained_evidence"] = [
             record.to_dict()
             for record in evidence
-            if isinstance(record.claim_value, dict)
+            if isinstance(record.claim_value, Mapping)
             and str(record.claim_value.get("aph_id", "")).casefold()
             == aph_id.casefold()
         ]

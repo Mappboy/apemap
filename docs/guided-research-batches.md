@@ -135,6 +135,12 @@ targets need independent evidence. Inspect each attached source and approve a
 fresh exact preview before application. Preparation/research never imply consent
 to contact members or schools, or to rebuild/publish a dataset.
 
+The saved second round contains 30 researched, unreviewed cases: Ali France has
+two supported attendance/institution-link proposals and 29 members remain
+unresolved. Nothing from that round is applied, so the projected missing-person
+scope remains 30 plus the home-education skip. See its
+[delivery and case conclusions](../data/reference/review/research/issue-102-p48-round-2-20261019/README.md).
+
 ## Saturday Paper survey reconciliation
 
 The `issue-104-survey-20261019` batch reconciles all 18 respondents in the

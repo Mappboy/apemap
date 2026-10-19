@@ -10,6 +10,7 @@ from typer.testing import CliRunner
 
 from apemap.cli import app
 from apemap.review import missing_education as module
+from apemap.review.evidence import EvidenceRecord, append_evidence, evidence_revision
 from apemap.review.research_batches import ResearchBatches
 from apemap.review.store import StaleReviewError
 from tests.test_review_service import review_service as review_service
@@ -104,6 +105,18 @@ def test_followup_freezes_lineage_history_and_budget_without_authority(
         if followup_parent.service.log_path.exists()
         else None
     )
+
+
+def test_followup_includes_immutable_retained_claims_without_rewriting_them(
+    followup_parent: ResearchBatches,
+) -> None:
+    record = EvidenceRecord.from_dict(result()["evidence"][0])
+    path = followup_parent.service.evidence_path
+    append_evidence(path, [record], expected_revision=evidence_revision(path))
+    before = path.read_bytes()
+    prepared = prepare(followup_parent)
+    assert prepared["tasks"][0]["context"]["retained_evidence"] == [record.to_dict()]
+    assert path.read_bytes() == before
 
 
 @pytest.mark.parametrize("action", ["accept", "reject", None])
