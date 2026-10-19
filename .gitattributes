@@ -6,6 +6,10 @@ data/reference/review/*.json text eol=lf
 data/reference/review/research/issue-104-survey-20261019/*.json text eol=lf
 data/reference/review/research/issue-104-survey-20261019/*.jsonl text eol=lf
 data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/results.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/application-*.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/applied-attendance-audit.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/reviews.jsonl text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/previews/*.json text eol=lf
 # Captured recipe manifest digests are reproducible across checkout hosts.
 data/*inputs-manifest.json text eol=lf
 data/release-recipes/*.json text eol=lf

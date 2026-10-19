@@ -1,0 +1,1980 @@
+{
+  "changes": {
+    "canonical": {
+      "after": {
+        "institutions": {
+          "added_count": 18,
+          "after": [
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-0992e19d53d2de0a",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Centralian Senior College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-0cbb0161ac0bca1b",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Willyama High School, Broken Hill",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-144223bbd452b342",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Tully State High School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-1d80aaed5cb20444",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Christ Church Grammar School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-258d022ace5cdbbe",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Epping Boys High School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-2c03b92fd0314e5e",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Gladstone Park Secondary College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-5d205f6863a0f6ae",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Prince Alfred College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-6085df525fc94523",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Cerdon College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-65673379ec09138f",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Brisbane State High School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-6e1772751ae2448d",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Trinity College Colac",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-8032f5f5958aef15",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Lurnea High School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-9b28a80008aea696",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "St Patrick's College, Campbelltown",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-a3881169b832f4dd",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "De La Salle College, Cronulla",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-b96e4806855f8ea6",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "St Mary's Cathedral College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-bd367d7785103244",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Bundamba State High School",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-d79a05efd42cb282",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Investigator College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-e61bf5cceffdfdcc",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "St John Bosco College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            },
+            {
+              "acara_id": null,
+              "campus_type": null,
+              "country": null,
+              "institution_id": "inst-unmatched-reviewed-ff5d1a1086e2fe66",
+              "institution_status": "unknown",
+              "latitude": null,
+              "longitude": null,
+              "postcode": null,
+              "school_name": "Mount Waverley Secondary College",
+              "school_type": "Secondary",
+              "sector": "Other",
+              "state": null,
+              "suburb": null
+            }
+          ],
+          "after_count": 11914,
+          "before": [],
+          "before_count": 11896,
+          "removed_count": 0,
+          "updated_count": 0
+        },
+        "member_education": {
+          "added_count": 18,
+          "after": [
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-140651-9b28a80008aea696",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-9b28a80008aea696",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-140651",
+              "recorded_school_id": "school:9b28a80008aea696",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:11:18+00:00",
+              "reviewer_notes": "Explicit high-school attendance at St Patrick's College, Campbelltown, citing Debra Vermeer's December 2013 Good Samaritan profile; underlying profile opened successfully. Not required: the Wikipedia-linked original source explicitly establishes high-school attendance.",
+              "school_name_as_recorded": "St Patrick's College, Campbelltown",
+              "source_url": "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-168275-a3881169b832f4dd",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-a3881169b832f4dd",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-168275",
+              "recorded_school_id": "school:a3881169b832f4dd",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:11:18+00:00",
+              "reviewer_notes": "Article explicitly says Sheldon attended De La Salle College, Cronulla and cites the ALP biography, successfully opened. Not required: underlying cited political-party biography explicitly identifies the school.",
+              "school_name_as_recorded": "De La Salle College, Cronulla",
+              "source_url": "https://www.alp.org.au/our-people/our-people/tony-sheldon/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-257613-1d80aaed5cb20444",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-1d80aaed5cb20444",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-257613",
+              "recorded_school_id": "school:1d80aaed5cb20444",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:55:31+00:00",
+              "reviewer_notes": "Christ Church Grammar School's cited 25 May 2016 article and newsletter establish old-boy identity and a visiting Senior Assembly address, not his own secondary grade. The original class-year/birth-year stage inference is withdrawn; a genuine final broad pass was required. Stopped after two final queries: the original school-published Chronicle 29, June 2001, printed page 18 explicitly identifies Varun Ghosh as Year 11. Browser opens failed size limits, but direct HTTP retrieval of the complete original PDF succeeded; its page was text-extracted, rendered and visually inspected. No graduation or attendance range is inferred. Strong underlying school evidence exists but exact QID page unavailable twice; user must review identity evidence before any use. Original school object is preserved verbatim as a lead. Its class-year/birth-year secondary-stage inference is withdrawn and replaced by directly retrieved, visually verified contemporaneous Year 11 evidence.",
+              "school_name_as_recorded": "Christ Church Grammar School",
+              "source_url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-263528-0992e19d53d2de0a",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-0992e19d53d2de0a",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-263528",
+              "recorded_school_id": "school:0992e19d53d2de0a",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 20:52:10+00:00",
+              "reviewer_notes": "Describes school-age events and Year 12motherhood but names no secondary institution. Parents' Yuendumu school employment is not her attendance. Six queries completed with no attributed named secondary school. Official visits, parents' workplace, unsupported namesake qualifications and unsourced comments were excluded. Cached date of birth differs from live article; identity established through exact APH MP ID/sitelink and career, no DOB correction proposed. User-led follow-up: Tim Rowse's original Inside Story book review (14 April 2025) identifies Price's classmate at Centralian Senior College and describes completion of her schooling. The person-specific senior-schooling context supports secondary attendance at that exact recorded name. Propose attendance only: no graduation status/year, dates, certificate, institution target or equivalence to Centralian College. St Philip's College remains an unverified indexed/user lead.",
+              "school_name_as_recorded": "Centralian Senior College",
+              "source_url": "https://insidestory.org.au/all-in-the-family-price/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-265990-8032f5f5958aef15",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-8032f5f5958aef15",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-265990",
+              "recorded_school_id": "school:8032f5f5958aef15",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:14:37+00:00",
+              "reviewer_notes": "Article contains no school name. Officialfirst-personAbout biography found in finalquery explicitly names Lurnea High School separately fromLurnea Public School. Stopped after 1 query: official first-person  biography explicitly namesLurnea High School.",
+              "school_name_as_recorded": "Lurnea High School",
+              "source_url": "https://annestanley.com.au/about/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-267506-258d022ace5cdbbe",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-258d022ace5cdbbe",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-267506",
+              "recorded_school_id": "school:258d022ace5cdbbe",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:29+00:00",
+              "reviewer_notes": "Opened the article and followed its reference 6 to the original first-person candidate questionnaire. Secondary attendance was verified through the underlying Wikipedia citation.",
+              "school_name_as_recorded": "Epping Boys High School",
+              "source_url": "https://rydedistrictmums.com.au/simon-kennedy-liberal/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-282335-6e1772751ae2448d",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-6e1772751ae2448d",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-282335",
+              "recorded_school_id": "school:6e1772751ae2448d",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:29+00:00",
+              "reviewer_notes": "Article names Trinity College in Colac; its About Helen citation failed to open. The same query was issued twice; both actual queries count. Opened the returned original campaign media-release PDF naming Trinity College Colac and Haines's former school captaincy.",
+              "school_name_as_recorded": "Trinity College Colac",
+              "source_url": "https://assets.nationbuilder.com/voicesofwannon/pages/1926/attachments/original/1743077112/2025-03-21_MR_-_Helen_Haines_successful_visit_-_Google_Docs.pdf?1743077112=",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-295676-6085df525fc94523",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-6085df525fc94523",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-295676",
+              "recorded_school_id": "school:6085df525fc94523",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:29+00:00",
+              "reviewer_notes": "Opened original cited Allora interview. It verifies Cerdon College in first person; it does not substantiate the additional St Mary Star of the Sea claim. The Catholic Weekly citation click returned an invalid-arguments error. At least one secondary school was established through the underlying Wikipedia citation; the extra Wikipedia-only school is retained as an unverified lead.",
+              "school_name_as_recorded": "Cerdon College",
+              "source_url": "https://alloranews.com/community/chi-e-dai-le/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-298839-144223bbd452b342",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-144223bbd452b342",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-298839",
+              "recorded_school_id": "school:144223bbd452b342",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:29+00:00",
+              "reviewer_notes": "Article describes teaching, not a secondary school she attended. Opened its cited ABC profile; it names no attended secondary institution. Search returned her first speech on the Greens site. The opened full transcript explicitly places her in year 9 at Tully State High School. Do not confuse schools she later taught at with attendance.",
+              "school_name_as_recorded": "Tully State High School",
+              "source_url": "https://greens.org.au/news/speech/first-speech-penny-allman-payne",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-312823-65673379ec09138f",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-65673379ec09138f",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-312823",
+              "recorded_school_id": "school:65673379ec09138f",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:26:44+00:00",
+              "reviewer_notes": "The person article names tertiary study, and the historical party biography citation was inaccessible; no secondary attendance established in stage one. Four broad queries followed a school-alumni lead to a successful fetch of the original newspaper survey. That survey explicitly supplies the school's name; official institution identity was also inspected.",
+              "school_name_as_recorded": "Brisbane State High School",
+              "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-315154-ff5d1a1086e2fe66",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-ff5d1a1086e2fe66",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-315154",
+              "recorded_school_id": "school:ff5d1a1086e2fe66",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:26:44+00:00",
+              "reviewer_notes": "The article and its ABC source cover qualifications and employment rather than naming attended secondary education. Four broad queries led to a republication, then a successfully retrieved original survey shared with the Campbell case. That direct published response establishes the school; the official school site establishes institution identity.",
+              "school_name_as_recorded": "Mount Waverley Secondary College",
+              "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-315434-5d205f6863a0f6ae",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-5d205f6863a0f6ae",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-315434",
+              "recorded_school_id": "school:5d205f6863a0f6ae",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:54.870000+00:00",
+              "reviewer_notes": "Article and linked personal website identify the farmer and Liberal member for Grey. No secondary school was named; the cited AFR profile returned 403. His own preselection booklet identifies Prince Alfred College and his college prefect/boarding-house captain roles. Graduation and attendance years are not inferred. Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed.",
+              "school_name_as_recorded": "Prince Alfred College",
+              "source_url": "https://tomvenning.com.au/wp-content/uploads/2024/09/Tom-Venning-Grey-Preselection-.pdf",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316540-e61bf5cceffdfdcc",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-e61bf5cceffdfdcc",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-316540",
+              "recorded_school_id": "school:e61bf5cceffdfdcc",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:54.870000+00:00",
+              "reviewer_notes": "Wikipedia identifies the Hughes Labor MP and tertiary education but no secondary institution. The cited local report returned 402; unrelated UK education-consultant results were excluded. The official member biography explicitly distinguishes St John Bosco Primary School from St John Bosco College in Engadine; propose the college only.",
+              "school_name_as_recorded": "St John Bosco College",
+              "source_url": "https://davidmoncrieffmp.com.au/about/about-david/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "graduated",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316818-d79a05efd42cb282",
+              "evidence_origin": "manual",
+              "graduation_year": 2022,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-d79a05efd42cb282",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-316818",
+              "recorded_school_id": "school:d79a05efd42cb282",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:54.870000+00:00",
+              "reviewer_notes": "Wikipedia names Investigator College. The cited Advertiser profile was inaccessible, so the final pass sought a direct school source. The college's own media release explicitly identifies the elected senator as its former school captain and 2022 graduate. Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed.",
+              "school_name_as_recorded": "Investigator College",
+              "source_url": "https://www.investigator.sa.edu.au/media-releases/old-collegian-charlotte-walker-becomes-nations-youngest-ever-senator/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "graduated",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-316915-2c03b92fd0314e5e",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-2c03b92fd0314e5e",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-316915",
+              "recorded_school_id": "school:2c03b92fd0314e5e",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:19:54.870000+00:00",
+              "reviewer_notes": "Wikipedia explicitly names Gladstone Park Secondary College; its underlying AMES Australia report independently states he graduated from that college and identifies the Calwell MP. Not needed: underlying cited attendance evidence retrieved.",
+              "school_name_as_recorded": "Gladstone Park Secondary College",
+              "source_url": "https://amesnews.com.au/lead-story/son-of-palestinian-migrants-set-to-become-a-federal-mp/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-88411-0cbb0161ac0bca1b",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-0cbb0161ac0bca1b",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-88411",
+              "recorded_school_id": "school:0cbb0161ac0bca1b",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:23:16+00:00",
+              "reviewer_notes": "No school named in the article. Early life mentions moving to Broken Hill at 11 and later university in Adelaide; these locations are not used to infer school attendance. Stopped after two queries: original publisher profile explicitly identifies Willyama High School, Broken Hill.",
+              "school_name_as_recorded": "Willyama High School, Broken Hill",
+              "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-hvo-bd367d7785103244",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-bd367d7785103244",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-hvo",
+              "recorded_school_id": "school:bd367d7785103244",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:23:16+00:00",
+              "reviewer_notes": "Names Bundamba State Secondary College. School sentence has no direct citation; adjacent APH biography/maiden-speech references were inspected as context, not assumed to prove it. Stopped after one query: first-person official biography and his own Hansard speech establish named high-school attendance.",
+              "school_name_as_recorded": "Bundamba State High School",
+              "source_url": "https://www.shayneneumann.com.au/",
+              "years_attended": null
+            },
+            {
+              "attended_identity_source_url": null,
+              "attended_institution_id": null,
+              "attended_status": "attended_unspecified",
+              "campus_continuity": null,
+              "campus_continuity_source_url": null,
+              "confidence": "verified",
+              "education_id": "edu-r36-b96e4806855f8ea6",
+              "evidence_origin": "manual",
+              "graduation_year": null,
+              "historical_broad_sector": null,
+              "historical_broad_sector_source_url": null,
+              "historical_context_scope": "assertion",
+              "historical_detailed_sector": null,
+              "historical_detailed_sector_source_url": null,
+              "historical_latitude": null,
+              "historical_location_source_url": null,
+              "historical_longitude": null,
+              "historical_scope_confirmed": null,
+              "institution_id": "inst-unmatched-reviewed-b96e4806855f8ea6",
+              "institution_resolution": "unresolved",
+              "level": "secondary",
+              "member_id": "aph-r36",
+              "recorded_school_id": "school:b96e4806855f8ea6",
+              "resolution_source_url": null,
+              "retrieved_at": "2026-10-18 11:23:16+00:00",
+              "reviewer_notes": "Explicit St Mary's Cathedral College attendance, with archived ALP biography and biographical book citations. Archived ALP link follow failed before final pass. Stopped after two queries: two original government transcripts directly establish the school, with explicit years 5–12 school context.",
+              "school_name_as_recorded": "St Mary's Cathedral College",
+              "source_url": "https://pmtranscripts.pmc.gov.au/release/transcript-45707",
+              "years_attended": null
+            }
+          ],
+          "after_count": 370,
+          "before": [],
+          "before_count": 352,
+          "removed_count": 0,
+          "updated_count": 0
+        }
+      },
+      "baseline": "prior_effective_decisions",
+      "before": {
+        "institutions": [],
+        "member_education": []
+      },
+      "counts": {
+        "after": {
+          "education_assertions": 370,
+          "members": 580,
+          "members_with_education": 290,
+          "members_with_resolved_education": 269,
+          "resolved_institutions": 288,
+          "service_intervals": 1754,
+          "unresolved_institutions": 27
+        },
+        "before": {
+          "education_assertions": 352,
+          "members": 580,
+          "members_with_education": 272,
+          "members_with_resolved_education": 269,
+          "resolved_institutions": 288,
+          "service_intervals": 1754,
+          "unresolved_institutions": 9
+        }
+      }
+    },
+    "decisions": [
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "140651",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:b6bbe9742d560be191b17dd11e3c42f46975d0f138331ea52246450b9e4f1dea"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "St Patrick's College, Campbelltown",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:5c99a375490c868253d3e48da71f3dd4a90f24c0dc9e0d3c2d4c04c43533bf50",
+            "retrieved_at": "2026-10-18T11:11:18Z"
+          },
+          "source_url": "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/"
+        },
+        "before": null,
+        "review_id": "education:140651:9b28a80008aea696"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "168275",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:caacf737a49025ad9f9897f2c76a83c3f5c2fff1ec42457f4f578418dad7aa6d"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "De La Salle College, Cronulla",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:b8fd9acaba98b908511bc3d64cb2dc387083626f23936ab7d8ed9f7f17db48d6",
+            "retrieved_at": "2026-10-18T11:11:18Z"
+          },
+          "source_url": "https://www.alp.org.au/our-people/our-people/tony-sheldon/"
+        },
+        "before": null,
+        "review_id": "education:168275:a3881169b832f4dd"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "257613",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:e8091e0eb7a012937d4b1c767368048cf113b3ca0de325cda85de52cfb2d9ab9"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Christ Church Grammar School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:9b82abaf247e56c980fdf1e69034858fdbf70b71898404933a0c7813bf822afd",
+            "retrieved_at": "2026-10-18T11:55:31Z"
+          },
+          "source_url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf"
+        },
+        "before": null,
+        "review_id": "education:257613:1d80aaed5cb20444"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "263528",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:bf2617be3828ce42ab4cef99dfb8ea05b886cda43f0ff89601ceb2653ec9fa26"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Centralian Senior College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:33cda71906a1029586f40e917be5d8fa9e508cabcafcd82842c47eb7e62d308e",
+            "retrieved_at": "2026-10-18T20:52:10Z"
+          },
+          "source_url": "https://insidestory.org.au/all-in-the-family-price/"
+        },
+        "before": null,
+        "review_id": "education:263528:0992e19d53d2de0a"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "265990",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:bd2e99560060b1420467b651add26bc68973f597783f2c2dcf9771ea4eaab827"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Lurnea High School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:d60ab6ed1320064013be9e992d136f5c74f0bdca3240cf7f4624bf36dc98a27d",
+            "retrieved_at": "2026-10-18T11:14:37Z"
+          },
+          "source_url": "https://annestanley.com.au/about/"
+        },
+        "before": null,
+        "review_id": "education:265990:8032f5f5958aef15"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "267506",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:671590bca74165957e20460d71bdf624ee153a87f3636d445ba4c1f977e3b912"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Epping Boys High School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:d6f7f3763fe5dfdfe0e8a1e6623c1c70ec31591c9b02312e1d2505c7f841c400",
+            "retrieved_at": "2026-10-18T11:19:29Z"
+          },
+          "source_url": "https://rydedistrictmums.com.au/simon-kennedy-liberal/"
+        },
+        "before": null,
+        "review_id": "education:267506:258d022ace5cdbbe"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "282335",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:21c10da5dd8b8a30e143bfdc57b0c4a114c036df3a35dee8e85ec072c0213dcd"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Trinity College Colac",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:06ae171e0b4f9aab4c97be8494505e496dc927130cfc3a88a849374e042a92ba",
+            "retrieved_at": "2026-10-18T11:19:29Z"
+          },
+          "source_url": "https://assets.nationbuilder.com/voicesofwannon/pages/1926/attachments/original/1743077112/2025-03-21_MR_-_Helen_Haines_successful_visit_-_Google_Docs.pdf?1743077112="
+        },
+        "before": null,
+        "review_id": "education:282335:6e1772751ae2448d"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "295676",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:8def025c0ab76235a66e7f7ca5a41e9f414d1f56db36088920bbbcdca5ea86af"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Cerdon College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:799387d21d5c02732bba03c9213c5c5b28b2094b186b8dd8ea0f6f4a5190c36a",
+            "retrieved_at": "2026-10-18T11:19:29Z"
+          },
+          "source_url": "https://alloranews.com/community/chi-e-dai-le/"
+        },
+        "before": null,
+        "review_id": "education:295676:6085df525fc94523"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "298839",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:bd7c86f78a13caf6125278b34c1b6766615566806fa1c8701bccf5ee6e226fdf"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Tully State High School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:1308be1137f8fc357ce013b7b2e9e307b7acc755b165a38627c2a52e622f1a5a",
+            "retrieved_at": "2026-10-18T11:19:29Z"
+          },
+          "source_url": "https://greens.org.au/news/speech/first-speech-penny-allman-payne"
+        },
+        "before": null,
+        "review_id": "education:298839:144223bbd452b342"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "312823",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:2ee0dd3cb94563678a0154974300470de64672dbb89e5779d31cc6c59023b6c7"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Brisbane State High School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:571c25cb58d41b08e3e7723080189e628aee3e69da2452e2740a208392af6c7a",
+            "retrieved_at": "2026-10-18T11:26:44+00:00"
+          },
+          "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"
+        },
+        "before": null,
+        "review_id": "education:312823:65673379ec09138f"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "315154",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:4a03f78513ff782ccbc19218fb7f07559abe29a8b987238ef3140f9ebf40f571"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Mount Waverley Secondary College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:ea12191498e6979c76b0651d8d55a5844a90271411673def894a8052d619534f",
+            "retrieved_at": "2026-10-18T11:26:44+00:00"
+          },
+          "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"
+        },
+        "before": null,
+        "review_id": "education:315154:ff5d1a1086e2fe66"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "315434",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:edd9118d506be6de7efa086182ac0ff95b0e2029c07eef7dd41b31421977b824"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Prince Alfred College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:2ff7247c3d2116694e3af4589d878c9181277d425909200bf71fe1e84dec1e4d",
+            "retrieved_at": "2026-10-18T11:19:54.870Z"
+          },
+          "source_url": "https://tomvenning.com.au/wp-content/uploads/2024/09/Tom-Venning-Grey-Preselection-.pdf"
+        },
+        "before": null,
+        "review_id": "education:315434:5d205f6863a0f6ae"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "316540",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:86edfd3609cd42215bf0fcbf9f31893acf4412847f5e81baf93f2fe696e4a58d"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "St John Bosco College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:d002d871edbe0189854930ea1e258b3df6620b2ecc351d62c02142940156f388",
+            "retrieved_at": "2026-10-18T11:19:54.870Z"
+          },
+          "source_url": "https://davidmoncrieffmp.com.au/about/about-david/"
+        },
+        "before": null,
+        "review_id": "education:316540:e61bf5cceffdfdcc"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "316818",
+            "attended_status": "graduated",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:3602cbc36241569e3f54992a589e2fd73ea316a654e9ed36e0840cc8b0cb781e"
+            ],
+            "graduation_year": 2022,
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Investigator College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:a4a083b30df24bae7b595c6b91f2677dd101132b45c51614830121d24051970e",
+            "retrieved_at": "2026-10-18T11:19:54.870Z"
+          },
+          "source_url": "https://www.investigator.sa.edu.au/media-releases/old-collegian-charlotte-walker-becomes-nations-youngest-ever-senator/"
+        },
+        "before": null,
+        "review_id": "education:316818:d79a05efd42cb282"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "316915",
+            "attended_status": "graduated",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:34048d13e9ddf249a9b746e8d3803af4e7ca8291841c348872f2fecc7531ab57"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Gladstone Park Secondary College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:9bc131fb8af403f7dc513d248cb04f65f8bd6ec9f32062b33921f1e7eac1b7b8",
+            "retrieved_at": "2026-10-18T11:19:54.870Z"
+          },
+          "source_url": "https://amesnews.com.au/lead-story/son-of-palestinian-migrants-set-to-become-a-federal-mp/"
+        },
+        "before": null,
+        "review_id": "education:316915:2c03b92fd0314e5e"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "88411",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:8092fee0b51c2c25025eee83b1ccd94ea51c4841cad629009877f6556fe2f7d9"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Willyama High School, Broken Hill",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:be0b0354b31a83d61a3ec3fb8e5beed684115593e975b8da9979e1ec4059829a",
+            "retrieved_at": "2026-10-18T11:23:16Z"
+          },
+          "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"
+        },
+        "before": null,
+        "review_id": "education:88411:0cbb0161ac0bca1b"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "HVO",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:31020e5cdab4c997b2a77a2f83f8c0758e74b6d6c01da8aa7bf4d843f9b003e5"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "Bundamba State High School",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:31f6ad199399950e063b4aa25e9584836e6fc6f6ff9421adc998ebef5ffb5fdf",
+            "retrieved_at": "2026-10-18T11:23:16Z"
+          },
+          "source_url": "https://www.shayneneumann.com.au/"
+        },
+        "before": null,
+        "review_id": "education:hvo:bd367d7785103244"
+      },
+      {
+        "after": {
+          "action": "accept",
+          "payload": {
+            "aph_id": "R36",
+            "attended_status": "attended_unspecified",
+            "confidence": "verified",
+            "evidence_refs": [
+              "evidence:6a558b7669dbac7a9d6294ff07e06232c13bbafd90f26f2802c89a35f9bd096e"
+            ],
+            "level": "secondary",
+            "purpose": "missing-secondary-education",
+            "recorded_school_name": "St Mary's Cathedral College",
+            "research_approval_scope": "individual",
+            "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+            "research_proposal_id": "proposal:92f740d8b5178a90a7b72deb267713ff47ce5b8ceaefee5604e9b26c9596d6b2",
+            "retrieved_at": "2026-10-18T11:23:16Z"
+          },
+          "source_url": "https://pmtranscripts.pmc.gov.au/release/transcript-45707"
+        },
+        "before": null,
+        "review_id": "education:r36:b96e4806855f8ea6"
+      }
+    ],
+    "default_applications": [
+      {
+        "assertions": [
+          {
+            "aph_id": "315434",
+            "applies": true,
+            "display_name": "VENNING, Tom",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Prince Alfred College",
+            "review_id": "education:315434:5d205f6863a0f6ae"
+          },
+          {
+            "aph_id": "DYU",
+            "applies": true,
+            "display_name": "FAWCETT, the Hon. David Julian",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Prince Alfred College",
+            "review_id": "education:dyu:5d205f6863a0f6ae"
+          },
+          {
+            "aph_id": "G0D",
+            "applies": true,
+            "display_name": "BERNARDI, Cory",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Prince Alfred College",
+            "review_id": "education:g0d:5d205f6863a0f6ae"
+          }
+        ],
+        "available": true,
+        "school_review_id": "school:5d205f6863a0f6ae"
+      },
+      {
+        "assertions": [
+          {
+            "aph_id": "245759",
+            "applies": true,
+            "display_name": "WATT, the Hon. Murray Patrick",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Brisbane State High School",
+            "review_id": "education:245759:65673379ec09138f"
+          },
+          {
+            "aph_id": "300121",
+            "applies": true,
+            "display_name": "CHANDLER-MATHER, Max",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Brisbane State High School",
+            "review_id": "education:300121:65673379ec09138f"
+          },
+          {
+            "aph_id": "312823",
+            "applies": true,
+            "display_name": "CAMPBELL, Julie-Ann",
+            "reason": "Uses the school-wide default",
+            "recorded_name": "Brisbane State High School",
+            "review_id": "education:312823:65673379ec09138f"
+          }
+        ],
+        "available": true,
+        "school_review_id": "school:65673379ec09138f"
+      }
+    ],
+    "individual_resolutions": {},
+    "relationship_conflicts": []
+  },
+  "events": [
+    {
+      "action": "accept",
+      "decision_id": "4e5a7d9d-56d5-4487-a2c4-5877b5530b9f",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Explicit high-school attendance at St Patrick's College, Campbelltown, citing Debra Vermeer's December 2013 Good Samaritan profile; underlying profile opened successfully. Not required: the Wikipedia-linked original source explicitly establishes high-school attendance.",
+      "payload": {
+        "aph_id": "140651",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:b6bbe9742d560be191b17dd11e3c42f46975d0f138331ea52246450b9e4f1dea"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "St Patrick's College, Campbelltown",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:5c99a375490c868253d3e48da71f3dd4a90f24c0dc9e0d3c2d4c04c43533bf50",
+        "retrieved_at": "2026-10-18T11:11:18Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:140651:9b28a80008aea696",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.goodsams.org.au/article/politics-a-way-of-giving-action-to-faith/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "725414b3-95a0-4c24-b1a6-78a67dc11abb",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Article explicitly says Sheldon attended De La Salle College, Cronulla and cites the ALP biography, successfully opened. Not required: underlying cited political-party biography explicitly identifies the school.",
+      "payload": {
+        "aph_id": "168275",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:caacf737a49025ad9f9897f2c76a83c3f5c2fff1ec42457f4f578418dad7aa6d"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "De La Salle College, Cronulla",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:b8fd9acaba98b908511bc3d64cb2dc387083626f23936ab7d8ed9f7f17db48d6",
+        "retrieved_at": "2026-10-18T11:11:18Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:168275:a3881169b832f4dd",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.alp.org.au/our-people/our-people/tony-sheldon/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "6733d819-eb2b-4a88-9263-61e3fa8b6d02",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Christ Church Grammar School's cited 25 May 2016 article and newsletter establish old-boy identity and a visiting Senior Assembly address, not his own secondary grade. The original class-year/birth-year stage inference is withdrawn; a genuine final broad pass was required. Stopped after two final queries: the original school-published Chronicle 29, June 2001, printed page 18 explicitly identifies Varun Ghosh as Year 11. Browser opens failed size limits, but direct HTTP retrieval of the complete original PDF succeeded; its page was text-extracted, rendered and visually inspected. No graduation or attendance range is inferred. Strong underlying school evidence exists but exact QID page unavailable twice; user must review identity evidence before any use. Original school object is preserved verbatim as a lead. Its class-year/birth-year secondary-stage inference is withdrawn and replaced by directly retrieved, visually verified contemporaneous Year 11 evidence.",
+      "payload": {
+        "aph_id": "257613",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:e8091e0eb7a012937d4b1c767368048cf113b3ca0de325cda85de52cfb2d9ab9"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Christ Church Grammar School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:9b82abaf247e56c980fdf1e69034858fdbf70b71898404933a0c7813bf822afd",
+        "retrieved_at": "2026-10-18T11:55:31Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:257613:1d80aaed5cb20444",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://obafiles.ccgs.wa.edu.au/Chronicle/no-29-june-2001.pdf",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "94eb053f-2821-44a6-84dd-9e4e8ba10d7d",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Describes school-age events and Year 12motherhood but names no secondary institution. Parents' Yuendumu school employment is not her attendance. Six queries completed with no attributed named secondary school. Official visits, parents' workplace, unsupported namesake qualifications and unsourced comments were excluded. Cached date of birth differs from live article; identity established through exact APH MP ID/sitelink and career, no DOB correction proposed. User-led follow-up: Tim Rowse's original Inside Story book review (14 April 2025) identifies Price's classmate at Centralian Senior College and describes completion of her schooling. The person-specific senior-schooling context supports secondary attendance at that exact recorded name. Propose attendance only: no graduation status/year, dates, certificate, institution target or equivalence to Centralian College. St Philip's College remains an unverified indexed/user lead.",
+      "payload": {
+        "aph_id": "263528",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:bf2617be3828ce42ab4cef99dfb8ea05b886cda43f0ff89601ceb2653ec9fa26"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Centralian Senior College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:33cda71906a1029586f40e917be5d8fa9e508cabcafcd82842c47eb7e62d308e",
+        "retrieved_at": "2026-10-18T20:52:10Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:263528:0992e19d53d2de0a",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "CAm",
+      "schema_version": 1,
+      "source_url": "https://insidestory.org.au/all-in-the-family-price/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "e1240c5b-b5e2-4463-a0e1-c4f0935dba42",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Article contains no school name. Officialfirst-personAbout biography found in finalquery explicitly names Lurnea High School separately fromLurnea Public School. Stopped after 1 query: official first-person  biography explicitly namesLurnea High School.",
+      "payload": {
+        "aph_id": "265990",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:bd2e99560060b1420467b651add26bc68973f597783f2c2dcf9771ea4eaab827"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Lurnea High School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:d60ab6ed1320064013be9e992d136f5c74f0bdca3240cf7f4624bf36dc98a27d",
+        "retrieved_at": "2026-10-18T11:14:37Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:265990:8032f5f5958aef15",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://annestanley.com.au/about/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "1451c962-90aa-4674-81b1-852d4230a1f3",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Opened the article and followed its reference 6 to the original first-person candidate questionnaire. Secondary attendance was verified through the underlying Wikipedia citation.",
+      "payload": {
+        "aph_id": "267506",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:671590bca74165957e20460d71bdf624ee153a87f3636d445ba4c1f977e3b912"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Epping Boys High School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:d6f7f3763fe5dfdfe0e8a1e6623c1c70ec31591c9b02312e1d2505c7f841c400",
+        "retrieved_at": "2026-10-18T11:19:29Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.280251+00:00",
+      "replacement_action": null,
+      "review_id": "education:267506:258d022ace5cdbbe",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://rydedistrictmums.com.au/simon-kennedy-liberal/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "f85341fe-84c4-46ce-8c45-f684721f0d71",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Article names Trinity College in Colac; its About Helen citation failed to open. The same query was issued twice; both actual queries count. Opened the returned original campaign media-release PDF naming Trinity College Colac and Haines's former school captaincy.",
+      "payload": {
+        "aph_id": "282335",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:21c10da5dd8b8a30e143bfdc57b0c4a114c036df3a35dee8e85ec072c0213dcd"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Trinity College Colac",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:06ae171e0b4f9aab4c97be8494505e496dc927130cfc3a88a849374e042a92ba",
+        "retrieved_at": "2026-10-18T11:19:29Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:282335:6e1772751ae2448d",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://assets.nationbuilder.com/voicesofwannon/pages/1926/attachments/original/1743077112/2025-03-21_MR_-_Helen_Haines_successful_visit_-_Google_Docs.pdf?1743077112=",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "b78dd99c-7bad-494e-856d-f2a3f44a2d77",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Opened original cited Allora interview. It verifies Cerdon College in first person; it does not substantiate the additional St Mary Star of the Sea claim. The Catholic Weekly citation click returned an invalid-arguments error. At least one secondary school was established through the underlying Wikipedia citation; the extra Wikipedia-only school is retained as an unverified lead.",
+      "payload": {
+        "aph_id": "295676",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:8def025c0ab76235a66e7f7ca5a41e9f414d1f56db36088920bbbcdca5ea86af"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Cerdon College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:799387d21d5c02732bba03c9213c5c5b28b2094b186b8dd8ea0f6f4a5190c36a",
+        "retrieved_at": "2026-10-18T11:19:29Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:295676:6085df525fc94523",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://alloranews.com/community/chi-e-dai-le/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "b124936c-b479-494d-b62f-9f4b5ce1f355",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Article describes teaching, not a secondary school she attended. Opened its cited ABC profile; it names no attended secondary institution. Search returned her first speech on the Greens site. The opened full transcript explicitly places her in year 9 at Tully State High School. Do not confuse schools she later taught at with attendance.",
+      "payload": {
+        "aph_id": "298839",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:bd7c86f78a13caf6125278b34c1b6766615566806fa1c8701bccf5ee6e226fdf"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Tully State High School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:1308be1137f8fc357ce013b7b2e9e307b7acc755b165a38627c2a52e622f1a5a",
+        "retrieved_at": "2026-10-18T11:19:29Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:298839:144223bbd452b342",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://greens.org.au/news/speech/first-speech-penny-allman-payne",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "bef25f16-ff15-4fe4-8700-e4a1f3dfd52e",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "The person article names tertiary study, and the historical party biography citation was inaccessible; no secondary attendance established in stage one. Four broad queries followed a school-alumni lead to a successful fetch of the original newspaper survey. That survey explicitly supplies the school's name; official institution identity was also inspected.",
+      "payload": {
+        "aph_id": "312823",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:2ee0dd3cb94563678a0154974300470de64672dbb89e5779d31cc6c59023b6c7"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Brisbane State High School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:571c25cb58d41b08e3e7723080189e628aee3e69da2452e2740a208392af6c7a",
+        "retrieved_at": "2026-10-18T11:26:44+00:00"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:312823:65673379ec09138f",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "c83fa927-ad66-4e6e-b6c2-96698758c7d7",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "The article and its ABC source cover qualifications and employment rather than naming attended secondary education. Four broad queries led to a republication, then a successfully retrieved original survey shared with the Campbell case. That direct published response establishes the school; the official school site establishes institution identity.",
+      "payload": {
+        "aph_id": "315154",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:4a03f78513ff782ccbc19218fb7f07559abe29a8b987238ef3140f9ebf40f571"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Mount Waverley Secondary College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:ea12191498e6979c76b0651d8d55a5844a90271411673def894a8052d619534f",
+        "retrieved_at": "2026-10-18T11:26:44+00:00"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:315154:ff5d1a1086e2fe66",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "fd7a87ef-5cec-40c8-9ab4-fe3ab881c169",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Article and linked personal website identify the farmer and Liberal member for Grey. No secondary school was named; the cited AFR profile returned 403. His own preselection booklet identifies Prince Alfred College and his college prefect/boarding-house captain roles. Graduation and attendance years are not inferred. Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed.",
+      "payload": {
+        "aph_id": "315434",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:edd9118d506be6de7efa086182ac0ff95b0e2029c07eef7dd41b31421977b824"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Prince Alfred College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:2ff7247c3d2116694e3af4589d878c9181277d425909200bf71fe1e84dec1e4d",
+        "retrieved_at": "2026-10-18T11:19:54.870Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:315434:5d205f6863a0f6ae",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://tomvenning.com.au/wp-content/uploads/2024/09/Tom-Venning-Grey-Preselection-.pdf",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "c2f9b7b2-145b-4d0a-86b4-3d51f8b619de",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Wikipedia identifies the Hughes Labor MP and tertiary education but no secondary institution. The cited local report returned 402; unrelated UK education-consultant results were excluded. The official member biography explicitly distinguishes St John Bosco Primary School from St John Bosco College in Engadine; propose the college only.",
+      "payload": {
+        "aph_id": "316540",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:86edfd3609cd42215bf0fcbf9f31893acf4412847f5e81baf93f2fe696e4a58d"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "St John Bosco College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:d002d871edbe0189854930ea1e258b3df6620b2ecc351d62c02142940156f388",
+        "retrieved_at": "2026-10-18T11:19:54.870Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:316540:e61bf5cceffdfdcc",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://davidmoncrieffmp.com.au/about/about-david/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "ad2c798e-6516-468f-a4f0-f595a3ef69bb",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Wikipedia names Investigator College. The cited Advertiser profile was inaccessible, so the final pass sought a direct school source. The college's own media release explicitly identifies the elected senator as its former school captain and 2022 graduate. Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed.",
+      "payload": {
+        "aph_id": "316818",
+        "attended_status": "graduated",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:3602cbc36241569e3f54992a589e2fd73ea316a654e9ed36e0840cc8b0cb781e"
+        ],
+        "graduation_year": 2022,
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Investigator College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:a4a083b30df24bae7b595c6b91f2677dd101132b45c51614830121d24051970e",
+        "retrieved_at": "2026-10-18T11:19:54.870Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:316818:d79a05efd42cb282",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.investigator.sa.edu.au/media-releases/old-collegian-charlotte-walker-becomes-nations-youngest-ever-senator/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "f4aa71c7-a209-4ee6-a85b-9bbb5bcd0b45",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Wikipedia explicitly names Gladstone Park Secondary College; its underlying AMES Australia report independently states he graduated from that college and identifies the Calwell MP. Not needed: underlying cited attendance evidence retrieved.",
+      "payload": {
+        "aph_id": "316915",
+        "attended_status": "graduated",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:34048d13e9ddf249a9b746e8d3803af4e7ca8291841c348872f2fecc7531ab57"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Gladstone Park Secondary College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:9bc131fb8af403f7dc513d248cb04f65f8bd6ec9f32062b33921f1e7eac1b7b8",
+        "retrieved_at": "2026-10-18T11:19:54.870Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:316915:2c03b92fd0314e5e",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://amesnews.com.au/lead-story/son-of-palestinian-migrants-set-to-become-a-federal-mp/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "e93bed19-e6d5-4cc1-b707-7e3e9a70f3ec",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "No school named in the article. Early life mentions moving to Broken Hill at 11 and later university in Adelaide; these locations are not used to infer school attendance. Stopped after two queries: original publisher profile explicitly identifies Willyama High School, Broken Hill.",
+      "payload": {
+        "aph_id": "88411",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:8092fee0b51c2c25025eee83b1ccd94ea51c4841cad629009877f6556fe2f7d9"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Willyama High School, Broken Hill",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:be0b0354b31a83d61a3ec3fb8e5beed684115593e975b8da9979e1ec4059829a",
+        "retrieved_at": "2026-10-18T11:23:16Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:88411:0cbb0161ac0bca1b",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "5f6d47f3-af0f-4efe-a79c-bca66da8ccc2",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Names Bundamba State Secondary College. School sentence has no direct citation; adjacent APH biography/maiden-speech references were inspected as context, not assumed to prove it. Stopped after one query: first-person official biography and his own Hansard speech establish named high-school attendance.",
+      "payload": {
+        "aph_id": "HVO",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:31020e5cdab4c997b2a77a2f83f8c0758e74b6d6c01da8aa7bf4d843f9b003e5"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "Bundamba State High School",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:31f6ad199399950e063b4aa25e9584836e6fc6f6ff9421adc998ebef5ffb5fdf",
+        "retrieved_at": "2026-10-18T11:23:16Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:hvo:bd367d7785103244",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://www.shayneneumann.com.au/",
+      "supersedes": []
+    },
+    {
+      "action": "accept",
+      "decision_id": "554781fd-8002-4197-81be-b76599d92be0",
+      "entity_type": "member_education",
+      "legacy": null,
+      "notes": "Explicit St Mary's Cathedral College attendance, with archived ALP biography and biographical book citations. Archived ALP link follow failed before final pass. Stopped after two queries: two original government transcripts directly establish the school, with explicit years 5–12 school context.",
+      "payload": {
+        "aph_id": "R36",
+        "attended_status": "attended_unspecified",
+        "confidence": "verified",
+        "evidence_refs": [
+          "evidence:6a558b7669dbac7a9d6294ff07e06232c13bbafd90f26f2802c89a35f9bd096e"
+        ],
+        "level": "secondary",
+        "purpose": "missing-secondary-education",
+        "recorded_school_name": "St Mary's Cathedral College",
+        "research_approval_scope": "individual",
+        "research_batch_id": "issue-102-p48-missing-schools-followup-20261019",
+        "research_proposal_id": "proposal:92f740d8b5178a90a7b72deb267713ff47ce5b8ceaefee5604e9b26c9596d6b2",
+        "retrieved_at": "2026-10-18T11:23:16Z"
+      },
+      "recorded_at": "2026-10-19T03:30:41.281252+00:00",
+      "replacement_action": null,
+      "review_id": "education:r36:b96e4806855f8ea6",
+      "reviewed_at": "2026-10-19",
+      "reviewer": "Cam",
+      "schema_version": 1,
+      "source_url": "https://pmtranscripts.pmc.gov.au/release/transcript-45707",
+      "supersedes": []
+    }
+  ],
+  "kind": "decision_batch",
+  "research_batch": {
+    "approve_sampled": false,
+    "batch_id": "issue-102-p48-missing-schools-followup-20261019",
+    "content_sha256": "e0e1c978ec002ea26b2e6cd4c0e191937bc297d6b8b81bf6877aaae4d36a0c71",
+    "review_revision": "d8f99eea40d5372905007dcee17b9ff7fdc6d73ec918bf3c8efa3cff1610d12c",
+    "sample": []
+  },
+  "research_queue_expectation": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "attendance_assertions": 370,
+      "mapped_assertions": 343,
+      "unresolved_assertions": 27
+    },
+    "canonical_before": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 343,
+      "unresolved_assertions": 9
+    },
+    "pending_after": 0,
+    "pending_before": 0,
+    "removed_review_ids": [],
+    "status_counts_after": {
+      "accepted": 250,
+      "needs_individual_review": 7,
+      "rejected": 1,
+      "resolved_individually": 47
+    },
+    "status_counts_before": {
+      "accepted": 250,
+      "needs_individual_review": 7,
+      "rejected": 1,
+      "resolved_individually": 47
+    }
+  },
+  "revision": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+  "schema_version": 1,
+  "school_assertions": {},
+  "source_revision": "d8fd272516cd7a53c71d8cc54bb169b3b8518e643b77b3dff08b8163aa01f3d7",
+  "validation_outcome": {
+    "effective_decisions": 393,
+    "events": 519,
+    "relationship_conflicts": [
+      {
+        "decision_id": "da22402b-5ee7-479a-91bd-914f66dd8393",
+        "default_decision_id": "15608270-745f-4e34-96ed-00179d5df8fc",
+        "default_institution_ref": "acara:49103",
+        "default_relationship_type": "direct",
+        "institution_ref": "acara:49128",
+        "kind": "target_disagreement",
+        "message": "education:300707:cd56814316f5b0ad overrides the school-wide relationship (target disagreement).",
+        "recorded_name": "Australian Islamic College, Dianella and Kewdale",
+        "relationship_type": "direct",
+        "review_id": "education:300707:cd56814316f5b0ad",
+        "school_review_id": "school:cd56814316f5b0ad"
+      },
+      {
+        "decision_id": "7f8b9536-3bc5-4c42-9d63-f95e7c688f92",
+        "default_decision_id": "0c11ae72-0007-4bad-9aa3-e9847a08ebe3",
+        "default_institution_ref": "acara:45326",
+        "default_relationship_type": "successor",
+        "institution_ref": null,
+        "kind": "assertion_unresolved",
+        "message": "education:hym:3a40a73718408507 overrides the school-wide relationship (assertion unresolved).",
+        "recorded_name": "Box Hill Technical College",
+        "relationship_type": null,
+        "review_id": "education:hym:3a40a73718408507",
+        "school_review_id": "school:3a40a73718408507"
+      }
+    ],
+    "revision": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+    "valid": true,
+    "warnings": []
+  }
+}
