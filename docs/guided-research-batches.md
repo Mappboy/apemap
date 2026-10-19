@@ -62,7 +62,11 @@ The audit pins the published manifest and the members, parliamentary service and
 education CSV checksums; a mutable local export is not the baseline.
 
 The saved research contains 18 member proposals with attendance findings and 30
-unresolved cases (9 not-found and 21 uncertain outcomes). All are unreviewed.
+unresolved cases (9 not-found and 21 uncertain outcomes). All 48 have now been
+individually reviewed: 18 attendance findings are applied, and 30 remain marked
+Needs further research. No institution mappings were applied. The current
+projected missing-attendance scope is 30 members plus the home-education skip;
+published dataset 0.7.0 and the frozen research inputs are unchanged.
 Four user-led follow-ups preserve Santa Sabina and Scotch Oakburn leads, the Lisa
 Darmanin namesake exclusion, and a new Centralian Senior College attendance proposal
 for Jacinta Nampijinpa Price. The previous audited import is archived unchanged

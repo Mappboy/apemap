@@ -1,0 +1,52 @@
+{
+  "applied_at": "2026-10-19T03:35:03.415842+00:00",
+  "approval_sha256": "9f14b606fea0118e899f0a957078d0cf35a6df24b5d1def01998c895ee27b989",
+  "events": [
+    "4e5a7d9d-56d5-4487-a2c4-5877b5530b9f",
+    "725414b3-95a0-4c24-b1a6-78a67dc11abb",
+    "6733d819-eb2b-4a88-9263-61e3fa8b6d02",
+    "94eb053f-2821-44a6-84dd-9e4e8ba10d7d",
+    "e1240c5b-b5e2-4463-a0e1-c4f0935dba42",
+    "1451c962-90aa-4674-81b1-852d4230a1f3",
+    "f85341fe-84c4-46ce-8c45-f684721f0d71",
+    "b78dd99c-7bad-494e-856d-f2a3f44a2d77",
+    "b124936c-b479-494d-b62f-9f4b5ce1f355",
+    "bef25f16-ff15-4fe4-8700-e4a1f3dfd52e",
+    "c83fa927-ad66-4e6e-b6c2-96698758c7d7",
+    "fd7a87ef-5cec-40c8-9ab4-fe3ab881c169",
+    "c2f9b7b2-145b-4d0a-86b4-3d51f8b619de",
+    "ad2c798e-6516-468f-a4f0-f595a3ef69bb",
+    "f4aa71c7-a209-4ee6-a85b-9bbb5bcd0b45",
+    "e93bed19-e6d5-4cc1-b707-7e3e9a70f3ec",
+    "5f6d47f3-af0f-4efe-a79c-bca66da8ccc2",
+    "554781fd-8002-4197-81be-b76599d92be0"
+  ],
+  "queue_changes": {
+    "added_review_ids": [],
+    "canonical_after": {
+      "attendance_assertions": 370,
+      "mapped_assertions": 343,
+      "unresolved_assertions": 27
+    },
+    "canonical_before": {
+      "attendance_assertions": 352,
+      "mapped_assertions": 343,
+      "unresolved_assertions": 9
+    },
+    "pending_after": 0,
+    "pending_before": 0,
+    "removed_review_ids": [],
+    "status_counts_after": {
+      "accepted": 250,
+      "needs_individual_review": 7,
+      "rejected": 1,
+      "resolved_individually": 47
+    },
+    "status_counts_before": {
+      "accepted": 250,
+      "needs_individual_review": 7,
+      "rejected": 1,
+      "resolved_individually": 47
+    }
+  }
+}

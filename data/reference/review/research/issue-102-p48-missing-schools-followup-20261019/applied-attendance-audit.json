@@ -1,0 +1,107 @@
+{
+  "applied_proposals": [
+    "proposal:5c99a375490c868253d3e48da71f3dd4a90f24c0dc9e0d3c2d4c04c43533bf50",
+    "proposal:b8fd9acaba98b908511bc3d64cb2dc387083626f23936ab7d8ed9f7f17db48d6",
+    "proposal:9b82abaf247e56c980fdf1e69034858fdbf70b71898404933a0c7813bf822afd",
+    "proposal:33cda71906a1029586f40e917be5d8fa9e508cabcafcd82842c47eb7e62d308e",
+    "proposal:d60ab6ed1320064013be9e992d136f5c74f0bdca3240cf7f4624bf36dc98a27d",
+    "proposal:d6f7f3763fe5dfdfe0e8a1e6623c1c70ec31591c9b02312e1d2505c7f841c400",
+    "proposal:06ae171e0b4f9aab4c97be8494505e496dc927130cfc3a88a849374e042a92ba",
+    "proposal:799387d21d5c02732bba03c9213c5c5b28b2094b186b8dd8ea0f6f4a5190c36a",
+    "proposal:1308be1137f8fc357ce013b7b2e9e307b7acc755b165a38627c2a52e622f1a5a",
+    "proposal:571c25cb58d41b08e3e7723080189e628aee3e69da2452e2740a208392af6c7a",
+    "proposal:ea12191498e6979c76b0651d8d55a5844a90271411673def894a8052d619534f",
+    "proposal:2ff7247c3d2116694e3af4589d878c9181277d425909200bf71fe1e84dec1e4d",
+    "proposal:d002d871edbe0189854930ea1e258b3df6620b2ecc351d62c02142940156f388",
+    "proposal:a4a083b30df24bae7b595c6b91f2677dd101132b45c51614830121d24051970e",
+    "proposal:9bc131fb8af403f7dc513d248cb04f65f8bd6ec9f32062b33921f1e7eac1b7b8",
+    "proposal:be0b0354b31a83d61a3ec3fb8e5beed684115593e975b8da9979e1ec4059829a",
+    "proposal:31f6ad199399950e063b4aa25e9584836e6fc6f6ff9421adc998ebef5ffb5fdf",
+    "proposal:92f740d8b5178a90a7b72deb267713ff47ce5b8ceaefee5604e9b26c9596d6b2"
+  ],
+  "approval_sha256": "9f14b606fea0118e899f0a957078d0cf35a6df24b5d1def01998c895ee27b989",
+  "attendance_decisions": 18,
+  "batch_content_sha256": "e0e1c978ec002ea26b2e6cd4c0e191937bc297d6b8b81bf6877aaae4d36a0c71",
+  "batch_id": "issue-102-p48-missing-schools-followup-20261019",
+  "configuration_fix": {
+    "code_guards_changed": false,
+    "external_dir": "data/raw/historical/acara",
+    "incorrect_database": "data/aped.duckdb",
+    "pinned_database": "data/aped-historical-v0.7.0.duckdb",
+    "port": 8765
+  },
+  "counts_after": {
+    "institutions": 11914,
+    "member_education": 370,
+    "members": 580,
+    "parliament_service": 1754
+  },
+  "counts_before": {
+    "institutions": 11896,
+    "member_education": 352,
+    "members": 580,
+    "parliament_service": 1754
+  },
+  "database_rebuilt": false,
+  "dataset_version": {
+    "next_patch": "0.7.1",
+    "published": "0.7.0",
+    "status": "Selected unused target for a separate corrected build/release; not built or published here."
+  },
+  "db_sha256": "9568bbc44e929ce836784efd5fa220f3e4beac64fdec03b7c5073a827be91f82",
+  "decision_bytes_before": 460954,
+  "decision_revision_after": "fe61c86be5988b3d2d6f2ede569e14eae2cd54b71fd2943899ffbdb84baf71b4",
+  "decision_revision_before": "c6eee53103886e3364cf55e422a6a25b51b52cb201181ef1e1cd933f307516da",
+  "event_ids": [
+    "4e5a7d9d-56d5-4487-a2c4-5877b5530b9f",
+    "725414b3-95a0-4c24-b1a6-78a67dc11abb",
+    "6733d819-eb2b-4a88-9263-61e3fa8b6d02",
+    "94eb053f-2821-44a6-84dd-9e4e8ba10d7d",
+    "e1240c5b-b5e2-4463-a0e1-c4f0935dba42",
+    "1451c962-90aa-4674-81b1-852d4230a1f3",
+    "f85341fe-84c4-46ce-8c45-f684721f0d71",
+    "b78dd99c-7bad-494e-856d-f2a3f44a2d77",
+    "b124936c-b479-494d-b62f-9f4b5ce1f355",
+    "bef25f16-ff15-4fe4-8700-e4a1f3dfd52e",
+    "c83fa927-ad66-4e6e-b6c2-96698758c7d7",
+    "fd7a87ef-5cec-40c8-9ab4-fe3ab881c169",
+    "c2f9b7b2-145b-4d0a-86b4-3d51f8b619de",
+    "ad2c798e-6516-468f-a4f0-f595a3ef69bb",
+    "f4aa71c7-a209-4ee6-a85b-9bbb5bcd0b45",
+    "e93bed19-e6d5-4cc1-b707-7e3e9a70f3ec",
+    "5f6d47f3-af0f-4efe-a79c-bca66da8ccc2",
+    "554781fd-8002-4197-81be-b76599d92be0"
+  ],
+  "evidence_sha256": "5da33640c3a68c4b40d53c138f1e9726e84e48aa387195998db9fb1957021365",
+  "human_review_actions": {
+    "accept": 18,
+    "research": 30
+  },
+  "manual_definitions": 0,
+  "mapping_decisions": 0,
+  "missing_scope_after": {
+    "needs_research": 30,
+    "resolved_skip": 1
+  },
+  "missing_scope_before": {
+    "needs_research": 48,
+    "resolved_skip": 1
+  },
+  "new_evidence_retained_by_agent": 0,
+  "package_version": {
+    "previous": "0.17.0",
+    "reason": "Configuration and reviewed data only; no runtime behavior change.",
+    "target": "0.17.0"
+  },
+  "preview_name": "previews/b96a0698-63ab-4099-a746-88ae39055ceb.json",
+  "projection_after_sha256": "b235e8afae62de1f64dbbf584d333b97aa992770fede7bb158f3d137dbe510ed",
+  "projection_before_sha256": "d4ce65d272ce057b91621add7fa7ca96f39812abd05071d5a2161d0beb7d855e",
+  "receipt_name": "application-9f14b606fea0118e899f0a957078d0cf35a6df24b5d1def01998c895ee27b989.json",
+  "recorded_at": "2026-10-19T03:38:05.148554+00:00",
+  "research_results_rewritten": false,
+  "review_revision": "d8f99eea40d5372905007dcee17b9ff7fdc6d73ec918bf3c8efa3cff1610d12c",
+  "reviews_sha256": "59128d77f5ec036024681e19d18dd42e863ccf9c469f85046a67a5786182e48c",
+  "schema_version": 1,
+  "source_revision": "d8fd272516cd7a53c71d8cc54bb169b3b8518e643b77b3dff08b8163aa01f3d7",
+  "user_authorization": "Fix and apply the linked issue-102 follow-up preview; retain the existing individual source reviews and apply only its 18 accepted proposals."
+}
