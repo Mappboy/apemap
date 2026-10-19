@@ -103,6 +103,38 @@ exports is a separate step. Package 0.16.0 adds this workflow. A future dataset
 0.7.1 correction is contingent on individual approvals, a verified rebuild and
 the separate publication workflow; dataset 0.7.0 remains unchanged here.
 
+### Prepare a later missing-school research round
+
+Package 0.18.0 adds a separate follow-up command. It does not relax the original
+published-cohort audit or modify reviewed research:
+
+```powershell
+uv run apemap review --db-path data/aped-historical-v0.7.0.duckdb --external-dir data/raw/historical/acara research-batch follow-up-missing-education issue-102-p48-round-2-20261019 --from-batch issue-102-p48-missing-schools-followup-20261019 --expected-count 30
+```
+
+The required count means selected research tasks, not the published audit count.
+Only parent proposals explicitly marked **Needs further research**, not applied,
+and still missing named secondary attendance in the current projection qualify.
+Accepted-but-unapplied, rejected, unreviewed, newly named and home-educated cases
+are excluded. The same parent database/register snapshot is required; the new
+batch pins current decision/evidence revisions and parent manifest, content,
+review and application hashes. Preparation refuses count/input drift and existing
+destinations, and changes neither the database nor authority ledgers.
+
+Each task preserves the prior proposal, review history, earlier rounds and
+member-scoped retained evidence as context, **not inherited approval**. New-round
+logs count only actual new operations; reused sources and original search counts
+remain separately attributed. Allow three searches/six opens, then one targeted
+retry of two searches/four opens. Imports enforce five queries/ten opens total
+per case, including identity and institution work. Session research does not
+invent guided-model attempts or token usage.
+
+Use the ordinary Research batches review/retain/preview/apply workflow. Supported
+attendance may remain unmapped; exact campus, historical identity and canonical
+targets need independent evidence. Inspect each attached source and approve a
+fresh exact preview before application. Preparation/research never imply consent
+to contact members or schools, or to rebuild/publish a dataset.
+
 ## Saturday Paper survey reconciliation
 
 The `issue-104-survey-20261019` batch reconciles all 18 respondents in the
