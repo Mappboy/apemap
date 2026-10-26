@@ -12,6 +12,7 @@ from uuid import uuid4
 from flask import Flask, abort, redirect, render_template, request, url_for
 
 from apemap.review.research_batches import ResearchBatches, _digest
+from apemap.review.model import education_review_id
 from apemap.review.research_packets import load_research_packet
 from apemap.review.service import ReviewService
 from apemap.review.store import StaleReviewError
@@ -45,6 +46,7 @@ def _rows(state: dict[str, Any]) -> list[dict[str, Any]]:
                 "name": (
                     context["member"]["display_name"]
                     if state["manifest"]["kind"] == "members"
+                    or state["manifest"].get("purpose") == "missing-secondary-education"
                     else context["assertion"]["recorded_school_name"]
                     + (
                         " · " + context["member"]["display_name"]
@@ -57,6 +59,12 @@ def _rows(state: dict[str, Any]) -> list[dict[str, Any]]:
                 "status_label": FILTERS[status],
                 "sample": proposal["proposal_id"] in state["sample"],
                 "applied": applied,
+                "decision_review_ids": [
+                    education_review_id(item["aph_id"], item["recorded_school_name"])
+                    for item in proposal["education_proposals"]
+                ]
+                if "education_proposals" in proposal
+                else [proposal["review_id"]],
                 "mapping_problems": ResearchBatches._mapping_problems(state, proposal),
                 "eligibility_reasons": state.get("current_eligibility", {}).get(
                     proposal["proposal_id"], proposal["eligibility_reasons"]
@@ -227,6 +235,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
             batch=state,
             rows=visible,
             all_rows=rows,
+            event_rows={rid: row for row in rows for rid in row["decision_review_ids"]},
             summary=_summary(state, rows),
             selected=selected,
             previous=navigation[position - 1] if position > 0 else None,
@@ -342,6 +351,7 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
                 for evidence in proposal["evidence"]
             },
             "notes": request.form.get("notes", ""),
+            "reviewer": request.form.get("reviewer", "").strip(),
             "identity_error": request.form.get("identity_error") == "yes",
             "supersedes": request.form.getlist("supersedes"),
         }
@@ -352,12 +362,19 @@ def register_batch_routes(app: Flask, service: ReviewService) -> None:
         try:
             if not request.form.get("binding"):
                 raise ValueError("Reload the batch before reviewing")
+            if (
+                state["manifest"].get("purpose")
+                in {"missing-secondary-education", "survey-evidence-reconciliation"}
+                and not draft["reviewer"]
+            ):
+                raise ValueError("Enter the reviewer for this individual review")
             batches.record_review(
                 batch_id,
                 proposal_id,
                 draft["action"],
                 inspected,
                 notes=draft["notes"],
+                reviewer=draft["reviewer"] or None,
                 identity_error=draft["identity_error"],
                 supersedes=draft["supersedes"],
                 institution_action=draft.get("institution_action"),

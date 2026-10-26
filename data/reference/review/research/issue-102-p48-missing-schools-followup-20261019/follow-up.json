@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "issue_url": "https://github.com/Mappboy/apemap/issues/102",
+  "recorded_at": "2026-10-18T20:52:42Z",
+  "review_status": "unreviewed",
+  "timestamp_precision": "Jacinta's 2026-10-18T20:52:10Z source timestamp is the observed retrieval-start bound immediately before a successful direct open, not exact response completion or publisher update time. Michelle/Lisa timestamps are grouped retrieval-completion bounds. Wendy's timestamp records capture of a user-supplied lead, not retrieval of the specific post.",
+  "method": "Targeted verification of user-supplied leads, not another broad research pass. Sources are paraphrased for research attribution; copyright remains with their publishers. No authoritative evidence, reviews or decisions are appended.",
+  "query_accounting": {
+    "original_batch_queries": 213,
+    "search_queries_this_update": [],
+    "search_count_this_update": 0,
+    "prior_user_lead_query_log_complete": false,
+    "note": "Earlier conversation source checks are reused with explicit limitations. Their complete search strings, per-request chronology and exact aggregate count are unavailable; 213 is the frozen original research count, not the combined session total. This update reopened supplied URLs directly, without new searches. No model/token provenance is inferred.",
+    "known_prior_queries": [
+      {"aph_id": "281558", "query": "\"Wendy Askew\" \"Scotch Oakburn\" 1980"},
+      {"aph_id": "281558", "query": "\"ScotchOakburnspaceGallery\" \"Wendy\""},
+      {"aph_id": "281558", "query": "\"Gallery exhibition\" \"Wendy Askew\" \"80\""},
+      {"aph_id": "263528", "query": "\"Jacinta Price\" \"St Philip's College\""}
+    ]
+  },
+  "members": [
+    {
+      "aph_id": "290544",
+      "name": "Michelle Ananda-Rajah",
+      "outcome": "uncertain",
+      "conclusion": "Santa Sabina College, Strathfield, NSW is now a sourced school-name lead, correcting the earlier not-found result. Karen Barlow's 28 June 2025 Saturday Paper survey identifies the same Victorian senator/former Higgins MP and lists this school. The field does not specify secondary stage, attendance dates or graduation, so no secondary assertion is proposed.",
+      "alternatives": [{"name": "Santa Sabina College", "locality_as_reported": "Strathfield, NSW", "disposition": "secondary_stage_unverified", "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus"}],
+      "source_checks": [{"url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus", "status": "opened", "retrieved_at": "2026-10-18T20:51:34Z", "timestamp_precision": "Observed completion bound for the grouped direct source opens, not a publisher update time.", "locator": "Dr Michelle Ananda-Rajah profile, School field"}],
+      "evidence": [{
+        "source_title": "Karen Barlow — Exclusive: Labor has first Left-majority caucus (28 June 2025)",
+        "source_url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus",
+        "retrieved_at": "2026-10-18T20:51:34Z",
+        "claim_type": "attendance_context",
+        "claim_value": {"recorded_school_name": "Santa Sabina College", "secondary_stage_verified": false},
+        "stance": "contextual",
+        "excerpt_or_note": "The survey's Michelle Ananda-Rajah profile lists Santa Sabina College in Strathfield, NSW in its School field. It does not explicitly identify secondary attendance or graduation. User's high-school claim is not promoted to verified stage evidence."
+      }]
+    },
+    {
+      "aph_id": "281558",
+      "name": "Wendy Askew",
+      "outcome": "uncertain",
+      "conclusion": "User supplied an excerpt attributed to the Scotch Oakburn College space Gallery Facebook page identifying Senator Wendy Askew with the label ('80). This supports an alumni/cohort lead rather than merely an exhibition appearance, but the specific post and its date were not independently retrieved. Secondary attendance and graduation in 1980 are not established.",
+      "alternatives": [{"name": "Scotch Oakburn College", "disposition": "user_supplied_alumni_lead", "source_url": "https://www.facebook.com/ScotchOakburnspaceGallery/", "cohort_label_as_supplied": "'80", "post_url": null, "post_date": null, "verified_post": false}],
+      "source_checks": [{"url": "https://www.facebook.com/ScotchOakburnspaceGallery/", "status": "prior_page_shell_observed_specific_post_unavailable", "retrieved_at": null, "note": "Earlier browser check read the public gallery page; older posts were login-gated. No login or independent verification of this quoted post occurred."}],
+      "user_supplied_excerpt": "Gallery exhibition was officially opened Friday evening by Senator Wendy Askew ('80). The exhibition showcases pieces from our archives relating to the ...",
+      "evidence": [{
+        "source_title": "User-supplied excerpt attributed to Scotch Oakburn College space Gallery Facebook page — post unverified",
+        "source_url": "https://www.facebook.com/ScotchOakburnspaceGallery/",
+        "retrieved_at": "2026-10-18T20:52:42Z",
+        "claim_type": "attendance_context",
+        "claim_value": {"recorded_school_name": "Scotch Oakburn College", "attribution": "user_supplied_excerpt", "cohort_label_as_supplied": "'80", "verified_post": false, "secondary_stage_verified": false},
+        "stance": "contextual",
+        "excerpt_or_note": "User-supplied excerpt records Senator Wendy Askew ('80) opening a gallery exhibition. This timestamp records the lead's capture in this research update, not retrieval of the specific Facebook post. Its permalink/date remain unknown; no secondary attendance, graduation year, attendance span or historical school equivalence is inferred."
+      }]
+    },
+    {
+      "aph_id": "301128",
+      "name": "Lisa Darmanin",
+      "outcome": "not_found",
+      "conclusion": "The Manly Selective Campus/High School 2007 LinkedIn lead belongs to the Olympic sailor, not the Victorian senator. Reopened the senator's official about page and the athlete's own site, which links to the quoted LinkedIn profile. The senator's tertiary study and secondary-teacher spouse are not personal secondary attendance evidence. Keep the existing wrong-person exclusion and do not transfer dates or school claims.",
+      "alternatives": [],
+      "source_checks": [
+        {"url": "https://lisadarmanin.com.au/about/", "status": "opened", "retrieved_at": "2026-10-18T20:51:34Z", "note": "Senator's own biography, distinct from athlete; no personal secondary school named."},
+        {"url": "https://www.lisadarmanin.com/", "status": "opened", "retrieved_at": "2026-10-18T20:51:34Z", "note": "Olympic medallist/sailing biography links https://www.linkedin.com/in/lisa-darmanin/."},
+        {"url": "https://www.linkedin.com/in/lisa-darmanin/", "status": "prior_direct_access_blocked", "retrieved_at": null, "note": "Earlier direct LinkedIn access failed. User-supplied indexed education excerpt is not a senator source."}
+      ],
+      "evidence": [{
+        "source_title": "Lisa Darmanin — athlete's own site and linked professional profile (namesake exclusion)",
+        "source_url": "https://www.lisadarmanin.com/",
+        "retrieved_at": "2026-10-18T20:51:34Z",
+        "claim_type": "attendance_context",
+        "claim_value": {"recorded_school_name": "Manly Selective Campus", "disposition": "wrong_person", "linked_profile": "https://www.linkedin.com/in/lisa-darmanin/"},
+        "stance": "contradicts",
+        "excerpt_or_note": "The athlete's own site identifies an Olympic sailing medallist and links the Lisa Darmanin LinkedIn profile behind the user's OLY education excerpt. The senator has a separate official biography at lisadarmanin.com.au/about/. This is a namesake exclusion, not evidence of the senator's attendance."
+      }]
+    },
+    {
+      "aph_id": "263528",
+      "name": "Jacinta Nampijinpa Price",
+      "outcome": "found",
+      "conclusion": "Tim Rowse's original Inside Story book review (14 April 2025) identifies Price's classmate at Centralian Senior College and describes completion of her schooling. The person-specific senior-schooling context supports secondary attendance at that exact recorded name. Propose attendance only: no graduation status/year, dates, certificate, institution target or equivalence to Centralian College. St Philip's College remains an unverified indexed/user lead.",
+      "alternatives": [{"name": "St Philip's College", "disposition": "indexed_lead_unverified", "source_url": "https://au.linkedin.com/in/jacinta-price-ba642b64", "note": "Earlier search index combined St.Philips College and Centralian College with 1993–1998; full profile was blocked. Do not split this span between schools or treat it as verified attendance or graduation."}],
+      "source_checks": [
+        {"url": "https://insidestory.org.au/all-in-the-family-price/", "status": "opened", "retrieved_at": "2026-10-18T20:52:10Z", "locator": "Paragraph identifying her classmate at Centralian Senior College and completion of schooling", "note": "Independently reopened by audit agent; original published review, not a directly inspected memoir or official school record. Only education paraphrase retained."},
+        {"url": "https://au.linkedin.com/in/jacinta-price-ba642b64", "status": "prior_search_index_only_direct_access_blocked", "retrieved_at": null, "note": "Indexed combined school/date listing was observed earlier; full profile was not verified."}
+      ],
+      "evidence": [{
+        "source_title": "Tim Rowse — All in the family, Inside Story (14 April 2025)",
+        "source_url": "https://insidestory.org.au/all-in-the-family-price/",
+        "retrieved_at": "2026-10-18T20:52:10Z",
+        "claim_type": "attendance",
+        "claim_value": {"recorded_school_name": "Centralian Senior College", "level": "secondary", "attended_status": "attended_unspecified"},
+        "stance": "supports",
+        "excerpt_or_note": "Rowse's published review of Matters of the Heart identifies Price's classmate at Centralian Senior College and describes her completion of schooling. This supplies person-specific senior-school attendance context, but no graduation year, credential or attendance dates. The memoir itself was not inspected; historical institution identity is not resolved."
+      }]
+    }
+  ]
+}

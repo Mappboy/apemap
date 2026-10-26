@@ -165,6 +165,11 @@ When the user corrects your approach, append a one-line rule here before ending 
 
 - Run performance baselines from an immutable checkout before editing fixtures or workflows.
 - Count every query in batched research search calls toward the per-case search budget.
+- Require explicit secondary-stage evidence; never infer it from alumni year labels or birth-year arithmetic.
+- Compare archived tracked files against their original Git blobs, not only working-tree hashes; exclude runtime locks and bytecode caches from artifact baselines.
+- Derive education review IDs with `education_review_id`; never enter an unverified school-name digest.
+- Treat frozen `EvidenceRecord.claim_value` objects as `Mapping`, not `dict`, when selecting retained research context.
+- Reserve research-batch `application-*.json` filenames for native application receipts; use a different prefix for audit metadata.
 - When a guided mapping changes target, exclude other-candidate evidence from its preview and report the exclusion; preserve prior records and keep JSON/API candidate validation strict.
 - Read saved manual institutions from active definition events; local register search returns ACARA schools only.
 - Scope unmatched-school research across all parliaments unless restricted explicitly; deliver it in the normal Research batches review workflow, not a separate packet page, and verify it in the running reviewer.

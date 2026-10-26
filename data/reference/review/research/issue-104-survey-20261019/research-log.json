@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "research_date": "2026-10-19",
+  "scope": "Survey reconciliation only: 18 respondents, 27 named school/stage-unknown claims and four separately excluded tertiary institutions. No wider politician search.",
+  "search_queries": [
+    {"query": "site.sacredheart.wa.edu.au history Highgate Sorrento school", "member_aph_id": "312871", "purpose": "Investigate reported Highgate versus current Sorrento mapping; one query, not an attendance-era inference."}
+  ],
+  "search_count": 1,
+  "source_access": [
+    {"url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus", "operation": "web_open", "status": "success", "note": "Original profiles and school fields read, including non-specific responses and nonrespondent list; unrelated article fields excluded from saved research."},
+    {"url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus", "operation": "requests_get_sandboxed", "status": "failed_dns", "note": "Sandbox DNS resolution failed; no source content obtained in this attempt."},
+    {"url": "https://www.thesaturdaypaper.com.au/news/politics/2025/06/28/exclusive-labor-has-first-left-majority-caucus", "operation": "requests_get_authorized_network", "status": "http_200", "bytes": 227207, "sha256": "7e43b6677c62cbb1085ceb3637a12ee1096db32ee36168320a482a57f126fce7", "retrieval_completion_bound": "2026-10-18T21:19:23Z", "note": "Saved only to ignored .cache/issue-104-source.html for reproducible extraction. Not redistributed in Git."},
+    {"url": "https://www.sacredheart.wa.edu.au/about-us/our-history", "operation": "web_open", "status": "success", "retrieval_completion_bound": "2026-10-18T21:19:23Z", "finding": "School's own history distinguishes the Highgate and Sorrento campuses and describes relocation in the 1980s. This does not date Trish Cook's attendance or establish same-campus continuity."},
+    {"url": "https://shpsh.wa.edu.au/school-profile/", "operation": "web_open", "status": "success", "retrieval_completion_bound": "2026-10-18T21:19:23Z", "finding": "Highgate school's own history dates the high-school move to Sorrento to 1980. Do not transfer that institution date into a member's attendance dates."}
+  ],
+  "delegated_access_note": "Read-only audit agent independently reopened the original survey and inspected current local APH caches for identity/service and omitted school histories. Exact per-request chronology and source-open aggregate are unavailable; the entries above enumerate the coordinating pass, not a fabricated combined fetch total.",
+  "model": null,
+  "token_usage": null,
+  "authority_effects": "None during research. Any later evidence retention is separately recorded; no attendance or mapping decisions are authorized by these source accesses."
+}

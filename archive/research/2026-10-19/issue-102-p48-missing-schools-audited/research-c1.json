@@ -1,0 +1,885 @@
+{
+  "schema_version": 1,
+  "issue_url": "https://github.com/Mappboy/apemap/issues/102",
+  "parliament": 48,
+  "researcher": "Codex coordinating research C1",
+  "review_status": "unreviewed",
+  "time_precision": "Source accesses are bounded by observed tool retrieval times. Positive attendance sources and article identities were explicitly rechecked at the recorded completion times; web results can contain cached crawls.",
+  "retrieval_windows": {
+    "root_pass": {
+      "started_at": "2026-10-18T11:11:33Z",
+      "completed_at": "2026-10-18T11:21:05.820Z"
+    },
+    "secondary_stage_reinspection": {
+      "started_at": "2026-10-18T11:47:19Z",
+      "completed_at": "2026-10-18T11:48:41Z",
+      "note": "Previously saved supporting URL reopened by 11:47:22Z; subsequent text inspection completed before the observed completion bound. No new search queries."
+    },
+    "warwick_final_broad": {
+      "started_at": "2026-10-18T11:49:59Z",
+      "completed_at": "2026-10-18T11:50:25Z",
+      "note": "Warwick Stacey's first genuine final broad pass: six actual queries after the Wikipedia-source reinspection. Search results repeat the alumni/Wikipedia lead, unrelated people and tertiary study, without establishing secondary stage."
+    }
+  },
+  "records": [
+    {
+      "aph_id": "315434",
+      "name": "Tom Venning",
+      "qid": "Q134310411",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tom_Venning",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134310411",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Article and linked personal website identify the farmer and Liberal member for Grey. No secondary school was named; the cited AFR profile returned 403. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Article and linked personal website identify the farmer and Liberal member for Grey. No secondary school was named; the cited AFR profile returned 403.",
+        "citation_urls": [
+          "https://tomvenning.com.au/",
+          "https://www.afr.com/politics/federal/meet-the-ex-deloitte-consultant-who-has-driven-85-000km-to-win-a-seat-20250331-p5lntm"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 5,
+        "outcome": "His own preselection booklet identifies Prince Alfred College and his college prefect/boarding-house captain roles. Graduation and attendance years are not inferred."
+      },
+      "search_log": [
+        {
+          "query": "\"Tom Venning\" school",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom Venning\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom Venning\" college Grey",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom Venning\" educated",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom Venning\" education school Bute",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tom_Venning",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://tomvenning.com.au/",
+          "stage": "wikipedia",
+          "outcome": "Opened; biography does not name secondary school.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.afr.com/politics/federal/meet-the-ex-deloitte-consultant-who-has-driven-85-000km-to-win-a-seat-20250331-p5lntm",
+          "stage": "wikipedia",
+          "outcome": "Failed: 403 Forbidden.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134310411",
+          "stage": "final_broad",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://tomvenning.com.au/wp-content/uploads/2024/09/Tom-Venning-Grey-Preselection-.pdf",
+          "stage": "final_broad",
+          "outcome": "Opened and verified explicit attendance evidence; rechecked at recorded retrieval time.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Tom_Venning",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Prince Alfred College",
+          "source_url": "https://tomvenning.com.au/wp-content/uploads/2024/09/Tom-Venning-Grey-Preselection-.pdf",
+          "paraphrase": "His candidate booklet's Qualifications section places his school prefect and boarding captain roles at Prince Alfred College (PDF page 13).",
+          "retrieved_at": "2026-10-18T11:19:54.870Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "attendance_proposed",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed."
+      ],
+      "total_search_query_count": 5
+    },
+    {
+      "aph_id": "316052",
+      "name": "Gabriel Ng",
+      "qid": "Q134312228",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Gabriel_Ng",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134312228",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia names Trinity Grammar School, Kew, citing the July 2021 school magazine. Both the page-24 and issue-root Issuu retrievals failed. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia names Trinity Grammar School, Kew, citing the July 2021 school magazine. Both the page-24 and issue-root Issuu retrievals failed.",
+        "citation_urls": [
+          "https://issuu.com/trinitygrammar/docs/grammarian_july_2021/24"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "An attributable public reprint of the Saturday Paper interview also names Trinity Grammar, but the original returned 403 and the school magazine was inaccessible. Retain a school lead for individual verification, without asserting secondary attendance."
+      },
+      "search_log": [
+        {
+          "query": "\"Gabriel Ng\" school Trinity",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Gabriel Ng\" \"Trinity\" politician education",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "site:trinity.vic.edu.au \"Gabriel Ng\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Gabriel Ng\" \"school\" Menzies alumni",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Gabriel Ng\" \"Trinity Grammarian\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Gabriel Ng\" educated college Menzies",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Gabriel_Ng",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://issuu.com/trinitygrammar/docs/grammarian_july_2021/24",
+          "stage": "wikipedia",
+          "outcome": "Failed: non-retryable retrieval error.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://issuu.com/trinitygrammar/docs/grammarian_july_2021",
+          "stage": "final_broad",
+          "outcome": "Failed: internal error.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.thesaturdaypaper.com.au/news/politics/2025/07/05/class-2025-part-ii",
+          "stage": "final_broad",
+          "outcome": "Failed: 403 Forbidden.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.adogs.info/sites/default/files/press_releases/pr%201046.pdf",
+          "stage": "final_broad",
+          "outcome": "Opened page 8; reprint names Trinity Grammar School, Kew. Secondary attendance not independently verified from original.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://gabrielngmp.com/about",
+          "stage": "final_broad",
+          "outcome": "Opened; identity and children’s schooling only.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134312228",
+          "stage": "final_broad",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Gabriel_Ng",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        "Trinity Grammar School, Kew: cited school publication inaccessible; public interview reprint retained as a lead."
+      ],
+      "result_status": "needs_further_research",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "316312",
+      "name": "Jamie Chaffey",
+      "qid": "Q134311983",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jamie_Chaffey",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134311983",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia and the cited Gilgandra candidate biography identify the former Gunnedah mayor and Parkes MP, without a secondary institution. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia and the cited Gilgandra candidate biography identify the former Gunnedah mayor and Parkes MP, without a secondary institution.",
+        "citation_urls": [
+          "https://www.nswnationals.org.au/jamie-chaffey/",
+          "https://www.gilgandraweekly.com.au/jamie-chaffey-preselected-as-nationals-candidate-2024-08-06"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six final queries and the member's own biography found no supported secondary school. School visits, polling booths, the school-leavers guide and company-directors training are excluded."
+      },
+      "search_log": [
+        {
+          "query": "\"Jamie Chaffey\" school",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Jamie Chaffey\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Jamie Chaffey\" educated",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Jamie Chaffey\" \"secondary school\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Jamie Chaffey\" education college",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Jamie Chaffey\" college Gunnedah",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Jamie_Chaffey",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.nswnationals.org.au/jamie-chaffey/",
+          "stage": "wikipedia",
+          "outcome": "Failed: 500 retrieval error.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.gilgandraweekly.com.au/jamie-chaffey-preselected-as-nationals-candidate-2024-08-06",
+          "stage": "wikipedia",
+          "outcome": "Opened; trade and council background, no school.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.jamiechaffey.com.au/biography/",
+          "stage": "final_broad",
+          "outcome": "Opened; career and family, no secondary school.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134311983",
+          "stage": "final_broad",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Jamie_Chaffey",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "no_credible_evidence",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "316540",
+      "name": "David Moncrieff",
+      "qid": "Q134370438",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/David_Moncrieff",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134370438",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia identifies the Hughes Labor MP and tertiary education but no secondary institution. The cited local report returned 402; unrelated UK education-consultant results were excluded. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia identifies the Hughes Labor MP and tertiary education but no secondary institution. The cited local report returned 402; unrelated UK education-consultant results were excluded.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 1,
+        "outcome": "The official member biography explicitly distinguishes St John Bosco Primary School from St John Bosco College in Engadine; propose the college only."
+      },
+      "search_log": [
+        {
+          "query": "\"David Moncrieff\" school",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Moncrieff",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.williamclarence.com/about/people/david-moncrieff",
+          "stage": "final_broad",
+          "outcome": "Opened and excluded: different UK school-services consultant.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://uk.linkedin.com/in/david-moncrieff-7964b6b3",
+          "stage": "final_broad",
+          "outcome": "Failed: 999; no evidence used.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.theleader.com.au/story/8899980/david-moncrieff-to-contest-hughes-seat-for-labor/",
+          "stage": "final_broad",
+          "outcome": "Failed: 402 Payment Required.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://davidmoncrieffmp.com.au/",
+          "stage": "final_broad",
+          "outcome": "Opened; explicitly corroborates college attendance.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134370438",
+          "stage": "final_broad",
+          "outcome": "Opened: exact APH MP identifier and English Wikipedia sitelink confirmed.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://davidmoncrieffmp.com.au/about/about-david/",
+          "stage": "final_broad",
+          "outcome": "Opened and verified explicit attendance evidence; rechecked at recorded retrieval time.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/David_Moncrieff",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "St John Bosco College",
+          "source_url": "https://davidmoncrieffmp.com.au/about/about-david/",
+          "paraphrase": "The member's own About page explicitly names attendance at St John Bosco College in Engadine separately from his primary school.",
+          "retrieved_at": "2026-10-18T11:19:54.870Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "attendance_proposed",
+      "limitations": [],
+      "total_search_query_count": 1
+    },
+    {
+      "aph_id": "316550",
+      "name": "Tom French",
+      "qid": "Q134349318",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Tom_French_(Australian_politician)",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134349318",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia, the cited ALP biography and cited first-speech reporting identify the Moore MP, electrical apprenticeship and law career, but no secondary institution. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia, the cited ALP biography and cited first-speech reporting identify the Moore MP, electrical apprenticeship and law career, but no secondary institution.",
+        "citation_urls": [
+          "https://www.alp.org.au/our-people/our-people/tom-french/",
+          "https://thenightly.com.au/politics/australian-news-and-politics-live-legislation-introduced-for-childcare-safety-reforms-concerns-over-cctv-c-19443563"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six queries found only tertiary/trade education, official school visits and other people. Harrow belongs to an English rugby player; excluded."
+      },
+      "search_log": [
+        {
+          "query": "\"Tom French\" school Moore",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom French\" \"high school\" Moore",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom French\" educated secondary school",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom French\" education college electrician Moore",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom French\" secondary school Perth",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Tom French\" college educated \"New South Wales\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Tom_French_(Australian_politician)",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.alp.org.au/our-people/our-people/tom-french/",
+          "stage": "wikipedia",
+          "outcome": "Opened; no named secondary school.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://thenightly.com.au/politics/australian-news-and-politics-live-legislation-introduced-for-childcare-safety-reforms-concerns-over-cctv-c-19443563",
+          "stage": "wikipedia",
+          "outcome": "Opened cited first-speech reporting; no named secondary school.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134349318",
+          "stage": "final_broad",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Tom_French_(Australian_politician)",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [],
+      "school_leads": [],
+      "result_status": "no_credible_evidence",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed."
+      ],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "316551",
+      "name": "Emma Comer",
+      "qid": "Q134312215",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Emma_Comer",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134312215",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia names Everton Park State High School and school captaincy. Its Hansard attendance citation was inaccessible; the cited ALP profile does not substantiate the school. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia names Everton Park State High School and school captaincy. Its Hansard attendance citation was inaccessible; the cited ALP profile does not substantiate the school.",
+        "citation_urls": [
+          "https://www.alp.org.au/our-people/our-people/emma-comer/",
+          null
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Six final queries did not retrieve independently verifiable attendance evidence. The Oregon volleyball player and UK education staff member are different people. Retain the Wikipedia school lead as incomplete research."
+      },
+      "search_log": [
+        {
+          "query": "\"Emma Comer\" school Everton",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Emma Comer\" \"high school\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Emma Comer\" educated college Petrie",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Emma Comer\" \"Everton Park State High School\"",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Emma Comer\" education secondary school",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Emma Comer\" school captain Petrie",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Emma_Comer",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.alp.org.au/our-people/our-people/emma-comer/",
+          "stage": "wikipedia",
+          "outcome": "Opened; no school attendance claim.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": null,
+          "stage": "wikipedia",
+          "outcome": "Clicking Wikipedia reference 8 (link 83) failed without returning its target URL. No target URL or source content is inferred.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134312215",
+          "stage": "final_broad",
+          "outcome": "Opened: exact APH MP identifier and English Wikipedia sitelink confirmed.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Emma_Comer",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        "Everton Park State High School: Wikipedia school-captain claim; underlying Hansard citation inaccessible."
+      ],
+      "result_status": "needs_further_research",
+      "limitations": [],
+      "total_search_query_count": 6
+    },
+    {
+      "aph_id": "316818",
+      "name": "Charlotte Walker",
+      "qid": "Q134590436",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Charlotte_Walker_(politician)",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134590436",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia names Investigator College. The cited Advertiser profile was inaccessible, so the final pass sought a direct school source. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia names Investigator College. The cited Advertiser profile was inaccessible, so the final pass sought a direct school source.",
+        "citation_urls": [
+          "https://www.adelaidenow.com.au/news%2Fsouth-australia%2Fpromise-of-a-senate-seat-for-labors-charlotte-walker-on-her-21st-birthday%2Fnews-story%2Fde2754567759d9fedd9a2d3e159793ee"
+        ]
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 2,
+        "outcome": "The college's own media release explicitly identifies the elected senator as its former school captain and 2022 graduate."
+      },
+      "search_log": [
+        {
+          "query": "\"Charlotte Walker\" school Investigator",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "query": "\"Charlotte Walker\" \"Investigator College\" senator",
+          "stage": "final_broad",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Charlotte_Walker_(politician)",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.adelaidenow.com.au/news%2Fsouth-australia%2Fpromise-of-a-senate-seat-for-labors-charlotte-walker-on-her-21st-birthday%2Fnews-story%2Fde2754567759d9fedd9a2d3e159793ee",
+          "stage": "wikipedia",
+          "outcome": "Failed: restricted URL.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134590436",
+          "stage": "final_broad",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.investigator.sa.edu.au/media-releases/old-collegian-charlotte-walker-becomes-nations-youngest-ever-senator/",
+          "stage": "final_broad",
+          "outcome": "Opened and verified explicit attendance evidence; rechecked at recorded retrieval time.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Charlotte_Walker_(politician)",
+          "stage": "final_broad",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Investigator College",
+          "source_url": "https://www.investigator.sa.edu.au/media-releases/old-collegian-charlotte-walker-becomes-nations-youngest-ever-senator/",
+          "paraphrase": "The college identifies Senator Charlotte Walker as its former captain and explicitly as a 2022 graduate.",
+          "retrieved_at": "2026-10-18T11:19:54.870Z",
+          "attended_status": "graduated",
+          "institution_resolution": "needs_mapping",
+          "graduation_year": 2022
+        }
+      ],
+      "school_leads": [],
+      "result_status": "attendance_proposed",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed."
+      ],
+      "total_search_query_count": 2
+    },
+    {
+      "aph_id": "316915",
+      "name": "Basem Abdo",
+      "qid": "Q134311976",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Basem_Abdo",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "confirmed_mp_id_and_enwiki_sitelink",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134311976",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia explicitly names Gladstone Park Secondary College; its underlying AMES Australia report independently states he graduated from that college and identifies the Calwell MP. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia explicitly names Gladstone Park Secondary College; its underlying AMES Australia report independently states he graduated from that college and identifies the Calwell MP.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "not_required",
+        "query_count": 0,
+        "outcome": "Not needed: underlying cited attendance evidence retrieved."
+      },
+      "search_log": [],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Basem_Abdo",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134311976",
+          "stage": "wikipedia",
+          "outcome": "Opened: exact APH MP identifier and English Wikipedia sitelink confirmed.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://amesnews.com.au/lead-story/son-of-palestinian-migrants-set-to-become-a-federal-mp/",
+          "stage": "wikipedia",
+          "outcome": "Opened and verified explicit attendance evidence; rechecked at recorded retrieval time.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Basem_Abdo",
+          "stage": "wikipedia",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        }
+      ],
+      "schools": [
+        {
+          "recorded_school_name": "Gladstone Park Secondary College",
+          "source_url": "https://amesnews.com.au/lead-story/son-of-palestinian-migrants-set-to-become-a-federal-mp/",
+          "paraphrase": "AMES Australia's report identifies the newly elected Calwell MP and explicitly states he is a graduate of Gladstone Park Secondary College.",
+          "retrieved_at": "2026-10-18T11:19:54.870Z",
+          "attended_status": "graduated",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "school_leads": [],
+      "result_status": "attendance_proposed",
+      "limitations": [],
+      "total_search_query_count": 0
+    },
+    {
+      "aph_id": "317036",
+      "name": "Warwick Stacey",
+      "qid": "Q134610777",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Warwick_Stacey",
+      "identity": {
+        "status": "confirmed",
+        "live_qid_status": "unavailable_internal_error",
+        "qid_source_url": "https://www.wikidata.org/wiki/Q134610777",
+        "confirmed_at": "2026-10-18T11:21:05.820Z",
+        "corroboration": "Wikipedia names Sydney Grammar School. The school's own alumni Postcards profile identifies Warwick Stacey (OS 1970), with the same military and language career. That supports attendance; no graduation year is inferred from the alumni label. Cached P10020 identity is preserved separately in the frozen task."
+      },
+      "wikipedia": {
+        "outcome": "Wikipedia names Sydney Grammar School. The school's own alumni Postcards profile identifies Warwick Stacey (OS 1970), with the same military and language career. That supports attendance; no graduation year is inferred from the alumni label.",
+        "citation_urls": []
+      },
+      "final_search": {
+        "status": "completed",
+        "query_count": 6,
+        "outcome": "Uncertain: six queries in the first final broad pass did not establish explicit secondary stage or a defined school-leaving year. Results repeat the Sydney Grammar alumni account and Wikipedia, or concern tertiary Campion study and unrelated people. The saved alumni account confirms school cadets and OS 1970 but does not explicitly identify the stage; retain it as a lead only."
+      },
+      "search_log": [
+        {
+          "query": "\"Warwick Stacey\" \"Sydney Grammar\" \"school\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        },
+        {
+          "query": "\"Warwick Stacey\" \"Higher School Certificate\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        },
+        {
+          "query": "\"Warwick Stacey\" \"secondary\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        },
+        {
+          "query": "\"Warwick Stacey\" \"leaving\" \"Grammar\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        },
+        {
+          "query": "\"Warwick Stacey\" \"school\" \"1970\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        },
+        {
+          "query": "\"Warwick Stacey\" \"education\" \"Sydney\"",
+          "stage": "final_broad",
+          "retrieval_window": "warwick_final_broad"
+        }
+      ],
+      "access_log": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Warwick_Stacey",
+          "stage": "wikipedia",
+          "outcome": "Opened and inspected person, education and references.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.wikidata.org/wiki/Q134610777",
+          "stage": "wikipedia",
+          "outcome": "Failed: internal retrieval error; cached QID remains an unreviewed hint.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.sydgram.nsw.edu.au/about-grammar/publications/sgs-magazine/sgs-magazine-issue-14-autumn/postcards/",
+          "stage": "wikipedia",
+          "outcome": "Opened and verified explicit attendance evidence; rechecked at recorded retrieval time.",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Warwick_Stacey",
+          "stage": "wikipedia",
+          "outcome": "Reopened to verify the exact article identity at 2026-10-18T11:21:05.820Z",
+          "retrieval_window": "root_pass"
+        },
+        {
+          "url": "https://www.sydgram.nsw.edu.au/about-grammar/publications/sgs-magazine/sgs-magazine-issue-14-autumn/postcards/",
+          "stage": "wikipedia",
+          "outcome": "Reopened saved school alumni profile successfully and inspected the Warwick Stacey section. The cadet reminiscence and OS 1970 label corroborate school attendance and the person, but neither explicitly states secondary stage or defines a leaving year.",
+          "retrieval_window": "secondary_stage_reinspection"
+        }
+      ],
+      "schools": [],
+      "school_leads": [
+        {
+          "recorded_school_name": "Sydney Grammar School",
+          "source_url": "https://www.sydgram.nsw.edu.au/about-grammar/publications/sgs-magazine/sgs-magazine-issue-14-autumn/postcards/",
+          "paraphrase": "The school alumni publication profiles Warwick Stacey (OS 1970), whose British Army and interpreting career corroborate this person. Attendance only; OS 1970 is not promoted to a graduation year.",
+          "retrieved_at": "2026-10-18T11:19:54.870Z",
+          "attended_status": "attended_unspecified",
+          "institution_resolution": "needs_mapping"
+        }
+      ],
+      "result_status": "uncertain",
+      "limitations": [
+        "Exact Wikidata page could not be retrieved; retain the cached QID as a hint while the Wikipedia person identity is confirmed.",
+        "Original finding is retained verbatim as a lead, not an attendance proposal. Explicit secondary-stage evidence is absent from the saved alumni source; do not infer stage or leaving year from OS 1970 or school cadets."
+      ],
+      "total_search_query_count": 6
+    }
+  ]
+}

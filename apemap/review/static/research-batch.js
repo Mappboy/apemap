@@ -35,7 +35,7 @@
       if (!dispositions.length && action.value === "accept") {
         message = "Acceptance requires cited, inspected evidence. Choose Needs further research or Reject proposal and add notes.";
       } else if (form.dataset.acceptReady === "false" && action.value === "accept") {
-        message = "This proposal identity remains unresolved. Choose Needs further research or Reject proposal and add notes.";
+        message = form.querySelector("[data-accept-message]")?.value || "This proposal identity remains unresolved. Choose Needs further research or Reject proposal and add notes.";
       } else if (identityError?.checked && action.value === "accept") {
         message = "This proposal identifies the wrong person. Choose Needs further research or Reject proposal and add notes; acceptance is blocked.";
       } else if (dispositions.some((select) => select.value === "unavailable") && action.value === "accept") {

@@ -3,6 +3,14 @@ data/reference/*.csv text eol=lf
 data/reference/*.json text eol=lf
 data/reference/review/*.jsonl text eol=lf merge=union
 data/reference/review/*.json text eol=lf
+data/reference/review/research/issue-104-survey-20261019/*.json text eol=lf
+data/reference/review/research/issue-104-survey-20261019/*.jsonl text eol=lf
+data/reference/review/research/issue-102-p48-round-2-20261019/*.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/results.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/application-*.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/applied-attendance-audit.json text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/reviews.jsonl text eol=lf
+data/reference/review/research/issue-102-p48-missing-schools-followup-20261019/previews/*.json text eol=lf
 # Captured recipe manifest digests are reproducible across checkout hosts.
 data/*inputs-manifest.json text eol=lf
 data/release-recipes/*.json text eol=lf
@@ -17,6 +25,8 @@ archive/legacy-review/2026-10-05/* -text whitespace=blank-at-eol,blank-at-eof,sp
 archive/inputs/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 archive/input-provisioning/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 archive/notebooks/2026-10-02/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/research/2026-10-19/issue-102-p48-missing-schools-audited/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+archive/research/2026-10-19/issue-102-round2-preparation-without-retained-context/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve the exact verified release bytes and their report checksums.
 data/processed/historical/0.3.0/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Candidate inventories retain the exact bytes delivered in release archives.
